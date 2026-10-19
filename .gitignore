@@ -1,0 +1,13 @@
+node_modules/
+app/dist/
+app/dist-single/
+app/dist-zip/
+app/coverage/
+app/test-results/
+app/playwright-report/
+app/blob-report/
+app/tests/visual/__out__/
+*.log
+.DS_Store
+Thumbs.db
+.vercel

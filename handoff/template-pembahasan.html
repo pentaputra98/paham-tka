@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E2A5C">
+<title>Saluran Irigasi Optimal</title>
+<meta name="description" content="Media pembelajaran interaktif turunan fungsi: membedah soal optimasi volume saluran irigasi langkah demi langkah.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..600&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+/* =========================================================
+   TOKENS — putih · biru tua · merah · emas
+   Merah = garis lipat / kendala / salah · Emas = hasil terbaik
+   ========================================================= */
+:root{
+  --paper:#FFFFFF; --paper-2:#F4F6FB; --paper-3:#E7ECF5;
+  --ink:#0B1A33; --ink-2:#34465F; --ink-3:#6A7891;
+  --navy:#0E2A5C; --navy-2:#163C7E; --navy-3:#2A5BB0; --sky:#7FB2FF; --navy-soft:#EDF2FC;
+  --bp:#0A1830;
+  --red:#C8102E; --red-2:#E5394F; --red-soft:#FDECEE;
+  --gold:#A87A0E; --gold-2:#E2B43C; --gold-3:#F5D778; --gold-soft:#FBF3DC;
+  --line:#DCE3EE;
+  --shadow-pop:0 24px 60px -22px rgba(0,0,0,.65),0 0 0 1px rgba(14,42,92,.08);
+  --ease:cubic-bezier(.65,0,.35,1); --ease-out:cubic-bezier(.2,.8,.2,1);
+  --f-display:'Archivo',system-ui,sans-serif;
+  --f-body:'Plus Jakarta Sans',system-ui,sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--f-body);color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;overflow:hidden;font-size:16px;line-height:1.55}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(rgba(14,42,92,.11) 1px,transparent 1.3px);background-size:22px 22px;-webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.75),rgba(0,0,0,.2));mask-image:linear-gradient(180deg,rgba(0,0,0,.75),rgba(0,0,0,.2))}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:3px solid var(--gold-2);outline-offset:2px;border-radius:8px}
+svg.lucide{width:18px;height:18px;stroke-width:2.1}
+b,strong{font-weight:700;color:var(--navy)}
+.k-red{color:var(--red)!important}.k-gold{color:var(--gold)!important}.k-blue{color:var(--navy-3)!important}
+
+/* ================= SHELL ================= */
+#app{position:relative;z-index:1;height:100vh;height:100dvh;display:grid;grid-template-rows:auto auto 1fr auto;grid-template-columns:minmax(0,1fr);overflow:hidden}
+.top{display:flex;align-items:center;gap:14px;padding:10px clamp(12px,2vw,26px);background:rgba(255,255,255,.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.brand-mark{width:36px;height:36px;border-radius:10px;background:var(--navy);display:grid;place-items:center;flex:none}
+.brand-txt b{display:block;font-family:var(--f-display);font-stretch:118%;font-weight:800;font-size:15px;line-height:1.1;color:var(--navy)}
+.brand-txt small{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.tblock{margin-left:auto;display:flex;align-items:stretch;border:1.5px solid var(--navy);border-radius:8px;overflow:hidden;font-family:var(--f-mono);font-size:11.5px;min-width:0}
+.tblock span{padding:5px 10px;display:flex;align-items:center;white-space:nowrap}
+.tb-k{background:var(--navy);color:#fff;letter-spacing:.16em}
+.tb-n{color:var(--red);font-weight:700;border-right:1.5px solid var(--navy)}
+.tb-t{color:var(--navy);font-weight:600;max-width:240px;overflow:hidden;text-overflow:ellipsis}
+.ctrls{display:flex;gap:6px}
+.icon-btn{position:relative;width:38px;height:38px;border-radius:10px;display:grid;place-items:center;color:var(--navy);border:1px solid var(--line);background:#fff;transition:border-color .2s,transform .2s}
+.icon-btn:hover{border-color:var(--navy);transform:translateY(-1px)}
+.icon-btn[aria-pressed="false"]{color:var(--ink-3)}
+.icon-btn[aria-pressed="false"]::after{content:'';position:absolute;width:22px;height:2px;background:var(--red);transform:rotate(-45deg);border-radius:2px}
+.icon-btn .ic-min{display:none}
+.is-fs .icon-btn .ic-max{display:none}.is-fs .icon-btn .ic-min{display:inline}
+.progress{height:3px;background:var(--paper-3)}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--navy),var(--navy-3) 75%,var(--gold-2));transition:width .9s var(--ease)}
+#stages{position:relative;overflow:hidden;min-height:0}
+.bottom{display:flex;align-items:center;gap:12px;padding:10px clamp(12px,2vw,26px);padding-bottom:max(10px,env(safe-area-inset-bottom));background:rgba(255,255,255,.94);border-top:1px solid var(--line)}
+#app.is-lobby .bottom{display:none}
+.nbtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;padding:0 18px;border-radius:12px;font-weight:700;font-size:15px;transition:transform .2s,background .2s;white-space:nowrap}
+.nbtn.ghost{border:1.5px solid var(--line);color:var(--navy);background:#fff}
+.nbtn.ghost:hover{border-color:var(--navy)}
+.nbtn.primary{background:var(--navy);color:#fff;box-shadow:0 10px 22px -12px rgba(14,42,92,.85)}
+.nbtn.primary:hover{background:var(--navy-2);transform:translateY(-1px)}
+.nbtn.primary.nudge{animation:nudge 1.8s var(--ease) infinite}
+.nbtn.primary.skip{background:#fff;color:var(--navy);border:1.5px solid var(--navy);box-shadow:none}
+@keyframes nudge{50%{box-shadow:0 0 0 7px rgba(226,180,60,.4)}}
+.nbtn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.navmid{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.navlabel{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.subdots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.subdots button{width:24px;height:6px;border-radius:6px;background:var(--paper-3);transition:background .3s,width .4s var(--ease)}
+.subdots button.done{background:var(--navy-3)}
+.subdots button.cur{background:var(--red);width:40px}
+.stage{position:absolute;inset:0;opacity:0;visibility:hidden;pointer-events:none}
+.stage.on{opacity:1;visibility:visible;pointer-events:auto}
+
+/* ================= LOBBY ================= */
+.lobby{height:100%;display:grid;grid-template-columns:1.08fr .92fr;gap:clamp(20px,4vw,64px);align-items:center;padding:clamp(18px,4vw,64px);overflow-y:auto}
+.eyebrow{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--red);font-weight:700;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:'';width:22px;height:2px;background:currentColor}
+.hero-title{font-family:var(--f-display);font-weight:900;font-stretch:125%;font-size:clamp(34px,5.2vw,84px);line-height:.93;letter-spacing:-.025em;color:var(--navy);margin:18px 0 0}
+.hero-title .ln{display:block;overflow:hidden;padding-bottom:.04em}
+.hero-title .ln>span{display:block;transform:translateY(105%);animation:lineUp 1.1s var(--ease-out) forwards}
+.hero-title .ln:nth-child(2)>span{animation-delay:.12s}.hero-title .ln:nth-child(3)>span{animation-delay:.24s}
+.hero-title .accent{color:var(--navy-3)}
+.hero-title .sub{font-stretch:75%;font-weight:700;font-size:.4em;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-top:.45em;display:flex;align-items:center;gap:.6em}
+.hero-title .sub::before{content:'';width:2.2em;height:3px;background:var(--red)}
+@keyframes lineUp{to{transform:none}}
+.lede{font-size:clamp(15.5px,1.25vw,18px);color:var(--ink-2);max-width:34em;margin:22px 0;opacity:0;animation:fadeUp .9s .5s var(--ease-out) forwards}
+.facts{display:flex;flex-wrap:wrap;border:1.5px solid var(--navy);border-radius:12px;overflow:hidden;width:max-content;max-width:100%;margin-bottom:26px;opacity:0;animation:fadeUp .9s .65s var(--ease-out) forwards}
+.facts div{padding:9px 16px;border-right:1.5px solid var(--navy)}
+.facts div:last-child{border-right:0;background:var(--gold-soft)}
+.facts dt{font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.facts dd{font-family:var(--f-display);font-stretch:112%;font-weight:800;font-size:17px;color:var(--navy)}
+.lobby-actions{display:flex;flex-wrap:wrap;align-items:center;gap:14px;opacity:0;animation:fadeUp .9s .8s var(--ease-out) forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.cta{display:inline-flex;align-items:center;gap:16px;height:62px;padding:0 9px 0 30px;border-radius:999px;background:var(--navy);color:#fff;font-family:var(--f-display);font-stretch:118%;font-weight:800;font-size:19px;box-shadow:0 18px 40px -16px rgba(14,42,92,.85);transition:transform .25s var(--ease)}
+.cta .cta-ic{width:46px;height:46px;border-radius:50%;background:var(--gold-2);color:var(--navy);display:grid;place-items:center;transition:transform .3s var(--ease)}
+.cta:hover{transform:translateY(-2px)}.cta:hover .cta-ic{transform:translateX(4px)}
+.toggles{display:flex;gap:8px;flex-wrap:wrap}
+.tgl{display:inline-flex;align-items:center;gap:9px;height:44px;padding:0 16px 0 12px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-weight:600;font-size:14px;color:var(--ink-2)}
+.tgl[aria-pressed="true"]{border-color:var(--navy);color:var(--navy)}
+.tgl .sw{width:32px;height:19px;border-radius:10px;background:var(--paper-3);position:relative;transition:background .3s;flex:none}
+.tgl .sw::after{content:'';position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .3s var(--ease)}
+.tgl[aria-pressed="true"] .sw{background:var(--navy)}
+.tgl[aria-pressed="true"] .sw::after{left:15px}
+.hint-keys{margin-top:18px;font-size:13px;color:var(--ink-3);opacity:0;animation:fadeUp .9s 1s var(--ease-out) forwards}
+.hint-keys kbd{font-family:var(--f-mono);font-size:11.5px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;background:#fff;color:var(--navy)}
+.bp{background-color:var(--bp);color:#E8EEF9;background-image:radial-gradient(110% 80% at 70% -10%,rgba(42,91,176,.45) 0%,transparent 60%),linear-gradient(rgba(127,178,255,.085) 1px,transparent 1px),linear-gradient(90deg,rgba(127,178,255,.085) 1px,transparent 1px),linear-gradient(rgba(127,178,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(127,178,255,.04) 1px,transparent 1px);background-size:100% 100%,80px 80px,80px 80px,16px 16px,16px 16px}
+.lobby-art{position:relative;aspect-ratio:1/1;max-height:74vh;width:100%;border-radius:22px;overflow:hidden;opacity:0;animation:fadeUp 1s .2s var(--ease-out) forwards;box-shadow:0 30px 60px -32px rgba(10,24,48,.7)}
+.lobby-art svg{position:absolute;inset:0;width:100%;height:100%;padding:6%}
+.crop::before{content:'';position:absolute;inset:12px;pointer-events:none;z-index:6;opacity:.75;background:linear-gradient(var(--gold-2),var(--gold-2)) left top/16px 1.5px no-repeat,linear-gradient(var(--gold-2),var(--gold-2)) left top/1.5px 16px no-repeat,linear-gradient(var(--gold-2),var(--gold-2)) right top/16px 1.5px no-repeat,linear-gradient(var(--gold-2),var(--gold-2)) right top/1.5px 16px no-repeat,linear-gradient(var(--gold-2),var(--gold-2)) left bottom/16px 1.5px no-repeat,linear-gradient(var(--gold-2),var(--gold-2)) left bottom/1.5px 16px no-repeat,linear-gradient(var(--gold-2),var(--gold-2)) right bottom/16px 1.5px no-repeat,linear-gradient(var(--gold-2),var(--gold-2)) right bottom/1.5px 16px no-repeat}
+.figcap{position:absolute;left:24px;top:20px;z-index:7;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(232,238,249,.62);pointer-events:none}
+.figcap b{color:var(--gold-3)}
+.hero-svg .dr{stroke-dasharray:1;stroke-dashoffset:1;animation:dr 1.9s var(--ease) forwards}
+@keyframes dr{to{stroke-dashoffset:0}}
+.hero-svg .fi{opacity:0;animation:fi .9s ease forwards}
+@keyframes fi{to{opacity:1}}
+.hero-svg .rise{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(0);animation:rise 2.2s var(--ease) forwards}
+@keyframes rise{to{transform:scaleY(1)}}
+.hero-svg .pulse{transform-box:fill-box;transform-origin:center;animation:pulse 2.6s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.5);opacity:.55}}
+.hero-svg .wave{animation:waveX 4s linear infinite}
+@keyframes waveX{to{transform:translateX(-60px)}}
+.hero-svg text{font-family:var(--f-mono);font-size:13px;fill:rgba(232,238,249,.8)}
+.hero-svg .var{font-family:KaTeX_Math,'Times New Roman',serif;font-style:italic;font-size:22px}
+
+/* ================= MAIN SCENE (satu layar) ================= */
+.scene{position:absolute;inset:0;overflow:hidden;--ft:132px;--fr:500px;--fb:0px;--bw:460px;--bh:340px}
+.host3d{position:absolute;inset:0}
+.host3d canvas{display:block;width:100%!important;height:100%!important;touch-action:none;outline:none}
+.no3d{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:30px;color:#fff}
+.l3wrap{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:4}
+.l3{position:absolute;left:0;top:0;white-space:nowrap;font-family:var(--f-mono);font-size:13px;font-weight:600;padding:5px 10px;border-radius:8px;background:rgba(8,20,42,.86);color:#fff;border:1px solid rgba(255,255,255,.22);will-change:transform,opacity;opacity:0;text-align:center;line-height:1.25;transition:border-color .4s,color .4s,background .4s}
+.l3 i{font-family:KaTeX_Math,'Times New Roman',serif;font-size:1.32em;font-style:italic;font-weight:400}
+.l3 b{color:inherit}
+.l3 small{display:block;font-size:10px;font-weight:400;opacity:.78;letter-spacing:.06em}
+.l3.red{border-color:#ff5a6e;color:#ffdfe3}.l3.blue{border-color:var(--sky);color:#e3eeff}
+.l3.big{font-size:15px;padding:8px 14px;background:rgba(255,255,255,.95);color:var(--navy);border:2px solid var(--navy-3)}
+.l3.tip{background:var(--gold-2);color:var(--navy);border:0;font-family:var(--f-body);font-weight:700;font-size:13px;border-radius:999px;padding:6px 13px}
+.l3.tip::after{content:'';position:absolute;left:50%;bottom:-6px;width:12px;height:12px;background:var(--gold-2);transform:translateX(-50%) rotate(45deg);z-index:-1}
+.l3.gold{border-color:var(--gold-2)!important;color:#fff3cf!important;background:rgba(60,42,0,.88)!important}
+.src-glow{animation:srcGlow .9s var(--ease)}
+@keyframes srcGlow{30%{box-shadow:0 0 0 4px rgba(245,215,120,.9);background:rgba(245,215,120,.35);border-radius:6px}}
+
+/* caption pop-up */
+.cap{position:absolute;left:20px;top:16px;z-index:10;width:min(540px,calc(100% - var(--fr) - 40px));background:rgba(255,255,255,.97);color:var(--ink);border-radius:16px;padding:12px 18px 14px 18px;box-shadow:var(--shadow-pop);border-left:4px solid var(--red)}
+.cap.pop{animation:capPop .55s var(--ease-out)}
+@keyframes capPop{from{opacity:0;transform:translateY(-10px) scale(.97)}to{opacity:1;transform:none}}
+.cap-k{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--red);font-weight:700;margin-bottom:3px}
+.cap-t{font-size:16px;line-height:1.5}
+.cap-a{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.cap-a:empty{display:none}
+.btn{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-radius:11px;background:var(--navy);color:#fff;font-weight:700;font-size:14px;transition:background .2s,transform .2s}
+.btn:hover{background:var(--navy-2);transform:translateY(-1px)}
+.btn.sec{background:#fff;border:1.5px solid var(--line);color:var(--navy)}
+.btn.sec:hover{border-color:var(--navy)}
+.btn.gold{background:var(--gold-2);color:var(--navy)}
+.seal{width:58px;height:58px;border-radius:50%;flex:none;background:radial-gradient(circle at 30% 28%,#FFF0B8,#E2B43C 46%,#9C700A);display:grid;place-items:center;font-family:var(--f-display);font-stretch:125%;font-weight:900;font-size:30px;color:var(--navy);box-shadow:0 0 0 3px #fff,0 0 0 5px var(--gold-2),0 10px 24px -6px rgba(168,122,14,.75)}
+.verdict{display:flex;align-items:center;gap:14px}
+
+/* papan tulis */
+.board{position:absolute;z-index:10;right:16px;top:16px;bottom:16px;width:var(--bw);display:flex;flex-direction:column;background:#fff;color:var(--ink);border-radius:18px;box-shadow:var(--shadow-pop);overflow:hidden}
+.bd-head{display:flex;align-items:center;gap:10px;padding:11px 14px 11px 16px;border-bottom:1px solid var(--line);background:var(--paper-2)}
+.bd-k{font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.bd-t{font-family:var(--f-display);font-stretch:112%;font-weight:800;font-size:16px;color:var(--navy);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bd-re{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;color:var(--navy);border:1px solid var(--line);background:#fff}
+.bd-re:hover{border-color:var(--navy)}
+.bd-re svg.lucide{width:15px;height:15px}
+.bd-pins{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 14px;border-bottom:1px dashed var(--line);font-size:15px}
+.bd-pins:empty{display:none}
+.bd-pins::before{content:'Hasil sebelumnya';font-family:var(--f-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);width:100%}
+.pin{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;background:var(--navy-soft);border:1.5px solid var(--navy-3)}
+.pin.gold{background:var(--gold-soft);border-color:var(--gold-2)}
+.pin.pop{animation:capPop .5s var(--ease-out) backwards}
+.bd-lines{flex:1;overflow-y:auto;padding:12px 14px 18px;display:flex;flex-direction:column;gap:6px;scrollbar-width:thin;
+  background-image:linear-gradient(transparent 47px,rgba(42,91,176,.07) 47px);background-size:100% 48px;background-attachment:local}
+.bl{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0 10px;min-height:42px;transition:opacity .5s}
+.bl.past{opacity:.5}
+.bl.res{opacity:1}
+.bl-m{display:flex;align-items:center;flex-wrap:nowrap;white-space:nowrap;font-size:clamp(18px,1.55vw,23px);padding:2px 8px;border-radius:9px;transition:box-shadow .4s,background .4s}
+.bl-m.box-navy{box-shadow:0 0 0 2px var(--navy-3);background:var(--navy-soft)}
+.bl-m.box-gold{box-shadow:0 0 0 2px var(--gold-2);background:var(--gold-soft)}
+.bl-m.boxin{animation:boxIn .7s var(--ease-out)}
+@keyframes boxIn{from{box-shadow:0 0 0 10px rgba(226,180,60,.0),0 0 0 2px transparent;transform:scale(1.04)}}
+.bl-n{font-size:12px;line-height:1.3;color:var(--ink-3);text-align:right;margin-left:auto;max-width:100%;flex:0 1 auto;opacity:0;transform:translateX(8px);transition:opacity .5s,transform .5s var(--ease-out)}
+.bl.noted .bl-n{opacity:1;transform:none}
+.tk{display:inline-block;margin:0 .05em;line-height:1.3}
+.tk.hid{visibility:hidden}
+.tk.op{margin:0 .22em}
+.tk.u{color:var(--ink-3);font-size:.82em}
+.tk.red{color:var(--red)}.tk.blue{color:var(--navy-3)}.tk.gold{color:var(--gold)}
+.tk.tx{font-family:var(--f-body);font-size:.7em;font-weight:600;color:var(--ink)}
+.tk.tx.gold{color:#7a5800}
+.tk.lbl{font-family:var(--f-mono);font-size:.5em;letter-spacing:.12em;text-transform:uppercase;color:var(--red);font-weight:700;margin-right:.6em}
+.tk.muted{color:var(--ink-3);font-size:.78em}
+.tk.sp{margin-right:.35em}
+.m-frac{display:inline-flex;flex-direction:column;align-items:center;margin:0 .14em;vertical-align:middle}
+.m-num,.m-den{display:flex;align-items:center;justify-content:center;padding:0 .12em;font-size:.9em}
+.m-bar{align-self:stretch;height:2px;background:currentColor;margin:.05em 0;border-radius:2px}
+.fly-tok{position:fixed;z-index:95;pointer-events:none;background:var(--gold-soft);border-radius:6px;box-shadow:0 0 0 2px var(--gold-2),0 12px 26px -8px rgba(0,0,0,.45);color:var(--ink);visibility:visible!important;display:flex;align-items:center;justify-content:center}
+.fly{position:fixed;left:0;top:0;z-index:96;pointer-events:none}
+.fly-num{font-family:var(--f-display);font-stretch:115%;font-weight:900;font-size:24px;color:var(--navy);background:var(--gold-soft);border-radius:10px;padding:2px 10px;box-shadow:0 0 0 2px var(--gold-2),0 10px 30px -8px rgba(0,0,0,.5)}
+.bd-foot{border-top:1px solid var(--line);padding:12px 14px 14px;background:var(--paper-2);max-height:60%;overflow:auto}
+.bd-foot:empty{display:none}
+.ask-q{font-size:14.5px;font-weight:600;margin-bottom:8px}
+.ask-q::before{content:'Coba jawab';display:block;font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--red);font-weight:700;margin-bottom:2px}
+.ask-o{display:flex;flex-wrap:wrap;gap:8px}
+.opt{border:1.5px solid var(--line);border-radius:11px;padding:7px 14px;background:#fff;font-size:15.5px;transition:border-color .2s,transform .2s,background .2s;display:inline-flex;align-items:center;gap:8px;min-height:42px;text-align:left}
+.opt .ol{font-family:var(--f-mono);font-size:11px;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;background:var(--paper-3);color:var(--navy);flex:none;font-weight:700}
+.opt:hover:not(:disabled){border-color:var(--navy);transform:translateY(-1px)}
+.opt.wrong{border-color:var(--red);background:var(--red-soft);animation:shake .45s}
+.opt.right{border-color:var(--gold-2);background:var(--gold-soft)}
+.opt:disabled{cursor:default}
+.ask-o.col{flex-direction:column;align-items:stretch}
+@keyframes shake{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.ask-h{margin-top:8px;font-size:14px;border-radius:10px;padding:8px 12px;display:none;animation:capPop .4s var(--ease-out)}
+.ask-h.no{display:block;background:var(--red-soft);color:var(--ink)}
+.ask-h.ok{display:block;background:var(--gold-soft)}
+.ask-x{margin-top:8px;text-align:right}
+.lnk{font-size:13px;font-weight:600;color:var(--navy-3);text-decoration:underline;text-underline-offset:3px}
+.hud2 .h2r{display:flex;gap:16px;font-family:var(--f-mono);font-size:14px;color:var(--ink-2)}
+.hud2 .h2r b{color:var(--navy)}
+.hud2 .h2v{font-family:var(--f-display);font-stretch:115%;font-weight:900;font-size:30px;color:var(--navy);line-height:1.1;margin-top:2px}
+.hud2 .h2v small{font-size:14px;color:var(--ink-3);font-weight:700}
+.hud2 .h2m{font-size:13px;color:var(--ink-2)}
+.hud2.peak .h2v{color:var(--gold)}
+.vbar{position:relative;height:10px;border-radius:8px;background:var(--paper-3);margin:8px 0}
+.vbar>i{position:absolute;left:0;top:0;bottom:0;border-radius:8px;background:linear-gradient(90deg,var(--navy-3),var(--sky));width:0}
+.hud2.peak .vbar>i{background:linear-gradient(90deg,var(--gold-2),var(--gold-3))}
+.vbar .rec{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--navy);left:0}
+
+/* panels inside free area */
+.inFree{position:absolute;left:20px;top:var(--ft);right:var(--fr);bottom:calc(var(--fb) + 18px);z-index:3}
+.p-soal,.p-cards,.notes-ov,.labctl{display:none}
+.scene.m-soal .p-soal{display:block}
+.scene.m-cards .p-cards{display:grid}
+.scene.m-notes .notes-ov{display:block}
+.scene.m-notes .board,.scene.m-notes .cap{display:none}
+.scene.lab .labctl{display:block}
+.scene.m-soal .host3d,.scene.m-cards .host3d,.scene.m-notes .host3d{visibility:hidden}
+.p-soal{background:#fff;color:var(--ink);border-radius:18px;overflow:auto;box-shadow:var(--shadow-pop)}
+.soal{padding:24px 26px 20px 56px;position:relative;font-size:15.5px;line-height:1.78}
+.soal::before{content:'';position:absolute;left:38px;top:0;bottom:0;width:1.5px;background:rgba(200,16,46,.35)}
+.soal-h{display:flex;justify-content:space-between;gap:10px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px;padding-bottom:8px;border-bottom:1px dashed var(--line)}
+.stmts{list-style:none;margin:8px 0 10px;display:grid;gap:2px}
+.stmts li{display:flex;gap:10px}
+.stmts li>span:first-child{font-family:var(--f-mono);font-weight:700;color:var(--navy);flex:none}
+.abc{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:0 18px;margin-top:4px;font-size:14.5px}
+.abc li>span{font-family:var(--f-mono);font-weight:700;color:var(--navy);margin-right:8px}
+.hl{--hc:rgba(200,16,46,.2);background:linear-gradient(var(--hc),var(--hc)) no-repeat 0 90%/0% 44%;transition:background-size 1s var(--ease);padding:0 2px;border-radius:2px}
+.hl.on{background-size:100% 44%}
+.hl.navy{--hc:rgba(42,91,176,.24)}.hl.gold{--hc:rgba(226,180,60,.5)}
+.labctl{position:absolute;z-index:9;left:20px;right:var(--fr);bottom:calc(var(--fb) + 16px)}
+.labctl>div{max-width:560px;margin:0 auto;background:rgba(255,255,255,.97);border-radius:16px;padding:10px 16px;color:var(--ink);box-shadow:var(--shadow-pop);display:flex;align-items:center;gap:12px}
+.labctl label{font-weight:700;font-size:14px;color:var(--navy);white-space:nowrap}
+.labctl label i{font-family:KaTeX_Math,serif;font-size:1.25em}
+.labctl output{font-family:var(--f-mono);font-weight:700;font-size:16px;color:var(--navy);min-width:74px;text-align:right}
+input[type=range]{-webkit-appearance:none;appearance:none;flex:1;height:30px;background:transparent;cursor:pointer;min-width:0}
+input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:8px;background:linear-gradient(90deg,var(--navy-3),var(--navy))}
+input[type=range]::-moz-range-track{height:8px;border-radius:8px;background:linear-gradient(90deg,var(--navy-3),var(--navy))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-9px;border-radius:50%;background:#fff;border:4px solid var(--gold-2);box-shadow:0 4px 12px rgba(0,0,0,.35)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:4px solid var(--gold-2)}
+
+/* cards (analisis) */
+.p-cards{grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:14px}
+.card{perspective:1300px;min-height:0}
+.card-in{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform 1.05s cubic-bezier(.7,0,.2,1)}
+.card.flip .card-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;-webkit-backface-visibility:hidden;backface-visibility:hidden;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.front{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.2);color:#E8EEF9;justify-content:space-between}
+.front .num{font-family:var(--f-display);font-stretch:125%;font-weight:900;font-size:40px;line-height:1}
+.front .st{font-size:15px;line-height:1.45}
+.front .wait{font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(232,238,249,.5)}
+.card.focus .front{border-color:var(--gold-2);box-shadow:0 0 0 4px rgba(226,180,60,.2)}
+.back{transform:rotateY(180deg);background:#fff;color:var(--ink);font-size:14px;line-height:1.45}
+.back .bn{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.back .bs{font-weight:600;color:var(--ink-2);padding-right:124px}
+.back .bc{font-size:17px;color:var(--navy);margin-top:auto}
+.back .bw{font-size:13.5px;color:var(--ink-2)}
+.back.ok{box-shadow:inset 0 0 0 2.5px var(--gold-2)}
+.back.no{box-shadow:inset 0 0 0 2.5px var(--red)}
+.stamp{position:absolute;right:12px;top:12px;font-family:var(--f-display);font-stretch:125%;font-weight:900;font-size:18px;letter-spacing:.08em;padding:3px 10px;border:3px solid;border-radius:8px;transform:rotate(-8deg)}
+.stamp.ok{color:var(--gold);border-color:var(--gold-2);background:var(--gold-soft)}
+.stamp.no{color:var(--red);border-color:var(--red);background:var(--red-soft)}
+.card.flip .stamp{animation:slam .55s .6s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes slam{from{opacity:0;transform:rotate(-8deg) scale(2.8)}to{opacity:1;transform:rotate(-8deg) scale(1)}}
+
+/* notes overlay */
+.notes-ov{position:absolute;inset:14px;z-index:12;overflow:auto;border-radius:18px;background:#fff;box-shadow:var(--shadow-pop)}
+.notes-bar{position:sticky;top:0;z-index:2;display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 18px;background:rgba(244,246,251,.97);border-bottom:1px solid var(--line)}
+.notes-bar .t{font-family:var(--f-display);font-stretch:115%;font-weight:800;color:var(--navy);font-size:17px;flex:1;min-width:200px}
+.notes-bar .t small{display:block;font-family:var(--f-body);font-weight:500;font-size:13px;color:var(--ink-3)}
+
+/* graph modal */
+.graph-ov{position:absolute;inset:0;z-index:30;background:rgba(6,14,30,.72);display:none;place-items:center;padding:16px}
+.graph-ov.open{display:grid;animation:fi .3s ease}
+.g-card{width:min(900px,100%);max-height:100%;border-radius:20px;display:flex;flex-direction:column;overflow:hidden;position:relative;box-shadow:var(--shadow-pop)}
+.g-head{padding:16px 20px 4px}
+.g-head h3{font-family:var(--f-display);font-stretch:115%;font-weight:800;font-size:20px;color:#fff}
+.g-stat{margin:6px 20px 0;padding:9px 14px;border-radius:12px;background:rgba(255,255,255,.95);color:var(--ink);font-size:15px;font-weight:600;min-height:42px}
+.g-stat.flat{background:var(--gold-soft);box-shadow:0 0 0 2px var(--gold-2)}
+.g-svg{flex:1;min-height:0;padding:6px 14px 0;display:flex}
+.g-svg svg{width:100%;height:100%;min-height:230px;max-height:52vh}
+.g-foot{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:8px 20px 16px;color:rgba(232,238,249,.8);font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.g-foot input{min-width:140px}
+.gl{stroke:rgba(200,215,240,.09)}
+.ax{stroke:rgba(220,230,250,.55);stroke-width:1.4}
+.axt{fill:rgba(220,230,250,.7);font-family:var(--f-mono);font-size:12px}
+.axn{fill:rgba(220,230,250,.85);font-family:var(--f-mono);font-size:13px;font-weight:700}
+.curve{fill:none;stroke:var(--sky);stroke-width:3.6;stroke-linecap:round}
+.tanl{stroke:#ff8796;stroke-width:3.4;stroke-linecap:round;transition:stroke .3s}
+.isflat .tanl{stroke:var(--gold-3);filter:url(#g6glow)}
+.pdot{fill:#fff;stroke:#ff8796;stroke-width:3}
+.isflat .pdot{fill:var(--gold-3);stroke:#fff}
+.hiker *{stroke:#fff;stroke-width:2.4;stroke-linecap:round;fill:none}
+.hiker .hd{fill:#fff}.hiker .pack{fill:var(--red-2);stroke:none}
+.s-tag{font-family:var(--f-display);font-stretch:115%;font-weight:800;font-size:14px;letter-spacing:.04em;text-transform:uppercase}
+
+/* menu / toast */
+.drawer{position:fixed;inset:0;z-index:120;pointer-events:none;visibility:hidden;transition:visibility 0s .45s}
+.drawer.open{visibility:visible;pointer-events:auto;transition-delay:0s}
+.drawer .scrim{position:absolute;inset:0;background:rgba(10,24,48,.4);opacity:0;transition:opacity .35s}
+.drawer .panel{position:absolute;right:0;top:0;bottom:0;width:min(380px,92vw);background:#fff;transform:translateX(100%);transition:transform .45s var(--ease);padding:20px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;box-shadow:-20px 0 60px -20px rgba(0,0,0,.4)}
+.drawer.open .scrim{opacity:1}.drawer.open .panel{transform:none}
+.drawer h3{font-family:var(--f-display);font-stretch:118%;font-weight:800;color:var(--navy);font-size:20px;display:flex;justify-content:space-between;align-items:center}
+.mitem{display:grid;grid-template-columns:42px 1fr;gap:10px;align-items:center;text-align:left;padding:10px;border-radius:12px;border:1.5px solid var(--line)}
+.mitem:hover{border-color:var(--navy)}
+.mitem .mn{font-family:var(--f-mono);font-weight:700;color:var(--red);font-size:13px}
+.mitem .mt{font-weight:700;color:var(--navy);font-size:14.5px;line-height:1.25}
+.mitem .ms{font-size:12.5px;color:var(--ink-3)}
+.mitem.cur{background:var(--paper-2);border-color:var(--navy)}
+#toast{position:fixed;left:50%;bottom:92px;transform:translate(-50%,20px);z-index:130;background:var(--navy);color:#fff;padding:12px 18px;border-radius:14px;font-size:14.5px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .35s,transform .45s var(--ease-out);max-width:min(560px,92vw);box-shadow:0 20px 40px -16px rgba(0,0,0,.5)}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#toast.gold{background:var(--gold-2);color:var(--navy)}
+#printRoot{display:none}
+
+/* ================= RESPONSIVE ================= */
+/* tata letak "sempit" (jendela tegak di desktop) — diatur lewat JS */
+.scene.narrow .board{left:10px;right:10px;top:auto;bottom:10px;width:auto;height:var(--bh)}
+.scene.narrow .cap{left:10px;right:10px;top:8px;width:auto;padding:9px 14px 10px}
+.scene.narrow .cap-t{font-size:14.5px;line-height:1.42}
+.scene.narrow .inFree{left:10px;right:10px}
+.scene.narrow .labctl{left:10px;right:10px}
+@media (max-width:899px) and (orientation:portrait){
+  .lobby{grid-template-columns:1fr;align-content:start;gap:16px}
+  .lobby-art{max-height:34vh;max-width:34vh;order:-1;justify-self:center}
+}
+@media (max-width:899px){
+  .bl-m{font-size:18px}
+  .bl-n{font-size:11px}
+  .p-cards{gap:8px}
+  .front .num{font-size:24px}.front .st{font-size:12.5px}
+  .face{padding:10px}
+  .back{font-size:12px}.back .bs{padding-right:84px;font-size:11.5px}.back .bc{font-size:14px}.back .bw{font-size:11.5px}
+  .stamp{font-size:12px;padding:2px 7px}
+  .notes-ov{inset:8px}
+}
+@media (max-width:640px){
+  .brand-txt{display:none}.tb-k{display:none!important}
+  .top{gap:8px;padding:8px 10px}.ctrls{gap:4px}
+  .icon-btn{width:34px;height:34px}.brand-mark{width:32px;height:32px}
+  .tb-t{max-width:120px}.tblock span{padding:4px 7px}
+  .bottom{gap:8px;padding:8px 10px}
+  .nbtn{padding:0 14px}#btnPrev span{display:none}
+  .navlabel{font-size:10px}
+  .soal{padding:16px 14px 14px 30px;font-size:14px}.soal::before{left:18px}
+  .abc{grid-template-columns:1fr}
+}
+/* ===== layar pendek: HP / tablet kecil dalam posisi mendatar ===== */
+@media (max-height:520px){
+  .top{padding:4px 10px;gap:8px}.brand-mark{width:28px;height:28px}.brand-txt small{display:none}.brand-txt b{font-size:13px}
+  .icon-btn{width:30px;height:30px;border-radius:8px}.ctrls{gap:4px}
+  .tblock{font-size:10.5px}.tblock span{padding:3px 8px}.tb-k{display:none!important}
+  .bottom{padding:4px 10px;gap:8px;padding-bottom:max(4px,env(safe-area-inset-bottom))}
+  .nbtn{height:34px;font-size:13px;padding:0 12px;border-radius:10px}#btnPrev span{display:none}
+  .navmid{gap:3px}.navlabel{font-size:9.5px}.subdots button{height:5px;width:18px}.subdots button.cur{width:28px}
+  .cap{top:8px;left:10px;padding:7px 12px 8px;border-radius:12px;border-left-width:3px}
+  .cap-k{font-size:9px;margin-bottom:1px}.cap-t{font-size:13px;line-height:1.35}
+  .cap-a{margin-top:6px;gap:6px}.btn{height:30px;font-size:12px;padding:0 10px;border-radius:9px}
+  .seal{width:40px;height:40px;font-size:20px}
+  .board{top:8px;bottom:8px;right:8px;border-radius:14px}
+  .bd-head{padding:5px 8px 5px 12px}.bd-k{display:none}.bd-t{font-size:13.5px}.bd-re{width:26px;height:26px}
+  .bd-pins{padding:4px 10px;font-size:12.5px;gap:4px}.bd-pins::before{display:none}.pin{padding:1px 8px}
+  .bd-lines{padding:6px 10px 10px;gap:2px;background-image:linear-gradient(transparent 33px,rgba(42,91,176,.07) 33px);background-size:100% 34px}
+  .bl{min-height:32px;padding-bottom:3px}.bl-m{font-size:15.5px;padding:1px 6px}.bl-n{font-size:9.5px;line-height:1.15}
+  .bd-foot{padding:6px 10px 8px}.ask-q{font-size:12.5px;margin-bottom:5px}.opt{min-height:32px;padding:4px 10px;font-size:13px}
+  .ask-h{font-size:12px;padding:5px 9px;margin-top:5px}.ask-x{margin-top:4px}
+  .hud2 .h2v{font-size:20px}.hud2 .h2r{font-size:12px}.vbar{margin:4px 0}
+  .labctl>div{padding:4px 12px;gap:8px}.labctl label{font-size:12px}.labctl output{font-size:13px;min-width:60px}
+  .l3{font-size:11px;padding:3px 7px}.l3.big{font-size:12px;padding:5px 9px}.l3.tip{font-size:11px;padding:4px 10px}
+  .p-cards{gap:6px}.face{padding:8px}.front .num{font-size:20px}.front .st{font-size:11.5px;line-height:1.3}.front .wait{display:none}
+  .back{font-size:11px}.back .bs{display:none}.back .bn{padding-right:78px}.back .bc{font-size:14px;margin-top:auto}.back .bw{font-size:10.5px}.stamp{font-size:11px;padding:1px 6px;border-width:2px}
+  .soal{padding:12px 14px 12px 30px;font-size:13px;line-height:1.6}.soal::before{left:18px}
+  .lobby{padding:12px 20px;gap:20px;grid-template-columns:1.2fr .8fr}
+  .hero-title{font-size:min(9vh,7vw);margin-top:8px}.lede{font-size:13px;margin:10px 0}.facts{display:none}.hint-keys{display:none}
+  .cta{height:44px;font-size:15px;padding:0 6px 0 20px}.cta .cta-ic{width:34px;height:34px}.tgl{height:34px;font-size:12px}
+  .lobby-art{max-height:78vh}
+  .g-head{padding:8px 14px 0}.g-head h3{font-size:15px}.g-stat{margin:4px 14px 0;font-size:12px;padding:5px 10px;min-height:0}
+  .g-svg svg{min-height:150px;max-height:46vh}.g-foot{padding:4px 14px 8px;gap:6px}
+  .graph-ov{padding:8px}.notes-ov{inset:6px}.notes-bar{padding:6px 12px}.notes-bar .t{font-size:14px}.notes-bar .t small{display:none}
+  .done-card{padding:18px 22px 18px}.done-card h2{font-size:42px}.done-card p{font-size:13px}
+}
+
+/* ===== overlay: putar HP ===== */
+.rotate-ov{position:fixed;inset:0;z-index:300;display:none;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:30px;text-align:center;color:#fff}
+.rotate-ov h2{font-family:var(--f-display);font-stretch:118%;font-weight:900;font-size:24px;line-height:1.15}
+.rotate-ov p{font-size:15px;color:rgba(232,238,249,.8);max-width:22em}
+.phone-wrap{position:relative;width:170px;height:170px;display:grid;place-items:center}
+.phone{width:64px;height:112px;border:4px solid #fff;border-radius:14px;position:relative;animation:turnPhone 2.8s var(--ease) infinite;box-shadow:0 0 0 6px rgba(127,178,255,.15)}
+.phone::before{content:'';position:absolute;inset:6px 4px;border-radius:6px;background:linear-gradient(160deg,#2A5BB0,#0E2A5C);}
+.phone::after{content:'';position:absolute;left:50%;bottom:4px;width:16px;height:3px;border-radius:2px;background:#fff;transform:translateX(-50%)}
+.phone i{position:absolute;inset:16px 10px;z-index:1;border-radius:3px;background:rgba(245,215,120,.9);clip-path:polygon(0 60%,100% 60%,100% 100%,0 100%);animation:waterTilt 2.8s var(--ease) infinite}
+.rot-arrow{position:absolute;inset:0;animation:arrowFade 2.8s var(--ease) infinite}
+@keyframes turnPhone{0%,15%{transform:rotate(0)}55%,85%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
+@keyframes arrowFade{0%,10%{opacity:0}25%,50%{opacity:1}60%,100%{opacity:0}}
+@keyframes waterTilt{0%,15%{clip-path:polygon(0 60%,100% 60%,100% 100%,0 100%)}55%,85%{clip-path:polygon(0 0,40% 0,40% 100%,0 100%)}100%{clip-path:polygon(0 60%,100% 60%,100% 100%,0 100%)}}
+@media (orientation:portrait) and (max-width:1024px){
+  .rotate-ov{display:flex}
+  #app,.drawer{visibility:hidden}
+}
+
+/* ===== pop-up SELESAI ===== */
+.done-ov{position:fixed;inset:0;z-index:150;display:none;place-items:center;padding:16px;background:rgba(6,14,30,.62);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.done-ov.open{display:grid;animation:fi .35s ease}
+.done-card{position:relative;width:min(460px,100%);background:#fff;border-radius:22px;padding:28px 30px 26px;text-align:center;box-shadow:0 40px 80px -30px rgba(0,0,0,.7);animation:donePop .7s cubic-bezier(.2,1.4,.4,1)}
+@keyframes donePop{from{opacity:0;transform:scale(.6) rotate(-4deg)}to{opacity:1;transform:none}}
+.done-card .seal{margin:0 auto 10px;width:64px;height:64px;font-size:30px}
+.done-card h2{font-family:var(--f-display);font-stretch:125%;font-weight:900;font-size:56px;line-height:1;letter-spacing:.04em;background:linear-gradient(90deg,var(--navy),var(--navy-3) 45%,var(--gold-2) 55%,var(--navy));-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% 100%;animation:shine 3s linear infinite}
+@keyframes shine{to{background-position:-200% 0}}
+.done-card p{font-size:15px;color:var(--ink-2);margin:10px 0 18px}
+.done-card .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.done-x{position:absolute;right:12px;top:12px;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;border:1px solid var(--line);color:var(--navy)}
+.done-x:hover{border-color:var(--navy)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.15s!important}
+}
+@media print{
+  #app,.drawer,#toast,.rotate-ov,.done-ov{display:none!important}
+  html,body{overflow:visible!important;height:auto!important;background:#fff}
+  body::before{display:none}
+  #printRoot{display:block}
+}
+</style>
+<style id="notesCss">
+.nsheet{max-width:860px;margin:0 auto;padding:28px 34px 40px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#0B1A33;line-height:1.55}
+.nsheet h1{font-family:'Archivo',system-ui,sans-serif;font-stretch:118%;font-weight:900;font-size:26px;color:#0E2A5C;line-height:1.1}
+.nsheet .meta{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#C8102E;margin:6px 0 18px}
+.nsheet section{display:grid;grid-template-columns:1fr 300px;gap:10px 24px;align-items:center;padding:14px 0;border-top:1.5px dashed #DCE3EE;break-inside:avoid}
+.nsheet section.full{grid-template-columns:1fr}
+.nsheet h2{grid-column:1/-1;font-family:'Archivo',system-ui,sans-serif;font-stretch:110%;font-weight:800;font-size:16px;color:#0E2A5C;display:flex;gap:10px;align-items:center}
+.nsheet h2 span{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:#0E2A5C;color:#fff;font-family:'JetBrains Mono',monospace;font-size:12px}
+.nsheet .katex-display{margin:.3em 0;text-align:left}
+.nsheet .katex-display>.katex{text-align:left}
+.nsheet .why{font-size:13px;color:#6A7891}
+.nsheet svg{width:100%;height:auto;display:block}
+.nsheet .ans{border:2px solid #E2B43C;background:#FBF3DC;border-radius:12px;padding:10px 14px;font-weight:700;color:#0E2A5C}
+.nsheet table{border-collapse:collapse;font-size:14px;width:100%}
+.nsheet td{padding:5px 8px;border-bottom:1px solid #DCE3EE}
+.nsheet .ok{color:#A87A0E;font-weight:800}.nsheet .no{color:#C8102E;font-weight:800}
+@media (max-width:700px){.nsheet{padding:18px 16px 30px}.nsheet section{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app" class="is-lobby">
+  <header class="top">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M4 6v12h16V6" fill="none" stroke="#fff" stroke-width="2.6"/><rect x="6.2" y="11" width="11.6" height="5.2" fill="#7FB2FF"/><circle cx="12" cy="4" r="2" fill="#E2B43C"/></svg></div>
+      <div class="brand-txt"><b>Saluran Irigasi</b><small>Turunan · Optimasi</small></div>
+    </div>
+    <div class="tblock" aria-live="polite"><span class="tb-k">BAGIAN</span><span class="tb-n" id="tbNum">00/09</span><span class="tb-t" id="tbTitle">Lobi</span></div>
+    <div class="ctrls">
+      <button class="icon-btn" id="hdMusic" aria-pressed="false" title="Musik latar (M)" aria-label="Musik latar"><i data-lucide="music"></i></button>
+      <button class="icon-btn" id="hdSfx" aria-pressed="true" title="Efek suara" aria-label="Efek suara"><i data-lucide="volume-2"></i></button>
+      <button class="icon-btn" id="hdFs" title="Layar penuh (F)" aria-label="Layar penuh"><span class="ic-max"><i data-lucide="maximize"></i></span><span class="ic-min"><i data-lucide="minimize"></i></span></button>
+      <button class="icon-btn" id="hdMenu" title="Daftar bagian" aria-label="Daftar bagian"><i data-lucide="list"></i></button>
+    </div>
+  </header>
+  <div class="progress"><i id="progBar"></i></div>
+
+  <main id="stages">
+    <!-- ================= LOBI ================= -->
+    <section class="stage" id="stL">
+      <div class="lobby">
+        <div>
+          <p class="eyebrow">Kelas 12 · Kalkulus · Aplikasi turunan</p>
+          <h1 class="hero-title">
+            <span class="ln"><span>Pembahasan Soal</span></span>
+            <span class="ln"><span>Materi <span class="accent">Turunan</span></span></span>
+            <span class="ln"><span class="sub">Kontekstual</span></span>
+          </h1>
+          <p class="lede">Satu lembar pelat beton 1.200 m² dilipat jadi saluran air sepanjang 100 m. Berapa ukurannya supaya airnya paling banyak? Kita kerjakan langkah demi langkah, seperti di papan tulis.</p>
+          <dl class="facts">
+            <div><dt>Panjang</dt><dd>100 m</dd></div>
+            <div><dt>Pelat beton</dt><dd>1.200 m²</dd></div>
+            <div><dt>Dicari</dt><dd>Volume maks</dd></div>
+          </dl>
+          <div class="lobby-actions">
+            <button class="cta" id="btnStart">Mulai <span class="cta-ic"><i data-lucide="arrow-right"></i></span></button>
+            <div class="toggles">
+              <button class="tgl" id="tgMusic" aria-pressed="false"><span class="sw"></span>Musik latar</button>
+              <button class="tgl" id="tgSfx" aria-pressed="true"><span class="sw"></span>Efek suara</button>
+            </div>
+          </div>
+          <p class="hint-keys">Tombol <kbd>←</kbd> <kbd>→</kbd> untuk maju-mundur, <kbd>F</kbd> layar penuh. Setiap langkah bisa diulang.</p>
+        </div>
+        <div class="lobby-art bp crop">
+          <div class="figcap"><b>GBR. 00</b> Penampang saluran &amp; bukit volume</div>
+          <svg class="hero-svg" viewBox="0 0 560 540" aria-hidden="true">
+            <defs>
+              <linearGradient id="hw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6DB6FF" stop-opacity=".95"/><stop offset="1" stop-color="#1D5BC0" stop-opacity=".9"/></linearGradient>
+              <linearGradient id="hp" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7FB2FF"/><stop offset=".5" stop-color="#F5D778"/><stop offset="1" stop-color="#7FB2FF"/></linearGradient>
+              <filter id="hglow" filterUnits="userSpaceOnUse" x="0" y="0" width="560" height="540"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <pattern id="hhatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="10" stroke="rgba(160,190,240,.25)" stroke-width="1.5"/></pattern>
+              <clipPath id="hclip"><rect x="196" y="338" width="168" height="114"/></clipPath>
+            </defs>
+            <line class="dr" pathLength="1" x1="80" y1="262" x2="490" y2="262" stroke="rgba(220,230,250,.5)" stroke-width="1.4" style="animation-delay:.2s"/>
+            <line class="dr" pathLength="1" x1="80" y1="262" x2="80" y2="40" stroke="rgba(220,230,250,.5)" stroke-width="1.4" style="animation-delay:.2s"/>
+            <text x="492" y="280" class="fi" style="animation-delay:.6s">t</text>
+            <text x="58" y="44" class="fi" style="animation-delay:.6s">V</text>
+            <path class="dr" pathLength="1" d="M100 262 Q280 -86 460 262" stroke="url(#hp)" stroke-width="4" fill="none" stroke-linecap="round" style="animation-delay:.6s"/>
+            <line class="fi" x1="205" y1="88" x2="355" y2="88" stroke="#F5D778" stroke-width="3.2" stroke-linecap="round" filter="url(#hglow)" style="animation-delay:2.2s"/>
+            <g class="fi" style="animation-delay:2.2s"><circle class="pulse" cx="280" cy="88" r="10" fill="rgba(245,215,120,.35)"/><circle cx="280" cy="88" r="6.5" fill="#F5D778"/></g>
+            <text x="300" y="72" class="fi" style="animation-delay:2.5s;fill:#F5D778;font-weight:700">V′(t) = 0</text>
+            <line class="fi" x1="280" y1="100" x2="280" y2="326" stroke="#F5D778" stroke-dasharray="4 7" opacity=".55" style="animation-delay:2.6s"/>
+            <rect x="90" y="458" width="380" height="40" fill="url(#hhatch)"/>
+            <line x1="90" y1="458" x2="470" y2="458" stroke="rgba(160,190,240,.35)"/>
+            <g clip-path="url(#hclip)">
+              <rect class="rise" x="196" y="346" width="168" height="106" fill="url(#hw)" style="animation-delay:1.6s"/>
+              <path class="wave fi" d="M196 346 q15 -6 30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 V354 H196Z" fill="rgba(170,210,255,.6)" style="animation-delay:3.4s"/>
+            </g>
+            <path class="dr" pathLength="1" d="M190 332 L190 458 L370 458 L370 332" stroke="#E6EBF2" stroke-width="12" fill="none" style="animation-delay:.9s"/>
+            <g class="fi" style="animation-delay:2.9s" stroke="#ff5a6e" stroke-width="1.6"><line x1="156" y1="338" x2="156" y2="452"/><line x1="150" y1="338" x2="162" y2="338"/><line x1="150" y1="452" x2="162" y2="452"/><line x1="404" y1="338" x2="404" y2="452"/><line x1="398" y1="338" x2="410" y2="338"/><line x1="398" y1="452" x2="410" y2="452"/></g>
+            <g class="fi" style="animation-delay:2.9s" stroke="#7FB2FF" stroke-width="1.6"><line x1="196" y1="484" x2="364" y2="484"/><line x1="196" y1="478" x2="196" y2="490"/><line x1="364" y1="478" x2="364" y2="490"/></g>
+            <text x="128" y="402" class="var fi" style="animation-delay:3.1s;fill:#ff8796">t</text>
+            <text x="418" y="402" class="var fi" style="animation-delay:3.1s;fill:#ff8796">t</text>
+            <text x="272" y="516" class="var fi" style="animation-delay:3.1s;fill:#a9cbff">x</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SATU LAYAR UTAMA ================= -->
+    <section class="stage" id="stM">
+      <div class="scene bp" id="scene">
+        <div class="host3d" id="host3d"></div>
+
+        <div class="p-soal inFree">
+          <article class="soal">
+            <div class="soal-h"><span>Soal</span><span>Turunan · Aplikasi</span></div>
+            <p>Sebuah saluran irigasi berbentuk balok <span class="hl navy" data-hl="2" data-src="s-tutup">terbuka (tanpa tutup)</span> akan dibuat dari material beton. Diketahui panjang saluran tersebut adalah <span class="hl" data-hl="1" data-src="s-p">100 meter</span>, dan total luas pelat beton yang digunakan untuk mencetak <span class="hl navy" data-hl="2" data-src="s-bag">dasar dan kedua dinding kiri-kanan</span> saluran tersebut adalah <span class="hl" data-hl="1" data-src="s-L">1.200 m²</span>. Berdasarkan informasi tersebut, analisislah pernyataan-pernyataan berikut agar volume air yang ditampung mencapai <span class="hl gold" data-hl="2" data-src="s-max">maksimum</span>:</p>
+            <ol class="stmts">
+              <li><span>(1)</span><span>Kedalaman saluran air tersebut adalah 3 meter.</span></li>
+              <li><span>(2)</span><span>Lebar dasar saluran air tersebut adalah 4 meter.</span></li>
+              <li><span>(3)</span><span>Volume air maksimum yang dapat ditampung adalah 1.800 m³.</span></li>
+              <li><span>(4)</span><span>Volume air maksimum yang dapat ditampung adalah 2.400 m³.</span></li>
+            </ol>
+            <p>Manakah kesimpulan analisis yang tepat?</p>
+            <ol class="abc">
+              <li><span>A.</span>(1), (2), dan (3) saja</li>
+              <li><span>B.</span>(1) dan (3) saja</li>
+              <li><span>C.</span>(2) dan (4) saja</li>
+              <li><span>D.</span>(4) saja</li>
+              <li><span>E.</span>(1), (2), (3), dan (4)</li>
+            </ol>
+          </article>
+        </div>
+
+        <div class="p-cards inFree" id="cards"></div>
+
+        <div class="cap" id="cap"><div class="cap-k" id="capK"></div><div class="cap-t" id="capT"></div><div class="cap-a" id="capA"></div></div>
+
+        <aside class="board" id="board" aria-label="Papan tulis">
+          <div class="bd-head"><span class="bd-k">Papan tulis</span><span class="bd-t" id="bdTitle">–</span><button class="bd-re" id="bdReplay" title="Ulangi animasi langkah ini" aria-label="Ulangi animasi langkah ini"><i data-lucide="rotate-ccw"></i></button></div>
+          <div class="bd-pins" id="bdPins"></div>
+          <div class="bd-lines" id="bdLines"></div>
+          <div class="bd-foot" id="bdFoot"></div>
+        </aside>
+
+        <div class="labctl"><div><label for="tSlider">Kedalaman <i>t</i></label><input type="range" id="tSlider" min="0.5" max="5.5" step="0.01" value="1.2" aria-label="Kedalaman t dalam meter"><output id="tOut">1,20 m</output></div></div>
+
+        <div class="notes-ov" id="notesOv">
+          <div class="notes-bar">
+            <div class="t">Catatan lengkap<small>Semua langkah dari awal sampai akhir. Simpan untuk belajar lagi.</small></div>
+            <button class="btn" id="btnPrint"><i data-lucide="printer"></i>Cetak / simpan PDF</button>
+            <button class="btn sec" id="btnDl"><i data-lucide="download"></i>Unduh catatan</button>
+          </div>
+          <div id="notesHost"></div>
+        </div>
+
+        <div class="graph-ov" id="graphOv" role="dialog" aria-label="Bukti maksimum lewat grafik">
+          <div class="g-card bp">
+            <div class="g-head"><h3>Kenapa di titik maksimum f′(t) = 0?</h3></div>
+            <div class="g-stat" id="gStat">–</div>
+            <div class="g-svg"><svg id="g6"></svg></div>
+            <div class="g-foot"><span>Geser titik</span><input type="range" id="g6Range" min="0.2" max="5.8" step="0.01" value="0.4" aria-label="Geser titik pada grafik"><button class="btn sec" id="gReplay"><i data-lucide="play"></i>Putar lagi</button><button class="btn gold" id="gClose"><i data-lucide="check"></i>Paham, lanjut</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom" aria-label="Navigasi langkah">
+    <button class="nbtn ghost" id="btnPrev"><i data-lucide="arrow-left"></i><span>Kembali</span></button>
+    <div class="navmid"><div class="navlabel" id="navLabel">–</div><div class="subdots" id="subDots"></div></div>
+    <button class="nbtn primary" id="btnNext"><span id="nextTxt">Lanjut</span><i data-lucide="arrow-right"></i></button>
+  </nav>
+</div>
+
+<div class="drawer" id="menu" aria-hidden="true">
+  <div class="scrim" data-close></div>
+  <div class="panel" role="dialog" aria-label="Daftar bagian">
+    <h3>Daftar bagian <button class="icon-btn" data-close aria-label="Tutup"><i data-lucide="x"></i></button></h3>
+    <div id="menuList" style="display:grid;gap:8px"></div>
+  </div>
+</div>
+<div id="toast" role="status"></div>
+
+<div class="rotate-ov bp" role="alert">
+  <div class="phone-wrap">
+    <svg class="rot-arrow" viewBox="0 0 170 170" aria-hidden="true"><path d="M140 70 A62 62 0 0 0 70 26" fill="none" stroke="#E2B43C" stroke-width="4" stroke-linecap="round"/><path d="M78 16 L66 26 L80 34" fill="none" stroke="#E2B43C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="phone"><i></i></div>
+  </div>
+  <h2>Putar HP-mu ke posisi mendatar</h2>
+  <p>Media ini dirancang untuk layar <b style="color:#F5D778">landscape</b> supaya gambar 3D dan papan tulis terlihat bersamaan.</p>
+  <button class="btn gold" id="btnRotFs"><i data-lucide="maximize"></i>Layar penuh &amp; mendatar</button>
+</div>
+
+<div class="done-ov" id="doneOv" role="dialog" aria-label="Selesai">
+  <div class="done-card">
+    <button class="done-x" id="doneX" aria-label="Tutup"><i data-lucide="x"></i></button>
+    <div class="seal">✓</div>
+    <h2>SELESAI</h2>
+    <p>Hebat! Kamu sudah menuntaskan pembahasan ini dari awal sampai akhir.<br>Jawaban: <b>B</b> — pernyataan (1) dan (3) benar.</p>
+    <div class="row">
+      <button class="btn gold" id="doneClose"><i data-lucide="check"></i>Tutup</button>
+      <button class="btn sec" id="doneNotes"><i data-lucide="file-text"></i>Lihat catatan</button>
+    </div>
+  </div>
+</div>
+<div id="printRoot"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   UTIL
+   ========================================================= */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt=(n,d=0)=>Number(n).toLocaleString('id-ID',{minimumFractionDigits:d,maximumFractionDigits:d});
+const sleep=ms=>new Promise(r=>setTimeout(r,RM?ms*.25:ms));
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const Vf=t=>1200*t-200*t*t, dVf=t=>1200-400*t;
+const KOPT={delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false};
+function math(el){ if(window.renderMathInElement) try{renderMathInElement(el,KOPT);}catch(e){} }
+function tex(s){ try{ return katex.renderToString(s,{throwOnError:false}); }catch(e){ return s; } }
+function icons(){ if(window.lucide&&lucide.createIcons) try{lucide.createIcons();}catch(e){} }
+const NS='http://www.w3.org/2000/svg';
+function sv(tag,attrs,parent){ const e=document.createElementNS(NS,tag); if(attrs) for(const k in attrs) e.setAttribute(k,attrs[k]); if(parent) parent.appendChild(e); return e; }
+const raf2=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+
+/* ---------- tween + loop ---------- */
+const Ease={lin:t=>t,io:t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2,out:t=>1-Math.pow(1-t,3),
+  smooth:t=>{const s=x=>1/(1+Math.exp(-x)),k=10,e=s(-k/2);return clamp((s(k*(t-.5))-e)/(1-2*e),0,1);}};
+const TW=new Set();
+function tween(o){ return new Promise(res=>{ if(o.tag) for(const x of TW) if(x.tag===o.tag){TW.delete(x);x.res(false);} const d=RM?Math.min(o.dur,180):o.dur; TW.add({...o,dur:Math.max(1,d),t0:performance.now()+(o.delay||0),res}); }); }
+function killTween(tag){ for(const x of TW) if(x.tag===tag){TW.delete(x);x.res(false);} }
+function tickTW(now){ for(const tw of [...TW]){ if(now<tw.t0) continue; const p=Math.min(1,(now-tw.t0)/tw.dur); tw.update(tw.from+(tw.to-tw.from)*(tw.ease||Ease.io)(p),p); if(p>=1){TW.delete(tw);tw.res(true);} } }
+const LOOPS=new Set(); let lastT=performance.now();
+function raf(now){ const dt=Math.min(.05,(now-lastT)/1000); lastT=now; tickTW(now); LOOPS.forEach(f=>{try{f(dt,now/1000);}catch(e){console.error(e);}}); requestAnimationFrame(raf); }
+
+/* =========================================================
+   AUDIO (Web Audio, disintesis)
+   ========================================================= */
+const SND={
+  ctx:null,master:null,sfx:null,bgm:null,rev:null,sfxOn:true,bgmOn:false,bgmTimer:null,noiseBuf:null,lastTick:0,
+  init(){
+    if(this.ctx){ if(this.ctx.state==='suspended') this.ctx.resume(); return true; }
+    const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return false;
+    const c=this.ctx=new AC();
+    this.master=c.createGain(); this.master.gain.value=.9;
+    const comp=c.createDynamicsCompressor(); comp.threshold.value=-16; comp.ratio.value=3;
+    this.master.connect(comp); comp.connect(c.destination);
+    this.sfx=c.createGain(); this.sfx.gain.value=.6; this.sfx.connect(this.master);
+    this.bgm=c.createGain(); this.bgm.gain.value=0; this.bgm.connect(this.master);
+    this.rev=c.createConvolver(); this.rev.buffer=this.impulse(3,2.4);
+    const rg=c.createGain(); rg.gain.value=.4; this.rev.connect(rg); rg.connect(this.master);
+    const len=c.sampleRate*.6; this.noiseBuf=c.createBuffer(1,len,c.sampleRate);
+    const d=this.noiseBuf.getChannelData(0); for(let i=0;i<len;i++) d[i]=Math.random()*2-1;
+    return true;
+  },
+  impulse(sec,decay){ const c=this.ctx,len=Math.floor(c.sampleRate*sec),b=c.createBuffer(2,len,c.sampleRate); for(let ch=0;ch<2;ch++){const d=b.getChannelData(ch);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,decay);} return b; },
+  note(f,o={}){
+    const c=this.ctx; if(!c) return;
+    const t=c.currentTime+(o.t||0),dur=o.dur||.3,vol=o.vol||.2,att=o.att||.006;
+    const osc=c.createOscillator(); osc.type=o.type||'sine'; osc.frequency.setValueAtTime(f,t);
+    if(o.glide) osc.frequency.exponentialRampToValueAtTime(o.glide,t+dur);
+    if(o.detune) osc.detune.value=o.detune;
+    const g=c.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+att); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    let node=osc; if(o.lp){const fl=c.createBiquadFilter();fl.type='lowpass';fl.frequency.value=o.lp;osc.connect(fl);node=fl;}
+    node.connect(g); g.connect(o.bus||this.sfx);
+    if(o.rev){const s=c.createGain();s.gain.value=o.rev;g.connect(s);s.connect(this.rev);}
+    osc.start(t); osc.stop(t+dur+.05);
+  },
+  noise(o={}){
+    const c=this.ctx; if(!c) return;
+    const t=c.currentTime+(o.t||0),dur=o.dur||.3;
+    const src=c.createBufferSource(); src.buffer=this.noiseBuf;
+    const bp=c.createBiquadFilter(); bp.type='bandpass'; bp.Q.value=o.q||1.2;
+    bp.frequency.setValueAtTime(o.f0||400,t); bp.frequency.exponentialRampToValueAtTime(o.f1||2400,t+dur);
+    const g=c.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(o.vol||.08,t+dur*.35); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    src.connect(bp); bp.connect(g); g.connect(this.sfx);
+    src.start(t); src.stop(t+dur+.05);
+  },
+  ok(){ return this.sfxOn&&this.init(); },
+  click(){ if(!this.ok())return; this.note(1250,{dur:.07,vol:.1,glide:700}); this.note(2500,{dur:.03,vol:.03}); },
+  tick(){ if(!this.ok())return; const n=performance.now(); if(n-this.lastTick<45)return; this.lastTick=n; this.note(2100,{dur:.025,vol:.025,type:'triangle'}); },
+  chalk(){ if(!this.ok())return; this.noise({dur:.07,vol:.035,f0:3000,f1:5200,q:2}); },
+  correct(){ if(!this.ok())return; [1046.5,1318.5,1568,2093].forEach((f,i)=>{ this.note(f,{t:i*.075,dur:1.1,vol:.12,rev:.5}); this.note(f*2,{t:i*.075,dur:.5,vol:.025,type:'triangle',rev:.4}); }); },
+  wrong(){ if(!this.ok())return; [0,.16].forEach(t=>this.note(196,{t,dur:.14,vol:.11,type:'square',lp:850})); },
+  fanfare(){ if(!this.ok())return; [392,523.25,659.25,783.99].forEach((f,i)=>this.note(f,{t:i*.12,dur:.32,vol:.1,type:'sawtooth',lp:2600,rev:.3})); [523.25,659.25,783.99,1046.5].forEach(f=>{this.note(f,{t:.5,dur:1.8,vol:.075,type:'sawtooth',lp:2200,rev:.6});this.note(f,{t:.5,dur:1.8,vol:.06,type:'triangle',detune:7,rev:.5});}); this.note(130.8,{t:.5,dur:1.6,vol:.14}); },
+  whoosh(v=1){ if(!this.ok())return; this.noise({dur:.32,vol:.045*v,f0:500,f1:2800,q:.9}); },
+  stamp(){ if(!this.ok())return; this.note(150,{dur:.2,vol:.32,glide:55}); this.noise({dur:.09,vol:.12,f0:1800,f1:500,q:.6}); },
+  chime(){ if(!this.ok())return; this.note(1568,{dur:1.4,vol:.09,rev:.7}); this.note(2349,{t:.09,dur:1.2,vol:.06,rev:.7}); },
+  bgmStart(){
+    if(!this.init()||this.bgmOn)return; this.bgmOn=true;
+    const c=this.ctx,n=c.currentTime; this.bgm.gain.cancelScheduledValues(n); this.bgm.gain.setValueAtTime(this.bgm.gain.value,n); this.bgm.gain.linearRampToValueAtTime(.55,n+2.5);
+    let i=0; const chords=[[261.63,329.63,392,493.88],[220,261.63,329.63,392],[174.61,220,261.63,329.63],[196,246.94,293.66,392]];
+    const penta=[523.25,587.33,659.25,783.99,880,1046.5];
+    const step=()=>{ if(!this.bgmOn)return; const ch=chords[i%4]; i++;
+      ch.forEach(f=>{ this.pad(f,9.5,.026); this.pad(f*1.003,9.5,.016,'triangle'); }); this.pad(ch[0]/2,9.5,.04);
+      for(let k=0;k<3;k++) this.note(penta[Math.floor(Math.random()*penta.length)],{t:1+Math.random()*6.5,dur:2.2,vol:.018,bus:this.bgm,rev:.9});
+      this.bgmTimer=setTimeout(step,8000); };
+    step();
+  },
+  pad(f,dur,vol,type='sine'){
+    const c=this.ctx,t=c.currentTime;
+    const o=c.createOscillator(); o.type=type; o.frequency.value=f;
+    const lp=c.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=1000;
+    const g=c.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+3); g.gain.setValueAtTime(vol,t+dur-4); g.gain.linearRampToValueAtTime(0,t+dur);
+    o.connect(lp); lp.connect(g); g.connect(this.bgm);
+    const s=c.createGain(); s.gain.value=.5; g.connect(s); s.connect(this.rev);
+    o.start(t); o.stop(t+dur+.1);
+  },
+  bgmStop(){ this.bgmOn=false; clearTimeout(this.bgmTimer); if(this.ctx){const n=this.ctx.currentTime;this.bgm.gain.cancelScheduledValues(n);this.bgm.gain.setValueAtTime(this.bgm.gain.value,n);this.bgm.gain.linearRampToValueAtTime(0,n+1.2);} }
+};
+
+function burst(o={}){ if(!window.confetti||RM) return; try{ confetti({particleCount:o.n||90,spread:o.spread||70,startVelocity:o.v||36,origin:o.origin||{x:.5,y:.6},colors:['#E2B43C','#F5D778','#0E2A5C','#2A5BB0','#C8102E','#FFFFFF'],scalar:o.scalar||.9,ticks:230,zIndex:200}); }catch(e){} }
+function originOf(el){ const r=el.getBoundingClientRect(); return {x:(r.left+r.width/2)/innerWidth,y:(r.top+r.height/2)/innerHeight}; }
+let toastT=null;
+function toast(html,cls=''){ const t=$('#toast'); t.className=cls; t.innerHTML=html; math(t); requestAnimationFrame(()=>t.classList.add('show')); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),4000); }
+function flyTo(src,dst,o={}){
+  if(!src||!dst){ o.done&&o.done(); return; }
+  const a=src.getBoundingClientRect(), b=dst.getBoundingClientRect();
+  const g=document.createElement('div'); g.className='fly '+(o.cls||''); g.innerHTML=o.html; document.body.appendChild(g);
+  const gr=g.getBoundingClientRect(); g.style.left=(b.left+b.width/2-gr.width/2)+'px'; g.style.top=(b.top+b.height/2-gr.height/2)+'px';
+  const dx=(a.left+a.width/2)-(b.left+b.width/2), dy=(a.top+a.height/2)-(b.top+b.height/2), arc=Math.min(110,Math.hypot(dx,dy)*.25);
+  SND.whoosh();
+  g.animate([{transform:`translate(${dx}px,${dy}px) scale(.8)`,opacity:.4},{transform:`translate(${dx*.5}px,${dy*.5-arc}px) scale(1.1)`,opacity:1,offset:.5},{transform:'none',opacity:1}],{duration:RM?200:950,easing:'cubic-bezier(.65,0,.35,1)'}).onfinish=()=>{g.remove();o.done&&o.done();};
+}
+
+/* =========================================================
+   THREE.JS — pelat beton yang dilipat jadi saluran
+   ========================================================= */
+const C3=(()=>{
+  const ok=!!(window.THREE&&THREE.OrbitControls);
+  const L=36,W=0.34;
+  const st={t:2.5,x:7,fl:0,fr:0,water:0,dash:0,hb:0,hw:0,mode:'fold',tT:2.5,orbit:false,auto:false,tipAt:'sheet'};
+  const ND=260; let drops,dPos,dVel,dLife,dHead=0,waterBase=null;
+  let R,scene,cam,ctl,host=null,ov,base,lp,rp,lw,rw,cl,cr,water,surf,dashL,dashR,dmat,bMat,wMat,eMat,w=1,h=1,view='flat',camLock=false,active=false,ro=null,surfBase=null,onFrame=null;
+  let FR={l:0,t:0,r:0,b:0};
+  const LB={},DM={};
+  let camT,vA,vB,vC,TKX,TKZ;
+  function concrete(){
+    const c=document.createElement('canvas'); c.width=c.height=256; const g=c.getContext('2d');
+    g.fillStyle='#cfd4db'; g.fillRect(0,0,256,256);
+    for(let i=0;i<6000;i++){const v=165+Math.random()*80|0;g.fillStyle=`rgba(${v},${v+2},${v+7},${Math.random()*.55})`;const r=Math.random()*1.9;g.fillRect(Math.random()*256,Math.random()*256,r,r);}
+    for(let i=0;i<260;i++){g.fillStyle=`rgba(80,90,105,${.2+Math.random()*.3})`;g.beginPath();g.arc(Math.random()*256,Math.random()*256,Math.random()*1.5+.3,0,7);g.fill();}
+    const t=new THREE.CanvasTexture(c); t.wrapS=t.wrapT=THREE.RepeatWrapping; t.encoding=THREE.sRGBEncoding; t.anisotropy=4; return t;
+  }
+  function mkDim(color){ const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(18),3)); const m=new THREE.LineBasicMaterial({color,transparent:true,opacity:0,depthTest:false}); const l=new THREE.LineSegments(g,m); l.renderOrder=20; l.frustumCulled=false; scene.add(l); return l; }
+  function setDim(l,a,b,tk){ l.geometry.attributes.position.array.set([a.x,a.y,a.z,b.x,b.y,b.z,a.x-tk.x,a.y-tk.y,a.z-tk.z,a.x+tk.x,a.y+tk.y,a.z+tk.z,b.x-tk.x,b.y-tk.y,b.z-tk.z,b.x+tk.x,b.y+tk.y,b.z+tk.z]); l.geometry.attributes.position.needsUpdate=true; }
+  function mkLabel(k,cls){ const e=document.createElement('div'); e.className='l3 '+cls; ov.appendChild(e); LB[k]={e,op:0,tg:0,pos:new THREE.Vector3(),html:''}; }
+  function init(){
+    camT=new THREE.Vector3(); vA=new THREE.Vector3(); vB=new THREE.Vector3(); vC=new THREE.Vector3();
+    TKX=new THREE.Vector3(.4,0,0); TKZ=new THREE.Vector3(0,0,.4);
+    R=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
+    R.setPixelRatio(Math.min(window.devicePixelRatio||1,2)); R.outputEncoding=THREE.sRGBEncoding;
+    R.toneMapping=THREE.ACESFilmicToneMapping; R.toneMappingExposure=.92;
+    R.shadowMap.enabled=true; R.shadowMap.type=THREE.PCFSoftShadowMap; R.setClearColor(0x000000,0);
+    scene=new THREE.Scene(); scene.fog=new THREE.Fog(0x0a1830,80,200);
+    cam=new THREE.PerspectiveCamera(36,1,.1,600); cam.position.set(0,60,20);
+    ctl=new THREE.OrbitControls(cam,R.domElement); ctl.enableDamping=true; ctl.dampingFactor=.08; ctl.minDistance=14; ctl.maxDistance=160; ctl.maxPolarAngle=Math.PI*.49; ctl.enablePan=false; ctl.enabled=false; ctl.autoRotateSpeed=.8;
+    scene.add(new THREE.HemisphereLight(0xe6eeff,0x0b1a33,.8));
+    const sun=new THREE.DirectionalLight(0xfff1d6,1.25); sun.position.set(16,34,24); sun.castShadow=true; sun.shadow.mapSize.set(2048,2048);
+    const sc=sun.shadow.camera; sc.left=-30;sc.right=30;sc.top=24;sc.bottom=-24;sc.near=1;sc.far=100; sun.shadow.bias=-.0005; scene.add(sun);
+    const rim=new THREE.DirectionalLight(0x7fb0ff,.6); rim.position.set(-26,14,-22); scene.add(rim);
+    const ground=new THREE.Mesh(new THREE.PlaneGeometry(300,300),new THREE.ShadowMaterial({opacity:.38})); ground.rotation.x=-Math.PI/2; ground.position.y=-W-.01; ground.receiveShadow=true; scene.add(ground);
+    const grid=new THREE.GridHelper(200,100,0xE2B43C,0x5f86c9); grid.material.transparent=true; grid.material.opacity=.12; grid.position.y=-W-.005; scene.add(grid);
+    const tex=concrete(); const tb=tex.clone(); tb.needsUpdate=true; tb.repeat.set(6,1); const tw2=tex.clone(); tw2.needsUpdate=true; tw2.repeat.set(6,.5);
+    bMat=new THREE.MeshStandardMaterial({color:0xc4cad2,roughness:.92,metalness:0,map:tb,emissive:0x2a5bb0,emissiveIntensity:0});
+    wMat=new THREE.MeshStandardMaterial({color:0xc4cad2,roughness:.92,metalness:0,map:tw2,emissive:0xc8102e,emissiveIntensity:0});
+    const box=new THREE.BoxGeometry(1,1,1), eg=new THREE.EdgesGeometry(box);
+    eMat=new THREE.LineBasicMaterial({color:0x0e2a5c,transparent:true,opacity:.55});
+    const mk=mat=>{const m=new THREE.Mesh(box,mat);m.castShadow=true;m.receiveShadow=true;m.add(new THREE.LineSegments(eg,eMat));return m;};
+    base=mk(bMat); scene.add(base);
+    lp=new THREE.Group(); rp=new THREE.Group(); scene.add(lp,rp);
+    lw=mk(wMat); rw=mk(wMat); lp.add(lw); rp.add(rw);
+    cl=mk(wMat); cr=mk(wMat); scene.add(cl,cr);
+    const dg=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-L/2,0,0),new THREE.Vector3(L/2,0,0)]);
+    dmat=new THREE.LineDashedMaterial({color:0xff3b55,dashSize:.9,gapSize:.55,transparent:true,opacity:0,depthTest:false});
+    dashL=new THREE.Line(dg,dmat); dashL.computeLineDistances(); dashR=new THREE.Line(dg,dmat); dashR.computeLineDistances();
+    dashL.renderOrder=dashR.renderOrder=15; scene.add(dashL,dashR);
+    const wg=new THREE.BoxGeometry(1,1,1,40,1,8); waterBase=Float32Array.from(wg.attributes.position.array);
+    water=new THREE.Mesh(wg,new THREE.MeshPhysicalMaterial({color:0x0f56c8,emissive:0x0a3a8c,emissiveIntensity:.35,transparent:true,opacity:.68,roughness:.15,metalness:0,clearcoat:1,depthWrite:false}));
+    water.renderOrder=5; scene.add(water);
+    const sg=new THREE.PlaneGeometry(1,1,80,10); sg.rotateX(-Math.PI/2); surfBase=Float32Array.from(sg.attributes.position.array);
+    surf=new THREE.Mesh(sg,new THREE.MeshPhysicalMaterial({color:0x3d95ff,emissive:0x0d4fb0,emissiveIntensity:.3,transparent:true,opacity:.86,roughness:.18,metalness:.05,clearcoat:.6,clearcoatRoughness:.15,side:THREE.DoubleSide,depthWrite:false}));
+    surf.renderOrder=6; scene.add(surf);
+    // tetesan air yang tumpah (hanya hiasan, volume tidak berkurang)
+    const dc=document.createElement('canvas'); dc.width=dc.height=64; const dg2=dc.getContext('2d');
+    const rg=dg2.createRadialGradient(32,32,2,32,32,30); rg.addColorStop(0,'rgba(220,240,255,1)'); rg.addColorStop(.45,'rgba(110,180,255,.9)'); rg.addColorStop(1,'rgba(60,140,255,0)');
+    dg2.fillStyle=rg; dg2.fillRect(0,0,64,64);
+    dPos=new Float32Array(ND*3).fill(-999); dVel=new Float32Array(ND*3); dLife=new Float32Array(ND);
+    const dgeo=new THREE.BufferGeometry(); dgeo.setAttribute('position',new THREE.BufferAttribute(dPos,3));
+    drops=new THREE.Points(dgeo,new THREE.PointsMaterial({size:.7,map:new THREE.CanvasTexture(dc),transparent:true,depthWrite:false,color:0xbfe0ff}));
+    drops.frustumCulled=false; drops.renderOrder=7; scene.add(drops);
+    ov=document.createElement('div'); ov.className='l3wrap';
+    DM.p=mkDim(0xdfe8ff); DM.x=mkDim(0x7fb2ff); DM.tl=mkDim(0xff4d63); DM.tr=mkDim(0xff4d63); DM.w12=mkDim(0xffffff);
+    mkLabel('p','white'); mkLabel('x','blue'); mkLabel('tl','red'); mkLabel('tr','red'); mkLabel('w12','white'); mkLabel('area','big'); mkLabel('tip','tip');
+  }
+  function apply(){
+    const x=st.x,t=st.t, efl=Ease.io(clamp(st.fl,0,1)), efr=Ease.io(clamp(st.fr,0,1));
+    base.scale.set(L,W,x); base.position.set(0,-W/2,0);
+    lp.position.set(0,0,-x/2); lp.rotation.x=efl*Math.PI/2; lw.scale.set(L,W,t); lw.position.set(0,-W/2,-t/2);
+    rp.position.set(0,0,x/2); rp.rotation.x=-efr*Math.PI/2; rw.scale.set(L,W,t); rw.position.set(0,-W/2,t/2);
+    cl.scale.set(L,W,W); cl.position.set(0,-W/2,-x/2-W/2); cl.visible=st.fl>.985;
+    cr.scale.set(L,W,W); cr.position.set(0,-W/2,x/2+W/2); cr.visible=st.fr>.985;
+    dashL.position.set(0,.03,-x/2); dashR.position.set(0,.03,x/2);
+    dmat.opacity=st.dash*(1-Math.max(st.fl,st.fr));
+    const hw=st.water*t*Math.min(efl,efr), lvl=Math.max(hw-.14,.001);
+    water.visible=surf.visible=hw>.05;
+    water.scale.set(L-.04,lvl,x-.04); water.position.set(0,lvl/2,0);
+    surf.scale.set(L-.04,1,x-.04); surf.position.set(0,lvl+.01,0);
+    st.lvl=lvl; st.full=st.water>.9&&efl>.98&&efr>.98;
+    bMat.emissiveIntensity=st.hb; wMat.emissiveIntensity=st.hw;
+    eMat.opacity=.12+.5*Math.max(st.dash,Math.min(st.fl,st.fr));
+  }
+  /* --- air: gelombang + goyangan (slosh) mengikuti putaran pengguna --- */
+  const SL={s:0,v:0,l:0,lv:0,az:null,po:null,acc:0};
+  function H(X,Z,time,hx){
+    const chop=Math.min(.06,Math.abs(SL.v)*.012);
+    return .055*Math.sin(X*.42-time*2.1)+.03*Math.sin(Z*1.7+time*1.5)+.02*Math.sin((X*.8+Z)*1.1-time*3.3)
+      +chop*Math.sin(X*1.3+Z*2+time*7)+SL.s*.4*(Z/hx)+SL.l*.22*(X/(L/2));
+  }
+  function slosh(dt){
+    let wA=0,wP=0;
+    if(ctl.enabled){
+      const az=ctl.getAzimuthalAngle(), po=ctl.getPolarAngle();
+      if(SL.az!==null&&dt>0){ let da=az-SL.az; if(da>Math.PI) da-=2*Math.PI; if(da<-Math.PI) da+=2*Math.PI; wA=clamp(da/dt,-4,4); wP=clamp((po-SL.po)/dt,-3,3); }
+      SL.az=az; SL.po=po;
+    } else SL.az=null;
+    SL.v+=(-40*SL.s-4*SL.v+12*wA)*dt; SL.s+=SL.v*dt; if(Math.abs(SL.s)>1.2){ SL.s=Math.sign(SL.s)*1.2; SL.v*=.3; }
+    SL.lv+=(-30*SL.l-3.5*SL.lv+8*wP)*dt; SL.l+=SL.lv*dt; if(Math.abs(SL.l)>1){ SL.l=Math.sign(SL.l); SL.lv*=.3; }
+  }
+  function spawnDrop(side){
+    const i=dHead; dHead=(dHead+1)%ND; const j=i*3;
+    dPos[j]=(Math.random()-.5)*(L-2); dPos[j+1]=st.t+.05; dPos[j+2]=side*(st.x/2+W*.5);
+    dVel[j]=(Math.random()-.5)*.6; dVel[j+1]=.6+Math.random()*1.5; dVel[j+2]=side*(1.1+Math.random()*1.9);
+    dLife[i]=1;
+  }
+  function updateDrops(dt){
+    let any=false;
+    for(let i=0;i<ND;i++){
+      if(dLife[i]<=0) continue; any=true; const j=i*3;
+      dVel[j+1]-=9.8*dt; dPos[j]+=dVel[j]*dt; dPos[j+1]+=dVel[j+1]*dt; dPos[j+2]+=dVel[j+2]*dt;
+      if(dPos[j+1]<-W){ dLife[i]=0; dPos[j+1]=-999; }
+    }
+    if(any||drops.userData.dirty){ drops.geometry.attributes.position.needsUpdate=true; drops.userData.dirty=any; }
+  }
+  function waves(time,dt){
+    slosh(dt||0);
+    if(surf.visible){
+      const hx=Math.max(st.x/2,.5), lvl=st.lvl||.001;
+      const p=surf.geometry.attributes.position,a=p.array,sz=st.x;
+      for(let i=0;i<a.length;i+=3){ a[i+1]=clamp(H(surfBase[i]*L,surfBase[i+2]*sz,time,hx),-lvl+.02,.38); }
+      p.needsUpdate=true; surf.geometry.computeVertexNormals();
+      const wp=water.geometry.attributes.position, b=wp.array;
+      for(let i=0;i<b.length;i+=3){ if(waterBase[i+1]>.49){ const d=lvl>.3?clamp(H(waterBase[i]*L,waterBase[i+2]*sz,time,hx),-lvl+.02,.38):0; b[i+1]=.5+d/lvl; } }
+      wp.needsUpdate=true; water.geometry.computeVertexNormals();
+      // tumpah sedikit bila goyangan melewati bibir dinding
+      const over=Math.abs(SL.s)*.4-.1;
+      if(st.full&&over>0&&dt){ SL.acc+=over*260*dt; let n=Math.min(4,Math.floor(SL.acc)); SL.acc-=n; while(n-->0) spawnDrop(Math.sign(SL.s)); }
+    }
+    updateDrops(dt||0);
+  }
+  function dims(){
+    const x=st.x,t=st.t,fx=L/2+1.1;
+    vA.set(fx,0,-x/2); vB.set(fx,0,x/2); setDim(DM.x,vA,vB,TKX); LB.x.pos.set(fx+.6,-1.5,0);
+    vA.set(fx,0,-x/2); vB.set(fx,0,-t); lp.localToWorld(vB); setDim(DM.tl,vA,vB,TKX); LB.tl.pos.copy(vA).add(vB).multiplyScalar(.5); LB.tl.pos.z-=1.6;
+    vA.set(fx,0,x/2); vB.set(fx,0,t); rp.localToWorld(vB); setDim(DM.tr,vA,vB,TKX); LB.tr.pos.copy(vA).add(vB).multiplyScalar(.5); LB.tr.pos.z+=1.6;
+    vA.set(fx+2.4,0,-t); lp.localToWorld(vA); vB.set(fx+2.4,0,t); rp.localToWorld(vB); setDim(DM.w12,vA,vB,TKX); LB.w12.pos.copy(vA).add(vB).multiplyScalar(.5); LB.w12.pos.x+=2.6;
+    vC.set(0,0,t); rp.localToWorld(vC); const zp=Math.max(vC.z,x/2+W)+1.5;
+    vA.set(-L/2,0,zp); vB.set(L/2,0,zp); setDim(DM.p,vA,vB,TKZ); LB.p.pos.set(-L/4,0,zp+1.4);
+    LB.area.pos.set(-L/6,.1,0);
+    const a=st.tipAt;
+    if(a==='dash'){ LB.tip.pos.set(-L/3,0,-x/2); }
+    else if(a==='water'){ LB.tip.pos.set(-L/5,t*Math.max(st.water,.2)+.8,0); }
+    else if(a==='top'){ LB.tip.pos.set(-L/6,t+1.6,0); }
+    else LB.tip.pos.set(-L/5,1,0);
+  }
+  function labels(dt){
+    if(st.mode==='lab'){ text('x',`<i>x</i> = ${fmt(st.x,2)} m`); text('tl',`<i>t</i> = ${fmt(st.t,2)} m`); }
+    for(const k in LB){
+      const lb=LB[k]; lb.op+=(lb.tg-lb.op)*Math.min(1,dt*6);
+      if(DM[k]) DM[k].material.opacity=lb.op*.95;
+      vC.copy(lb.pos).project(cam);
+      const vis=vC.z<1&&lb.op>.01;
+      lb.e.style.opacity=vis?lb.op.toFixed(3):0;
+      if(vis) lb.e.style.transform=`translate(${((vC.x*.5+.5)*w).toFixed(1)}px,${((-vC.y*.5+.5)*h).toFixed(1)}px) translate(-50%,${k==='tip'?'-130%':'-50%'})`;
+    }
+  }
+  function text(k,html){ const lb=LB[k]; if(lb&&lb.html!==html){lb.e.innerHTML=html;lb.html=html;} }
+  function pose(name){
+    const fw=Math.max(120,w-FR.l-FR.r), fh=Math.max(120,h-FR.t-FR.b), tv=Math.tan(cam.fov*Math.PI/360), kx=tv*fw/h, ky=tv*fh/h;
+    if(name==='flat'){ const hw=L/2+8, hh=10; const d=Math.max(hw/kx,hh/ky); const t=new THREE.Vector3(2.6,0,1.4); return {p:new THREE.Vector3(0,1,.36).normalize().multiplyScalar(d).add(t),t}; }
+    const r=fw<600?14:17; const d=Math.max(r/kx,r/ky)*.9; const t=new THREE.Vector3(6.5,.8,.8); const dir=new THREE.Vector3(1,.58,.86).normalize();
+    return {p:dir.multiplyScalar(d).add(t),t};
+  }
+  function applyOffset(){ const fw=w-FR.l-FR.r, fh=h-FR.t-FR.b, cx=FR.l+fw/2, cy=FR.t+fh/2; cam.setViewOffset(w,h,w/2-cx,h/2-cy,w,h); cam.updateProjectionMatrix(); }
+  function goView(name,dur=1800){
+    view=name; const to=pose(name); const fp=cam.position.clone(), ft=(ctl.enabled?ctl.target:camT).clone();
+    camT.copy(ft); ctl.enabled=false; camLock=true;
+    return tween({from:0,to:1,dur,ease:Ease.io,tag:'c3cam',update:e=>{ cam.position.lerpVectors(fp,to.p,e); cam.position.y+=Math.sin(e*Math.PI)*3; camT.lerpVectors(ft,to.t,e); }})
+      .then(done=>{ if(done){ camLock=false; ctl.target.copy(camT); ctl.enabled=st.orbit; ctl.update(); } return done; });
+  }
+  function resize(){
+    if(!host||!R) return;
+    w=host.clientWidth||1; h=host.clientHeight||1;
+    R.setSize(w,h,false); cam.aspect=w/h; applyOffset();
+    if(!camLock){ const p=pose(view); if(!ctl.enabled){ cam.position.copy(p.p); camT.copy(p.t); } }
+  }
+  function frame(dt,time){
+    if(!active||!R) return;
+    if(st.mode==='lab'){ st.t+=(st.tT-st.t)*Math.min(1,dt*12); if(Math.abs(st.tT-st.t)<.002) st.t=st.tT; st.x=12-2*st.t; }
+    apply(); waves(time,dt); dims();
+    if(ctl.enabled){ ctl.autoRotate=st.auto; ctl.update(); } else cam.lookAt(camT);
+    R.render(scene,cam); labels(dt);
+    if(onFrame) onFrame(st);
+  }
+  const prop=(k,v,dur,o={})=>tween({from:st[k],to:v,dur,ease:o.ease||Ease.io,delay:o.delay||0,tag:'c3'+k,update:x=>st[k]=x});
+  const api={
+    state:st,
+    attach(el){
+      if(!ok){ if(!el.querySelector('.no3d')) el.innerHTML='<div class="no3d">Tampilan 3D tidak dapat dimuat. Periksa koneksi internet lalu muat ulang halaman.</div>'; return; }
+      if(!R) init(); active=true;
+      if(host===el) return;
+      host=el; el.appendChild(R.domElement); el.appendChild(ov);
+      if(ro) ro.disconnect(); ro=new ResizeObserver(resize); ro.observe(el); resize();
+    },
+    detach(){ active=false; },
+    setFree(fr){ FR=fr; if(R) resize(); },
+    mode(m){ if(st.mode===m) return; st.mode=m; if(m==='lab'){ st.tT=st.t; } },
+    dims(t,dur=0){ killTween('c3dim'); if(!dur){ st.t=t; st.x=12-2*t; return Promise.resolve(); } const f=st.t; return tween({from:f,to:t,dur,tag:'c3dim',update:v=>{st.t=v;st.x=12-2*v;}}); },
+    orbit(on){ st.orbit=on; if(ctl&&!camLock) ctl.enabled=on; },
+    auto(on){ st.auto=on; },
+    fold(v,dur=2200){ if(!ok) return Promise.resolve(); if(Math.abs(st.fl-v)<.001&&Math.abs(st.fr-v)<.001) return Promise.resolve(); return Promise.all([prop('fl',v,dur,{ease:Ease.lin}),prop('fr',v,dur,{ease:Ease.lin,delay:dur>50?320:0})]); },
+    water(v,dur=1600){ return ok?prop('water',v,dur):Promise.resolve(); },
+    dash(v,dur=700){ return ok?prop('dash',v,dur):Promise.resolve(); },
+    hl(b,wv,dur=500){ if(!ok) return; prop('hb',b,dur); prop('hw',wv,dur); },
+    goView(n,d){ return (ok&&R)?goView(n,d):Promise.resolve(); },
+    show(map){ if(!ok||!R) return; for(const k in LB) LB[k].tg=map&&map[k]?1:0; },
+    text(k,html){ if(ok&&R) text(k,html); },
+    gold(keys){ if(!ok||!R) return; ['p','x','tl','tr'].forEach(k=>LB[k].e.classList.toggle('gold',keys.includes(k))); },
+    tip(html,at){ if(!ok||!R) return; if(html){ text('tip',html); st.tipAt=at||'sheet'; LB.tip.tg=1; } else LB.tip.tg=0; },
+    labelEl(k){ return LB[k]&&LB[k].e; },
+    setT(v){ st.tT=v; },
+    set onFrame(f){ onFrame=f; },
+    kick(v){ SL.v+=v; },
+    debug(){ let n=0; if(dLife) for(let i=0;i<ND;i++) if(dLife[i]>0) n++; return {s:SL.s,drops:n,full:!!st.full}; },
+    frame
+  };
+  return api;
+})();
+
+/* =========================================================
+   PAPAN TULIS — baris demi baris, angka terbang ke slot yang tepat
+   ========================================================= */
+const T=(k,t,c,src)=>({k,t,c,src});
+const O=(k,t)=>({k,t,c:'op'});
+const H=(k,h,c,src)=>({k,h,c,src});
+const F=(n,d)=>({frac:[n,d]});
+const S={i:0,run:0,started:false,pending:false};
+const live=run=>run===S.run;
+const B={
+  el:null,rows:[],title:null,pinKey:'',askRes:null,flying:new Set(),
+  init(){ this.el=$('#board'); this.body=$('#bdLines'); this.pinsEl=$('#bdPins'); this.foot=$('#bdFoot'); },
+  tok(d){
+    if(d.frac){
+      const f=document.createElement('span'); f.className='m-frac';
+      const n=document.createElement('span'); n.className='m-num'; const b=document.createElement('span'); b.className='m-bar'; const dn=document.createElement('span'); dn.className='m-den';
+      d.frac[0].forEach(x=>n.appendChild(this.tok(x))); d.frac[1].forEach(x=>dn.appendChild(this.tok(x)));
+      f.append(n,b,dn); return f;
+    }
+    const s=document.createElement('span');
+    s.className='tk'+(d.h!=null?' tx':'')+(d.c?' '+d.c:''); s.dataset.k=d.k; if(d.src) s.dataset.src=d.src;
+    if(d.h!=null) s.innerHTML=d.h; else s.innerHTML=tex(d.t);
+    return s;
+  },
+  mkRow(spec){
+    const el=document.createElement('div'); el.className='bl';
+    const m=document.createElement('div'); m.className='bl-m'; spec.toks.forEach(t=>m.appendChild(this.tok(t)));
+    el.appendChild(m);
+    if(spec.note){ const n=document.createElement('div'); n.className='bl-n'; n.innerHTML=spec.note; el.appendChild(n); }
+    return {id:spec.id,spec,el,m};
+  },
+  has(id){ return this.rows.some(r=>r.id===id); },
+  scroll(){ const b=this.body; b.scrollTo({top:b.scrollHeight,behavior:RM?'auto':'smooth'}); },
+  dimPast(){ this.rows.forEach((r,i)=>r.el.classList.toggle('past',i<this.rows.length-1)); },
+  finish(row,anim){
+    row.el.querySelectorAll('.tk.hid').forEach(t=>t.classList.remove('hid'));
+    if(row.spec.note) row.el.classList.add('noted');
+    if(row.spec.box&&!row.boxed){ row.boxed=true; row.m.classList.add('box-'+row.spec.box); row.el.classList.add('res'); if(anim){ row.m.classList.add('boxin'); if(row.spec.box==='gold') SND.chime(); } }
+  },
+  flush(){
+    this.flying.forEach(f=>{ f.g.remove(); f.tk.classList.remove('hid'); f.res(); }); this.flying.clear();
+    this.rows.forEach(r=>this.finish(r,false));
+  },
+  chapter(title,pins,c){
+    if(this.title!==title){
+      this.flush(); this.title=title; $('#bdTitle').textContent=title;
+      this.rows.forEach(r=>r.el.remove()); this.rows=[];
+      if(c&&c.dir>0&&!RM) this.body.animate([{opacity:0},{opacity:1}],{duration:400});
+    }
+    const key=(pins||[]).map(p=>p.id).join('|');
+    if(key!==this.pinKey){
+      this.pinKey=key; this.pinsEl.innerHTML='';
+      (pins||[]).forEach((p,i)=>{ const e=document.createElement('span'); e.className='pin'+(p.gold?' gold':'')+(c&&c.dir>0?' pop':''); e.style.animationDelay=(i*.12)+'s'; p.toks.forEach(t=>e.appendChild(this.tok(t))); this.pinsEl.appendChild(e); });
+    }
+  },
+  async to(list,n,from,c){
+    const want=list.slice(0,n);
+    let k=0; while(k<this.rows.length&&k<want.length&&this.rows[k].id===want[k].id) k++;
+    if(c.replay) k=Math.min(k,from);
+    this.flush();
+    this.rows.splice(k).forEach(r=>r.el.remove());
+    for(let i=k;i<want.length;i++){
+      if(!live(c.run)) return false;
+      const anim=c.dir>0&&(c.seq||c.replay||i>=from);
+      await this.write(want[i],anim,c);
+    }
+    this.dimPast();
+    return live(c.run);
+  },
+  async write(spec,anim,c){
+    const row=this.mkRow(spec); this.body.appendChild(row.el); this.rows.push(row); this.dimPast();
+    if(!anim){ this.finish(row,false); this.body.scrollTop=this.body.scrollHeight; return; }
+    const toks=$$('.tk',row.el); toks.forEach(t=>t.classList.add('hid'));
+    this.scroll(); await raf2(); await sleep(120);
+    for(const tk of toks){
+      if(!live(c.run)){ this.finish(row,false); return; }
+      const s=srcEl(tk.dataset.src);
+      if(s&&visibleEnough(s)) await this.fly(s,tk);
+      else{ tk.classList.remove('hid'); if(!RM) tk.animate([{clipPath:'inset(0 100% 0 0)',opacity:.2,transform:'translateY(3px)'},{clipPath:'inset(0 0 0 0)',opacity:1,transform:'none'}],{duration:300,easing:'ease-out'}); SND.chalk(); await sleep(115); }
+    }
+    if(!live(c.run)){ this.finish(row,false); return; }
+    await sleep(140); this.finish(row,true); await sleep(spec.box?650:330);
+  },
+  fly(s,tk){
+    return new Promise(res=>{
+      const a=s.getBoundingClientRect(), b=tk.getBoundingClientRect();
+      const g=tk.cloneNode(true); g.classList.remove('hid'); g.classList.add('fly-tok');
+      Object.assign(g.style,{left:b.left+'px',top:b.top+'px',width:b.width+'px',height:b.height+'px',margin:0,fontSize:getComputedStyle(tk).fontSize});
+      document.body.appendChild(g);
+      s.classList.remove('src-glow'); void s.offsetWidth; s.classList.add('src-glow');
+      const dx=a.left+a.width/2-(b.left+b.width/2), dy=a.top+a.height/2-(b.top+b.height/2);
+      const sc=clamp(a.height/Math.max(b.height,1),.6,1.5), dist=Math.hypot(dx,dy), arc=Math.min(80,dist*.22);
+      const D=RM?120:clamp(dist*.95,480,860);
+      SND.whoosh(.55);
+      const rec={g,tk,res};
+      this.flying.add(rec);
+      const an=g.animate([{transform:`translate(${dx}px,${dy}px) scale(${sc})`,opacity:.85},{transform:`translate(${dx*.5}px,${dy*.5-arc}px) scale(${(sc+1.15)/2})`,opacity:1,offset:.5},{transform:'none',opacity:1}],{duration:D,easing:'cubic-bezier(.65,0,.35,1)'});
+      an.onfinish=()=>{ if(!this.flying.has(rec)) return; this.flying.delete(rec); g.remove(); tk.classList.remove('hid'); if(!RM) tk.animate([{transform:'scale(1.22)'},{transform:'none'}],{duration:300,easing:'ease-out'}); SND.tick(); setTimeout(res,120); };
+    });
+  },
+  ask(q,opts,c,o={}){
+    return new Promise(res=>{
+      S.pending=true; chrome();
+      const f=this.foot;
+      f.innerHTML=`<div class="ask"><div class="ask-q">${q}</div><div class="ask-o${o.col?' col':''}"></div><div class="ask-h"></div><div class="ask-x"><button class="lnk">Lihat jawabannya saja</button></div></div>`;
+      const box=$('.ask-o',f), hint=$('.ask-h',f);
+      const done=(v)=>{ if(this.askRes!==done) return; this.askRes=null; S.pending=false; f.innerHTML=''; chrome(); res(v); };
+      this.askRes=done;
+      opts.forEach((op,i)=>{
+        const b=document.createElement('button'); b.className='opt';
+        b.innerHTML=(o.letters?`<span class="ol">${'ABCDE'[i]}</span>`:'')+`<span>${op.tex?tex(op.tex):op.txt}</span>`;
+        b.onclick=()=>{
+          if(!live(c.run)) return;
+          if(!op.ok){ SND.wrong(); b.classList.remove('wrong'); void b.offsetWidth; b.classList.add('wrong'); hint.className='ask-h no'; hint.innerHTML='<b class="k-red">Belum tepat.</b> '+op.hint; math(hint); return; }
+          SND.correct(); b.classList.add('right'); $$('.opt',f).forEach(x=>x.disabled=true);
+          burst({n:60,spread:55,origin:originOf(b)});
+          hint.className='ask-h ok'; hint.innerHTML='<b class="k-gold">Benar!</b> '+(o.win||'Kita tulis langkahnya.'); math(hint);
+          setTimeout(()=>done(true),1100);
+        };
+        box.appendChild(b);
+      });
+      $('.lnk',f).onclick=()=>{ SND.click(); done(true); };
+      math(f);
+    });
+  },
+  cancelAsk(){ if(this.askRes) this.askRes(false); }
+};
+function srcEl(s){ if(!s) return null; if(s[0]==='@') return document.querySelector(`[data-src="${s.slice(1)}"]`); return B.el.querySelector(`[data-k="${s}"]`); }
+function visibleEnough(el){
+  const r=el.getBoundingClientRect(); if(r.width<1||r.height<1) return false;
+  if(r.bottom<0||r.top>innerHeight||r.right<0||r.left>innerWidth) return false;
+  const lb=el.closest('.l3'); if(lb&&parseFloat(lb.style.opacity||'0')<.3) return false;
+  if(el.closest('.tk.hid')) return false;
+  const lines=el.closest('.bd-lines'); if(lines){ const lr=lines.getBoundingClientRect(); if(r.bottom<lr.top||r.top>lr.bottom) return false; }
+  return true;
+}
+
+/* =========================================================
+   ISI PAPAN TULIS (urutan seperti guru menulis)
+   ========================================================= */
+const PIN={
+  l:{id:'pl',toks:[T('Pl1','l'),O('Pl2','='),T('Pl3','12'),T('Pl4','\\text{ m}','u')]},
+  x:{id:'px',toks:[T('Px1','x','blue'),O('Px2','='),T('Px3','12-2t')]},
+  f:{id:'pf',toks:[T('Pf1','f(t)'),O('Pf2','='),T('Pf3','1200t'),O('Pf4','-'),T('Pf5','200t^2')]},
+  t:{id:'pt',gold:1,toks:[T('Pt1','t'),O('Pt2','='),T('Pt3','3'),T('Pt4','\\text{ m}','u')]},
+  x6:{id:'px6',gold:1,toks:[T('Px61','x'),O('Px62','='),T('Px63','6'),T('Px64','\\text{ m}','u')]},
+  v:{id:'pv',gold:1,toks:[T('Pv1','V'),O('Pv2','='),T('Pv3','1800'),T('Pv4','\\text{ m}^3','u')]}
+};
+const LK=[
+  {id:'k1',toks:[H('k1a','Diketahui','lbl')]},
+  {id:'k2',toks:[T('k2a','p'),O('k2b','='),T('k2c','100','','@s-p'),T('k2d','\\text{ m}','u')],note:'panjang saluran'},
+  {id:'k3',toks:[T('k3a','L'),O('k3b','='),T('k3c','1200','','@s-L'),T('k3d','\\text{ m}^2','u')],note:'luas pelat beton'},
+  {id:'k4',toks:[H('k4a','beton = dasar + 2 dinding','','@s-bag')],note:'tanpa tutup'},
+  {id:'k5',toks:[H('k5a','Ditanya','lbl'),H('k5b','ukuran agar volume <b>maksimum</b>','gold','@s-max')]}
+];
+const LA=[
+  {id:'a1',toks:[T('a1a','L'),O('a1b','='),T('a1c','p'),O('a1d','\\times'),T('a1e','l')],note:'rumus luas persegi panjang'},
+  {id:'a2',toks:[T('a2a','1200','','@luas'),O('a2b','='),T('a2c','100','','@p100'),O('a2d','\\times'),T('a2e','l','red','a1e')],note:'masukkan angkanya'},
+  {id:'a3',toks:[T('a3a','l','red','a2e'),O('a3b','='),F([T('a3c','1200','','a2a')],[T('a3d','100','','a2c')])],note:'kedua ruas dibagi 100'},
+  {id:'a4',toks:[T('a4a','l','red','a3a'),O('a4b','='),T('a4c','12'),T('a4d','\\text{ m}','u')],box:'navy',note:'1200 : 100 = 12'}
+];
+const LM=[
+  {id:'m1',toks:[T('m1a','12','','Pl3'),O('m1b','='),T('m1c','t','red','@lt'),O('m1d','+'),T('m1e','x','blue','@lx'),O('m1f','+'),T('m1g','t','red','@lr')],note:'lebar 12 m dibagi tiga'},
+  {id:'m2',toks:[T('m2a','12','','m1a'),O('m2b','='),T('m2c','2t','red'),O('m2d','+'),T('m2e','x','blue','m1e')],note:'t + t = 2t'},
+  {id:'m3',toks:[T('m3a','12','','m2a'),O('m3b','-'),T('m3c','2t','red','m2c'),O('m3d','='),T('m3e','x','blue','m2e')],note:'2t pindah ruas → jadi −2t'},
+  {id:'m4',toks:[T('m4a','x','blue','m3e'),O('m4b','='),T('m4c','12','','m3a'),O('m4d','-'),T('m4e','2t','red','m3c')],box:'navy',note:'ditulis dengan x di kiri'}
+];
+const LV=[
+  {id:'v1',toks:[T('v1a','V'),O('v1b','='),T('v1c','p'),O('v1d','\\times'),T('v1e','l'),O('v1f','\\times'),T('v1g','t')],note:'volume balok'},
+  {id:'v2',toks:[T('v2a','V','','v1a'),O('v2b','='),T('v2c','100','','@p100'),O('v2d','\\cdot'),T('v2e','x','blue','@lx'),O('v2f','\\cdot'),T('v2g','t','red','@lt')],note:'lebar dasar x, tinggi t'},
+  {id:'v3',toks:[T('v3a','V','','v2a'),O('v3b','='),T('v3c','100','','v2c'),O('v3d','\\cdot'),T('v3e','(12-2t)','blue','Px3'),O('v3f','\\cdot'),T('v3g','t','red','v2g')],note:'ganti x dengan 12 − 2t'},
+  {id:'v4',toks:[T('v4a','V','','v3a'),O('v4b','='),T('v4c','100','','v3c'),O('v4d','\\cdot'),T('v4e','(12t-2t^2)','','v3e')],note:'t dikalikan ke dalam kurung'},
+  {id:'v5',toks:[T('v5a','V','','v4a'),O('v5b','='),T('v5c','1200t'),O('v5d','-'),T('v5e','200t^2')],note:'100 dikalikan ke dalam kurung'},
+  {id:'v6',toks:[T('v6a','f(t)'),O('v6b','='),T('v6c','1200t','','v5c'),O('v6d','-'),T('v6e','200t^2','','v5e')],box:'navy',note:'kita tulis sebagai fungsi'}
+];
+const LD=[
+  {id:'d0',toks:[H('d0a','Aturan turunan','lbl'),T('d0b',"(a\\,t^n)' = n\\cdot a\\,t^{\\,n-1}",'muted')]},
+  {id:'d1',toks:[T('d1a',"f'(t)"),O('d1b','='),T('d1c','1200','','Pf3'),O('d1d','-'),T('d1e','400t','','Pf5')],box:'navy',note:'1200t → 1200<br>200t² → 2·200t = 400t'},
+  {id:'d2',toks:[T('d2a','1200','','d1c'),O('d2b','-'),T('d2c','400t','','d1e'),O('d2d','='),T('d2e','0','gold')],note:'maksimum → f′(t) = 0'},
+  {id:'d3',toks:[T('d3a','-400t','','d2c'),O('d3b','='),T('d3c','-1200','','d2a')],note:'1200 pindah ruas → −1200'},
+  {id:'d4',toks:[T('d4a','t'),O('d4b','='),F([T('d4c','-1200','','d3c')],[T('d4d','-400','','d3a')])],note:'kedua ruas dibagi −400'},
+  {id:'d5',toks:[T('d5a','t','','d4a'),O('d5b','='),T('d5c','3'),T('d5d','\\text{ m}','u')],box:'gold',note:'negatif : negatif = positif'}
+];
+const LX=[
+  {id:'x1',toks:[T('x1a','x','blue','Px1'),O('x1b','='),T('x1c','12-2t','','Px3')],note:'rumus lebar dasar'},
+  {id:'x2',toks:[T('x2a','x','blue','x1a'),O('x2b','='),T('x2c','12'),O('x2d','-'),T('x2e','2'),T('x2f','('),T('x2g','3','gold','Pt3'),T('x2h',')')],note:'ganti t dengan 3'},
+  {id:'x3',toks:[T('x3a','x','blue','x2a'),O('x3b','='),T('x3c','12','','x2c'),O('x3d','-'),T('x3e','6')],note:'2 × 3 = 6'},
+  {id:'x4',toks:[T('x4a','x','blue','x3a'),O('x4b','='),T('x4c','6'),T('x4d','\\text{ m}','u')],box:'gold',note:'lebar dasar terbaik'},
+  {id:'w1',toks:[T('w1a','V'),O('w1b','='),T('w1c','p'),O('w1d','\\times'),T('w1e','l'),O('w1f','\\times'),T('w1g','t')],note:'volume balok'},
+  {id:'w2',toks:[T('w2a','V','','w1a'),O('w2b','='),T('w2c','100','','@p100'),O('w2d','\\cdot'),T('w2e','6','','x4c'),O('w2f','\\cdot'),T('w2g','3','','Pt3')],note:'p = 100, l = 6, t = 3'},
+  {id:'w3',toks:[T('w3a','V','','w2a'),O('w3b','='),T('w3c','1800'),T('w3d','\\text{ m}^3','u')],box:'gold',note:'volume maksimum'}
+];
+const LS=[
+  {id:'s1',toks:[T('s1a','(1)','sp'),T('s1b','t = 3\\text{ m}','','Pt3'),T('s1c','\\;\\checkmark','gold')],note:'<b class="k-gold">BENAR</b>'},
+  {id:'s2',toks:[T('s2a','(2)','sp'),T('s2b','x = 6 \\ne 4','','Px63'),T('s2c','\\;\\times','red')],note:'<b class="k-red">SALAH</b>'},
+  {id:'s3',toks:[T('s3a','(3)','sp'),T('s3b','V = 1800','','Pv3'),T('s3c','\\;\\checkmark','gold')],note:'<b class="k-gold">BENAR</b>'},
+  {id:'s4',toks:[T('s4a','(4)','sp'),T('s4b','2400 \\ne 1800','','Pv3'),T('s4c','\\;\\times','red')],note:'<b class="k-red">SALAH</b>'},
+  {id:'s5',toks:[H('s5a','Jawaban','lbl'),T('s5b','\\textbf{B}'),H('s5c','&nbsp;(1) dan (3) saja')],box:'gold'}
+];
+const LR=[
+  {id:'r1',toks:[T('r1a','t = 3\\text{ m}')],note:'kedalaman',box:'gold'},
+  {id:'r2',toks:[T('r2a','x = 6\\text{ m}')],note:'lebar dasar',box:'gold'},
+  {id:'r3',toks:[T('r3a','V = 1800\\text{ m}^3')],note:'volume maksimum',box:'gold'},
+  {id:'r4',toks:[H('r4a','Jawaban','lbl'),T('r4b','\\textbf{B}'),H('r4c','&nbsp;(1) dan (3) saja')],box:'gold'}
+];
+const LT={
+  area:'Luas = <b data-src="luas">1.200</b> m²',
+  p:'<i>p</i> = <b data-src="p100">100</b> m',
+  w12q:'<i>l</i> = <b>?</b>', w12:'<i>l</i> = <b data-src="l12">12</b> m',
+  tF:'<i data-src="lt">t</i>', xF:'<i data-src="lx">x</i>', trF:'<i data-src="lr">t</i>',
+  tD:'<i data-src="lt">t</i><small>kedalaman</small>', xD:'<i data-src="lx">x</i><small>lebar dasar</small>',
+  t3:'<i>t</i> = 3 m<small>kedalaman</small>', x6:'<i>x</i> = 6 m<small>lebar dasar</small>'
+};
+
+/* =========================================================
+   LANGKAH-LANGKAH (satu layar)
+   ========================================================= */
+const CH=[
+  {t:'Lobi',d:'Halaman awal'},
+  {t:'Pahami soal',d:'Diketahui & ditanya'},
+  {t:'Lebar pelat',d:'L = p × l → l = 12 m'},
+  {t:'Lipat jadi balok',d:'x = 12 − 2t'},
+  {t:'Volume air',d:'f(t) = 1200t − 200t²'},
+  {t:'Turunan',d:'f′(t) = 0 → t = 3 m'},
+  {t:'Ukuran terbaik',d:'x = 6 m · V = 1.800 m³'},
+  {t:'Catatan lengkap',d:'Simpan & cetak'},
+  {t:'Analisis pernyataan',d:'Benar atau salah?'},
+  {t:'Selesai',d:'Jawaban B'}
+];
+const STEPS=[];
+const step=(ch,o)=>STEPS.push({ch,...o});
+const host3d=()=>$('#host3d');
+
+function scene3d(o){
+  C3.attach(host3d());
+  C3.mode(o.lab?'lab':'fold');
+  if(!o.lab) C3.dims(o.t!=null?o.t:2.5,o.tDur||0);
+  C3.fold(o.fold?1:0,o.foldDur!=null?o.foldDur:1);
+  C3.dash(o.dash?1:0); C3.hl(o.hb||0,o.hw||0);
+  C3.water(o.water?1:0,o.waterDur!=null?o.waterDur:900);
+  C3.orbit(!!o.orbit); C3.auto(!!o.auto);
+  C3.goView(o.view||'flat',o.viewDur!=null?o.viewDur:1200);
+  C3.show(o.show||{});
+  if(o.text) for(const k in o.text) C3.text(k,o.text[k]);
+  C3.gold(o.gold||[]);
+  C3.tip(o.tip||null,o.tipAt);
+}
+const FOLDED={fold:1,view:'iso',orbit:true,show:{p:1,x:1,tl:1,tr:0},text:{p:LT.p,x:LT.xD,tl:LT.tD,tr:LT.trF}};
+const hlSoal=n=>$$('.p-soal .hl').forEach(h=>h.classList.toggle('on',+h.dataset.hl<=n));
+
+/* ---- 1 · Pahami soal ---- */
+step(1,{scene:'soal',cap:'Baca soalnya dulu. Santai, belum perlu menghitung apa pun.',run(c){ hlSoal(0); B.chapter('Diketahui & ditanya',[],c); B.to(LK,0,0,c); }});
+step(1,{scene:'soal',cap:'Catat yang <b>diketahui</b>: panjang saluran dan luas pelat beton.',run(c){ hlSoal(1); B.chapter('Diketahui & ditanya',[],c); setTimeout(()=>{ if(live(c.run)) B.to(LK,3,0,c); },c.dir>0?700:0); }});
+step(1,{scene:'soal',cap:'Kata <b class="k-gold">maksimum</b> adalah tanda: soal ini diselesaikan dengan <b>turunan</b>.',run(c){ hlSoal(2); B.chapter('Diketahui & ditanya',[],c); setTimeout(()=>{ if(live(c.run)) B.to(LK,5,3,c); },c.dir>0?700:0); }});
+
+/* ---- 2 · Lebar pelat ---- */
+const FLAT2={fold:0,view:'flat',show:{area:1,p:1,w12:1},text:{area:LT.area,p:LT.p,w12:LT.w12q}};
+step(2,{cap:'Sebelum dibentuk, semua beton ini adalah <b>satu lembar persegi panjang</b>. Luas dan panjangnya sudah diketahui. Berapa lebarnya?',
+  run(c){ scene3d({...FLAT2,viewDur:c.entered?1400:900}); B.chapter('Mencari lebar pelat',[],c); B.to(LA,1,0,c); }});
+step(2,{cap:'Masukkan angkanya ke rumus luas, lalu bagi dengan 100.',
+  async run(c){
+    const had=B.has('a4')&&!c.replay;
+    scene3d({...FLAT2,viewDur:900,text:{...FLAT2.text,w12:had?LT.w12:LT.w12q}});
+    B.chapter('Mencari lebar pelat',[],c);
+    const ok=await B.to(LA,4,1,c);
+    if(ok&&!had){ const tk=B.el.querySelector('[data-k="a4c"]'); flyTo(tk,C3.labelEl('w12'),{html:'12 m',cls:'fly-num',done:()=>{ if(live(c.run)){ C3.text('w12',LT.w12); SND.chime(); } }}); }
+    else C3.text('w12',LT.w12);
+  }});
+
+/* ---- 3 · Lipat jadi balok ---- */
+const FLAT3={fold:0,view:'flat',dash:1,hb:.22,hw:.3,show:{p:1,w12:1,x:1,tl:1,tr:1},text:{p:LT.p,w12:LT.w12,x:LT.xF,tl:LT.tF,tr:LT.trF},tip:'garis lipat',tipAt:'dash'};
+step(3,{cap:'Pelat akan dilipat menjadi saluran. Lebar 12 m dibagi tiga: dinding <b class="k-red">t</b>, dasar <b class="k-blue">x</b>, dinding <b class="k-red">t</b>.',
+  run(c){ scene3d({...FLAT3,foldDur:c.dir<0?1800:1,viewDur:c.dir<0?1800:900}); B.chapter('Melipat jadi balok',[PIN.l],c); setTimeout(()=>{ if(live(c.run)) B.to(LM,2,0,c); },c.dir>0?600:0); }});
+step(3,{cap:'Kita butuh rumus untuk <b class="k-blue">x</b>. Coba jawab di papan tulis.',
+  async run(c){
+    scene3d({...FLAT3,viewDur:900}); B.chapter('Melipat jadi balok',[PIN.l],c);
+    if(!(await B.to(LM,2,2,c))) return;
+    if(!B.has('m3')&&c.dir>0&&!c.replay){
+      const ok=await B.ask('Dari $12 = 2t + x$, maka $x = \\ldots$',[
+        {tex:'x = 12 + 2t',hint:'Saat $2t$ pindah ruas, tandanya berubah: $+$ menjadi $-$.'},
+        {tex:'x = 12 - 2t',ok:true},
+        {tex:'x = 12 - t',hint:'Dindingnya ada dua, masing-masing $t$. Jadi yang dikurangkan $2t$.'}],c);
+      if(!ok||!live(c.run)) return;
+    }
+    B.to(LM,4,2,{...c,seq:true});
+  }});
+step(3,{cap:'Lipat kedua sisi ke atas! Sekarang <b class="k-red">t</b> = kedalaman dan <b class="k-blue">x</b> = lebar dasar. Seret gambar untuk memutar.',
+  run(c){
+    if(c.replay){ C3.fold(0,1); }
+    const anim=c.dir>0;
+    scene3d({...FOLDED,foldDur:anim?2400:1,viewDur:anim?2600:900});
+    B.chapter('Melipat jadi balok',[PIN.l],c); B.to(LM,4,4,c);
+  }});
+
+/* ---- 4 · Volume air ---- */
+const W4={...FOLDED,water:1,tip:'air',tipAt:'water'};
+step(4,{cap:'Saluran diisi air. Volume air = volume balok = <b>panjang × lebar × tinggi</b>.',
+  run(c){ scene3d({...W4,waterDur:2400,viewDur:900}); B.chapter('Volume air',[PIN.x],c); setTimeout(()=>{ if(live(c.run)) B.to(LV,2,0,c); },c.dir>0?900:0); }});
+step(4,{cap:'Ganti <b class="k-blue">x</b> dengan $12 - 2t$, supaya rumusnya hanya memakai satu huruf: <b class="k-red">t</b>.',
+  run(c){ scene3d({...W4,viewDur:900}); B.chapter('Volume air',[PIN.x],c); B.to(LV,6,2,c); }});
+step(4,{cap:'Coba sendiri: geser kedalaman <b class="k-red">t</b>. Kapan airnya paling banyak?',lab:true,
+  run(c){
+    scene3d({fold:1,lab:true,water:1,view:'iso',orbit:true,viewDur:900,show:{p:1,x:1,tl:1},text:{p:LT.p}});
+    onSlide(); B.chapter('Volume air',[PIN.x],c); B.to(LV,6,6,c); labHud();
+  }});
+
+/* ---- 5 · Turunan ---- */
+const SYM5={...FOLDED,water:1};
+step(5,{cap:'Volume paling banyak dicari dengan <b>turunan</b>. Di titik maksimum, nilai turunannya <b class="k-gold">nol</b>.<br><span style="color:var(--ink-3);font-size:.92em">Mau lihat buktinya lewat grafik?</span>',
+  actions:[{label:'Ya, tampilkan grafik',icon:'trending-up',cls:'gold',fn:()=>openGraph()},{label:'Tidak, lanjut saja',icon:'arrow-right',cls:'sec',fn:()=>{SND.click();next();}}],
+  run(c){ scene3d({...SYM5,tDur:900,viewDur:900}); B.chapter('Turunan',[PIN.f],c); B.to(LD,2,0,c); }});
+step(5,{cap:'Samakan turunannya dengan nol, lalu cari <b class="k-red">t</b>.',
+  async run(c){
+    scene3d({...SYM5,viewDur:900}); B.chapter('Turunan',[PIN.f],c);
+    if(!(await B.to(LD,3,2,c))) return;
+    if(!B.has('d3')&&c.dir>0&&!c.replay){
+      const ok=await B.ask('Dari $1200 - 400t = 0$, berapa nilai $t$?',[
+        {tex:'t = \\tfrac{1}{3}',hint:'Pembagiannya terbalik. Yang dibagi adalah $1200$ oleh $400$.'},
+        {tex:'t = 3',ok:true},
+        {tex:'t = 800',hint:'Jangan dikurangkan. Pindahkan dulu: $-400t = -1200$, lalu bagi dengan $-400$.'},
+        {tex:'t = 4',hint:'Coba hitung lagi $1200 : 400$.'}],c);
+      if(!ok||!live(c.run)) return;
+    }
+    B.to(LD,6,3,{...c,seq:true});
+  }});
+
+/* ---- 6 · Ukuran terbaik ---- */
+const OPT={fold:1,view:'iso',orbit:true,water:1,t:3,show:{p:1,x:1,tl:1},text:{p:LT.p,x:LT.x6,tl:LT.t3},gold:['p','x','tl']};
+step(6,{cap:'Kedalaman terbaik <b>3 m</b>. Lebar dasarnya tinggal dihitung dari $x = 12 - 2t$.',
+  async run(c){
+    const had=B.has('x4')&&B.title==='Ukuran terbaik'&&!c.replay;
+    if(had||c.dir<0) scene3d({...OPT,viewDur:900});
+    else scene3d({...SYM5,t:2.5,viewDur:900});
+    B.chapter('Ukuran terbaik',[PIN.x,PIN.t],c);
+    const ok=await B.to(LX,4,0,c);
+    if(ok&&!had&&c.dir>0){
+      C3.tip('ukuran terbaik','top');
+      C3.dims(3,2000); C3.text('x',LT.x6); C3.text('tl',LT.t3); C3.gold(['p','x','tl']); SND.whoosh(.8);
+      setTimeout(()=>{ if(live(c.run)) SND.chime(); },1800);
+    }
+  }});
+step(6,{cap:'Ukurannya: panjang <b>100 m</b>, lebar <b>6 m</b>, kedalaman <b>3 m</b>. Hitung volumenya!',
+  async run(c){
+    scene3d({...OPT,viewDur:900}); B.chapter('Ukuran terbaik',[PIN.x,PIN.t],c);
+    const fresh=!B.has('w3');
+    const ok=await B.to(LX,7,4,c);
+    if(ok){ C3.tip('V = 1.800 m³','water'); if(fresh&&c.dir>0){ SND.fanfare(); burst({n:150,spread:100,origin:{x:.35,y:.45}}); } }
+  }});
+
+/* ---- 7 · Catatan ---- */
+step(7,{scene:'notes',cap:'',run(){ $('#notesOv').scrollTop=0; }});
+
+/* ---- 8 · Analisis pernyataan ---- */
+const PINS8=[PIN.t,PIN.x6,PIN.v];
+const CAP8=['Hasil kita: $t = 3$ m, $x = 6$ m, $V = 1.800$ m³. Sekarang cocokkan dengan keempat pernyataan.',
+  '(1) Kedalaman 3 m → sama dengan hasil kita. <b class="k-gold">Benar.</b>',
+  '(2) Lebar 4 m → hasil kita 6 m. <b class="k-red">Salah.</b> (Lebar 4 m terjadi kalau $t = 4$, tapi itu bukan ukuran terbaik.)',
+  '(3) Volume 1.800 m³ → sama dengan hasil kita. <b class="k-gold">Benar.</b>',
+  '(4) Volume 2.400 m³ → lebih besar dari volume maksimum 1.800 m³. Tidak mungkin. <b class="k-red">Salah.</b>',
+  'Yang benar: (1) dan (3). Pilih jawabannya di papan tulis.'];
+for(let k=0;k<=5;k++) step(8,{scene:'cards',cap:CAP8[k],
+  async run(c){
+    flipCards(k,c); B.chapter('Analisis pernyataan',PINS8,c);
+    if(k<5){ B.to(LS,k,Math.max(0,k-1),c); return; }
+    if(!(await B.to(LS,4,4,c))) return;
+    if(!B.has('s5')&&c.dir>0&&!c.replay){
+      const ok=await B.ask('Kesimpulan yang tepat adalah…',[
+        {txt:'(1), (2), dan (3) saja',hint:'Pernyataan (2) salah: lebarnya 6 m, bukan 4 m.'},
+        {txt:'(1) dan (3) saja',ok:true},
+        {txt:'(2) dan (4) saja',hint:'Justru (2) dan (4) yang salah.'},
+        {txt:'(4) saja',hint:'2.400 m³ melebihi maksimum 1.800 m³, jadi (4) salah.'},
+        {txt:'(1), (2), (3), dan (4)',hint:'Tidak semuanya benar. Lihat lagi kartu (2) dan (4).'}],c,{letters:true,col:true,win:'Jawabannya <b>B</b>.'});
+      if(!ok||!live(c.run)) return;
+      await B.to(LS,5,4,{...c,seq:true});
+      if(live(c.run)){ SND.fanfare(); burst({n:160,spread:100,origin:{x:.4,y:.5}}); $('#btnNext').classList.add('nudge'); }
+      return;
+    }
+    B.to(LS,5,4,c);
+  }});
+
+/* ---- 9 · Selesai ---- */
+step(9,{cap:'<div class="verdict"><div class="seal">B</div><div>Pernyataan <b>(1) dan (3)</b> benar. Saluran terbaik: <b>100 m × 6 m × 3 m</b>, menampung <b class="k-gold">1.800 m³</b> air.</div></div>',
+  actions:[{label:'Lihat catatan',icon:'file-text',fn:()=>go(idxOfCh(7),-1)},{label:'Coba 3D lagi',icon:'box',cls:'sec',fn:()=>go(LAB_IDX,-1)},{label:'Ulang dari awal',icon:'rotate-ccw',cls:'sec',fn:()=>go(1,-1)}],
+  run(c){ scene3d({...OPT,auto:true,viewDur:1400,tip:null}); B.chapter('Ringkasan',[],c); B.to(LR,4,4,{...c,dir:-1}); if(c.dir>0) setTimeout(()=>{ if(live(c.run)) openDone(); },1300); }});
+
+STEPS.unshift({ch:0});
+const idxOfCh=ch=>STEPS.findIndex(s=>s.ch===ch);
+const LAB_IDX=STEPS.findIndex(s=>s.lab);
+
+/* =========================================================
+   KARTU PERNYATAAN
+   ========================================================= */
+const CARDS=[
+  {s:'Kedalaman saluran air tersebut adalah 3 meter.',ok:true,c:'t = 3\\text{ m}',w:'Sesuai hasil turunan.'},
+  {s:'Lebar dasar saluran air tersebut adalah 4 meter.',ok:false,c:'x = 6\\text{ m} \\ne 4',w:'4 m adalah lebar jika t = 4.'},
+  {s:'Volume air maksimum yang dapat ditampung adalah 1.800 m³.',ok:true,c:'V = 100\\cdot 6\\cdot 3 = 1800',w:'Sesuai hasil perhitungan.'},
+  {s:'Volume air maksimum yang dapat ditampung adalah 2.400 m³.',ok:false,c:'2400 > 1800',w:'Melebihi volume maksimum.'}
+];
+(function(){
+  const box=$('#cards');
+  CARDS.forEach((d,i)=>{
+    const c=document.createElement('div'); c.className='card';
+    c.innerHTML=`<div class="card-in"><div class="face front"><div class="num">(${i+1})</div><div class="st">${d.s}</div><div class="wait">belum diperiksa</div></div>
+      <div class="face back ${d.ok?'ok':'no'}"><div class="stamp ${d.ok?'ok':'no'}">${d.ok?'✓ BENAR':'✗ SALAH'}</div><div class="bn">Pernyataan (${i+1})</div><div class="bs">${d.s}</div><div class="bc">${tex(d.c)}</div><div class="bw">${d.w}</div></div></div>`;
+    box.appendChild(c);
+  });
+})();
+function flipCards(k,c){
+  $$('#cards .card').forEach((el,i)=>{
+    const want=k>=i+1, had=el.classList.contains('flip');
+    el.classList.toggle('flip',want); el.classList.toggle('focus',k===i+1||(k===0&&i===0));
+    if(want&&!had&&c.dir>0&&i===k-1){ SND.whoosh(.7); setTimeout(()=>{ if(live(c.run)){ SND.stamp(); CARDS[i].ok?SND.chime():SND.wrong(); } },650); }
+  });
+}
+
+/* =========================================================
+   LAB (geser kedalaman)
+   ========================================================= */
+const slider=$('#tSlider');
+const lab={rec:0,found:false};
+function onSlide(){ const v=+slider.value; $('#tOut').textContent=fmt(v,2)+' m'; C3.setT(v); }
+slider.addEventListener('input',()=>{ SND.tick(); onSlide(); });
+function labHud(){
+  B.foot.innerHTML=`<div class="hud2" id="hud2"><div class="h2r"><span>t = <b id="hT">–</b> m</span><span>x = <b id="hX">–</b> m</span></div><div class="h2v"><span id="hV">–</span><small> m³</small></div><div class="vbar"><i id="hBar"></i><span class="rec" id="hRec"></span></div><div class="h2m" id="hMsg">Rekor terbesarmu: <b id="hRecT">${lab.rec?fmt(lab.rec)+' m³':'–'}</b></div></div>`;
+}
+C3.onFrame=st=>{
+  if(STEPS[S.i].lab!==true||!$('#hud2')) return;
+  const t=st.t,x=st.x,v=100*x*t;
+  $('#hT').textContent=fmt(t,2); $('#hX').textContent=fmt(x,2); $('#hV').textContent=fmt(v);
+  $('#hBar').style.width=(v/1800*100).toFixed(2)+'%';
+  if(v>lab.rec+.5){ lab.rec=v; $('#hRecT').textContent=fmt(v)+' m³'; }
+  $('#hRec').style.left=(lab.rec/1800*100)+'%';
+  const near=Math.abs(st.tT-3)<.025&&Math.abs(t-st.tT)<.02;
+  $('#hud2').classList.toggle('peak',near);
+  if(near&&!lab.found){ lab.found=true; SND.correct(); burst({n:70,origin:originOf($('#hud2'))}); toast('Paling banyak di t = 3 m: 1.800 m³! Setelah ini kita buktikan dengan turunan.','gold'); $('#btnNext').classList.add('nudge'); }
+};
+
+/* =========================================================
+   GRAFIK (opsional)
+   ========================================================= */
+const G6=(()=>{
+  const svg=$('#g6'); svg.setAttribute('viewBox','0 0 640 400');
+  const X0=74,X1=590,Y0=350,Y1=40, kx=(X1-X0)/6, ky=(Y0-Y1)/2000;
+  const sx=t=>X0+t/6*(X1-X0), sy=v=>Y0-v/2000*(Y0-Y1);
+  const d=sv('defs',{},svg);
+  const fl=sv('filter',{id:'g6glow',filterUnits:'userSpaceOnUse',x:0,y:0,width:640,height:400},d); sv('feGaussianBlur',{stdDeviation:4,result:'b'},fl); const fm=sv('feMerge',{},fl); sv('feMergeNode',{in:'b'},fm); sv('feMergeNode',{in:'SourceGraphic'},fm);
+  [0,500,1000,1500,2000].forEach(v=>{ sv('line',{x1:X0,y1:sy(v),x2:X1,y2:sy(v),class:'gl'},svg); const tx=sv('text',{x:X0-10,y:sy(v)+4,'text-anchor':'end',class:'axt'},svg); tx.textContent=fmt(v); });
+  for(let t=0;t<=6;t++){ const tx=sv('text',{x:sx(t),y:Y0+20,'text-anchor':'middle',class:'axt'},svg); tx.textContent=t; }
+  sv('line',{x1:X0,y1:Y0,x2:X1+10,y2:Y0,class:'ax'},svg); sv('line',{x1:X0,y1:Y0,x2:X0,y2:Y1-14,class:'ax'},svg);
+  const a1=sv('text',{x:X1+12,y:Y0+4,class:'axn'},svg); a1.textContent='t (m)';
+  const a2=sv('text',{x:X0,y:Y1-22,'text-anchor':'middle',class:'axn'},svg); a2.textContent='V = f(t)';
+  sv('rect',{x:X0,y:Y1-10,width:sx(3)-X0,height:Y0-Y1+10,fill:'rgba(42,91,176,.13)'},svg);
+  sv('rect',{x:sx(3),y:Y1-10,width:X1-sx(3),height:Y0-Y1+10,fill:'rgba(200,16,46,.12)'},svg);
+  const l1=sv('text',{x:X0+12,y:Y0-12,class:'axn',style:'fill:#a9cbff'},svg); l1.textContent='naik';
+  const l2=sv('text',{x:X1-8,y:Y0-12,'text-anchor':'end',class:'axn',style:'fill:#ff8796'},svg); l2.textContent='turun';
+  let p=''; for(let t=0;t<=6.0001;t+=.05) p+=(p?'L':'M')+sx(t).toFixed(1)+' '+sy(Vf(t)).toFixed(1)+' ';
+  sv('path',{d:p,class:'curve'},svg);
+  sv('line',{x1:sx(3),y1:sy(1800)+8,x2:sx(3),y2:Y0,stroke:'#F5D778','stroke-dasharray':'4 6','stroke-width':1.6},svg);
+  const pt=sv('text',{x:sx(3)+8,y:Y0-12,class:'s-tag',style:'fill:#F5D778'},svg); pt.textContent='puncak';
+  const tan=sv('line',{class:'tanl'},svg);
+  const hk=sv('g',{class:'hiker'},svg);
+  sv('rect',{x:-9,y:-24,width:6,height:10,rx:2,class:'pack'},hk);
+  sv('line',{x1:0,y1:-8,x2:0,y2:-22},hk); sv('line',{x1:0,y1:-8,x2:-5,y2:0},hk); sv('line',{x1:0,y1:-8,x2:5,y2:0},hk); sv('line',{x1:0,y1:-18,x2:7,y2:-12},hk); sv('line',{x1:7,y1:-12,x2:9,y2:2},hk);
+  sv('circle',{cx:0,cy:-28,r:5,class:'hd'},hk);
+  const dot=sv('circle',{r:7,class:'pdot'},svg);
+  let cur=.4;
+  function setT(t){
+    cur=t; const v=Vf(t),m=dVf(t),px=sx(t),py=sy(v);
+    const dx=kx,dy=-m*ky,len=Math.hypot(dx,dy),ux=dx/len,uy=dy/len,Hh=95;
+    tan.setAttribute('x1',px-ux*Hh); tan.setAttribute('y1',py-uy*Hh); tan.setAttribute('x2',px+ux*Hh); tan.setAttribute('y2',py+uy*Hh);
+    dot.setAttribute('cx',px); dot.setAttribute('cy',py);
+    hk.setAttribute('transform',`translate(${px},${py-6}) rotate(${(Math.atan2(dy,dx)*180/Math.PI*.3).toFixed(1)})`);
+    const flat=Math.abs(m)<10; svg.classList.toggle('isflat',flat);
+    const st=$('#gStat'); st.classList.toggle('flat',flat);
+    st.innerHTML=flat?'<b class="k-gold">Di puncak:</b> garis singgung <b>datar</b>, kemiringannya 0 → f′(t) = 0. Volume paling besar.'
+      :m>0?`<b class="k-blue">Mendaki</b> (t = ${fmt(t,1)}): garis singgung miring ke atas → f′(t) positif, volume masih bertambah.`
+      :`<b class="k-red">Menurun</b> (t = ${fmt(t,1)}): garis singgung miring ke bawah → f′(t) negatif, volume berkurang.`;
+    $('#g6Range').value=t;
+  }
+  return {setT,get t(){return cur;}};
+})();
+const go6=(to,dur,ease=Ease.smooth)=>tween({from:G6.t,to,dur,ease,tag:'g6',update:v=>G6.setT(v)});
+async function playGraph(){ G6.setT(.4); await sleep(500); if(!$('#graphOv').classList.contains('open')) return; if(!(await go6(2.2,2600))) return; if(!(await go6(3,1500,Ease.out))) return; SND.chime(); await sleep(1400); if(!(await go6(4.6,2200))) return; await sleep(600); if(await go6(3,1800)) SND.chime(); }
+function openGraph(){ SND.click(); $('#graphOv').classList.add('open'); playGraph(); }
+function closeGraph(){ killTween('g6'); $('#graphOv').classList.remove('open'); }
+$('#g6Range').addEventListener('input',e=>{ killTween('g6'); G6.setT(+e.target.value); SND.tick(); });
+$('#gReplay').onclick=()=>{ SND.click(); playGraph(); };
+$('#gClose').onclick=()=>{ SND.click(); closeGraph(); };
+
+/* =========================================================
+   CATATAN LENGKAP
+   ========================================================= */
+function sheetSketch(){
+  return `<svg viewBox="0 0 320 150" aria-label="Sketsa pelat"><rect x="30" y="18" width="250" height="90" fill="#DCE1E8" stroke="#0E2A5C" stroke-width="1.5"/>
+  <line x1="30" y1="36.75" x2="280" y2="36.75" stroke="#C8102E" stroke-width="1.5" stroke-dasharray="6 4"/><line x1="30" y1="89.25" x2="280" y2="89.25" stroke="#C8102E" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="290" y="31" font-family="serif" font-style="italic" font-size="14" fill="#C8102E">t</text><text x="290" y="67" font-family="serif" font-style="italic" font-size="14" fill="#2A5BB0">x</text><text x="290" y="103" font-family="serif" font-style="italic" font-size="14" fill="#C8102E">t</text>
+  <text x="155" y="130" text-anchor="middle" font-family="monospace" font-size="12" fill="#0E2A5C">p = 100 m</text><text x="20" y="66" text-anchor="middle" font-family="monospace" font-size="12" fill="#0E2A5C" transform="rotate(-90 20 66)">l = 12 m</text>
+  <text x="155" y="68" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#34465F">Luas 1.200 m²</text></svg>`;
+}
+function boxSketch(lp,lx,lt,gold){
+  const c=gold?'#A87A0E':'#0E2A5C';
+  return `<svg viewBox="-46 0 386 212" aria-label="Sketsa saluran"><polygon points="40,116 130,116 310,46 220,46" fill="rgba(61,149,255,.35)"/><rect x="40" y="116" width="90" height="56" fill="rgba(15,86,200,.45)"/>
+  <path d="M214 40 V106 H316 V40" fill="none" stroke="#6A7891" stroke-dasharray="4 4"/>
+  <line x1="37" y1="110" x2="217" y2="40" stroke="#0E2A5C" stroke-width="1.5"/><line x1="133" y1="110" x2="313" y2="40" stroke="#0E2A5C" stroke-width="1.5"/><line x1="136" y1="176" x2="316" y2="106" stroke="#0E2A5C" stroke-width="1.5"/>
+  <line x1="313" y1="40" x2="316" y2="106" stroke="#0E2A5C" stroke-width="1.5"/>
+  <polygon points="34,110 40,110 40,170 130,170 130,110 136,110 136,176 34,176" fill="#C9CFD8" stroke="#0E2A5C" stroke-width="1.5"/>
+  <text x="128" y="66" font-family="monospace" font-size="12" fill="${c}" transform="rotate(-21 128 66)">${lp}</text>
+  <line x1="40" y1="190" x2="130" y2="190" stroke="#2A5BB0"/><text x="85" y="205" text-anchor="middle" font-family="monospace" font-size="12" fill="${gold?c:'#2A5BB0'}">${lx}</text>
+  <line x1="22" y1="116" x2="22" y2="170" stroke="#C8102E"/><text x="16" y="147" text-anchor="end" font-family="monospace" font-size="12" fill="${gold?c:'#C8102E'}">${lt}</text></svg>`;
+}
+function buildNotes(){
+  const h=`<div class="nsheet" id="notesSheet">
+  <h1>Pembahasan: Saluran Irigasi dengan Volume Maksimum</h1>
+  <div class="meta">Turunan · Aplikasi optimasi · Kelas 12</div>
+  <section class="full"><h2><span>0</span>Diketahui &amp; ditanya</h2>
+    <div>Panjang saluran $p = 100$ m. Luas pelat beton (dasar + 2 dinding, tanpa tutup) $L = 1.200$ m². Ditanya: ukuran saluran agar volume air <b>maksimum</b>.</div></section>
+  <section><h2><span>1</span>Lebar pelat</h2>
+    <div>$$\\begin{aligned}L&=p\\times l\\\\1200&=100\\times l\\\\l&=\\frac{1200}{100}\\\\l&=12\\text{ m}\\end{aligned}$$<div class="why">Sebelum dilipat, beton berupa satu lembar persegi panjang.</div></div>${sheetSketch()}</section>
+  <section><h2><span>2</span>Dilipat jadi balok</h2>
+    <div>$$\\begin{aligned}12&=t+x+t\\\\12&=2t+x\\\\12-2t&=x\\\\x&=12-2t\\end{aligned}$$<div class="why">t = kedalaman (dinding), x = lebar dasar.</div></div>${boxSketch('p = 100 m','x','t')}</section>
+  <section class="full"><h2><span>3</span>Fungsi volume</h2>
+    <div>$$\\begin{aligned}V&=p\\times l\\times t\\\\V&=100\\cdot x\\cdot t\\\\V&=100\\cdot(12-2t)\\cdot t\\\\V&=100\\cdot(12t-2t^2)\\\\V&=1200t-200t^2\\\\f(t)&=1200t-200t^2\\end{aligned}$$</div></section>
+  <section class="full"><h2><span>4</span>Turunan → nilai maksimum</h2>
+    <div>$$\\begin{aligned}f'(t)&=1200-400t\\\\1200-400t&=0\\\\-400t&=-1200\\\\t&=\\frac{-1200}{-400}\\\\t&=3\\text{ m}\\end{aligned}$$<div class="why">Di titik maksimum, turunan pertama bernilai nol.</div></div></section>
+  <section><h2><span>5</span>Lebar dasar &amp; volume maksimum</h2>
+    <div>$$\\begin{aligned}x&=12-2t\\\\x&=12-2(3)\\\\x&=12-6\\\\x&=6\\text{ m}\\end{aligned}$$ $$\\begin{aligned}V&=p\\times l\\times t\\\\V&=100\\cdot 6\\cdot 3\\\\V&=1800\\text{ m}^3\\end{aligned}$$</div>${boxSketch('p = 100 m','x = 6 m','t = 3 m',true)}</section>
+  <section class="full"><h2><span>6</span>Analisis pernyataan</h2>
+    <table><tr><td>(1) Kedalaman 3 m</td><td class="ok">BENAR</td></tr><tr><td>(2) Lebar dasar 4 m (seharusnya 6 m)</td><td class="no">SALAH</td></tr><tr><td>(3) Volume maksimum 1.800 m³</td><td class="ok">BENAR</td></tr><tr><td>(4) Volume maksimum 2.400 m³ (melebihi 1.800)</td><td class="no">SALAH</td></tr></table>
+    <div class="ans" style="margin-top:10px">Jawaban: B — pernyataan (1) dan (3) saja yang benar.</div></section>
+  </div>`;
+  $('#notesHost').innerHTML=h; math($('#notesHost'));
+  $('#printRoot').innerHTML=$('#notesHost').innerHTML;
+}
+$('#btnPrint').onclick=()=>{ SND.click(); window.print(); };
+$('#btnDl').onclick=()=>{
+  SND.click();
+  const html=`<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Catatan Saluran Irigasi</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=Plus+Jakarta+Sans:wght@400..800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#fff}${$('#notesCss').textContent}</style></head><body>${$('#notesHost').innerHTML}</body></html>`;
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([html],{type:'text/html'})); a.download='catatan-saluran-irigasi.html'; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
+};
+
+/* =========================================================
+   NAVIGASI
+   ========================================================= */
+function stepsOfCh(ch){ return STEPS.map((s,i)=>s.ch===ch?i:-1).filter(i=>i>=0); }
+function chrome(){
+  const st=STEPS[S.i],ch=st.ch,N=CH.length-1;
+  $('#app').classList.toggle('is-lobby',ch===0);
+  $('#tbNum').textContent=String(ch).padStart(2,'0')+'/'+String(N).padStart(2,'0');
+  $('#tbTitle').textContent=CH[ch].t;
+  $('#progBar').style.width=(S.i/(STEPS.length-1)*100).toFixed(1)+'%';
+  const ids=stepsOfCh(ch), pos=ids.indexOf(S.i);
+  $('#navLabel').textContent=ch?`Bagian ${ch} · langkah ${pos+1} dari ${ids.length}`:'';
+  const sd=$('#subDots'); sd.innerHTML='';
+  ids.forEach((id,j)=>{ const b=document.createElement('button'); b.className=j<pos?'done':j===pos?'cur':''; b.setAttribute('aria-label','Langkah '+(j+1)); b.onclick=()=>{SND.click();go(id,id>=S.i?1:-1);}; sd.appendChild(b); });
+  const end=S.i>=STEPS.length-1, lastOfCh=pos===ids.length-1;
+  const nb=$('#btnNext');
+  $('#nextTxt').textContent=S.pending?'Lewati soal':end?'Selesai':lastOfCh?'Bagian berikutnya':'Lanjut';
+  nb.classList.toggle('skip',S.pending);
+  nb.disabled=false; $('#btnPrev').disabled=S.i===0;
+  $$('#menuList .mitem').forEach((m,i)=>m.classList.toggle('cur',i===ch));
+}
+function setCap(st){
+  const cap=$('#cap');
+  $('#capK').textContent=`Bagian ${st.ch} · ${CH[st.ch].t}`;
+  $('#capT').innerHTML=st.cap||''; math($('#capT'));
+  const a=$('#capA'); a.innerHTML='';
+  (st.actions||[]).forEach(ac=>{ const b=document.createElement('button'); b.className='btn '+(ac.cls||''); b.innerHTML=(ac.icon?`<i data-lucide="${ac.icon}"></i>`:'')+ac.label; b.onclick=ac.fn; a.appendChild(b); });
+  icons();
+  cap.classList.remove('pop'); void cap.offsetWidth; cap.classList.add('pop');
+}
+function setScene(st){
+  const sc=$('#scene'), m=st.scene||'3d';
+  ['m-3d','m-soal','m-cards','m-notes'].forEach(c=>sc.classList.toggle(c,c==='m-'+m));
+  sc.classList.toggle('lab',!!st.lab);
+  if(m!=='3d') C3.detach();
+}
+function go(i,dir=1,o={}){
+  i=clamp(i,0,STEPS.length-1);
+  const prevI=S.i, st=STEPS[i], pst=STEPS[prevI];
+  const seq=S.started&&i===prevI+1&&dir>0;
+  B.cancelAsk(); closeGraph(); closeDone(); S.pending=false;
+  S.run++; const run=S.run;
+  const toL=st.ch===0, fromL=!S.started||pst.ch===0;
+  if(toL!==fromL||!S.started){
+    const o1=$(toL?'#stM':'#stL'), n1=$(toL?'#stL':'#stM');
+    if(S.started) o1.animate([{opacity:1},{opacity:0}],{duration:RM?1:350}).onfinish=()=>{ if((STEPS[S.i].ch===0)===toL) o1.classList.remove('on'); };
+    n1.classList.add('on'); n1.animate([{opacity:0,transform:`translateX(${dir*50}px)`},{opacity:1,transform:'none'}],{duration:RM?1:600,easing:'cubic-bezier(.2,.8,.2,1)'});
+    if(toL) C3.detach();
+  }
+  const entered=!S.started||pst.ch!==st.ch;
+  S.i=i; S.started=true;
+  B.foot.innerHTML='';
+  $('#btnNext').classList.remove('nudge');
+  chrome();
+  if(st.ch===0) return;
+  setScene(st); setCap(st);
+  layout();
+  const c={run,dir,seq,replay:!!o.replay,entered};
+  if(st.run) Promise.resolve(st.run(c)).catch(e=>console.error(e));
+}
+function next(){ if(S.i<STEPS.length-1) go(S.i+1,1); else openDone(); }
+function prev(){ if(S.i>0) go(S.i-1,-1); }
+function layout(){
+  const sc=$('#scene'); const W=sc.clientWidth,Hh=sc.clientHeight; if(!W||!Hh) return;
+  const side=W>=900||W/Hh>=1.25; let fr;
+  sc.classList.toggle('narrow',!side);
+  const cap=document.getElementById('cap');
+  if(side){
+    const bw=Math.round(clamp(W*(W<900?.36:.33),270,480)); sc.style.setProperty('--bw',bw+'px');
+    const r=bw+(Hh<420?18:34);
+    sc.style.setProperty('--fr',r+'px');
+    fr={l:0,t:(cap.offsetTop+cap.offsetHeight+10)||140,r,b:0};
+  }else{
+    const bh=Math.round(clamp(Hh*.37,190,360)); sc.style.setProperty('--bh',bh+'px');
+    fr={l:0,t:(cap.offsetTop+cap.offsetHeight+8)||100,r:0,b:bh+16};
+  }
+  sc.style.setProperty('--ft',fr.t+'px'); sc.style.setProperty('--fr',fr.r+'px'); sc.style.setProperty('--fb',fr.b+'px');
+  C3.setFree(fr);
+}
+new ResizeObserver(()=>layout()).observe($('#scene'));
+
+/* =========================================================
+   TOMBOL, MENU, AUDIO, KEYBOARD
+   ========================================================= */
+function setMusic(on){ SND.init(); on?SND.bgmStart():SND.bgmStop(); ['#tgMusic','#hdMusic'].forEach(s=>$(s).setAttribute('aria-pressed',on)); }
+function setSfx(on){ SND.sfxOn=on; ['#tgSfx','#hdSfx'].forEach(s=>$(s).setAttribute('aria-pressed',on)); if(on){SND.init();SND.click();} }
+$('#tgMusic').onclick=$('#hdMusic').onclick=()=>setMusic(!SND.bgmOn);
+$('#tgSfx').onclick=$('#hdSfx').onclick=()=>setSfx(!SND.sfxOn);
+function lockLandscape(){
+  const el=document.documentElement, fs=document.fullscreenElement||document.webkitFullscreenElement;
+  const lock=()=>{ try{ if(screen.orientation&&screen.orientation.lock) screen.orientation.lock('landscape').catch(()=>{}); }catch(e){} };
+  if(fs) return lock();
+  const req=el.requestFullscreen||el.webkitRequestFullscreen;
+  if(req){ try{ const p=req.call(el); if(p&&p.then) p.then(lock).catch(()=>{}); else lock(); }catch(e){} }
+}
+const isTouch=matchMedia('(pointer:coarse)').matches;
+$('#btnStart').onclick=()=>{ SND.init(); SND.click(); if(isTouch) lockLandscape(); go(1,1); };
+$('#btnRotFs').onclick=()=>{ SND.init(); SND.click(); lockLandscape(); };
+function openDone(){ $('#doneOv').classList.add('open'); SND.fanfare(); burst({n:180,spread:120,origin:{x:.5,y:.45}}); setTimeout(()=>burst({n:90,spread:140,origin:{x:.2,y:.5}}),350); setTimeout(()=>burst({n:90,spread:140,origin:{x:.8,y:.5}}),600); setTimeout(()=>$('#doneClose').focus({preventScroll:true}),300); }
+function closeDone(){ $('#doneOv').classList.remove('open'); }
+$('#doneX').onclick=$('#doneClose').onclick=()=>{ SND.click(); closeDone(); };
+$('#doneNotes').onclick=()=>{ SND.click(); closeDone(); go(idxOfCh(7),-1); };
+$('#doneOv').addEventListener('click',e=>{ if(e.target.id==='doneOv') closeDone(); });
+$('#btnNext').onclick=()=>{ SND.click(); next(); };
+$('#btnPrev').onclick=()=>{ SND.click(); prev(); };
+$('#bdReplay').onclick=()=>{ SND.click(); go(S.i,1,{replay:true}); };
+function toggleFs(){ const d=document,el=d.documentElement; if(!d.fullscreenElement&&!d.webkitFullscreenElement)(el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el); else (d.exitFullscreen||d.webkitExitFullscreen||function(){}).call(d); }
+$('#hdFs').onclick=()=>{ SND.click(); toggleFs(); };
+['fullscreenchange','webkitfullscreenchange'].forEach(ev=>document.addEventListener(ev,()=>document.body.classList.toggle('is-fs',!!(document.fullscreenElement||document.webkitFullscreenElement))));
+(function(){ const list=$('#menuList'); CH.forEach((c,i)=>{ const b=document.createElement('button'); b.className='mitem'; b.innerHTML=`<span class="mn">${String(i).padStart(2,'0')}</span><span><span class="mt">${c.t}</span><br><span class="ms">${c.d}</span></span>`; b.onclick=()=>{ SND.click(); closeMenu(); const t=idxOfCh(i); go(t,t>=S.i?1:-1); }; list.appendChild(b); }); })();
+function openMenu(){ $('#menu').classList.add('open'); $('#menu').setAttribute('aria-hidden','false'); }
+function closeMenu(){ $('#menu').classList.remove('open'); $('#menu').setAttribute('aria-hidden','true'); }
+$('#hdMenu').onclick=()=>{ SND.click(); openMenu(); };
+$$('#menu [data-close]').forEach(e=>e.onclick=closeMenu);
+document.addEventListener('keydown',e=>{
+  const tg=e.target, typing=tg&&(tg.tagName==='INPUT'||tg.tagName==='TEXTAREA');
+  if(e.key==='Escape'){ closeMenu(); closeGraph(); closeDone(); }
+  if(typing) return;
+  if(e.key==='ArrowRight'||e.key==='PageDown'){ e.preventDefault(); SND.init(); SND.click(); next(); }
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); SND.click(); prev(); }
+  else if(e.key==='f'||e.key==='F') toggleFs();
+  else if(e.key==='m'||e.key==='M') setMusic(!SND.bgmOn);
+});
+document.addEventListener('visibilitychange',()=>{ if(!SND.ctx) return; if(document.hidden) SND.ctx.suspend(); else SND.ctx.resume(); });
+
+/* =========================================================
+   INIT
+   ========================================================= */
+B.init();
+buildNotes();
+LOOPS.add(C3.frame);
+math(document.body); icons();
+G6.setT(.4); onSlide();
+go(0,1);
+requestAnimationFrame(raf);
+</script>
+</body>
+</html>
