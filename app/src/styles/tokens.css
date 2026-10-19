@@ -1,0 +1,328 @@
+/*
+ * Token desain Paham TKA (PRD §13). Tiga lapis: primitif → semantik → komponen.
+ * Ini SATU-SATUNYA berkas yang boleh memuat nilai mentah (warna, jarak, durasi, z-index).
+ * `npm run validate:tokens` menggagalkan build bila berkas lain memuat nilai mentah.
+ */
+/* stylelint-disable no-duplicate-selectors -- :root sengaja dipisah per lapis (primitif, semantik) */
+@layer tokens, base, components, pages, utilities;
+
+@layer tokens {
+  /* =========================== 1. PRIMITIF =========================== */
+  :root {
+    /* kertas */
+    --paper-0: #ffffff;
+    --paper-1: #f4f6fb;
+    --paper-2: #e7ecf5;
+    /* tinta (ink-600 menggantikan #6A7891 template: ≈5,5:1) */
+    --ink-900: #0b1a33;
+    --ink-700: #34465f;
+    --ink-600: #5b6a84;
+    /* biru */
+    --blue-900: #0e2a5c;
+    --blue-800: #163c7e;
+    --blue-600: #2a5bb0;
+    --blue-300: #7fb2ff;
+    --blue-50: #edf2fc;
+    /* blueprint */
+    --bp-900: #0a1830;
+    --bp-800: #0f2244;
+    --bp-ink-100: #e8eef9;
+    --bp-ink-300: #b9c7df;
+    /* merah = kendala/salah/jebakan */
+    --red-600: #c8102e;
+    --red-400: #e5394f;
+    --red-300: #ff8796;
+    --red-50: #fdecee;
+    /* emas = hanya jawaban/hasil akhir (gold-800 menggantikan #A87A0E untuk teks: ≈6,5:1) */
+    --gold-400: #e2b43c;
+    --gold-300: #f5d778;
+    --gold-800: #7a5800;
+    --gold-50: #fbf3dc;
+    --line-200: #dce3ee;
+
+    /* transparansi (dipakai lewat token semantik) */
+    --a-navy-06: rgb(14 42 92 / 0.06);
+    --a-navy-08: rgb(14 42 92 / 0.08);
+    --a-navy-11: rgb(14 42 92 / 0.11);
+    --a-navy-85: rgb(14 42 92 / 0.85);
+    --a-sky-04: rgb(127 178 255 / 0.04);
+    --a-sky-09: rgb(127 178 255 / 0.085);
+    --a-sky-15: rgb(127 178 255 / 0.15);
+    --a-sky-30: rgb(127 178 255 / 0.3);
+    --a-blue-45: rgb(42 91 176 / 0.45);
+    --a-blue-24: rgb(42 91 176 / 0.24);
+    --a-red-20: rgb(200 16 46 / 0.2);
+    --a-red-35: rgb(200 16 46 / 0.35);
+    --a-gold-20: rgb(226 180 60 / 0.2);
+    --a-gold-40: rgb(226 180 60 / 0.4);
+    --a-gold-50: rgb(226 180 60 / 0.5);
+    --a-gold-90: rgb(245 215 120 / 0.9);
+    --a-white-05: rgb(255 255 255 / 0.05);
+    --a-white-20: rgb(255 255 255 / 0.2);
+    --a-white-90: rgb(255 255 255 / 0.9);
+    --a-white-97: rgb(255 255 255 / 0.97);
+    --a-ink-50: rgb(11 26 51 / 0.5);
+    --a-bp-62: rgb(6 14 30 / 0.62);
+    --a-black-30: rgb(0 0 0 / 0.3);
+    --a-black-45: rgb(0 0 0 / 0.45);
+    --a-black-65: rgb(0 0 0 / 0.65);
+
+    /* jarak (skala 4/8) */
+    --space-0-5: 2px;
+    --space-1: 4px;
+    --space-1-5: 6px;
+    --space-2: 8px;
+    --space-2-5: 10px;
+    --space-3: 12px;
+    --space-3-5: 14px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 48px;
+    --space-8: 64px;
+
+    /* radius */
+    --radius-xs: 6px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 22px;
+    --radius-pill: 999px;
+
+    /* garis */
+    --bw-hair: 1px;
+    --bw-1: 1.5px;
+    --bw-2: 2px;
+    --bw-3: 3px;
+    --bw-4: 4px;
+
+    /* ukuran */
+    --size-touch: 44px;
+    --size-touch-lg: 48px;
+    --size-icon-sm: 16px;
+    --size-icon-md: 18px;
+    --size-icon-lg: 24px;
+    --size-mark: 36px;
+    --size-thumb: 26px;
+    --size-track: 8px;
+    --size-switch-w: 32px;
+    --size-switch-h: 19px;
+    --size-switch-knob: 15px;
+    --size-ring: 22px;
+    --size-hatch: 10px;
+    --size-grid-major: 80px;
+    --size-grid-minor: 16px;
+    --size-dot-grid: 22px;
+    --size-crop: 16px;
+    --size-sheet-w: 560px;
+    --size-measure: 34em;
+    --size-page-max: 880px;
+    --size-qcard-h: 148px;
+    --size-qcard-h-sm: 128px;
+    --size-search-w: 260px;
+    --size-key-col: 220px;
+    --blur-glass: 12px;
+    --size-card-min: 168px;
+    --size-hero-max: 560px;
+    --size-toast-max: 560px;
+    --size-phone-w: 64px;
+    --size-phone-h: 112px;
+    --size-phone-wrap: 170px;
+    --lift-1: -1px;
+    --lift-2: -2px;
+    --nudge-4: 4px;
+    --rise-16: 16px;
+    --rise-20: 20px;
+
+    /* huruf */
+    --font-display: 'Archivo Variable', 'Archivo', system-ui, sans-serif;
+    --font-body: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+    --font-math: 'KaTeX_Math', 'Times New Roman', serif;
+    --fs-micro: 10.5px;
+    --fs-label: 12px;
+    --fs-caption: 13px;
+    --fs-small: 14px;
+    --fs-body: 16px;
+    --fs-lead: clamp(15.5px, 1.25vw, 18px);
+    --fs-board: clamp(17px, 1.55vw, 23px);
+    --fs-title: clamp(18px, 1.6vw, 22px);
+    --fs-h2: clamp(22px, 2.2vw, 30px);
+    --fs-card-num: clamp(30px, 3vw, 42px);
+    --fs-hero: clamp(34px, 5.2vw, 84px);
+    --lh-tight: 0.93;
+    --lh-heading: 1.15;
+    --lh-math: 1.3;
+    --lh-body: 1.5;
+    --lh-paper: 1.78;
+    --tracking-label: 0.14em;
+    --tracking-wide: 0.16em;
+    --tracking-hero: -0.025em;
+    --stretch-body: 100%;
+    --stretch-ui: 112%;
+    --stretch-title: 118%;
+    --stretch-hero: 125%;
+    --stretch-narrow: 75%;
+    --fw-regular: 400;
+    --fw-medium: 500;
+    --fw-semibold: 600;
+    --fw-bold: 700;
+    --fw-heavy: 800;
+    --fw-black: 900;
+
+    /* gerak (PRD §13.5) */
+    --dur-instant: 100ms;
+    --dur-fast: 150ms;
+    --dur-base: 220ms;
+    --dur-slow: 360ms;
+    --dur-enter: 600ms;
+    --dur-reveal: 900ms;
+    --dur-line-up: 1100ms;
+    --dur-flip: 1050ms;
+    --dur-chalk: 300ms;
+    --dur-loop: 2800ms;
+    --delay-step-1: 120ms;
+    --delay-step-2: 240ms;
+    --delay-step-3: 500ms;
+    --stagger: 40ms;
+    --ease: cubic-bezier(0.65, 0, 0.35, 1);
+    --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
+    --ease-spring: cubic-bezier(0.2, 1.4, 0.4, 1);
+    --press-scale: 0.97;
+    --press-scale-card: 0.985;
+
+    /* lapisan (PRD §13.4) */
+    --z-stage: 0;
+    --z-raised: 1;
+    --z-free: 3;
+    --z-label3d: 4;
+    --z-crop: 6;
+    --z-lab: 9;
+    --z-panel: 10;
+    --z-sticky: 11;
+    --z-notes: 12;
+    --z-graph: 30;
+    --z-sketch: 40;
+    --z-sketch-bar: 41;
+    --z-fly: 95;
+    --z-fly-num: 96;
+    --z-header: 100;
+    --z-drawer: 120;
+    --z-toast: 130;
+    --z-done: 150;
+    --z-confetti: 200;
+    --z-rotate: 300;
+
+    /* bayangan */
+    --shadow-1: 0 1px 2px var(--a-navy-08), 0 8px 24px -16px var(--a-navy-85);
+    --shadow-2: 0 24px 60px -22px var(--a-black-65), 0 0 0 1px var(--a-navy-08);
+    --shadow-3: 0 40px 80px -30px var(--a-black-65);
+    --shadow-btn: 0 10px 22px -12px var(--a-navy-85);
+    --shadow-art: 0 30px 60px -32px var(--a-bp-62);
+    --shadow-knob: 0 1px 3px var(--a-black-30);
+  }
+
+  /* =========================== 2. SEMANTIK =========================== */
+  :root {
+    --color-text: var(--ink-900);
+    --color-text-secondary: var(--ink-700);
+    --color-text-muted: var(--ink-600);
+    --color-brand: var(--blue-900);
+    --color-brand-hover: var(--blue-800);
+    --color-on-brand: var(--paper-0);
+    --color-intermediate: var(--blue-600);
+    --color-intermediate-bg: var(--blue-50);
+    --color-constraint: var(--red-600);
+    --color-constraint-bg: var(--red-50);
+    --color-constraint-on-stage: var(--red-300);
+    --color-result: var(--gold-400);
+    --color-result-soft: var(--gold-300);
+    --color-result-ink: var(--gold-800);
+    --color-result-bg: var(--gold-50);
+    --color-surface: var(--paper-0);
+    --color-surface-sunken: var(--paper-1);
+    --color-track: var(--paper-2);
+    --color-line: var(--line-200);
+    --color-page: var(--paper-0);
+    --color-page-dots: var(--a-navy-11);
+    --color-stage: var(--bp-900);
+    --color-stage-raised: var(--bp-800);
+    --color-on-stage: var(--bp-ink-100);
+    --color-on-stage-muted: var(--bp-ink-300);
+    --color-stage-line: var(--a-sky-09);
+    --color-stage-line-minor: var(--a-sky-04);
+    --color-stage-glow: var(--a-blue-45);
+    --color-stage-accent: var(--blue-300);
+    --color-stage-surface: var(--a-white-05);
+    --color-stage-border: var(--a-white-20);
+    --color-focus: var(--gold-400);
+    --color-focus-on-gold: var(--blue-900);
+    --color-scrim: var(--a-bp-62);
+    --color-glass: var(--a-white-90);
+    --color-glass-strong: var(--a-white-97);
+    --color-highlight-red: var(--a-red-20);
+    --color-highlight-blue: var(--a-blue-24);
+    --color-highlight-gold: var(--a-gold-50);
+    --color-hatch: var(--a-sky-15);
+    --color-margin-line: var(--a-red-35);
+    --color-nudge: var(--a-gold-40);
+    --color-ring-soft: var(--a-gold-20);
+    --color-src-glow: var(--a-gold-90);
+
+    --focus-ring: var(--bw-3) solid var(--color-focus);
+    --focus-offset: var(--space-0-5);
+
+    /* tata letak shell */
+    --header-h: 60px;
+    --footer-h: 44px;
+    --gutter: clamp(12px, 2vw, 26px);
+    --board-w: clamp(270px, 33vw, 480px);
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+
+    /* pengali waktu global (core/clock menyetel --time-scale) */
+    --time-scale: 1;
+  }
+
+  /* layar pendek (HP mendatar, tinggi ≤ 520 px): PRD §13.10 "Ringkas" */
+  @media (max-height: 520px) {
+    :root {
+      --header-h: 46px;
+      --footer-h: 32px;
+      --fs-body: 15px;
+      --fs-hero: min(9vh, 7vw);
+      --fs-card-num: 26px;
+      --fs-board: 15.5px;
+      --gutter: 10px;
+    }
+  }
+
+  /* luas: tinggi ≥ 801 px dan lebar ≥ 1200 px */
+  @media (min-height: 801px) and (min-width: 1200px) {
+    :root {
+      --gutter: clamp(26px, 3vw, 48px);
+    }
+  }
+
+  /* hemat gerak: durasi dipangkas (PRD §9.2 butir 9) */
+  @media (prefers-reduced-motion: reduce) {
+    :root:not([data-motion='full']) {
+      --dur-enter: 1ms;
+      --dur-reveal: 1ms;
+      --dur-line-up: 1ms;
+      --dur-loop: 1ms;
+      --stagger: 0ms;
+    }
+  }
+
+  :root[data-motion='reduce'] {
+    --dur-enter: 1ms;
+    --dur-reveal: 1ms;
+    --dur-line-up: 1ms;
+    --dur-loop: 1ms;
+    --stagger: 0ms;
+  }
+}

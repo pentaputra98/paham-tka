@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0E2A5C" />
+    <meta name="color-scheme" content="light" />
+    <meta
+      name="description"
+      content="Paham TKA: pembahasan interaktif TKA Matematika Tingkat Lanjut 2025. Dari bingung jadi paham, langkah demi langkah."
+    />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Paham TKA" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <title>Paham TKA</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Lewati ke isi utama</a>
+    <div id="app"></div>
+    <div class="rotate bp" id="rotate" role="alert" aria-hidden="true">
+      <div class="phone-wrap" aria-hidden="true">
+        <svg class="rot-arrow" viewBox="0 0 170 170">
+          <path
+            d="M140 70 A62 62 0 0 0 70 26"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="4"
+            stroke-linecap="round"
+          />
+          <path
+            d="M78 16 L66 26 L80 34"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <div class="phone"><i></i></div>
+      </div>
+      <h2>Putar HP-mu ke posisi mendatar</h2>
+      <p>Paham TKA dirancang untuk layar mendatar supaya gambar dan papan tulis terlihat bersamaan.</p>
+      <button type="button" class="btn btn--lg" hidden>Layar penuh &amp; mendatar</button>
+    </div>
+    <noscript
+      ><p style="padding: 24px">
+        Paham TKA memerlukan JavaScript. Aktifkan JavaScript lalu muat ulang halaman.
+      </p></noscript
+    >
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>

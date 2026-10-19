@@ -1,0 +1,252 @@
+/* Chip filter, pil status, toggle, slider, kolom cari (PRD §13.6). */
+@layer components {
+  .chip {
+    --chip-bg: var(--color-surface);
+    --chip-fg: var(--color-brand);
+    --chip-border: var(--color-line);
+
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1-5);
+    min-height: var(--size-touch);
+    padding: 0 var(--space-3-5);
+    border-radius: var(--radius-pill);
+    border: var(--bw-1) solid var(--chip-border);
+    background: var(--chip-bg);
+    color: var(--chip-fg);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-small);
+    white-space: nowrap;
+    transition:
+      background-color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .chip:hover {
+      --chip-border: var(--color-brand);
+    }
+  }
+
+  .chip[aria-pressed='true'] {
+    --chip-bg: var(--color-brand);
+    --chip-fg: var(--color-on-brand);
+    --chip-border: var(--color-brand);
+  }
+
+  .chip .chip-count {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    opacity: 0.75;
+  }
+
+  /* pil status: teks + ikon + warna, tidak hanya warna */
+  .pill {
+    --pill-fg: var(--color-text-secondary);
+    --pill-bg: var(--color-surface-sunken);
+
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-0-5) var(--space-2-5);
+    border-radius: var(--radius-pill);
+    background: var(--pill-bg);
+    color: var(--pill-fg);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-body);
+    white-space: nowrap;
+  }
+
+  .pill .lucide {
+    width: var(--size-icon-sm);
+    height: var(--size-icon-sm);
+  }
+
+  .pill--done {
+    --pill-fg: var(--color-intermediate);
+    --pill-bg: var(--color-intermediate-bg);
+  }
+
+  .pill--review {
+    --pill-fg: var(--color-constraint);
+    --pill-bg: var(--color-constraint-bg);
+  }
+
+  .pill--mastered {
+    --pill-fg: var(--color-result-ink);
+    --pill-bg: var(--color-result-bg);
+  }
+
+  /* toggle: sakelar 32×19, area ketuk ≥ 44 */
+  .toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    width: 100%;
+    min-height: var(--size-touch);
+    padding: var(--space-2) 0;
+    text-align: left;
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+  }
+
+  .toggle .toggle-text {
+    display: grid;
+    gap: var(--space-0-5);
+  }
+
+  .toggle .toggle-text small {
+    font-weight: var(--fw-regular);
+    font-size: var(--fs-caption);
+    color: var(--color-text-muted);
+  }
+
+  .toggle .sw {
+    position: relative;
+    flex: none;
+    width: var(--size-switch-w);
+    height: var(--size-switch-h);
+    border-radius: var(--radius-pill);
+    background: var(--color-track);
+    box-shadow: inset 0 0 0 var(--bw-hair) var(--color-line);
+    transition: background-color var(--dur-base) var(--ease);
+  }
+
+  .toggle .sw::after {
+    content: '';
+    position: absolute;
+    top: var(--space-0-5);
+    left: var(--space-0-5);
+    width: var(--size-switch-knob);
+    height: var(--size-switch-knob);
+    border-radius: 50%;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-knob);
+    transition: transform var(--dur-base) var(--ease);
+  }
+
+  .toggle[aria-checked='true'] .sw {
+    background: var(--color-brand);
+  }
+
+  .toggle[aria-checked='true'] .sw::after {
+    transform: translateX(calc(var(--size-switch-w) - var(--size-switch-knob) - 2 * var(--space-0-5)));
+  }
+
+  .toggle[aria-disabled='true'] {
+    opacity: 0.38;
+  }
+
+  /* kelompok pilihan bersegmen (kecepatan, jalur) */
+  .seg {
+    display: inline-flex;
+    padding: var(--space-0-5);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-sunken);
+    border: var(--bw-hair) solid var(--color-line);
+    gap: var(--space-0-5);
+  }
+
+  .seg button {
+    min-height: var(--size-touch);
+    min-width: var(--size-touch);
+    padding: 0 var(--space-3);
+    border-radius: var(--radius-sm);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-small);
+    color: var(--color-text-secondary);
+    transition:
+      background-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+
+  .seg button[aria-checked='true'] {
+    background: var(--color-surface);
+    color: var(--color-brand);
+    box-shadow: var(--shadow-1);
+  }
+
+  /* slider: lintasan biru, jempol putih bergaris emas 26 px */
+  .slider {
+    appearance: none;
+    flex: 1;
+    min-width: 0;
+    height: var(--size-touch);
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .slider::-webkit-slider-runnable-track {
+    height: var(--size-track);
+    border-radius: var(--size-track);
+    background: linear-gradient(90deg, var(--color-intermediate), var(--color-brand));
+  }
+
+  .slider::-moz-range-track {
+    height: var(--size-track);
+    border-radius: var(--size-track);
+    background: linear-gradient(90deg, var(--color-intermediate), var(--color-brand));
+  }
+
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    width: var(--size-thumb);
+    height: var(--size-thumb);
+    margin-top: calc((var(--size-track) - var(--size-thumb)) / 2);
+    border-radius: 50%;
+    background: var(--color-surface);
+    border: var(--bw-4) solid var(--color-result);
+    box-shadow: var(--shadow-knob);
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+
+  .slider::-moz-range-thumb {
+    width: var(--size-thumb);
+    height: var(--size-thumb);
+    border-radius: 50%;
+    background: var(--color-surface);
+    border: var(--bw-4) solid var(--color-result);
+  }
+
+  .slider:hover::-webkit-slider-thumb {
+    transform: scale(1.05);
+  }
+
+  .slider:disabled {
+    opacity: 0.38;
+  }
+
+  /* kolom cari dengan label terlihat bagi pembaca layar */
+  .search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .search .lucide {
+    position: absolute;
+    left: var(--space-3);
+    color: var(--color-text-muted);
+    pointer-events: none;
+  }
+
+  .search input {
+    width: 100%;
+    min-height: var(--size-touch);
+    padding: 0 var(--space-3) 0 calc(var(--space-3) + var(--size-icon-md) + var(--space-2));
+    border-radius: var(--radius-pill);
+    border: var(--bw-1) solid var(--color-line);
+    background: var(--color-surface);
+    font-size: var(--fs-body);
+  }
+
+  .search input:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+    border-color: var(--color-brand);
+  }
+}

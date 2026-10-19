@@ -1,0 +1,203 @@
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    height: 100%;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    height: 100%;
+    overflow: hidden;
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--color-text);
+    background: var(--color-page);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* titik halus khas kertas grafik, memudar ke bawah */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-stage);
+    pointer-events: none;
+    background-image: radial-gradient(var(--color-page-dots) 1px, transparent 1.3px);
+    background-size: var(--size-dot-grid) var(--size-dot-grid);
+    mask-image: linear-gradient(180deg, var(--a-black-65), transparent);
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+
+  button {
+    background: none;
+    border: 0;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  a {
+    color: var(--color-intermediate);
+    text-underline-offset: var(--space-1);
+  }
+
+  b,
+  strong {
+    font-weight: var(--fw-bold);
+    color: var(--color-brand);
+  }
+
+  img,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  :focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+    border-radius: var(--radius-sm);
+  }
+
+  /* fokus terprogram (pindah rute) tidak perlu cincin; fokus keyboard tetap terlihat */
+  [tabindex='-1']:focus:not(:focus-visible),
+  h1[tabindex='-1']:focus {
+    outline: none;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  .lucide {
+    width: var(--size-icon-md);
+    height: var(--size-icon-md);
+    flex: none;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .skip-link {
+    position: fixed;
+    left: var(--space-3);
+    top: var(--space-3);
+    z-index: var(--z-rotate);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--color-brand);
+    color: var(--color-on-brand);
+    font-weight: var(--fw-bold);
+    transform: translateY(-200%);
+  }
+
+  .skip-link:focus-visible {
+    transform: none;
+  }
+
+  /* label mono kapital ala gambar teknik */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-constraint);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2-5);
+  }
+
+  .eyebrow::before {
+    content: '';
+    width: var(--space-5);
+    height: var(--bw-2);
+    background: currentcolor;
+  }
+
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .k-red {
+    color: var(--color-constraint);
+  }
+
+  .k-blue {
+    color: var(--color-intermediate);
+  }
+
+  .k-gold {
+    color: var(--color-result-ink);
+  }
+
+  /* panggung blueprint: grid dua lapis 80 + 16 */
+  .bp {
+    background-color: var(--color-stage);
+    color: var(--color-on-stage);
+    background-image:
+      radial-gradient(110% 80% at 70% -10%, var(--color-stage-glow) 0%, transparent 60%),
+      linear-gradient(var(--color-stage-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-stage-line) 1px, transparent 1px),
+      linear-gradient(var(--color-stage-line-minor) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-stage-line-minor) 1px, transparent 1px);
+    background-size:
+      100% 100%,
+      var(--size-grid-major) var(--size-grid-major),
+      var(--size-grid-major) var(--size-grid-major),
+      var(--size-grid-minor) var(--size-grid-minor),
+      var(--size-grid-minor) var(--size-grid-minor);
+  }
+
+  /* tanda potong emas di sudut panel (bukan hasil; garis tipis panggung sesuai template) */
+  .crop {
+    position: relative;
+  }
+
+  .crop::before {
+    --c: var(--color-stage-accent);
+    --l: var(--size-crop);
+    --w: var(--bw-1);
+
+    content: '';
+    position: absolute;
+    inset: var(--space-3);
+    z-index: var(--z-crop);
+    pointer-events: none;
+    opacity: 0.75;
+    background:
+      linear-gradient(var(--c), var(--c)) left top / var(--l) var(--w) no-repeat,
+      linear-gradient(var(--c), var(--c)) left top / var(--w) var(--l) no-repeat,
+      linear-gradient(var(--c), var(--c)) right top / var(--l) var(--w) no-repeat,
+      linear-gradient(var(--c), var(--c)) right top / var(--w) var(--l) no-repeat,
+      linear-gradient(var(--c), var(--c)) left bottom / var(--l) var(--w) no-repeat,
+      linear-gradient(var(--c), var(--c)) left bottom / var(--w) var(--l) no-repeat,
+      linear-gradient(var(--c), var(--c)) right bottom / var(--l) var(--w) no-repeat,
+      linear-gradient(var(--c), var(--c)) right bottom / var(--w) var(--l) no-repeat;
+  }
+}

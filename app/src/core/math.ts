@@ -1,0 +1,39 @@
+/**
+ * KaTeX (dibundel lokal, PRD §14.1). `tex()` untuk satu rumus; `renderMath()` mengganti
+ * segmen $…$ dan $$…$$ di dalam elemen. Tanpa eval; galat rumus ditampilkan sebagai teks.
+ */
+import katex from 'katex';
+import { esc } from './dom';
+
+export function tex(src: string, displayMode = false): string {
+  try {
+    return katex.renderToString(src, {
+      throwOnError: false,
+      displayMode,
+      output: 'htmlAndMathml',
+      strict: 'ignore',
+    });
+  } catch {
+    return src;
+  }
+}
+
+/** Ubah teks bercampur rumus menjadi HTML. Bagian non-rumus sudah berupa HTML tepercaya (konten bundel). */
+export function mathHtml(s: string): string {
+  return s.replace(/\$\$([\s\S]+?)\$\$|\$([^$]+?)\$/g, (_m, d: string | undefined, i: string | undefined) =>
+    d !== undefined ? tex(d, true) : tex(i ?? ''),
+  );
+}
+
+/** Ganti segmen $…$ pada simpul teks di dalam elemen (teks di luar rumus diloloskan). */
+export function renderMath(el: Element): void {
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  const hits: Text[] = [];
+  for (let n = walker.nextNode(); n; n = walker.nextNode())
+    if (n.nodeValue?.includes('$')) hits.push(n as Text);
+  for (const t of hits) {
+    const span = document.createElement('span');
+    span.innerHTML = mathHtml(esc(t.nodeValue ?? ''));
+    t.replaceWith(...span.childNodes);
+  }
+}

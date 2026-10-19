@@ -1,0 +1,369 @@
+/* Shell: kerangka aplikasi, header, kaki, lencana offline (PRD §7.3). */
+@layer components {
+  #app {
+    position: relative;
+    z-index: var(--z-raised);
+    height: 100vh;
+    height: 100dvh;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr);
+    overflow: hidden;
+  }
+
+  .top {
+    position: relative;
+    z-index: var(--z-header);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: calc(var(--header-h) + var(--safe-top));
+    padding: var(--safe-top) max(var(--gutter), var(--safe-right)) 0 max(var(--gutter), var(--safe-left));
+    background: var(--color-glass);
+    backdrop-filter: blur(var(--blur-glass));
+    border-bottom: var(--bw-hair) solid var(--color-line);
+  }
+
+  .top-back {
+    flex: none;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+    min-height: var(--size-touch);
+    color: inherit;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+  }
+
+  .wordmark {
+    display: block;
+    height: var(--size-icon-lg);
+    width: auto;
+    color: var(--color-brand);
+    flex: none;
+  }
+
+  .brand-sub {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+
+  /* blok judul ala gambar teknik: BAGIAN / nomor / judul */
+  .tblock {
+    display: flex;
+    align-items: stretch;
+    min-width: 0;
+    border: var(--bw-1) solid var(--color-brand);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+  }
+
+  .tblock span {
+    display: flex;
+    align-items: center;
+    padding: var(--space-1) var(--space-2-5);
+    white-space: nowrap;
+  }
+
+  .tblock .tb-k {
+    background: var(--color-brand);
+    color: var(--color-on-brand);
+    letter-spacing: var(--tracking-wide);
+  }
+
+  .tblock .tb-n {
+    color: var(--color-constraint);
+    font-weight: var(--fw-bold);
+    border-right: var(--bw-1) solid var(--color-brand);
+  }
+
+  .tblock .tb-t {
+    color: var(--color-brand);
+    font-weight: var(--fw-semibold);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+
+  .top-spacer {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .top-ctrls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex: none;
+  }
+
+  .top-ctrls .btn .btn-label {
+    display: inline;
+  }
+
+  /* lencana kesiapan offline */
+  .offline-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1-5);
+    min-height: var(--size-touch);
+    padding: 0 var(--space-3);
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-secondary);
+    background: var(--color-surface-sunken);
+    white-space: nowrap;
+  }
+
+  .offline-badge .lucide {
+    width: var(--size-icon-sm);
+    height: var(--size-icon-sm);
+  }
+
+  .offline-badge[data-state='ready'] {
+    color: var(--color-intermediate);
+    background: var(--color-intermediate-bg);
+  }
+
+  .offline-badge[data-state='error'] {
+    color: var(--color-constraint);
+    background: var(--color-constraint-bg);
+  }
+
+  .offline-badge .bar {
+    position: relative;
+    width: var(--space-7);
+    height: var(--space-1);
+    border-radius: var(--radius-pill);
+    background: var(--color-track);
+    overflow: hidden;
+  }
+
+  .offline-badge .bar i {
+    position: absolute;
+    inset: 0;
+    background: var(--color-intermediate);
+    transform-origin: left center;
+    transform: scaleX(var(--p, 0));
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+
+  .main {
+    position: relative;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .main:focus {
+    outline: none;
+  }
+
+  .foot {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: calc(var(--footer-h) + var(--safe-bottom));
+    padding: 0 max(var(--gutter), var(--safe-right)) var(--safe-bottom) max(var(--gutter), var(--safe-left));
+    border-top: var(--bw-hair) solid var(--color-line);
+    background: var(--color-glass-strong);
+    font-size: var(--fs-caption);
+    color: var(--color-text-secondary);
+  }
+
+  .foot-copy {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .foot .link-btn {
+    font-size: var(--fs-caption);
+  }
+
+  .foot .ver {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    color: var(--color-text-muted);
+  }
+
+  /* halaman berkolom tunggal yang dapat digulir (Tentang, Pengaturan, Kemajuan) */
+  .page-scroll {
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: var(--space-5) max(var(--gutter), var(--safe-right)) var(--space-6)
+      max(var(--gutter), var(--safe-left));
+  }
+
+  .page-col {
+    max-width: var(--size-page-max);
+    margin: 0 auto;
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-title);
+    font-weight: var(--fw-black);
+    font-size: var(--fs-h2);
+    line-height: var(--lh-heading);
+    color: var(--color-brand);
+  }
+
+  .panel {
+    background: var(--color-surface);
+    border: var(--bw-hair) solid var(--color-line);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4) var(--space-5);
+    box-shadow: var(--shadow-1);
+  }
+
+  .panel h2 {
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-ui);
+    font-weight: var(--fw-heavy);
+    font-size: var(--fs-title);
+    color: var(--color-brand);
+    margin-bottom: var(--space-2);
+  }
+
+  .panel p + p {
+    margin-top: var(--space-2);
+  }
+
+  .panel .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-4);
+    min-height: var(--size-touch);
+    padding: var(--space-1) 0;
+  }
+
+  .panel .row + .row {
+    border-top: var(--bw-hair) dashed var(--color-line);
+  }
+
+  .panel .row-label {
+    display: grid;
+    gap: var(--space-0-5);
+    font-weight: var(--fw-semibold);
+  }
+
+  .panel .row-label small {
+    font-weight: var(--fw-regular);
+    font-size: var(--fs-caption);
+    color: var(--color-text-muted);
+  }
+
+  .muted {
+    color: var(--color-text-muted);
+  }
+
+  @media (max-height: 520px) {
+    .brand-sub,
+    .top-ctrls .btn .btn-label {
+      display: none;
+    }
+
+    .offline-badge {
+      padding: 0 var(--space-2);
+    }
+
+    .offline-badge .bar {
+      width: var(--space-6);
+    }
+  }
+
+  @media (max-width: 760px) {
+    .brand-sub,
+    .top-ctrls .btn .btn-label,
+    .offline-badge .ob-text {
+      display: none;
+    }
+  }
+}
+
+/* penanda kata: garis aksen kusut → lurus (clip-path + opacity saja) */
+@layer components {
+  .wordmark {
+    overflow: visible;
+  }
+
+  .wm-text {
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-hero);
+    font-weight: var(--fw-black);
+    fill: currentcolor;
+  }
+
+  .wm-kusut,
+  .wm-lurus {
+    fill: none;
+    stroke: var(--color-intermediate);
+    stroke-width: var(--bw-3);
+    stroke-linecap: round;
+  }
+
+  .wm-kusut {
+    opacity: 0;
+  }
+
+  .wm--intro .wm-kusut {
+    animation: wm-kusut calc(var(--dur-enter) * 2.6) var(--ease-out) var(--delay-step-2) both;
+  }
+
+  .wm--intro .wm-lurus {
+    animation: wm-lurus calc(var(--dur-enter) * 2.6) var(--ease) var(--delay-step-2) both;
+  }
+
+  @keyframes wm-kusut {
+    0% {
+      opacity: 1;
+      clip-path: inset(0 100% 0 0);
+    }
+
+    45% {
+      opacity: 1;
+      clip-path: inset(0 0 0 0);
+    }
+
+    70% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  @keyframes wm-lurus {
+    0%,
+    70% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+}

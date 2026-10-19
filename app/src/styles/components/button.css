@@ -1,0 +1,162 @@
+/* Tombol (PRD §13.6). Satu tombol utama per layar. */
+@layer components {
+  .btn {
+    --btn-bg: var(--color-surface);
+    --btn-fg: var(--color-brand);
+    --btn-border: var(--color-line);
+    --btn-bg-hover: var(--color-surface);
+    --btn-border-hover: var(--color-brand);
+    --btn-bg-press: var(--color-surface-sunken);
+    --btn-h: var(--size-touch);
+    --btn-px: var(--space-4);
+    --btn-radius: var(--radius-md);
+    --btn-ring: var(--color-focus);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: var(--btn-h);
+    padding: 0 var(--btn-px);
+    border-radius: var(--btn-radius);
+    border: var(--bw-1) solid var(--btn-border);
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-small);
+    line-height: var(--lh-heading);
+    white-space: nowrap;
+    text-decoration: none;
+    transition:
+      background-color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
+
+  .btn:focus-visible {
+    outline-color: var(--btn-ring);
+  }
+
+  @media (hover: hover) {
+    .btn:hover {
+      background: var(--btn-bg-hover);
+      border-color: var(--btn-border-hover);
+    }
+  }
+
+  .btn:active {
+    background: var(--btn-bg-press);
+    transform: scale(var(--press-scale));
+    transition-duration: var(--dur-instant);
+  }
+
+  .btn[aria-disabled='true'],
+  .btn:disabled {
+    opacity: 0.38;
+    cursor: default;
+    transform: none;
+  }
+
+  .btn--primary {
+    --btn-bg: var(--color-brand);
+    --btn-fg: var(--color-on-brand);
+    --btn-border: var(--color-brand);
+    --btn-bg-hover: var(--color-brand-hover);
+    --btn-border-hover: var(--color-brand-hover);
+    --btn-bg-press: var(--color-brand-hover);
+
+    box-shadow: var(--shadow-btn);
+  }
+
+  @media (hover: hover) {
+    .btn--primary:hover {
+      transform: translateY(var(--lift-1));
+    }
+  }
+
+  /* emas: hanya aksi hasil (mis. Coba latihan serupa setelah SELESAI) */
+  .btn--gold {
+    --btn-bg: var(--color-result);
+    --btn-fg: var(--color-brand);
+    --btn-border: var(--color-result);
+    --btn-bg-hover: var(--color-result-soft);
+    --btn-border-hover: var(--color-result-soft);
+    --btn-bg-press: var(--color-result-soft);
+    --btn-ring: var(--color-focus-on-gold);
+  }
+
+  .btn--danger {
+    --btn-fg: var(--color-constraint);
+    --btn-border-hover: var(--color-constraint);
+  }
+
+  .btn--lg {
+    --btn-h: var(--size-touch-lg);
+    --btn-px: var(--space-5);
+
+    font-size: var(--fs-body);
+  }
+
+  .btn--block {
+    width: 100%;
+  }
+
+  /* ikon-tombol 44×44 (aria-label wajib) */
+  .icon-btn {
+    --ib-fg: var(--color-brand);
+
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    width: var(--size-touch);
+    height: var(--size-touch);
+    flex: none;
+    border-radius: var(--radius-md);
+    border: var(--bw-hair) solid var(--color-line);
+    background: var(--color-surface);
+    color: var(--ib-fg);
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .icon-btn:hover {
+      border-color: var(--color-brand);
+    }
+  }
+
+  .icon-btn:active {
+    background: var(--color-surface-sunken);
+    transform: scale(var(--press-scale));
+  }
+
+  /* keadaan "mati" untuk toggle ikon: coret merah, tidak hanya warna */
+  .icon-btn[aria-pressed='false'] {
+    --ib-fg: var(--color-text-muted);
+  }
+
+  .icon-btn[aria-pressed='false']::after {
+    content: '';
+    position: absolute;
+    width: var(--size-ring);
+    height: var(--bw-2);
+    border-radius: var(--bw-2);
+    background: var(--color-constraint);
+    transform: rotate(-45deg);
+  }
+
+  /* tautan bergaya teks dengan area ketuk 44 px */
+  .link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1-5);
+    min-height: var(--size-touch);
+    padding: 0 var(--space-1);
+    color: var(--color-intermediate);
+    font-weight: var(--fw-semibold);
+    text-decoration: underline;
+    text-underline-offset: var(--space-1);
+  }
+}

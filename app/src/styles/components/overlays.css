@@ -1,0 +1,253 @@
+/* Lembar (sheet/modal), toast, layar putar potret (PRD §13.6, §14). */
+@layer components {
+  .sheet {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-drawer);
+    display: grid;
+    place-items: center;
+    padding: max(var(--space-4), var(--safe-top)) max(var(--space-4), var(--safe-right))
+      max(var(--space-4), var(--safe-bottom)) max(var(--space-4), var(--safe-left));
+  }
+
+  .sheet-scrim {
+    position: absolute;
+    inset: 0;
+    background: var(--color-scrim);
+  }
+
+  .sheet-card {
+    position: relative;
+    width: min(var(--size-sheet-w), 100%);
+    max-height: 100%;
+    overflow: auto;
+    overscroll-behavior: contain;
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-3);
+    padding: var(--space-5) var(--space-5) var(--space-5);
+  }
+
+  .sheet-card:focus-visible {
+    outline: none;
+  }
+
+  .sheet-head {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+
+  .sheet-title {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-title);
+    font-weight: var(--fw-heavy);
+    font-size: var(--fs-title);
+    line-height: var(--lh-heading);
+    color: var(--color-brand);
+  }
+
+  .sheet-body {
+    color: var(--color-text-secondary);
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .sheet-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-2);
+    margin-top: var(--space-5);
+  }
+
+  @media (max-height: 520px) {
+    .sheet-card {
+      padding: var(--space-4);
+    }
+
+    .sheet-actions {
+      margin-top: var(--space-3);
+    }
+  }
+
+  /* toast: tidak mencuri fokus, hilang otomatis */
+  .toast-host {
+    position: fixed;
+    left: 50%;
+    bottom: calc(var(--footer-h) + var(--space-4) + var(--safe-bottom));
+    z-index: var(--z-toast);
+    display: grid;
+    gap: var(--space-2);
+    width: max-content;
+    max-width: min(var(--size-toast-max), calc(100vw - 2 * var(--space-4)));
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .toast {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2-5) var(--space-3) var(--space-2-5) var(--space-4);
+    border-radius: var(--radius-lg);
+    background: var(--color-brand);
+    color: var(--color-on-brand);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-semibold);
+    box-shadow: var(--shadow-3);
+    pointer-events: auto;
+  }
+
+  .toast b {
+    color: inherit;
+  }
+
+  .toast .btn {
+    --btn-bg: var(--color-surface);
+    --btn-fg: var(--color-brand);
+    --btn-border: var(--color-surface);
+    --btn-h: var(--size-touch);
+  }
+
+  .toast--result {
+    background: var(--color-result);
+    color: var(--color-brand);
+  }
+
+  /* layar putar: tampil pada orientasi potret di semua perangkat (landscape saja, K4) */
+  .rotate {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-rotate);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-5);
+    padding: var(--space-6);
+    text-align: center;
+  }
+
+  .rotate h2 {
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-title);
+    font-weight: var(--fw-black);
+    font-size: var(--fs-h2);
+    line-height: var(--lh-heading);
+    color: var(--color-on-stage);
+    max-width: 14em;
+  }
+
+  .rotate p {
+    color: var(--color-on-stage-muted);
+    max-width: 22em;
+  }
+
+  .phone-wrap {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: var(--size-phone-wrap);
+    height: var(--size-phone-wrap);
+  }
+
+  .phone {
+    position: relative;
+    width: var(--size-phone-w);
+    height: var(--size-phone-h);
+    border: var(--bw-4) solid var(--color-on-stage);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 0 0 var(--space-1-5) var(--a-sky-15);
+    animation: turn-phone var(--dur-loop) var(--ease) infinite;
+  }
+
+  .phone::before {
+    content: '';
+    position: absolute;
+    inset: var(--space-1-5) var(--space-1);
+    border-radius: var(--radius-xs);
+    background: linear-gradient(160deg, var(--color-intermediate), var(--color-brand));
+  }
+
+  .phone i {
+    position: absolute;
+    inset: var(--space-4) var(--space-2-5);
+    z-index: var(--z-raised);
+    border-radius: var(--bw-3);
+    background: var(--color-stage-accent);
+    clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
+    animation: water-tilt var(--dur-loop) var(--ease) infinite;
+  }
+
+  .rot-arrow {
+    position: absolute;
+    inset: 0;
+    color: var(--color-stage-accent);
+    animation: arrow-fade var(--dur-loop) var(--ease) infinite;
+  }
+
+  @keyframes turn-phone {
+    0%,
+    15% {
+      transform: rotate(0);
+    }
+
+    55%,
+    85% {
+      transform: rotate(-90deg);
+    }
+
+    100% {
+      transform: rotate(0);
+    }
+  }
+
+  @keyframes arrow-fade {
+    0%,
+    10% {
+      opacity: 0;
+    }
+
+    25%,
+    50% {
+      opacity: 1;
+    }
+
+    60%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes water-tilt {
+    0%,
+    15% {
+      clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
+    }
+
+    55%,
+    85% {
+      clip-path: polygon(0 0, 40% 0, 40% 100%, 0 100%);
+    }
+
+    100% {
+      clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
+    }
+  }
+
+  @media (orientation: portrait) {
+    .rotate {
+      display: flex;
+    }
+
+    #app,
+    .sheet,
+    .toast-host {
+      visibility: hidden;
+    }
+  }
+}
