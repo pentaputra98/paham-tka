@@ -2,6 +2,7 @@
 import 'katex/dist/katex-swap.min.css';
 import './styles/index.css';
 
+import { setupAudio } from './core/audio';
 import { watchMotion } from './core/clock';
 import { logError } from './core/diag';
 import { report } from './core/diag';
@@ -42,6 +43,7 @@ window.addEventListener('error', (e) => onFatal(`${e.message} @${e.filename}:${e
 window.addEventListener('unhandledrejection', (e) => onFatal(`promise: ${String(e.reason)}`));
 
 watchMotion();
+setupAudio();
 const applyClassroom = (): void => {
   document.documentElement.classList.toggle('is-classroom', store.settings.classroom);
 };
