@@ -20,6 +20,7 @@ export const DUR = {
   flip: 1050,
   toast: 4000,
   autoplayGap: 1200,
+  shake: 450,
 } as const;
 
 /** Geser terarah antarlayar: maju dari kanan, mundur dari kiri (px). */
