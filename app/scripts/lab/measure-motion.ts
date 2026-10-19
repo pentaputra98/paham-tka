@@ -1,6 +1,5 @@
 /** Uji kelayakan Motion, kriteria 4: ukuran tambahan gzip per varian (PRD §13.5a). */
 import { mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { build } from 'vite';
