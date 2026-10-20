@@ -21,6 +21,13 @@ Kesepuluh soal Rilis 1 kini punya modul pembahasan lengkap: 1, 2, 5, 6, 13, 16, 
 
 Semua oracle mencocokkan kunci di `docs/pembahasan25.md`. **Tidak ada kunci yang berubah.**
 
+**Uji akhir (commit `e37fcdc`):**
+- `npm run check` lolos;
+- unit 31/31;
+- e2e 49/50 pada putaran penuh. Satu uji jalan penuh soal 25 gagal sekali; diulang 2× seluruh berkasnya lolos 14/14 (dicatat *flaky*, penyebab belum ditemukan);
+- matriks viewport 124/124 (11 ukuran × 10 soal + layar umum);
+- lab 3D 5/5.
+
 ## 2. Perbaikan mesin yang ditemukan saat mengerjakan konten
 
 - **Papan:**
