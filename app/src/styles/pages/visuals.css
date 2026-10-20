@@ -253,3 +253,217 @@
     }
   }
 }
+
+/* ---------- soal 18: pintu kaca patri (3D pelengkap) + padanan 2D ---------- */
+@layer pages {
+  .vis-door {
+    position: relative;
+    height: 100%;
+  }
+
+  .door3d-host {
+    position: absolute;
+    inset: 0;
+  }
+
+  .door3d-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  .vis-door.is-2d .door3d-host {
+    display: none;
+  }
+
+  .door-skip {
+    position: absolute;
+    right: var(--space-2);
+    bottom: var(--space-2);
+    z-index: var(--z-lab);
+  }
+
+  .l3wrap {
+    position: absolute;
+    inset: 0;
+    z-index: var(--z-label3d);
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .l3 {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: var(--space-1) var(--space-2-5);
+    border-radius: var(--radius-sm);
+    border: var(--bw-hair) solid var(--color-stage-border);
+    background: var(--a-bp-62);
+    color: var(--color-on-stage);
+    font-family: var(--font-mono);
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-semibold);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+    will-change: transform, opacity;
+  }
+
+  .l3 i {
+    font-family: var(--font-math);
+    font-size: 1.25em;
+  }
+
+  .l3 b {
+    color: inherit;
+  }
+
+  .l3.red {
+    border-color: var(--red-400);
+  }
+
+  .l3.blue {
+    border-color: var(--color-stage-accent);
+  }
+
+  .l3.white {
+    border-color: var(--color-on-stage);
+  }
+
+  .l3.sky {
+    border-color: var(--color-on-stage-muted);
+  }
+
+  .l3.big {
+    padding: var(--space-1-5) var(--space-3);
+    background: var(--color-glass-strong);
+    color: var(--color-brand);
+    font-size: var(--fs-body);
+  }
+
+  .l3.gold {
+    border-color: var(--color-result);
+    color: var(--color-result-soft);
+  }
+
+  .ribbon18 {
+    display: none;
+    height: 100%;
+  }
+
+  .vis-door.is-2d .ribbon18 {
+    display: block;
+  }
+
+  .ribbon18 svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .rb-red {
+    fill: var(--red-600);
+  }
+
+  .rb-green {
+    fill: var(--glass-green);
+  }
+
+  .rb-yellow {
+    fill: var(--glass-yellow);
+  }
+
+  .no-glass .rb-red,
+  .no-glass .rb-green,
+  .no-glass .rb-yellow,
+  .no-glass .rb-on-red {
+    opacity: 0.12;
+  }
+
+  .rb-sq {
+    fill: none;
+  }
+
+  .rb-ring {
+    fill: none;
+    stroke: var(--blue-300);
+    stroke-width: var(--bw-4);
+  }
+
+  .rb-side {
+    fill: none;
+    stroke: var(--paper-0);
+    stroke-width: var(--bw-4);
+  }
+
+  .rb-diam {
+    stroke: var(--bp-ink-300);
+    stroke-width: var(--bw-4);
+  }
+
+  .rb-rline {
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-2);
+  }
+
+  .rb-t {
+    font-family: var(--font-mono);
+    font-size: var(--svg-fs-xs);
+    fill: var(--color-on-stage);
+  }
+
+  .rb-mid {
+    text-anchor: middle;
+  }
+
+  .rb-strong {
+    font-weight: var(--fw-bold);
+  }
+
+  .rb-on-red {
+    fill: var(--paper-0);
+  }
+
+  .rb-b-ring {
+    fill: var(--blue-300);
+  }
+
+  .rb-b-side {
+    fill: var(--paper-0);
+  }
+
+  .rb-b-diam {
+    fill: var(--bp-ink-300);
+  }
+
+  .rb-ruler {
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-1);
+  }
+
+  .rb-metal {
+    fill: var(--metal-400);
+  }
+
+  .rb-over {
+    fill: var(--red-400);
+  }
+
+  .rb-over-t {
+    fill: var(--red-300);
+  }
+
+  .rb-lack {
+    fill: none;
+    stroke: var(--red-300);
+    stroke-dasharray: 4 3;
+  }
+
+  .rb-pas {
+    fill: var(--gold-400);
+  }
+
+  .rb-pas-t {
+    fill: var(--gold-300);
+  }
+}

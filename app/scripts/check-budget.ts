@@ -23,7 +23,7 @@ const css = files.filter((f) => f.endsWith('.css')).reduce((s, f) => s + gz(f), 
 const fonts = files.filter((f) => f.endsWith('.woff2')).reduce((s, f) => s + statSync(f).size, 0);
 const total = files.reduce((s, f) => s + statSync(f).size, 0);
 const lazy3d = files
-  .filter((f) => /solid3d|three/i.test(f) && f.endsWith('.js'))
+  .filter((f) => /solid3d|three|door3d-scene/i.test(f) && f.endsWith('.js'))
   .reduce((s, f) => s + gz(f), 0);
 
 const rows: Array<[string, number, number]> = [

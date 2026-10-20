@@ -39,6 +39,10 @@
     --gold-800: #7a5800;
     --gold-50: #fbf3dc;
     --line-200: #dce3ee;
+    /* objek 3D/2D soal 18 (warna benda dari gambar soal, bukan makna) */
+    --metal-400: #b8c2cf;
+    --glass-green: #5b8c5a;
+    --glass-yellow: #e3df5c;
 
     /* transparansi (dipakai lewat token semantik) */
     --a-navy-06: rgb(14 42 92 / 0.06);
