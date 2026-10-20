@@ -125,6 +125,7 @@
     --size-qcard-h-sm: 128px;
     --size-search-w: 260px;
     --size-key-col: 220px;
+    --size-hero-board: 236px;
     --size-cap-max: 540px;
     --size-seal: 58px;
     --size-row: 42px;
@@ -291,7 +292,7 @@
     --color-margin-line: var(--a-red-35);
     --color-nudge: var(--a-gold-40);
     --color-ring-soft: var(--a-gold-20);
-    --color-src-glow: var(--a-gold-90);
+    --color-src-glow: var(--blue-300);
 
     --focus-ring: var(--bw-3) solid var(--color-focus);
     --focus-offset: var(--space-0-5);

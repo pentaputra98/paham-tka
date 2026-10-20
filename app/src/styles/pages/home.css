@@ -508,3 +508,38 @@
     }
   }
 }
+
+@layer pages {
+  .fly-board .ht {
+    display: inline-block;
+    margin: 0 0.05em;
+  }
+
+  .fly-board .ht.op {
+    margin: 0 0.2em;
+  }
+
+  .fly-board .bl-m {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-0-5) var(--space-2);
+    border-radius: var(--radius-sm);
+  }
+}
+
+/* ruang papan mini dipesan agar siklus tidak menggeser tata letak (CLS) */
+@layer pages {
+  .fly-stage {
+    align-content: start;
+  }
+
+  .fly-stage .fly-board {
+    min-height: var(--size-hero-board);
+  }
+
+  @media (max-height: 520px) {
+    .fly-stage .fly-board {
+      min-height: var(--size-touch);
+    }
+  }
+}

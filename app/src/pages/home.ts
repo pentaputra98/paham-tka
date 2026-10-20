@@ -5,6 +5,7 @@
 import { esc, html, pad2 } from '../core/dom';
 import { icon, type IconName } from '../core/icons';
 import { tex } from '../core/math';
+import { startHero } from './hero';
 import { progressSummary, store } from '../core/store';
 import {
   DOMAIN_LABEL,
@@ -74,7 +75,7 @@ function heroHtml(): string {
     <div class="fly-stage" aria-hidden="true" data-hero-stage>
       <div class="fly-paper">
         <span class="fly-label">Soal 25</span>
-        ${tex('\\lim_{x\\to 3}\\dfrac{1-\\cos(6x-18)}{\\left(x-\\frac{9}{x}\\right)\\sin(6x-18)}')}
+        ${tex('\\lim_{\\htmlData{h=x3}{x\\to 3}}\\dfrac{1-\\cos(\\htmlData{h=pem}{6x-18})}{\\left(x-\\frac{9}{x}\\right)\\sin(6x-18)}')}
       </div>
       <div class="fly-board">
         <span class="fly-label">Papan tulis</span>
@@ -147,5 +148,11 @@ export function homePage(): PageView {
     if (b) showSoonSheet(Number(b.dataset.no));
   });
 
-  return { el, title: '', header: { progress: true }, footer: true };
+  let stopHero: () => void = () => undefined;
+  requestAnimationFrame(() => {
+    const stage = el.querySelector<HTMLElement>('[data-hero-stage]');
+    if (stage?.isConnected) stopHero = startHero(stage);
+  });
+
+  return { el, title: '', header: { progress: true }, footer: true, destroy: () => stopHero() };
 }
