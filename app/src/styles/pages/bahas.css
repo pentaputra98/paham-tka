@@ -574,6 +574,8 @@
     gap: var(--space-1-5);
     padding: var(--space-3) var(--space-3-5) var(--space-4);
     scrollbar-width: thin;
+    /* ruang scrollbar selalu disediakan: lebar isi papan tidak berubah saat baris bertambah */
+    scrollbar-gutter: stable;
   }
 
   .bl {

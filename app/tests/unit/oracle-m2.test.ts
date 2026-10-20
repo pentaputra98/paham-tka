@@ -3,6 +3,8 @@ import q01 from '../../src/content/soal/q01';
 import q02 from '../../src/content/soal/q02';
 import q05 from '../../src/content/soal/q05';
 import q06 from '../../src/content/soal/q06';
+import q13 from '../../src/content/soal/q13';
+import q16 from '../../src/content/soal/q16';
 import q17 from '../../src/content/soal/q17';
 import q18 from '../../src/content/soal/q18';
 
@@ -12,6 +14,8 @@ import q18 from '../../src/content/soal/q18';
  * Soal 2: solusi dicari dengan mencoba semua bilangan cacah; tiap pilihan dihitung ulang perkaliannya.
  * Soal 5: akar dicari dengan bagi dua pada perubahan tanda di kisi; tiap pilihan diuji dengan f(x) = 0.
  * Soal 6: pembagian bersusun numerik untuk semua pasangan bulat (a, b); hanya satu yang bersisa 5x − 1.
+ * Soal 13: semua (a, b) bulat diuji terhadap definisi trapesium sama kaki (sejajar, kaki sama, bukan jajargenjang).
+ * Soal 16: titik singgung dicari dengan menyapu sudut pada lingkaran; garis singgung diuji tegak lurus f.
  * Soal 17: luas tiap warna dihitung dengan mencacah titik pada kisi halus di atas rambu 40 × 40 cm.
  * Soal 18: lingkaran sebagai poligon 20.000 sisi; jari-jari dicari dengan bagi dua, bukan rumus.
  */
@@ -220,5 +224,49 @@ describe('oracle soal 2', () => {
       return tulisBenar && o.r[0] === sol[0]![0] && o.r[1] === sol[0]![1];
     });
     expect(ok.map(([k]) => k)).toEqual([q02.key.answer]);
+  });
+});
+
+// ---------- soal 13 ----------
+describe('oracle soal 13', () => {
+  it('hanya BC = (−1, 4) membentuk trapesium sama kaki; a² + 2b = 9 = pilihan C', () => {
+    const A = [0, 0];
+    const B = [6, 0];
+    const D = [1, 4];
+    const hits: Array<[number, number]> = [];
+    for (let a = -10; a <= 10; a++)
+      for (let b = -10; b <= 10; b++) {
+        const C = [B[0]! + a, B[1]! + b];
+        const dc = [C[0]! - D[0]!, C[1]! - D[1]!];
+        const ab = [B[0]! - A[0]!, B[1]! - A[1]!];
+        const sejajar = dc[0]! * ab[1]! - dc[1]! * ab[0]! === 0 && dc[0]! * ab[0]! > 0;
+        const kakiSama = a * a + b * b === D[0]! ** 2 + D[1]! ** 2;
+        const bukanJajargenjang = Math.hypot(dc[0]!, dc[1]!) !== Math.hypot(ab[0]!, ab[1]!);
+        if (sejajar && kakiSama && bukanJajargenjang) hits.push([a, b]);
+      }
+    expect(hits).toEqual([[-1, 4]]);
+    const v = hits[0]![0] ** 2 + 2 * hits[0]![1];
+    const options: Record<string, number> = { A: 5, B: 7, C: 9, D: 10, E: 13 };
+    expect(Object.keys(options).filter((k) => options[k] === v)).toEqual([q13.key.answer]);
+  });
+});
+
+// ---------- soal 16 ----------
+describe('oracle soal 16', () => {
+  it('titik pada lingkaran yang garis singgungnya ⊥ f adalah (3, −1) dan (1, −5)', () => {
+    const [cx, cy, r] = [2, -3, Math.hypot(3 - 2, -1 + 3)];
+    const fDir = [0 - -1, 2 - 0]; // C → D
+    const found: string[] = [];
+    for (let k = 0; k < 360000; k++) {
+      const t = (2 * Math.PI * k) / 360000;
+      const [x, y] = [cx + r * Math.cos(t), cy + r * Math.sin(t)];
+      const tan = [-Math.sin(t), Math.cos(t)]; // arah garis singgung
+      if (Math.abs(tan[0]! * fDir[0]! + tan[1]! * fDir[1]!) < 1e-4)
+        found.push(`${Math.round(x)},${Math.round(y)}`);
+    }
+    const uniq = [...new Set(found)].sort();
+    expect(uniq).toEqual(['1,-5', '3,-1']);
+    const opts = ['3,1', '1,-5', '-1,5', '3,-1', '-3,-1'];
+    expect(opts.map((o) => uniq.includes(o))).toEqual(q16.key.cardOk);
   });
 });

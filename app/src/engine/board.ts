@@ -149,11 +149,10 @@ export class Board {
   private fitRows(rows: RowView[]): void {
     if (!rows.length) return;
     rows.forEach((r) => r.m.style.removeProperty('--fit'));
-    const pad = parseFloat(getComputedStyle(this.body).paddingLeft || '0');
-    const avail = this.body.clientWidth - 2 * pad;
-    const need = rows.map((r) => r.m.scrollWidth);
+    // lebar acuan = lebar baris itu sendiri (isi papan tanpa padding dan scrollbar)
+    const need = rows.map((r) => [r.m.scrollWidth, r.el.clientWidth] as const);
     rows.forEach((r, i) => {
-      const n = need[i]!;
+      const [n, avail] = need[i]!;
       if (avail > 0 && n > avail) r.m.style.setProperty('--fit', Math.max(0.6, avail / n).toFixed(3));
     });
   }
@@ -165,6 +164,8 @@ export class Board {
   private finish(row: RowView, anim: boolean): void {
     row.el.querySelectorAll('.tk.hid').forEach((t) => t.classList.remove('hid'));
     if (row.spec.note) row.el.classList.add('noted');
+    // ukur ulang setelah token tampil: lebar baris bisa berubah sejak ditulis (font, catatan, kotak)
+    this.fit(row);
     if (row.spec.box && !row.boxed) {
       row.boxed = true;
       row.m.classList.add(`box-${row.spec.box}`);
@@ -249,6 +250,8 @@ export class Board {
       await this.write(want[i]!, anim, c);
     }
     this.dimPast();
+    // satu pengukuran akhir untuk semua baris (tata letak papan bisa bergeser selama langkah berjalan)
+    this.refit();
     return c.live();
   }
 

@@ -1485,6 +1485,20 @@ Pin: $a=-1$, $b=4$.
 | D | 10 | SALAH | Tidak sama dengan $9$. |
 | E | 13 | SALAH | Tidak sama dengan $9$. |
 
+*Ditambahkan M2 (20 Okt 2026; kunci tidak berubah), dipakai di `app/src/content/soal/q13.ts`:*
+- **Bagian 1, papan:**
+  - langkah 1.1: k1 Diketahui, k2 $AD=BC$ (`@s-kaki`);
+  - langkah 1.2: k3 $A(0,0)$, k4 $\vec{AD}$ dan $\vec{AB}$, k5 $\vec{BC}=(a,b)$, k6 Ditanya $a^2+2b$.
+- **Visual Bagian 2:** bidang koordinat SVG dengan tahap:
+  - `pts` (2.1);
+  - `sym` (2.2): garis $x=3$ dan $C$ bergerak dari posisi $D$ ke $(5,4)$;
+  - `legs` (2.3): kedua kaki $\sqrt{17}$;
+  - `final` (2.4): alas atas $DC$.
+- **Pin** dipakai agar angka terbang antarpapan: $B$ dan $D$ untuk b1–b4; $\vec{AD}$ dan $\vec{BC}$ untuk c1–d1. Pop-up 2.4: "Masukkan $a=-1$ dan $b=4$ ke $a^2+2b$."
+- **Langkah 2.3 (opsional) "Mengapa bukan a = 1?":** isi *Pemeriksaan hasil* (kasus $a=+1$ menghasilkan jajargenjang).
+- **Bagian 4:** rumus singkat kartu $5\ne9$ … $1+8=9$; papan ringkasan s1–s6; pertanyaan berhuruf A–E.
+- **Ringkasan `LR`:** $C=(5,4)$, $\vec{BC}=(-1,4)$ (navy) · $a^2+2b=9$ (emas) · **Jawaban C** (emas).
+
 ### Bagian 5 — Selesai
 - **Segel:** **C**
 - **Pop-up:** "$\vec{BC}=(-1,4)$, sehingga $a^2+2b=1+8=\mathbf{9}$."
@@ -1820,6 +1834,30 @@ Garis singgungnya (gradien $-\frac12$): di $(3,-1)$: $x+2y-1=0$; di $(1,-5)$: $x
 | (3) | $(-1,5)$ | SALAH | $AT^2=73\ne5$ | Tidak berada di lingkaran. |
 | (4) | $(3,-1)$ | BENAR | $AT^2=5$, $\vec{AT}=(1,2)$ | Titik $B$ pada gambar. |
 | (5) | $(-3,-1)$ | SALAH | $AT^2=29\ne5$ | Tidak berada di lingkaran. |
+
+*Ditambahkan M2 (20 Okt 2026; kunci tidak berubah), dipakai di `app/src/content/soal/q16.ts`:*
+- **Visual:** bidang koordinat SVG yang menggambar ulang `garis_dan_lingkaran.png`.
+  - Label titik di gambar menjadi sumber `@g-A`, `@g-B`, `@g-C`, `@g-D`. Langkah 1.2 menampilkan adegan ini agar k2–k3 terbang dari labelnya.
+  - Tahap per langkah:
+    - `grad` (2.1): segitiga geser 1, naik 2;
+    - `radius` (2.2): $AB=\sqrt5$;
+    - `par` (3.1): jari-jari sejajar $f$, dua garis singgung putus-putus, tanda siku, titik singgung emas;
+    - `test` (3.2): kandidat emas atau merah, dengan chip pilihan sebagai sumber `@o-1`…`@o-5`.
+  - Rentang $y$ gambar $[-6;\ 3{,}5]$. Kandidat $(-1,5)$ berada di luar gambar dan ditandai panah di tepi atas.
+- **Papan:**
+  - "Garis f" untuk a1–a3; "Jari-jari lingkaran" untuk b1–b3;
+  - "Titik singgung" untuk c1–c4, dengan pin $m_f=2$ dan $r=\sqrt5$;
+  - "Menguji tiap pilihan" untuk d1–d5, dengan pin $A$, $r^2=5$, $T_1$, $T_2$.
+- **Langkah 3.2** dipecah satu langkah per pilihan. Pop-up tambahan:
+  - "Pilihan $(1,-5)$: $\vec{AT}=(-1,-2)$, panjangnya $\sqrt5$ dan sejajar $(1,2)$. Lolos."
+  - "Pilihan $(-1,5)$: $AT^2=73$, jauh di luar lingkaran."
+  - "Pilihan $(3,-1)$: $\vec{AT}=(1,2)$, yaitu titik $B$ pada gambar. Lolos."
+  - "Pilihan $(-3,-1)$: $AT^2=29$, tidak berada di lingkaran."
+- **Bagian 5:**
+  - Pop-up per kartu dari kolom *Alasan*.
+  - Papan ringkasan s1–s6.
+  - Pertanyaan kesimpulan: $(3,-1)$ saja · $(3,1)$ dan $(1,-5)$ · **$(3,-1)$ dan $(1,-5)$** · $(-1,5)$ dan $(-3,-1)$.
+- **Ringkasan `LR`** memuat persamaan kedua garis singgung dari *Catatan lengkap*.
 
 ### Bagian 6 — Selesai
 - **Segel:** **(3,−1), (1,−5)**

@@ -5,6 +5,8 @@ import { createCubic5 } from './cubic5';
 import { createDoor3d } from './door3d';
 import { createMat1 } from './mat1';
 import { createSign } from './sign17';
+import { createTan16 } from './tan16';
+import { createTrap13 } from './trap13';
 
 export const VISUALS: Record<string, VisualFactory> = {
   cone: createCone,
@@ -12,4 +14,6 @@ export const VISUALS: Record<string, VisualFactory> = {
   door3d: createDoor3d,
   mat1: createMat1,
   sign: createSign,
+  tan16: createTan16,
+  trap13: createTrap13,
 };

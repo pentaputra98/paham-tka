@@ -838,3 +838,256 @@
     color: var(--color-constraint-on-stage);
   }
 }
+
+/* ---------- soal 13: bidang koordinat trapesium ----------
+   Alas biru, kaki merah (kendala sama panjang); bagian baru muncul bertahap lewat opacity. */
+@layer pages {
+  .vis-trap {
+    height: 100%;
+    display: grid;
+    place-items: center;
+  }
+
+  .vis-trap svg {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .tp-grid {
+    stroke: var(--a-sky-15);
+    stroke-width: var(--bw-hair);
+  }
+
+  .tp-ax {
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-1);
+  }
+
+  .tp-ab,
+  .tp-dc {
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-4);
+    stroke-linecap: round;
+  }
+
+  .tp-ad,
+  .tp-bc {
+    stroke: var(--color-constraint-on-stage);
+    stroke-width: var(--bw-4);
+    stroke-linecap: round;
+  }
+
+  .tp-sym {
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 6 5;
+  }
+
+  .tp-mirror {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-1);
+    stroke-dasharray: 4 4;
+  }
+
+  .tp-pt {
+    fill: var(--color-on-stage);
+  }
+
+  .tp-lbl {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-sm);
+    fill: var(--color-on-stage);
+  }
+
+  .tp-len {
+    fill: var(--color-constraint-on-stage);
+  }
+
+  .tp-sym,
+  .tp-sym-t,
+  .tp-mirror,
+  .tp-c,
+  .tp-c-t,
+  .tp-bc,
+  .tp-len,
+  .tp-dc {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .at-sym .tp-sym,
+  .at-sym .tp-sym-t,
+  .at-sym .tp-mirror,
+  .at-sym .tp-c,
+  .at-sym .tp-c-t,
+  .at-legs .tp-bc,
+  .at-legs .tp-len,
+  .at-final .tp-dc {
+    opacity: 1;
+  }
+
+  .at-legs .tp-mirror {
+    opacity: 0;
+  }
+}
+
+/* ---------- soal 16: garis f dan lingkaran c ----------
+   f biru (arah), jari-jari merah, garis singgung biru muda; emas hanya titik singgung yang lolos. */
+@layer pages {
+  .vis-tan {
+    height: 100%;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: var(--space-2);
+  }
+
+  .vis-tan svg {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .t16-grid {
+    stroke: var(--a-sky-15);
+    stroke-width: var(--bw-hair);
+  }
+
+  .t16-ax {
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-1);
+  }
+
+  .t16-num {
+    font-family: var(--font-mono);
+    font-size: var(--svg-fs-xs);
+    fill: var(--color-on-stage-muted);
+  }
+
+  .t16-lbl {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-sm);
+    fill: var(--color-on-stage);
+  }
+
+  .t16-circ {
+    fill: var(--a-sky-09);
+    stroke: var(--color-on-stage);
+    stroke-width: var(--bw-2);
+  }
+
+  .t16-f {
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-3);
+  }
+
+  .t16-pt {
+    fill: var(--color-on-stage);
+  }
+
+  .t16-rise,
+  .t16-par,
+  .t16-tan,
+  .t16-at {
+    fill: none;
+    stroke-width: var(--bw-2);
+  }
+
+  .t16-rise {
+    stroke: var(--color-stage-accent);
+    stroke-dasharray: 4 4;
+  }
+
+  .t16-r,
+  .t16-par {
+    stroke: var(--color-constraint-on-stage);
+    stroke-width: var(--bw-3);
+  }
+
+  .t16-tan {
+    stroke: var(--color-stage-accent);
+    stroke-dasharray: 8 5;
+  }
+
+  .t16-ra {
+    fill: none;
+    stroke: var(--color-on-stage);
+    stroke-width: var(--bw-1);
+  }
+
+  .t16-at {
+    stroke: var(--color-on-stage-muted);
+    stroke-dasharray: 3 4;
+  }
+
+  .t16-T {
+    fill: var(--color-result);
+    stroke: var(--paper-0);
+    stroke-width: var(--bw-2);
+  }
+
+  .t16-r-t {
+    fill: var(--color-constraint-on-stage);
+  }
+
+  .t16-cand {
+    fill: var(--color-on-stage-muted);
+    stroke: var(--paper-0);
+    stroke-width: var(--bw-1);
+  }
+
+  .t16-cand.on {
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-4);
+  }
+
+  .t16-cand.ok {
+    fill: var(--color-result);
+  }
+
+  .t16-cand.no {
+    fill: var(--color-constraint-on-stage);
+  }
+
+  /* tahap: bagian muncul bertahap lewat opacity */
+  .t16-rise,
+  .t16-rise-t,
+  .t16-r,
+  .t16-r-t,
+  .t16-par,
+  .t16-tan,
+  .t16-ra,
+  .t16-T,
+  .t16-T-t,
+  .t16-at,
+  .t16-cand,
+  .t16-opts {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .at-grad .t16-rise,
+  .at-grad .t16-rise-t,
+  .at-radius .t16-r,
+  .at-radius .t16-r-t,
+  .at-par .t16-par,
+  .at-par .t16-tan,
+  .at-par .t16-ra,
+  .at-par .t16-T,
+  .at-par .t16-T-t,
+  .at-test .t16-cand,
+  .at-test .t16-opts,
+  .at-test .t16-at.on {
+    opacity: 1;
+  }
+
+  .at-par .t16-rise,
+  .at-par .t16-rise-t {
+    opacity: 0;
+  }
+}
