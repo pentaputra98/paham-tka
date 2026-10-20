@@ -67,7 +67,9 @@ export class Scene {
         : ['BENAR', 'SALAH'];
     this.cards = new Cards(content.cards, labels);
     this.notes = html('<div class="notes-ov" tabindex="-1"></div>');
-    this.cap = html(`<div class="cap" role="status" aria-live="polite"><div class="cap-k"></div><div class="cap-t"></div><div class="cap-a"></div></div>`);
+    this.cap = html(
+      `<div class="cap" role="status" aria-live="polite"><div class="cap-k"></div><div class="cap-t"></div><div class="cap-a"></div></div>`,
+    );
     this.capK = this.cap.querySelector('.cap-k')!;
     this.capT = this.cap.querySelector('.cap-t')!;
     this.capA = this.cap.querySelector('.cap-a')!;
@@ -90,7 +92,8 @@ export class Scene {
   private setMode(m: Mode): void {
     if (this.mode === m) return;
     this.mode = m;
-    for (const x of ['soal', 'svg', 'cards', 'notes', 'done', '3d']) this.root.classList.toggle(`m-${x}`, x === m);
+    for (const x of ['soal', 'svg', 'cards', 'notes', 'done', '3d'])
+      this.root.classList.toggle(`m-${x}`, x === m);
   }
 
   /** Stabilo bertahap (≤ level menyala). */
@@ -101,7 +104,11 @@ export class Scene {
       (h.closest('.hl') ?? h).classList.toggle('on', on);
     });
     this.paper.querySelectorAll('.focus').forEach((e) => e.classList.remove('focus'));
-    if (focus) this.paper.querySelector(`[data-src="${CSS.escape(focus.replace(/^@/, ''))}"]`)?.closest('.hl')?.classList.add('focus');
+    if (focus)
+      this.paper
+        .querySelector(`[data-src="${CSS.escape(focus.replace(/^@/, ''))}"]`)
+        ?.closest('.hl')
+        ?.classList.add('focus');
   }
 
   /** Ganti adegan; mengembalikan true bila stabilo baru dinyalakan (perlu jeda sebelum menulis papan). */
@@ -155,11 +162,18 @@ export class Scene {
       b.addEventListener('click', a.onClick);
       this.capA.append(b);
     }
-    play(this.cap, [{ opacity: 0, transform: 'translateY(-10px) scale(.97)' }, { opacity: 1, transform: 'none' }], {
-      duration: DUR.enter,
-      easing: EASE_OUT,
-      ui: true,
-    });
+    play(
+      this.cap,
+      [
+        { opacity: 0, transform: 'translateY(-10px) scale(.97)' },
+        { opacity: 1, transform: 'none' },
+      ],
+      {
+        duration: DUR.enter,
+        easing: EASE_OUT,
+        ui: true,
+      },
+    );
   }
 
   /** Hitung area bebas (template layout()): dipanggil saat ukuran berubah dan tiap ganti langkah. */
@@ -175,6 +189,7 @@ export class Scene {
     const ft = this.mode === 'notes' ? 0 : Math.round((capBottom || 120) + 10);
     this.root.style.setProperty('--fr', `${fr}px`);
     this.root.style.setProperty('--ft', `${ft}px`);
+    this.board.refit();
     const vis = this.currentVisual ? this.visuals.get(this.currentVisual) : undefined;
     vis?.resize?.();
   }

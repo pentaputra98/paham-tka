@@ -8,6 +8,7 @@ import { logError } from './core/diag';
 import { report } from './core/diag';
 import { store } from './core/store';
 import { aboutPage, progressPage } from './pages/info';
+import { bahasPage } from './pages/bahas';
 import { detailPage } from './pages/detail';
 import { homePage } from './pages/home';
 import { settingsPage } from './pages/settings';
@@ -55,6 +56,7 @@ mountRotate();
 startShell({
   home: homePage,
   detail: detailPage,
+  bahas: bahasPage,
   kemajuan: progressPage,
   pengaturan: settingsPage,
   tentang: aboutPage,

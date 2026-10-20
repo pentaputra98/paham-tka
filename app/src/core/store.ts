@@ -183,6 +183,42 @@ export const store = {
     storage.set(KEY_PROGRESS, JSON.stringify(progress));
     emit('progress');
   },
+  /** Item kemajuan satu soal (dibuat bila belum ada). */
+  item(no: number): ItemProgress {
+    return progress.items[String(no)] ?? { watched: 0, done: false, marks: [], practice: [] };
+  },
+  updateItem(no: number, f: (it: ItemProgress) => ItemProgress): void {
+    const it = f(structuredClone(store.item(no)));
+    progress = { ...progress, items: { ...progress.items, [String(no)]: { ...it, lastTs: Date.now() } } };
+    storage.set(KEY_PROGRESS, JSON.stringify(progress));
+    emit('progress');
+  },
+  /** Posisi terakhir pembahasan (FR-BAH-9). */
+  setLastStep(no: number, b: number, l: number): void {
+    store.updateItem(no, (it) => ({ ...it, lastStep: { b, l } }));
+  },
+  /** Pop-up SELESAI tercapai (status Sudah dibahas, §7.4). */
+  markDone(no: number): void {
+    store.updateItem(no, (it) => ({ ...it, done: true, watched: it.watched + 1 }));
+  },
+  /** Tandai/batal tandai bagian sebagai "belum paham" (FR-BAH-2, FR-BAH-12). */
+  toggleMark(no: number, ch: number): boolean {
+    let on = false;
+    store.updateItem(no, (it) => {
+      on = !it.marks.includes(ch);
+      return {
+        ...it,
+        marks: on ? [...it.marks, ch].sort((a, b) => a - b) : it.marks.filter((m) => m !== ch),
+      };
+    });
+    return on;
+  },
+  /** Tambah waktu belajar (ms) untuk ringkasan beranda. */
+  addTime(ms: number): void {
+    if (ms <= 0 || ms > 6 * 3600000) return;
+    progress = { ...progress, totalMs: progress.totalMs + ms };
+    storage.set(KEY_PROGRESS, JSON.stringify(progress));
+  },
   countVisit(): number {
     ui = { ...ui, visits: ui.visits + 1 };
     storage.set(KEY_UI, JSON.stringify(ui));

@@ -121,6 +121,18 @@
     --size-qcard-h-sm: 128px;
     --size-search-w: 260px;
     --size-key-col: 220px;
+    --size-cap-max: 540px;
+    --size-seal: 58px;
+    --size-row: 42px;
+    --size-row-sm: 32px;
+    --size-dot-w: 24px;
+    --size-stamp-room: 124px;
+    --size-perspective: 1300px;
+    --size-sketch: 300px;
+    --size-ft-0: 132px;
+    --size-fr-0: 500px;
+    --gap-lobby: clamp(20px, 4vw, 64px);
+    --pad-lobby-y: clamp(18px, 3.5vw, 48px);
     --blur-glass: 12px;
     --size-card-min: 168px;
     --size-hero-max: 560px;
@@ -189,10 +201,12 @@
     --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
     --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
     --ease-spring: cubic-bezier(0.2, 1.4, 0.4, 1);
+    --ease-flip: cubic-bezier(0.7, 0, 0.2, 1);
     --press-scale: 0.97;
     --press-scale-card: 0.985;
 
     /* lapisan (PRD §13.4) */
+    --z-below: -1;
     --z-stage: 0;
     --z-raised: 1;
     --z-free: 3;

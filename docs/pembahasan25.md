@@ -2591,6 +2591,19 @@ Uji numerik di $\theta=\frac\pi2$: segitiga siku-siku sama kaki dengan alas $2r$
 - **Langkah 1.1** — pop-up: "Baca limitnya dengan teliti. Faktornya adalah $x-\frac{9}{x}$ (bukan $\frac{x-9}{x}$)."
 - **Langkah 1.2** — pop-up: "Substitusi $x=3$: pembilang $1-\cos0=0$ dan penyebut $\left(3-3\right)\sin0=0$. Bentuknya $\frac00$."
 
+*Baris papan Bagian 1 (ditambahkan M1, 20 Okt 2026, disetujui pemilik materi; disusun dari teks soal dan pop-up 1.2; kunci tidak berubah):*
+
+| id | Baris | Terbang dari | Keterangan | Kotak |
+|----|-------|--------------|------------|-------|
+| k1 | **Diketahui** (label) | — | — | — |
+| k2 | $x\to3$ | `@s-x3` | titik limit | — |
+| k3 | $1-\cos(6x-18)$ | `@s-pem` | pembilang | — |
+| k4 | $\left(x-\frac9x\right)\sin(6x-18)$ | `@s-faktor`, `@s-sin` | penyebut | — |
+| k5 | **Ditanya** (label) nilai limit | `@s-tanya` | — | — |
+| k6 | $1-\cos0=0$ | — | pembilang di $x=3$ (langkah 1.2) | — |
+| k7 | $(3-3)\sin0=0$ | — | penyebut di $x=3$ (langkah 1.2) | — |
+| k8 | $\frac00$ | — | bentuk tak tentu, perlu disederhanakan | `navy` |
+
 ### Bagian 2 — Menyederhanakan bentuk trigonometri
 **Prasyarat konsep:** $1-\cos2\alpha=2\sin^2\alpha$ dan $\sin2\alpha=2\sin\alpha\cos\alpha$. Karena itu $\dfrac{1-\cos2\alpha}{\sin2\alpha}=\dfrac{2\sin^2\alpha}{2\sin\alpha\cos\alpha}=\tan\alpha$.
 
@@ -2631,6 +2644,9 @@ Uji numerik di $\theta=\frac\pi2$: segitiga siku-siku sama kaki dengan alas $2r$
 | c3 | $=\dfrac{u\,(x+3)}{x}$ | $u$←`a1` | $x-3=u$ | `navy` |
 
 #### Langkah 3.2 — Menggabungkan
+- **Pop-up** *(ditambahkan M1)*: "Gabungkan kedua hasil: bagian trigonometri menjadi $\tan3u$ dan faktornya memberi $u$ di penyebut."
+- **Hasil sebelumnya (pin) Bagian 3** *(ditambahkan M1)*: $u=x-3$ dan $\frac{1-\cos6u}{\sin6u}=\tan3u$ (sumber terbang `u`←pin untuk c3, $\tan3u$←pin untuk d2).
+
 | id | Baris | Terbang dari | Keterangan | Kotak |
 |----|-------|--------------|------------|-------|
 | d1 | bentuk soal $=\dfrac{1-\cos6u}{\left(x-\frac9x\right)\sin6u}$ | — | — | — |
@@ -2640,13 +2656,15 @@ Uji numerik di $\theta=\frac\pi2$: segitiga siku-siku sama kaki dengan alas $2r$
 ### Bagian 4 — Menghitung limit
 **Prasyarat konsep:** $\lim_{u\to0}\dfrac{\tan au}{u}=a$.
 
+*Pop-up (ditambahkan M1):* Langkah 4.1 (baris e1): "Pakai limit dasar $\lim_{u\to0}\frac{\tan au}{u}=a$ untuk bagian pertama." Langkah 4.2 (baris e2–e3): "Substitusi $x=3$ pada bagian kedua, lalu kalikan kedua hasil." Pin Bagian 4: $\frac{\tan3u}{u}\cdot\frac{x}{x+3}$. Konten opsional langkah 4.2: tabel nilai di sekitar $x=3$ memakai angka *Pemeriksaan hasil* ($x=2{,}999\to\approx1{,}4998$; $x=3{,}001\to\approx1{,}5003$).
+
 | id | Baris | Terbang dari | Keterangan | Kotak |
 |----|-------|--------------|------------|-------|
 | e1 | $\displaystyle\lim_{u\to0}\dfrac{\tan3u}{u}=3$ | $\tan3u$←`d3` | $\lim\frac{\tan au}{u}=a$ | `navy` |
 | e2 | $\displaystyle\lim_{x\to3}\dfrac{x}{x+3}=\dfrac{3}{3+3}=\dfrac12$ | $3$←`@s-x3` | substitusi langsung | `navy` |
 | e3 | $\text{limit}=3\cdot\dfrac12=\dfrac32$ | $3$←`e1`, $\frac12$←`e2` | — | `gold` |
 
-- **Pertanyaan cepat** (sebelum e3): "Hasil $\displaystyle\lim_{x\to3}\dfrac{x}{x+3}$ adalah…"
+- **Pertanyaan cepat** (sebelum e2; *diperbaiki M1 dari "sebelum e3", karena yang ditanyakan adalah isi baris e2; kunci tidak berubah*): "Hasil $\displaystyle\lim_{x\to3}\dfrac{x}{x+3}$ adalah…"
 
 | Opsi | Benar? | Petunjuk jika salah |
 |------|--------|---------------------|
@@ -2665,6 +2683,8 @@ $$\begin{aligned}u&=x-3,\quad6x-18=6u\\\frac{1-\cos6u}{\sin6u}&=\frac{2\sin^23u}
 | C | $0$ | SALAH | Limit bukan nol karena $\tan3u\sim3u$ dan $u$ saling menghilang. |
 | D | $\frac23$ | SALAH | Jebakan: kebalikan hasil. |
 | E | $\frac32$ | BENAR | $3\cdot\frac12$. |
+
+*Ditambahkan M1 (pop-up per kartu dan pertanyaan akhir, disusun dari kolom alasan di atas):* kartu dibuka satu per satu dengan pop-up "Pilihan A, $-\frac32$: tandanya seharusnya positif. Salah." … "Pilihan E, $\frac32=3\cdot\frac12$, sama dengan hasil kita (benar). Pilih jawabannya di papan tulis." Pertanyaan akhir `B.ask` berhuruf A–E; petunjuk tiap pilihan salah = kolom alasan; rumus singkat kartu: $-\tfrac32\ne\tfrac32$, $-\tfrac23\ne\tfrac32$, $0\ne\tfrac32$, $\tfrac23\ne\tfrac32$, $3\cdot\tfrac12=\tfrac32$.
 
 ### Bagian 7 — Selesai
 - **Segel:** **E**

@@ -12,6 +12,8 @@ export function tex(src: string, displayMode = false): string {
       displayMode,
       output: 'htmlAndMathml',
       strict: 'ignore',
+      // stabilo dan sumber terbang di kertas soal (konten bundel, bukan masukan siswa); \href dll. tetap ditolak
+      trust: (ctx: { command: string }) => ctx.command === '\\htmlData' || ctx.command === '\\htmlClass',
     });
   } catch {
     return src;
@@ -36,4 +38,19 @@ export function renderMath(el: Element): void {
     span.innerHTML = mathHtml(esc(t.nodeValue ?? ''));
     t.replaceWith(...span.childNodes);
   }
+}
+
+/** Teks terbaca dari rumus KaTeX di dalam elemen (MathML tanpa anotasi TeX), untuk aria-label. */
+export function mathLabel(el: Element): string {
+  const parts: string[] = [];
+  const walk = (n: Node): void => {
+    if (n.nodeType === Node.TEXT_NODE) {
+      if (!n.parentElement?.closest('.katex-html, annotation, [aria-hidden="true"]'))
+        parts.push(n.nodeValue ?? '');
+      return;
+    }
+    n.childNodes.forEach(walk);
+  };
+  walk(el);
+  return parts.join(' ').replace(/\s+/g, ' ').trim();
 }

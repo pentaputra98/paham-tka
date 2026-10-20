@@ -20,6 +20,8 @@ export interface HeaderSpec {
   block?: { k: string; n: string; t: string };
   /** tampilkan tombol Kemajuan berlabel */
   progress?: boolean;
+  /** kontrol tambahan khusus halaman (HTML tepercaya), disisipkan sebelum Pengaturan */
+  extra?: string;
 }
 
 export interface PageView {
@@ -54,6 +56,7 @@ function headerHtml(h: HeaderSpec): string {
   return `${left}${block}<div class="top-spacer"></div>
     <div class="top-ctrls">
       <span class="offline-badge" data-offline-badge hidden></span>
+      ${h.extra ?? ''}
       ${h.progress ? `<a class="btn" href="#/kemajuan">${icon('list-checks')}<span class="btn-label">Kemajuan</span></a>` : ''}
       <a class="icon-btn" href="#/pengaturan" aria-label="Pengaturan" title="Pengaturan">${icon('settings')}</a>
       ${fs}

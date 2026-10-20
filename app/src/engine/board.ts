@@ -10,7 +10,7 @@
 import { SND } from '../core/audio';
 import { dur, reducedMotion, sleep } from '../core/clock';
 import { esc, html } from '../core/dom';
-import { tex } from '../core/math';
+import { mathLabel, tex } from '../core/math';
 import { completeAll, play } from '../core/motion';
 import { DUR, EASE, EASE_OUT } from '../core/tokens';
 import type { Ask, Piece, Pin, Row, Tok } from './types';
@@ -113,7 +113,9 @@ export class Board {
     if (spec.note) {
       const n = document.createElement('div');
       n.className = 'bl-n';
-      n.innerHTML = spec.note.includes('$') ? spec.note.replace(/\$([^$]+)\$/g, (_x, s: string) => tex(s)) : spec.note;
+      n.innerHTML = spec.note.includes('$')
+        ? spec.note.replace(/\$([^$]+)\$/g, (_x, s: string) => tex(s))
+        : spec.note;
       el.append(n);
     }
     return { id: spec.id, spec, el, m, boxed: false };
@@ -131,6 +133,20 @@ export class Board {
     this.body.scrollTo({ top: this.body.scrollHeight, behavior: reducedMotion() ? 'auto' : 'smooth' });
   }
 
+  /** Perkecil huruf baris yang lebih lebar dari papan (min 60 %), tidak pernah memotong rumus. */
+  private fit(row: RowView): void {
+    row.m.style.removeProperty('--fit');
+    const avail = this.body.clientWidth - 2 * parseFloat(getComputedStyle(this.body).paddingLeft || '0');
+    const need = row.m.scrollWidth;
+    if (avail > 0 && need > avail)
+      row.m.style.setProperty('--fit', String(Math.max(0.6, avail / need).toFixed(3)));
+  }
+
+  /** Hitung ulang penyesuaian saat ukuran papan berubah. */
+  refit(): void {
+    this.rows.forEach((r) => this.fit(r));
+  }
+
   private dimPast(): void {
     this.rows.forEach((r, i) => r.el.classList.toggle('past', i < this.rows.length - 1));
   }
@@ -143,15 +159,19 @@ export class Board {
       row.m.classList.add(`box-${row.spec.box}`);
       row.el.classList.add('res');
       if (anim) {
-        play(row.m, [{ transform: 'scale(1.04)' }, { transform: 'none' }], { duration: DUR.enter, easing: EASE_OUT });
+        play(row.m, [{ transform: 'scale(1.04)' }, { transform: 'none' }], {
+          duration: DUR.enter,
+          easing: EASE_OUT,
+        });
         if (row.spec.box === 'gold') SND.chime();
       }
     }
   }
 
   private announce(row: RowView): void {
-    const math = [...row.el.querySelectorAll('.bl-m .katex-mathml, .bl-m .tx')].map((e) => e.textContent ?? '').join(' ');
-    const note = row.el.querySelector('.bl-n')?.textContent ?? '';
+    const math = mathLabel(row.m);
+    const n = row.el.querySelector('.bl-n');
+    const note = n ? mathLabel(n) : '';
     this.live.textContent = `${math}${note ? `. ${note}` : ''}`;
   }
 
@@ -201,11 +221,18 @@ export class Board {
         p.toks.forEach((t) => e.append(this.tok(t)));
         this.pinsEl.append(e);
         if (c.dir > 0)
-          play(e, [{ opacity: 0, transform: 'translateY(-6px) scale(.97)' }, { opacity: 1, transform: 'none' }], {
-            duration: DUR.enter,
-            easing: EASE_OUT,
-            delay: i * 120,
-          });
+          play(
+            e,
+            [
+              { opacity: 0, transform: 'translateY(-6px) scale(.97)' },
+              { opacity: 1, transform: 'none' },
+            ],
+            {
+              duration: DUR.enter,
+              easing: EASE_OUT,
+              delay: i * 120,
+            },
+          );
       });
     }
   }
@@ -231,6 +258,7 @@ export class Board {
     const row = this.mkRow(spec);
     this.body.append(row.el);
     this.rows.push(row);
+    this.fit(row);
     this.dimPast();
     if (!anim) {
       this.finish(row, false);
@@ -300,7 +328,11 @@ export class Board {
         g,
         [
           { transform: `translate(${dx}px, ${dy}px) scale(${sc})`, opacity: 0.85 },
-          { transform: `translate(${dx * 0.5}px, ${dy * 0.5 - arc}px) scale(${(sc + 1.15) / 2})`, opacity: 1, offset: 0.5 },
+          {
+            transform: `translate(${dx * 0.5}px, ${dy * 0.5 - arc}px) scale(${(sc + 1.15) / 2})`,
+            opacity: 1,
+            offset: 0.5,
+          },
           { transform: 'none', opacity: 1 },
         ],
         { duration: D, easing: EASE, tag: 'fly' },
@@ -311,7 +343,10 @@ export class Board {
         g.remove();
         tk.classList.remove('hid');
         if (g.dataset.run === String(c.run) && c.live()) {
-          play(tk, [{ transform: 'scale(1.22)' }, { transform: 'none' }], { duration: DUR.chalk, easing: 'ease-out' });
+          play(tk, [{ transform: 'scale(1.22)' }, { transform: 'none' }], {
+            duration: DUR.chalk,
+            easing: 'ease-out',
+          });
           SND.tick();
           setTimeout(res, dur(120));
         } else res();
@@ -348,10 +383,19 @@ export class Board {
           if (!op.ok) {
             SND.wrong();
             b.classList.add('wrong');
-            play(b, [{ transform: 'translateX(-5px)' }, { transform: 'translateX(5px)' }, { transform: 'translateX(-5px)' }, { transform: 'none' }], {
-              duration: DUR.shake,
-              ui: true,
-            });
+            play(
+              b,
+              [
+                { transform: 'translateX(-5px)' },
+                { transform: 'translateX(5px)' },
+                { transform: 'translateX(-5px)' },
+                { transform: 'none' },
+              ],
+              {
+                duration: DUR.shake,
+                ui: true,
+              },
+            );
             hint.className = 'ask-h no';
             hint.innerHTML = `<b class="k-red">Belum tepat.</b> ${mathText(op.hint ?? '')}`;
             return;
@@ -363,13 +407,17 @@ export class Board {
           hint.innerHTML = `<b class="k-gold">Benar.</b> ${mathText(a.win ?? 'Kita tulis langkahnya.')}`;
           void sleep(1100).then(() => done(true));
         });
+        // KaTeX di dalam tombol tidak memberi nama aksesibel di Chrome: ambil teks MathML
+        b.setAttribute('aria-label', `${a.letters ? `${'ABCDE'[i]}. ` : ''}${mathLabel(b)}`);
         box.append(b);
       });
       f.querySelector('[data-skip]')!.addEventListener('click', () => {
         SND.click();
         done(true);
       });
-      requestAnimationFrame(() => box.querySelector<HTMLButtonElement>('button')?.focus({ preventScroll: true }));
+      requestAnimationFrame(() =>
+        box.querySelector<HTMLButtonElement>('button')?.focus({ preventScroll: true }),
+      );
     });
   }
 
@@ -390,7 +438,8 @@ export function mathText(s: string): string {
 /** '@nama' → elemen [data-src=nama] di halaman; selain itu id token di papan (baris atau pin). */
 export function srcEl(src: string | undefined, board: HTMLElement): HTMLElement | null {
   if (!src) return null;
-  if (src.startsWith('@')) return document.querySelector<HTMLElement>(`[data-src="${CSS.escape(src.slice(1))}"]`);
+  if (src.startsWith('@'))
+    return document.querySelector<HTMLElement>(`[data-src="${CSS.escape(src.slice(1))}"]`);
   return board.querySelector<HTMLElement>(`[data-k="${CSS.escape(src)}"]`);
 }
 

@@ -189,22 +189,6 @@
     color: var(--color-text-muted);
   }
 
-  .fly-tok {
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: var(--z-fly);
-    pointer-events: none;
-    padding: 0 var(--space-1);
-    border-radius: var(--radius-xs);
-    background: var(--color-result-bg);
-    box-shadow:
-      0 0 0 var(--bw-2) var(--color-result),
-      var(--shadow-2);
-    color: var(--color-text);
-    will-change: transform, opacity;
-  }
-
   .hero-foot {
     display: flex;
     flex-wrap: wrap;

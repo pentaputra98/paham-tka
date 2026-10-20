@@ -54,7 +54,12 @@ export class Cards {
       el.classList.toggle('flip', want);
       el.classList.toggle('focus', k === i + 1 || (k === 0 && i === 0));
       el.querySelector('.back')!.setAttribute('aria-hidden', String(!want));
-      el.setAttribute('aria-label', want ? `${this.cards[i]!.label}: ${this.cards[i]!.ok ? this.labels[0] : this.labels[1]}` : `${this.cards[i]!.label}: belum diperiksa`);
+      el.setAttribute(
+        'aria-label',
+        want
+          ? `${this.cards[i]!.label}: ${this.cards[i]!.ok ? this.labels[0] : this.labels[1]}`
+          : `${this.cards[i]!.label}: belum diperiksa`,
+      );
       if (!c.dir || c.dir < 0) el.classList.add('no-anim');
       else el.classList.remove('no-anim');
       if (want && !had && c.dir > 0 && i === k - 1) {

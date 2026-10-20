@@ -30,7 +30,8 @@ export function validateSoal(raw: unknown): { errors: string[]; warns: string[] 
   const errors: string[] = [];
   const warns: string[] = [];
   const c = raw as SoalContent;
-  if (!c?.meta || !Array.isArray(c.steps)) return { errors: ['modul tidak mengekspor SoalContent sebagai default'], warns };
+  if (!c?.meta || !Array.isArray(c.steps))
+    return { errors: ['modul tidak mengekspor SoalContent sebagai default'], warns };
 
   // ---- keunikan ----
   const rowIds = new Set<string>();
@@ -80,7 +81,8 @@ export function validateSoal(raw: unknown): { errors: string[]; warns: string[] 
       for (const t of flatToks(row.toks)) {
         if (!t.src) continue;
         if (t.src.startsWith('@')) {
-          if (!atNames.has(t.src.slice(1))) errors.push(`${tag}: ${row.id}/${t.k} sumber '${t.src}' tidak dikenal`);
+          if (!atNames.has(t.src.slice(1)))
+            errors.push(`${tag}: ${row.id}/${t.k} sumber '${t.src}' tidak dikenal`);
         } else if (!before.has(t.src) && !pinToks.has(t.src))
           errors.push(`${tag}: ${row.id}/${t.k} sumber '${t.src}' tidak tampil sebelumnya`);
       }
@@ -89,7 +91,8 @@ export function validateSoal(raw: unknown): { errors: string[]; warns: string[] 
     // pertanyaan
     const a = st.ask;
     if (a) {
-      if (!list.some((r) => r.id === a.before)) errors.push(`${tag}: ask.before '${a.before}' bukan baris daftar ${b.list}`);
+      if (!list.some((r) => r.id === a.before))
+        errors.push(`${tag}: ask.before '${a.before}' bukan baris daftar ${b.list}`);
       const okCount = a.opts.filter((o) => o.ok).length;
       if (okCount !== 1) errors.push(`${tag}: pertanyaan harus punya tepat satu opsi benar (ada ${okCount})`);
       a.opts.forEach((o, oi) => {
@@ -100,7 +103,8 @@ export function validateSoal(raw: unknown): { errors: string[]; warns: string[] 
 
   // ---- kartu dan kunci ----
   if (c.cards.length < 3 || c.cards.length > 5) errors.push(`jumlah kartu ${c.cards.length} (harus 3–5)`);
-  if (c.key.cardOk.length !== c.cards.length) errors.push('panjang key.cardOk tidak sama dengan jumlah kartu');
+  if (c.key.cardOk.length !== c.cards.length)
+    errors.push('panjang key.cardOk tidak sama dengan jumlah kartu');
   c.cards.forEach((card, i) => {
     if (card.ok !== c.key.cardOk[i]) errors.push(`kartu ${card.label}: ok=${card.ok} berbeda dengan kunci`);
   });
@@ -112,13 +116,18 @@ export function validateSoal(raw: unknown): { errors: string[]; warns: string[] 
     .flat()
     .filter((r) => r.box === 'gold')
     .map((r) => r.id);
-  for (const g of gold) if (!c.key.goldRows.includes(g)) errors.push(`baris ${g} berkotak emas tetapi tidak dideklarasikan sebagai hasil akhir`);
-  for (const g of c.key.goldRows) if (!gold.includes(g)) errors.push(`key.goldRows '${g}' tidak berkotak emas`);
+  for (const g of gold)
+    if (!c.key.goldRows.includes(g))
+      errors.push(`baris ${g} berkotak emas tetapi tidak dideklarasikan sebagai hasil akhir`);
+  for (const g of c.key.goldRows)
+    if (!gold.includes(g)) errors.push(`key.goldRows '${g}' tidak berkotak emas`);
 
   // ---- catatan dari data yang sama ----
-  for (const s of c.notes.sections) for (const l of s.lists) if (!c.lists[l]) errors.push(`catatan: daftar '${l}' tidak ada`);
+  for (const s of c.notes.sections)
+    for (const l of s.lists) if (!c.lists[l]) errors.push(`catatan: daftar '${l}' tidak ada`);
 
   // ---- langkah terakhir SELESAI ----
-  if (c.steps.at(-1)?.visual.kind !== 'done') errors.push('langkah terakhir harus visual "done" (pop-up SELESAI)');
+  if (c.steps.at(-1)?.visual.kind !== 'done')
+    errors.push('langkah terakhir harus visual "done" (pop-up SELESAI)');
   return { errors, warns };
 }

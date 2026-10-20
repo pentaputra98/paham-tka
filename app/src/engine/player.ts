@@ -136,7 +136,12 @@ export class Player {
     if (st.optional) {
       const opt = st.optional;
       actions.push(
-        { label: opt.yes, icon: 'table', kind: 'secondary', onClick: () => this.hooks.optional(opt.panel, opt.label) },
+        {
+          label: opt.yes,
+          icon: 'table',
+          kind: 'secondary',
+          onClick: () => this.hooks.optional(opt.panel, opt.label),
+        },
         { label: 'Tidak, lanjut saja', icon: 'arrow-right', kind: 'secondary', onClick: () => this.next() },
       );
     }
