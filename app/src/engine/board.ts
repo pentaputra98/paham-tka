@@ -70,6 +70,15 @@ export class Board {
     this.foot = this.el.querySelector('.bd-foot')!;
     this.live = this.el.querySelector('[aria-live]')!;
     this.el.querySelector('.bd-re')!.addEventListener('click', () => this.onReplay());
+    // lebar isi papan berubah saat papan diubah ukurannya atau scrollbar muncul: ukur ulang baris
+    this.ro = new ResizeObserver(() => this.refit());
+    this.ro.observe(this.body);
+  }
+
+  private readonly ro: ResizeObserver;
+
+  destroy(): void {
+    this.ro.disconnect();
   }
 
   setReplayIcon(svg: string): void {

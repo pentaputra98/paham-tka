@@ -40,6 +40,8 @@ export interface DoorApi {
   info(): { geometries: number; textures: number; triangles: number; calls: number };
   fps(): number;
   onLowFps: (() => void) | null;
+  /** kompilasi shader lebih awal agar bingkai pertama tidak tersendat (spike 3D, syarat 2) */
+  compile(): Promise<void>;
 }
 
 const R = 4; // jari-jari 40 cm
@@ -86,7 +88,7 @@ const STAGES: Record<Stage, Params> = {
   radius: { ...ORNAMENT, glass: 1, span: 9, camZ: 13 },
   unroll: UNROLL,
   ruler: { ...UNROLL, line: 1, ruler: 1, camX: -5, span: 74, camZ: 62, camY: 1, look: 0 },
-  match: { ...UNROLL, line: 1, ruler: 1, metals: 1, span: 88, camZ: 92, camY: -3, look: -3 },
+  match: { ...UNROLL, line: 1, ruler: 1, metals: 1, span: 88, camZ: 92, camY: -8, look: -8 },
 };
 const TAG = 'door3d';
 
@@ -256,20 +258,20 @@ export function createDoor(host: HTMLElement): DoorApi {
   const lackMat = mat(css('--red-300'), { metalness: 0.1, transparent: true, opacity: 0.55 });
   const left0 = -40;
   const addRod = (len: number, y: number, m: MeshStandardMaterial, x0 = left0): Mesh => {
-    const rod = new Mesh(box(len, 0.5, 0.5), m);
+    const rod = new Mesh(box(len, 1, 0.8), m);
     rod.position.set(x0 + len / 2, y, 0);
     metals.add(rod);
     return rod;
   };
   // 2 logam A = 8 m: cukup, sisa 1,63 m (> 1 m) → merah
-  addRod(TOTAL, -3, metalMat);
-  addRod(80 - TOTAL, -3, overMat, left0 + TOTAL);
+  addRod(TOTAL, -6, metalMat);
+  addRod(80 - TOTAL, -6, overMat, left0 + TOTAL);
   // 1 logam B = 5 m: kurang
-  addRod(50, -5, metalMat);
-  addRod(TOTAL - 50, -5, lackMat, left0 + 50);
+  addRod(50, -12, metalMat);
+  addRod(TOTAL - 50, -12, lackMat, left0 + 50);
   // 1 logam C = 6,5 m: cukup, sisa 0,13 m → emas (pas)
-  addRod(TOTAL, -7, okMat);
-  addRod(65 - TOTAL, -7, overMat, left0 + TOTAL);
+  addRod(TOTAL, -18, okMat);
+  addRod(65 - TOTAL, -18, overMat, left0 + TOTAL);
 
   // ---------- label HTML terproyeksi ----------
   type LabelKey = 'merah' | 'r' | 'ring' | 'sides' | 'diam' | 'total' | 'A' | 'B' | 'C';
@@ -313,13 +315,13 @@ export function createDoor(host: HTMLElement): DoorApi {
     new Vector3(left0 + TOTAL, 3.4, 0),
     (p) => (p.line > 0.9 && p.metals < 0.1 ? 1 : 0),
   );
-  mkLabel('A', '2 logam A = 8 m · sisa 1,63 m · <b>Tidak Pas</b>', 'red', new Vector3(left0, -2.1, 0), (p) =>
+  mkLabel('A', '2 logam A = 8 m · sisa 1,63 m · <b>Tidak Pas</b>', 'red', new Vector3(left0, -3.6, 0), (p) =>
     p.metals > 0.9 ? 1 : 0,
   );
-  mkLabel('B', '1 logam B = 5 m · kurang · <b>Tidak Pas</b>', 'red', new Vector3(left0, -4.1, 0), (p) =>
+  mkLabel('B', '1 logam B = 5 m · kurang · <b>Tidak Pas</b>', 'red', new Vector3(left0, -9.6, 0), (p) =>
     p.metals > 0.9 ? 1 : 0,
   );
-  mkLabel('C', '1 logam C = 6,5 m · sisa 0,13 m · <b>Pas</b>', 'gold', new Vector3(left0, -6.1, 0), (p) =>
+  mkLabel('C', '1 logam C = 6,5 m · sisa 0,13 m · <b>Pas</b>', 'gold', new Vector3(left0, -15.6, 0), (p) =>
     p.metals > 0.9 ? 1 : 0,
   );
 
@@ -403,6 +405,8 @@ export function createDoor(host: HTMLElement): DoorApi {
       const lb = L[k];
       const on = lb.show(cur);
       lb.el.style.opacity = String(on);
+      // label tersembunyi tidak boleh dipilih sebagai sumber angka terbang (visibleEnough)
+      lb.el.style.visibility = on ? '' : 'hidden';
       if (!on) continue;
       tmpV.copy(lb.pos).project(camera);
       const x = (tmpV.x * 0.5 + 0.5) * w;
@@ -537,6 +541,13 @@ export function createDoor(host: HTMLElement): DoorApi {
       renderer.setSize(1, 1, false);
       canvas.remove();
       labels.remove();
+    },
+    async compile() {
+      // semua bagian adegan terlihat saat kompilasi agar setiap material ikut dikompilasi
+      const vis = [door.visible, ruler.visible, metals.visible];
+      door.visible = ruler.visible = metals.visible = true;
+      await renderer.compileAsync(scene, camera);
+      [door.visible, ruler.visible, metals.visible] = vis as [boolean, boolean, boolean];
     },
     info() {
       const i = renderer.info;

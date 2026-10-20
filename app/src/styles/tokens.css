@@ -43,6 +43,9 @@
     --metal-400: #b8c2cf;
     --glass-green: #5b8c5a;
     --glass-yellow: #e3df5c;
+    /* warna rambu soal 17 (warna benda nyata pada gambar soal) */
+    --sign-blue: #1b9ad6;
+    --sign-black: #121417;
 
     /* transparansi (dipakai lewat token semantik) */
     --a-navy-06: rgb(14 42 92 / 0.06);
@@ -132,6 +135,8 @@
     --size-row-sm: 32px;
     --size-dot-w: 24px;
     --size-stamp-room: 124px;
+    /* rumus kartu tidak boleh lebih lebar dari kartu: batas atas relatif lebar kartu */
+    --card-formula-max: 10cqi;
     --size-perspective: 1300px;
     --size-sketch: 300px;
     --size-ft-0: 132px;

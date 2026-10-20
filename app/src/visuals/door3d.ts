@@ -47,6 +47,7 @@ export function createDoor3d(): VisualScene & {
   let door: DoorApi | null = null;
   let loading: Promise<DoorApi | null> | null = null;
   let forced2d = false;
+  let dead = false;
   const ro = new ResizeObserver(() => door?.resize(host3d.clientWidth, host3d.clientHeight));
   ro.observe(host3d);
 
@@ -66,17 +67,24 @@ export function createDoor3d(): VisualScene & {
 
   function load(): Promise<DoorApi | null> {
     loading ??= import('./door3d-scene')
-      .then((m) => {
-        door = m.createDoor(host3d);
-        door.resize(host3d.clientWidth, host3d.clientHeight);
-        door.onLowFps = () => {
+      .then(async (m) => {
+        const d = m.createDoor(host3d);
+        d.resize(host3d.clientWidth, host3d.clientHeight);
+        d.onLowFps = () => {
           force2d(true);
           toast('Animasi 3D terasa berat. Kami beralih ke gambar 2D.', {
             duration: 6000,
             action: { label: 'Tetap 3D', onClick: () => force2d(false) },
           });
         };
-        return door;
+        await d.compile();
+        // adegan ditinggalkan selama memuat/kompilasi: buang, jangan pasang
+        if (dead) {
+          d.dispose();
+          return null;
+        }
+        door = d;
+        return d;
       })
       .catch(() => {
         force2d(true);
@@ -106,6 +114,7 @@ export function createDoor3d(): VisualScene & {
     info: () => door?.info() ?? null,
     fps: () => door?.fps() ?? 0,
     destroy() {
+      dead = true;
       ro.disconnect();
       door?.dispose();
       door = null;

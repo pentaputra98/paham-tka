@@ -47,7 +47,6 @@ export class Scene {
   private readonly capA: HTMLElement;
   private mode: Mode | null = null;
   private lastKey = '';
-  private lastBw = -1;
   /** pembangun HTML catatan lengkap; dijalankan sekali saat bagian catatan pertama dibuka */
   notesBuilder: (() => string) | null = null;
   private hlLevel = -1;
@@ -77,10 +76,16 @@ export class Scene {
     this.root.append(this.paper, this.svgHost, this.cards.el, this.notes, this.cap, board.el);
     this.ro = new ResizeObserver(() => this.layout());
     this.ro.observe(this.root);
+    // font KaTeX/tampilan bisa selesai dimuat setelah baris ditulis (kunjungan pertama): ukur ulang
+    document.fonts?.addEventListener('loadingdone', this.onFonts);
   }
+
+  private readonly onFonts = (): void => this.board.refit();
 
   destroy(): void {
     this.ro.disconnect();
+    document.fonts?.removeEventListener('loadingdone', this.onFonts);
+    this.board.destroy();
     this.visuals.forEach((v) => v.destroy?.());
   }
 
@@ -134,6 +139,7 @@ export class Scene {
       case 'cards':
         this.setMode('cards');
         this.cards.flip(v.flip, c);
+        this.cards.fit();
         return false;
       case 'notes':
         // catatan dibangun saat pertama kali dibuka (bukan saat halaman dimuat)
@@ -193,11 +199,7 @@ export class Scene {
       this.root.style.setProperty('--fr', `${fr}px`);
       this.root.style.setProperty('--ft', `${ft}px`);
     }
-    // baris papan hanya perlu disesuaikan ulang bila lebar papan berubah
-    if (bw !== this.lastBw) {
-      this.lastBw = bw;
-      this.board.refit();
-    }
+    if (this.mode === 'cards') this.cards.fit();
     const vis = this.currentVisual ? this.visuals.get(this.currentVisual) : undefined;
     vis?.resize?.();
   }

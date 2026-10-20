@@ -42,6 +42,26 @@ export class Cards {
     });
   }
 
+  /**
+   * Perkecil isi kartu yang lebih lebar atau lebih tinggi dari ruangnya (min 50 %), tidak pernah memotong rumus.
+   * Dipanggil saat kartu tampil dan saat ukuran area berubah; tulis–baca–tulis berkelompok.
+   */
+  fit(): void {
+    const els = [...this.el.querySelectorAll<HTMLElement>('.front .st, .back .bc')];
+    els.forEach((e) => e.style.removeProperty('font-size'));
+    const need = els.map((e) => ({
+      k: Math.min(
+        e.clientWidth && e.scrollWidth ? e.clientWidth / e.scrollWidth : 1,
+        e.clientHeight && e.scrollHeight ? e.clientHeight / e.scrollHeight : 1,
+      ),
+      fs: parseFloat(getComputedStyle(e).fontSize),
+    }));
+    els.forEach((e, i) => {
+      const { k, fs } = need[i]!;
+      if (k < 0.99) e.style.fontSize = `${(fs * Math.max(0.5, k)).toFixed(1)}px`;
+    });
+  }
+
   /** Idempoten: kartu 0..k-1 terbuka; kartu terakhir yang baru dibuka berbunyi bila maju. */
   flip(k: number, c: Ctx): void {
     const flipMs = Math.round(wallMs(DUR.flip));

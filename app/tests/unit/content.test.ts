@@ -16,3 +16,14 @@ describe('daftar soal (PRD §5)', () => {
     expect(SOAL[17]!.labels).toEqual(['Pas', 'Tidak Pas']);
   });
 });
+
+describe('verify:content menangkap garis miring LaTeX tunggal', () => {
+  it('karakter kendali (\b dari "\begin" tunggal) ditolak', async () => {
+    const { validateSoal } = await import('../../src/engine/validate');
+    const q06 = (await import('../../src/content/soal/q06')).default;
+    expect(validateSoal(q06).errors).toEqual([]);
+    const bad = structuredClone(q06);
+    bad.steps[0]!.cap = 'x \begin{aligned} y';
+    expect(validateSoal(bad).errors.some((e) => e.includes('karakter kendali'))).toBe(true);
+  });
+});

@@ -177,10 +177,28 @@ Pin: $F^{-1}=\begin{pmatrix}\frac12&0\\0&2\end{pmatrix}$. Setiap kartu diuji den
 | D | $\begin{pmatrix}-\frac12&0\\0&-2\end{pmatrix}$ | SALAH | $F\cdot D=\begin{pmatrix}-1&0\\0&-1\end{pmatrix}=-I$ | Angkanya benar tetapi tandanya salah; hasilnya $-I$, bukan $I$. |
 | E | $\begin{pmatrix}\frac12&0\\0&2\end{pmatrix}$ | BENAR | $F\cdot E=I$ | Kebalikan tiap elemen diagonal. |
 
+*Ditambahkan M2 (20 Okt 2026; kunci tidak berubah), dipakai di `app/src/content/soal/q01.ts`:*
+- **Visual Bagian 2:** adegan grid matriks dengan tiga tahap:
+  - `diag` (2.1): diagonal utama biru, diagonal samping merah, label $a,b,c,d$;
+  - `adj` (2.2): $a\leftrightarrow d$ bertukar dengan animasi, $-$ muncul pada $b$ dan $c$, nama berubah menjadi $\operatorname{adj}F$;
+  - `compare` (2.3 dan Bagian 3): $F$ dan $F^{-1}$ berdampingan dengan panah $2\to\frac12$, $\frac12\to2$ (= *Sorotan akhir*).
+  - Sel matriks dan elemen $F$ di kertas soal memakai sumber `@Fa`, `@Fb`, `@Fc`, `@Fd` yang sama. Mesin memilih yang sedang terlihat.
+- **Papan Bagian 2** dibagi dua judul agar baris matriks muat: "Determinan F" untuk a1–a4 (pin $F$), lalu "Adjoin dan invers" untuk b1–c3 (pin $\det F=1$). $\frac11$ pada c2 terbang dari pin.
+  - Baris b2 ditulis kapur sebagai satu matriks, karena elemen di dalam satu matriks tidak dapat terbang satu per satu.
+  - Pertukaran $a\leftrightarrow d$ diperlihatkan oleh adegan.
+- **Bagian 3 (opsional):**
+  - Papan "Pemeriksaan" dengan pin $F^{-1}$. Baris p1–p3 ditampilkan di panel **Ya, periksa** dan di catatan lengkap.
+- **Bagian 1:** langkah 1.1 menampilkan papan kosong "Diketahui dan ditanya"; k1–k2 muncul di 1.2, k3 di 1.3.
+- **Bagian 5:**
+  - Pop-up per kartu dari kolom *Alasan*. Kalimat B digabung menjadi satu agar tetap ≤ 2 kalimat.
+  - Papan ringkasan s1–s5, ditambah s6 "Jawaban E".
+  - Pertanyaan berhuruf A–E, dengan petunjuk dari kolom alasan.
+- **Ringkasan `LR`:** $\det F=1$ memakai kotak **navy** (diubah dari emas: emas hanya untuk jawaban, PRD).
+
 ### Bagian 6 — Selesai
 - **Segel:** **E**
 - **Pop-up:** "Invers $F$ adalah $\begin{pmatrix}\frac12&0\\0&2\end{pmatrix}$. Elemen diagonalnya dibalik: $2\to\frac12$ dan $\frac12\to2$."
-- **Ringkasan papan (`LR`):** $\det F=1$ (emas) · $F^{-1}=\begin{pmatrix}\frac12&0\\0&2\end{pmatrix}$ (emas) · **Jawaban E** (emas).
+- **Ringkasan papan (`LR`):** $\det F=1$ (navy, *diubah M2*) · $F^{-1}=\begin{pmatrix}\frac12&0\\0&2\end{pmatrix}$ (emas) · **Jawaban E** (emas).
 
 ### Pemeriksaan hasil
 Substitusi balik: $FF^{-1}=I$ (lihat Bagian 3). Metode kedua: matriks diagonal $\mathrm{diag}(p,q)$ memiliki invers $\mathrm{diag}(1/p,\,1/q)$, yaitu $\mathrm{diag}(\frac12,\,2)$. Kedua metode cocok dengan opsi E saja.
@@ -309,6 +327,25 @@ Susunan setara pada opsi E: bagi persamaan gajah dengan 2 → $5x+y=19$ dan $10x
 | C | $\begin{pmatrix}-\frac1{10}&\frac2{10}\\1&-1\end{pmatrix}\begin{pmatrix}34\\38\end{pmatrix}=\begin{pmatrix}4\\3\end{pmatrix}$ | SALAH | hasil hitung sebenarnya $\begin{pmatrix}4{,}2\\-4\end{pmatrix}$ | Jebakan urutan: matriks inversnya benar, tetapi vektor ruas kanan dibalik (gamal di atas gajah). Hasil tertulis juga keliru. |
 | D | $\begin{pmatrix}-1&2\\10&-10\end{pmatrix}\begin{pmatrix}38\\34\end{pmatrix}=\begin{pmatrix}3\\4\end{pmatrix}$ | SALAH | hasil hitung sebenarnya $\begin{pmatrix}30\\40\end{pmatrix}$ | Matriks adalah adjoin tanpa dibagi $-10$. Angka $(3,4)$ di ruas kanan benar, tetapi perkalian di ruas kiri tidak menghasilkannya. |
 | E | $\begin{pmatrix}-\frac15&\frac15\\2&-1\end{pmatrix}\begin{pmatrix}19\\34\end{pmatrix}=\begin{pmatrix}3\\4\end{pmatrix}$ | BENAR | $-\frac{19}{5}+\frac{34}{5}=3$; $38-34=4$ | Invers $M'$ yang benar, vektor sesuai, hasil perkalian cocok dan memenuhi kedua persamaan. |
+
+*Ditambahkan M2 (20 Okt 2026; kunci tidak berubah), dipakai di `app/src/content/soal/q02.ts`:*
+- **Visual Bagian 1–3:** kertas soal (gambar sumber, tabel, dan stabilo) tetap tampil, sehingga `@sg`, `@sm`, `@kg`, `@km`, `@s-gajah`, `@s-gamal`, dan `@s-xy` menjadi sumber terbang.
+  - Langkah 1.1 menampilkan papan kosong. k1–k3 muncul di 1.2, k4 di 1.3.
+- **Bagian 2:** m1–m2 berada di papan yang sama dengan e1–e2 ("Persamaan pakan"). Matriks koefisien m1 terbang dari e1, vektor kanan dari $38$ pada e1.
+- **Bagian 3:**
+  - Papan "Invers matriks" untuk i1–i4 dengan pin $M$.
+  - Papan "Kalikan dengan ruas kanan" untuk s1–s5, dengan pin $M^{-1}$ dan $\mathbf b=(38,34)$.
+- **Bagian 5:**
+  - Langkah pembuka menampilkan papan "Susunan setara" dari paragraf *Cara menguji* di atas:
+    - q1: gajah ÷ 2: $5x+y=19$;
+    - q2: $M'=\begin{pmatrix}5&1\\10&1\end{pmatrix}$, $\det M'=-5$;
+    - q3: $M'^{-1}$ (navy).
+  - Pop-up langkah itu: "Pilihan memakai susunan setara: persamaan gajah dibagi 2. Uji matriks, vektor, dan hasil perkaliannya."
+  - Pop-up per kartu diringkas dari kolom *Alasan*.
+  - Papan ringkasan v1–v6 (id v karena s1–s5 sudah dipakai).
+  - Pertanyaan berhuruf A–E memakai teks singkat per pilihan.
+  - Pernyataan kartu ditulis dua baris (perkalian, lalu "= hasil") agar muat di kartu.
+- **Belum dibuat:** sorotan angka 3 dan 4 pada gambar sapi dan kambing. Gambar sumber dipakai apa adanya.
 
 ### Bagian 6 — Selesai
 - **Segel:** **E**
@@ -625,6 +662,28 @@ Pin: akar $=\{-4,\ -2,\ 3\}$.
 | (4) | $(4,0)$ | SALAH | $f(4)=48$ | Titik di atas sumbu X. Jebakan: $4$ adalah pembagi $24$ sehingga tampak "cocok", tetapi pembagi suku tetap belum tentu akar. |
 | (5) | $(5,0)$ | SALAH | $f(5)=126$ | Jauh di atas sumbu X. |
 
+*Ditambahkan M2 (20 Okt 2026; kunci tidak berubah), dipakai di `app/src/content/soal/q05.ts`:*
+- **Bagian 1, papan:**
+  - langkah 1.2: k1 Diketahui, k2 $f(x)=x^3+3x^2-10x-24$ (`@s-f`);
+  - langkah 1.3: k3 Ditanya: titik potong dengan sumbu X (`@s-sx`; keterangan "jawabannya bisa lebih dari satu").
+  - Urutan stabilo: 1.1 `@s-tanya`, 1.2 `@s-f`, 1.3 `@s-sx`.
+- **Langkah 2.1, papan:** baris z1 "pada sumbu X $y=0\Rightarrow f(x)=0$" (navy; keterangan "nilai $x$ itu disebut akar").
+  - Pertanyaan cepat muncul sebelum z1, dengan teks: "Titik potong grafik dengan sumbu X dicari dari…" (dokumen tidak memuat teks pertanyaannya).
+- **Visual:** grafik kubik SVG. Skala sumbu Y dipadatkan agar $f(5)=126$ dan minimum $\approx-30$ terlihat bersama.
+  - Chip pilihan $(-2,0)\ldots(5,0)$ di bawah grafik menjadi sumber `@o-1`…`@o-5`.
+  - Titik pada kurva bergerak ke $x$ tiap pilihan. Titik dan chip menjadi emas bila $f=0$, merah bila tidak.
+  - Slider "geser $x$" ada di langkah 2.1.
+- **Langkah 2.2** dipecah: satu langkah per pilihan (u1–u2, u3, u4, u5, u6). Pop-up tambahan:
+  - "Pilihan $(-1,0)$: $f(-1)=-12$. Grafik berada di bawah sumbu X."
+  - "Pilihan $(3,0)$: $f(3)=0$, jadi titik potong."
+  - "Pilihan $(4,0)$: $f(4)=48$, titiknya di atas sumbu X."
+  - "Pilihan $(5,0)$: $f(5)=126$, jauh di atas sumbu X."
+- **Langkah 2.3 (opsional):** h1–h5 ditampilkan di panel **Ya, periksa** dan di catatan lengkap. Grafik menandai ketiga akar.
+- **Bagian 4:**
+  - Pop-up per kartu dari kolom *Alasan*.
+  - Papan ringkasan s1–s5, ditambah s6 "Jawaban $(-2,0)$ dan $(3,0)$".
+  - Pertanyaan kesimpulan: $(3,0)$ saja · **$(-2,0)$ dan $(3,0)$** · $(-2,0)$, $(3,0)$, dan $(4,0)$ · $(-1,0)$ dan $(3,0)$.
+
 ### Bagian 5 — Selesai
 - **Segel:** **(−2,0), (3,0)**
 - **Pop-up:** "Grafik memotong sumbu X di $(-2,0)$ dan $(3,0)$ dari pilihan yang ada; titik potong ketiganya adalah $x=-4,\,-2,\,3$."
@@ -736,6 +795,28 @@ Pin: $a+b=-1$.
 | C | −1 | BENAR | $a=2$, $b=-3$. |
 | D | −5 | SALAH | $-5$ adalah $q$ (konstanta hasil bagi), bukan $a+b$. |
 | E | −7 | SALAH | Tidak sama dengan $2+(-3)$; jangan menjumlahkan $b$ dengan $q$ atau $p$. |
+
+*Ditambahkan M2 (20 Okt 2026; kunci tidak berubah), dipakai di `app/src/content/soal/q06.ts`:*
+- **Bagian 1, papan:**
+  - langkah 1.1: k1 Diketahui, k2 $f(x)=x^4+ax^3+bx^2+x-6$ (`@s-f`);
+  - langkah 1.2: k3 pembagi $x^2+x+1$ (`@s-p`), k4 sisa $5x-1$ (`@s-r`), k5 Ditanya $a+b$ (`@s-tanya`).
+- **Visual:** kertas soal tetap tampil dengan stabilo sepanjang Bagian 2–3 (papan saja), sehingga `@s-f`, `@s-p`, dan `@s-r` selalu terlihat sebagai sumber.
+- **Pin dipecah per suku**, agar tiap koefisien terbang sendiri:
+  - $x^4\,|\,{+ax^3}\,|\,{+bx^2}\,|\,{-4x}\,|\,{-5}$;
+  - $x^4\,|\,{+(p+1)x^3}\,|\,{+(p+q+1)x^2}\,|\,{+(p+q)x}\,|\,{+q}$.
+  - Contoh: c1 $q\leftarrow+q$, $-5\leftarrow-5$; d1 $a\leftarrow+ax^3$, $p+1\leftarrow+(p+1)x^3$.
+- **Judul papan:**
+  - "Menyingkirkan sisa" untuk a1–a4;
+  - "Hasil bagi berderajat dua" untuk b1–b3. b3 ditulis dua baris rata "=" agar muat;
+  - "Mencari q dan p" untuk c1–c4;
+  - "Mencari a dan b" untuk d1–d5, dengan pin tambahan $p=1$, $q=-5$.
+  - Pop-up langkah 3.2: "Samakan koefisien $x^3$ dan $x^2$, lalu jumlahkan $a$ dan $b$."
+- **Bagian 5:**
+  - Rumus singkat kartu disusun dari kolom alasan: $11\ne-1$, $5\ne-1$, $2+(-3)=-1$, $-5\ne-1$, $-7\ne-1$.
+  - Pop-up per kartu dari kolom *Alasan*.
+  - Papan ringkasan s1–s5, ditambah s6 "Jawaban C".
+  - Pertanyaan berhuruf A–E.
+- **Ringkasan `LR`:** $a=2$, $b=-3$ (navy) · $a+b=-1$ (emas) · **Jawaban C** (emas).
 
 ### Bagian 6 — Selesai
 - **Segel:** **C**
@@ -1847,6 +1928,34 @@ Pin: hitam $=640{,}56$ · biru $=344$ · merah $=384$ · putih $=231{,}44$.
 | (4) | Biru dan putih | SALAH | $344+231{,}44=575{,}44<640{,}56$ | Hampir, tetapi masih kurang. |
 | (5) | Biru dan merah | BENAR | $344+384=728>640{,}56$ | — |
 
+*Ditambahkan M2 (20 Okt 2026; kunci tidak berubah), dipakai di `app/src/content/soal/q17.ts`:*
+- **Bagian 1, papan:**
+  - k1 Diketahui
+  - k2 sisi persegi $=40$ cm
+  - k3 jari-jari cakram putih $=14$ cm
+  - k4 tepi lengan mendatar $=10$ cm (di kiri dan kanan lengan tegak)
+  - k5 banyak cat $\propto$ luas warna (`@s-cat`)
+  - k6 Ditanya: cat yang lebih banyak dari hitam (`@s-tanya`)
+  - k7 Tafsir: jumlah dua kuantitas $>$ hitam ("setengah hitam" $=\frac12\times$ luas hitam)
+- **Langkah 1.3, pop-up** (dari *Tafsir pilihan jawaban* di atas): "Setiap pilihan menyebut dua kuantitas cat. Pilihan benar bila jumlah keduanya lebih banyak daripada cat hitam."
+- **Bagian 2:** pop-up 2.1 dan 2.2 masing-masing dipecah menjadi dua langkah, dan visual menyorot satu warna per langkah:
+  - a1–a3 hitam: "Hitam adalah cincin antara jari-jari 14 dan 20. Jari-jari 20 adalah setengah sisi persegi 40."
+  - a4–a5 biru: "Biru adalah persegi dikurangi lingkaran besar."
+  - b1–b3 merah: "Salib: dua persegi panjang $28\times8$ yang bertumpuk di persegi $8\times8$."
+  - b4–b5 putih: "Putih adalah sisa cakram setelah dikurangi salib."
+  - Papan berganti judul "Luas merah dan putih" untuk b1–b5. Label luas yang sudah dihitung muncul di rambu.
+- **Bagian 3:** pin hitam/biru/merah/putih (dari Bagian 5) dipasang sebagai sumber terbang baris c1–c6. Pop-up per langkah:
+  - c1 = pop-up 3.1;
+  - c2–c3: "Pilihan 1 dan 2: setengah hitam ditambah biru, atau ditambah merah, sama-sama melebihi hitam."
+  - c4: "Pilihan 3: putih paling sedikit, sehingga setengah hitam ditambah putih masih kurang dari hitam."
+  - c5–c6: "Pilihan 4 hampir, tetapi masih kurang. Pilihan 5, biru ditambah merah, melebihi hitam."
+  - Di papan, baris c2–c6 hanya memuat angka (mis. $320{,}28+344=664{,}28>640{,}56$). Nama kuantitas pindah ke keterangan baris agar muat di layar 667 px.
+- **Bagian 5:**
+  - Pop-up per kartu disusun dari kolom *Rumus singkat* dan *Alasan*.
+  - Rumus pada kartu diringkas menjadi perbandingan akhir ($664{,}28>640{,}56$ dst.) agar muat di kartu.
+  - Papan ringkasan s1–s5, ditambah s6 "Jawaban: pilihan 1, 2, dan 5".
+  - Pertanyaan kesimpulan: 1 dan 2 saja · **1, 2, dan 5** · 1, 2, 4, dan 5 · 5 saja, masing-masing dengan petunjuk dari baris c.
+
 ### Bagian 6 — Selesai
 - **Segel:** **1 · 2 · 5**
 - **Pop-up:** "Hitam sekitar 640,56 cm². Gabungan $\frac12$ hitam + biru, $\frac12$ hitam + merah, dan biru + merah masing-masing melebihinya."
@@ -1920,7 +2029,7 @@ Pengecekan simbolik dengan $\pi$ (tanpa pembulatan), merah $=384$: pilihan 1 ben
 | b1 | $456\times4=(3{,}14-2)\,r^2$ | $3{,}14$←`@s-pi` | kedua ruas dikali 4 | — |
 | b2 | $1824=1{,}14\,r^2$ | — | $456\cdot4=1824$ | `navy` |
 | b3 | $r^2=\dfrac{1824}{1{,}14}=1600$ | — | $1{,}14\cdot1600=1824$ | `navy` |
-| b4 | $r=40\ \text{cm}$ | — | $\sqrt{1600}=40$ | `gold` |
+| b4 | $r=40\ \text{cm}$ | — | $\sqrt{1600}=40$ | `navy` *(diubah M2 dari `gold`: emas hanya untuk jawaban akhir, PRD; kunci tidak berubah)* |
 
 - **Pertanyaan cepat** (sebelum b3): "Dari $1824=1{,}14\,r^2$, nilai $r^2$ adalah…"
 
@@ -1963,6 +2072,31 @@ $$\begin{aligned}456&=\frac{(\pi-2)r^2}{4}\Rightarrow r^2=\frac{1824}{1{,}14}=16
 | (1) | Membeli 2 buah logam A (8 m) | TIDAK PAS | sisa $\approx1{,}63$ m $>1$ m | Cukup, tetapi sisanya lebih dari 1 meter. |
 | (2) | Membeli 1 buah logam B (5 m) | TIDAK PAS | $5<6{,}37$ | Tidak cukup untuk kerangka. |
 | (3) | Membeli 1 buah logam C (6,5 m) | PAS | sisa $\approx0{,}13$ m $\le1$ m | Cukup dan sisa kecil. |
+
+*Ditambahkan M2 (20 Okt 2026; kunci tidak berubah), dipakai di `app/src/content/soal/q18.ts`:*
+- **Visual:** adegan 3D pelengkap `door3d` (lihat `docs/spike-3d-soal18.md`) dengan padanan 2D (diagram pita). Tahap per langkah:
+  - 2.1 `ornament`;
+  - 2.2 `unglass`;
+  - 2.3 `radius`;
+  - 3.1 `unroll`;
+  - 3.2 `ruler`;
+  - 3.3–3.5 `match`.
+- **Sumber terbang dari label adegan** (3D dan 2D memakai nama yang sama):
+  - $456$ pada a4 ← `@l3-merah` (menggantikan `@s-merah`, karena kertas soal tidak tampil saat adegan dibuka);
+  - $40$ cm pada b4 ← `@l3-r`;
+  - $637{,}5$ pada c5 ← `@l3-total`.
+- **Bagian 2:** langkah 2.2 dipecah menjadi dua langkah:
+  - b1–b3, dengan pertanyaan cepat sebelum b3. Pop-up: "Kalikan kedua ruas dengan 4, lalu bagi dengan $1{,}14$ untuk mendapatkan $r^2$."
+  - b4. Pop-up: "Akar dari $1600$ adalah $40$. Jari-jari lingkaran ornamen $40$ cm."
+- **Bagian 3, pin:** $r=40$ cm untuk c1–c5. Untuk d1–d3: kerangka $\approx6{,}37$ m dan pas: cukup, sisa $\le1$ m.
+- **Bagian 3, langkah tambahan:**
+  - c5 berdiri sendiri: "Jajarkan semua batang pada penggaris: totalnya sekitar $637{,}5$ cm."
+  - Satu langkah per logam. d1 memakai pop-up 3.2. d2: "1 logam B hanya 5 m, lebih pendek dari kerangka. Tidak cukup." d3: "1 logam C cukup, dan sisanya hanya $0{,}13$ m."
+  - Label baris c1/c2 disingkat menjadi "lingkaran" dan "sisi", dengan keterangan "keliling" dan "sisi persegi".
+- **Bagian 5:**
+  - Pop-up per kartu dari kolom *Alasan*.
+  - Papan ringkasan s1–s3, ditambah s4 "Jawaban: Tidak Pas · Tidak Pas · Pas".
+  - Pertanyaan kesimpulan "Pilihan yang pas adalah…": 2 buah logam A · 1 buah logam B · **1 buah logam C**.
 
 ### Bagian 6 — Selesai
 - **Segel:** **Tidak · Tidak · Pas**

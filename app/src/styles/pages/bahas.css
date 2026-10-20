@@ -545,11 +545,19 @@
 
   .pin {
     display: inline-flex;
+    flex-wrap: wrap;
+    max-width: 100%;
     align-items: center;
     padding: var(--space-0-5) var(--space-2-5);
     border-radius: var(--radius-pill);
     border: var(--bw-1) solid var(--color-intermediate);
     background: var(--color-intermediate-bg);
+  }
+
+  /* token pin tidak boleh terlipat di dalam dirinya (rumus KaTeX bisa patah di tanda +) */
+  .pin > * {
+    flex: none;
+    white-space: nowrap;
   }
 
   .pin.gold {
@@ -911,8 +919,15 @@
   }
 
   .front .st {
+    flex: 1 1 auto;
+    min-height: 0;
     font-size: var(--fs-body);
     line-height: var(--lh-body);
+  }
+
+  /* rumus pada kartu tidak dipatahkan; ukurannya disesuaikan oleh Cards.fit() */
+  .front .st .katex {
+    white-space: nowrap;
   }
 
   .front .wait {
@@ -929,6 +944,7 @@
   }
 
   .back {
+    container-type: inline-size;
     transform: rotateY(180deg);
     background: var(--color-surface);
     color: var(--color-text);
@@ -960,7 +976,8 @@
 
   .back .bc {
     margin-top: auto;
-    font-size: var(--fs-title);
+    font-size: min(var(--fs-title), var(--card-formula-max));
+    white-space: nowrap;
     color: var(--color-brand);
   }
 
@@ -1481,7 +1498,7 @@
     }
 
     .back .bc {
-      font-size: var(--fs-body);
+      font-size: min(var(--fs-body), var(--card-formula-max));
     }
 
     .back .bw {
@@ -1573,6 +1590,36 @@
     border: var(--bw-2) solid var(--color-text-muted);
     border-radius: var(--radius-xs);
     transform: translateY(var(--space-0-5));
+  }
+
+  /* gambar lebar (mis. pintu + detail ornamen soal 18) berdiri sendiri di antara paragraf */
+  .soal-fig-wide {
+    margin: var(--space-2) 0;
+  }
+
+  .soal-fig-wide img {
+    display: block;
+    width: 100%;
+  }
+
+  /* tabel data pada naskah soal (panjang logam, pilihan Pas/Tidak Pas) */
+  .soal-table {
+    border-collapse: collapse;
+    margin: var(--space-2) 0;
+    font-size: var(--fs-small);
+  }
+
+  .soal-table th,
+  .soal-table td {
+    border: var(--bw-hair) solid var(--color-line);
+    padding: var(--space-1) var(--space-2-5);
+    text-align: left;
+    min-width: var(--size-touch);
+  }
+
+  .soal-table thead th {
+    background: var(--color-surface-sunken);
+    font-weight: var(--fw-semibold);
   }
 
   @media (max-height: 520px) {

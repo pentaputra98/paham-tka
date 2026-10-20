@@ -7,7 +7,7 @@ import { icon } from '../core/icons';
 import { renderMath } from '../core/math';
 import { store } from '../core/store';
 import { DOMAIN_LABEL, RELEASE_1, RESPONSE_LABEL, getSoal } from '../content';
-import { hasContent, loadContent } from '../content/soal/registry';
+import { hasContent, loadContent, prefetchContent } from '../content/soal/registry';
 import type { Route } from '../router/router';
 import type { PageView } from '../shell/app';
 
@@ -61,6 +61,7 @@ export function detailPage(route: Route): PageView {
   </div>`);
 
   if (ready) {
+    prefetchContent(s.no);
     void loadContent(s.no).then((c) => {
       const host = el.querySelector<HTMLElement>('[data-paper]');
       if (!c || !host) return;

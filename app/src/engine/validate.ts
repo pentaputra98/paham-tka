@@ -31,6 +31,13 @@ export function validateSoal(raw: unknown): { errors: string[]; warns: string[] 
   if (!c?.meta || !Array.isArray(c.steps))
     return { errors: ['modul tidak mengekspor SoalContent sebagai default'], warns };
 
+  // ---- garis miring LaTeX tunggal di string TS ('\b', '\f', '\t', '\v') menjadi karakter kendali ----
+  JSON.stringify(c, (k, v: unknown) => {
+    if (typeof v === 'string' && /[\b\f\t\v]/.test(v))
+      errors.push(`karakter kendali di '${k}': tulis garis miring LaTeX ganda (\\\\) — ${v.slice(0, 40)}`);
+    return v;
+  });
+
   // ---- keunikan ----
   const rowIds = new Set<string>();
   const tokKeys = new Set<string>();

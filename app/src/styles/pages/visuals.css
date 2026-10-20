@@ -467,3 +467,374 @@
     fill: var(--gold-300);
   }
 }
+
+/* ---------- soal 17: rambu rumah makan ----------
+   Warna lapisan = warna benda pada gambar soal. Sorotan meredupkan warna lain (bukan emas). */
+@layer pages {
+  .vis-sign {
+    height: 100%;
+    display: grid;
+    place-items: center;
+  }
+
+  .vis-sign svg {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .sg-l {
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .sg-blue {
+    fill: var(--sign-blue);
+  }
+
+  .sg-black {
+    fill: var(--sign-black);
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-hair);
+  }
+
+  .sg-white {
+    fill: var(--paper-0);
+  }
+
+  .sg-red {
+    fill: var(--red-600);
+  }
+
+  .has-focus .sg-l:not(.on) {
+    opacity: 0.22;
+  }
+
+  .sg-arrow {
+    fill: none;
+    stroke: var(--color-on-stage);
+    stroke-width: var(--bw-2);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .sg-r {
+    stroke: var(--paper-0);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 5 4;
+  }
+
+  .sg-lbl {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-sm);
+    fill: var(--color-on-stage);
+  }
+
+  .sg-on-red {
+    fill: var(--paper-0);
+  }
+
+  .sg-on-white {
+    fill: var(--ink-900);
+  }
+
+  .sg-w {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-w .sg-w {
+    opacity: 1;
+  }
+
+  .sg-val {
+    font-family: var(--font-display);
+    font-weight: var(--fw-black);
+    font-size: var(--svg-fs-md);
+    /* putih bergaris hitam: terbaca di atas warna apa pun, termasuk lapisan yang diredupkan */
+    fill: var(--paper-0);
+    stroke: var(--sign-black);
+    stroke-width: var(--bw-4);
+    paint-order: stroke;
+    stroke-linejoin: round;
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .sg-val.on {
+    opacity: 1;
+  }
+}
+
+@layer pages {
+  /* daerah putih per kuadran sempit: label luasnya lebih kecil */
+  .sg-val-white {
+    font-size: var(--svg-fs-sm);
+  }
+}
+
+/* ---------- soal 1: grid matriks 2×2 ----------
+   Sorotan memakai cincin pseudo-elemen yang hanya berubah opacity; pertukaran a ↔ d memakai FLIP (transform). */
+@layer pages {
+  .vis-mat {
+    height: 100%;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: var(--space-4);
+    color: var(--color-on-stage);
+    font-size: var(--fs-h2);
+  }
+
+  .mx-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+  }
+
+  .mx {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .mx-b {
+    padding: var(--space-1) var(--space-2-5);
+    border-inline: var(--bw-3) solid var(--color-on-stage);
+    border-radius: var(--radius-xl);
+  }
+
+  .mx-g {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(var(--size-touch), auto));
+    gap: var(--space-1) var(--space-4);
+  }
+
+  .mx-c {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--size-touch);
+  }
+
+  .mx-c::before {
+    content: '';
+    position: absolute;
+    inset: calc(var(--space-1) * -1);
+    border: var(--bw-3) solid var(--color-stage-accent);
+    border-radius: var(--radius-md);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .vis-mat[data-stage='diag'] .mk-a::before,
+  .vis-mat[data-stage='diag'] .mk-d::before {
+    opacity: 1;
+  }
+
+  .vis-mat[data-stage='diag'] .mk-b::before,
+  .vis-mat[data-stage='diag'] .mk-c::before {
+    border-color: var(--color-constraint-on-stage);
+    opacity: 1;
+  }
+
+  .mx-neg {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .vis-mat[data-stage='adj'] .mk-b .mx-neg,
+  .vis-mat[data-stage='adj'] .mk-c .mx-neg {
+    opacity: 1;
+    color: var(--color-constraint-on-stage);
+  }
+
+  .mx-tag {
+    position: absolute;
+    right: calc(var(--space-3) * -1);
+    top: calc(var(--space-2) * -1);
+    font-size: var(--fs-caption);
+    color: var(--color-on-stage-muted);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .vis-mat[data-stage='diag'] .mx-tag,
+  .vis-mat[data-stage='adj'] .mx-tag {
+    opacity: 1;
+  }
+
+  .mx-to,
+  .mx-inv,
+  .nm-adj,
+  .vis-mat[data-stage='adj'] .nm-F {
+    display: none;
+  }
+
+  .vis-mat[data-stage='adj'] .nm-adj {
+    display: inline;
+  }
+
+  .vis-mat[data-stage='compare'] .mx-to {
+    display: grid;
+    gap: var(--space-2);
+    font-size: var(--fs-body);
+    color: var(--color-stage-accent);
+  }
+
+  .vis-mat[data-stage='compare'] .mx-inv {
+    display: flex;
+  }
+
+  /* F⁻¹ adalah jawaban: satu-satunya tempat emas di adegan ini */
+  .mx-inv .mx-b {
+    border-color: var(--color-result);
+  }
+
+  .mx-note {
+    min-height: var(--size-touch);
+    font-size: var(--fs-small);
+    color: var(--color-on-stage-muted);
+    text-align: center;
+  }
+
+  .n-sketch-mat {
+    height: auto;
+    padding: var(--space-4);
+    background: var(--color-stage);
+    border-radius: var(--radius-md);
+  }
+
+  @media (max-height: 520px) {
+    .vis-mat {
+      font-size: var(--fs-title);
+      gap: var(--space-2);
+    }
+
+    .mx-row {
+      gap: var(--space-3);
+    }
+  }
+}
+
+/* ---------- soal 5: grafik kubik ----------
+   Emas hanya pada titik/chip yang f(x) = 0 (titik potong = jawaban); merah bila bukan nol. */
+@layer pages {
+  .vis-cubic {
+    height: 100%;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto auto;
+    gap: var(--space-2);
+  }
+
+  .vis-cubic svg {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .cb-axis,
+  .cb-tick {
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-1);
+  }
+
+  .show-sx .cb-xaxis {
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-4);
+  }
+
+  .cb-num {
+    font-family: var(--font-mono);
+    font-size: var(--svg-fs-xs);
+    fill: var(--color-on-stage-muted);
+  }
+
+  .cb-lbl {
+    font-family: var(--font-math);
+    font-style: italic;
+    font-size: var(--svg-fs-sm);
+    fill: var(--color-on-stage);
+  }
+
+  .cb-curve {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-3);
+    stroke-linejoin: round;
+  }
+
+  .cb-root {
+    fill: var(--color-stage-accent);
+    stroke: var(--color-on-stage);
+    stroke-width: var(--bw-1);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-roots .cb-root {
+    opacity: 1;
+  }
+
+  .cb-drop {
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-1);
+    stroke-dasharray: 4 4;
+  }
+
+  .cb-pt {
+    fill: var(--color-constraint-on-stage);
+    stroke: var(--paper-0);
+    stroke-width: var(--bw-2);
+  }
+
+  .cb-pt.zero {
+    fill: var(--color-result);
+  }
+
+  .cb-pv {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-md);
+    fill: var(--color-on-stage);
+  }
+
+  .cb-pv.zero {
+    fill: var(--color-result-soft);
+  }
+
+  .cb-opts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2);
+  }
+
+  .cb-opt {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-0-5) var(--space-3);
+    border: var(--bw-1) solid var(--color-stage-border);
+    border-radius: var(--radius-pill);
+    color: var(--color-on-stage);
+    font-size: var(--fs-small);
+  }
+
+  .cb-opt.on {
+    border-color: var(--color-stage-accent);
+    background: var(--a-sky-15);
+  }
+
+  .cb-opt.ok {
+    border-color: var(--color-result);
+    color: var(--color-result-soft);
+  }
+
+  .cb-opt.no {
+    border-color: var(--color-constraint-on-stage);
+    color: var(--color-constraint-on-stage);
+  }
+}
