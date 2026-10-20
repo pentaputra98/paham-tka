@@ -58,8 +58,6 @@ async function settled(page: Page, i: number): Promise<void> {
     .toEqual({ rows: want, hid: 0, fly: 0, run: 0 });
 }
 
-const label = (page: Page): Promise<string> => page.locator('.navlabel').innerText();
-
 test.describe('Pembahasan soal 25 (G-Gerak)', () => {
   test('jalan penuh jalur Amati sampai pop-up SELESAI, tanpa galat konsol', async ({ page }) => {
     const errors: string[] = [];
