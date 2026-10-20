@@ -137,7 +137,7 @@
     /* teks kertas soal di halaman Detail: ikut lebar kertas (kueri kontainer) */
     --fs-paper-detail: clamp(calc(16px * var(--ui)), 2.3cqi, calc(30px * var(--ui)));
     /* judul hero maks. selebar panelnya ("Soal TKA 2025," muat satu baris) */
-    --hero-title-max: 12.5cqi;
+    --hero-title-max: 10.4cqi;
     --dur-hero-breath: 9s;
     /* batas ukuran angka matriks relatif tinggi zona visual (2×2 dan 3×3) */
     --mat-fit-2: 19cqh;
