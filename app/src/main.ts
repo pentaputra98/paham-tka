@@ -57,6 +57,7 @@ startShell({
   home: homePage,
   detail: detailPage,
   bahas: bahasPage,
+  catatan: bahasPage,
   kemajuan: progressPage,
   pengaturan: settingsPage,
   tentang: aboutPage,

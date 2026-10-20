@@ -6,9 +6,10 @@
  * Isi dari docs/pembahasan25.md soal 25 (a2, e1, e2, e3).
  */
 import { reducedMotion, sleep } from '../core/clock';
-import { tex } from '../core/math';
+import { mathHtml, tex } from '../core/math';
+import { flyClone } from '../engine/fly';
 import { play } from '../core/motion';
-import { DUR, EASE, EASE_OUT } from '../core/tokens';
+import { DUR, EASE_OUT } from '../core/tokens';
 
 interface HTok {
   k: string;
@@ -59,7 +60,7 @@ const ROWS: HRow[] = [
   },
 ];
 
-const mt = (s: string): string => s.replace(/\$([^$]+)\$/g, (_m, x: string) => tex(x));
+const mt = mathHtml;
 
 function visible(el: Element): boolean {
   const r = el.getBoundingClientRect();
@@ -80,35 +81,8 @@ export function startHero(stage: HTMLElement): () => void {
   const live = (): boolean => alive && stage.isConnected;
 
   const fly = async (from: Element, to: HTMLElement): Promise<void> => {
-    const a = from.getBoundingClientRect();
-    const b = to.getBoundingClientRect();
-    const g = to.cloneNode(true) as HTMLElement;
-    g.classList.add('fly-tok');
-    Object.assign(g.style, {
-      left: `${b.left}px`,
-      top: `${b.top}px`,
-      width: `${b.width}px`,
-      height: `${b.height}px`,
-      margin: '0',
-    });
-    document.body.append(g);
-    const dx = a.left + a.width / 2 - (b.left + b.width / 2);
-    const dy = a.top + a.height / 2 - (b.top + b.height / 2);
-    const arc = Math.min(70, Math.hypot(dx, dy) * 0.22);
-    from.classList.add('src-glow');
-    await play(
-      g,
-      [
-        { transform: `translate(${dx}px, ${dy}px) scale(.9)`, opacity: 0.85 },
-        { transform: `translate(${dx * 0.5}px, ${dy * 0.5 - arc}px) scale(1.08)`, opacity: 1, offset: 0.5 },
-        { transform: 'none', opacity: 1 },
-      ],
-      {
-        duration: Math.max(DUR.flyMin, Math.min(DUR.flyMax, Math.hypot(dx, dy) * 0.9)),
-        easing: EASE,
-        tag: 'hero',
-      },
-    ).finished;
+    const { g, k } = flyClone(from, to, { tag: 'hero' });
+    await k.finished;
     g.remove();
     from.classList.remove('src-glow');
     to.style.visibility = '';

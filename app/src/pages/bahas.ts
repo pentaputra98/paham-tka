@@ -218,11 +218,8 @@ export function bahasPage(route: Route): PageView {
       else if (t.dataset.act === 'music') {
         SND.init();
         store.updateSettings({ music: !store.settings.music });
-        t.setAttribute('aria-pressed', String(store.settings.music));
       } else if (t.dataset.act === 'sfx') {
         store.updateSettings({ sfx: !store.settings.sfx });
-        t.setAttribute('aria-pressed', String(store.settings.sfx));
-        t.innerHTML = icon(store.settings.sfx ? 'volume-2' : 'volume-x');
         if (store.settings.sfx) {
           SND.init();
           SND.click();
@@ -230,6 +227,17 @@ export function bahasPage(route: Route): PageView {
       }
     };
     top?.addEventListener('click', onTop);
+    // tombol musik/suara selalu mengikuti pengaturan, termasuk saat diubah lewat pintasan M
+    const syncTop = (): void => {
+      const mu = top?.querySelector<HTMLElement>('[data-act="music"]');
+      const sf = top?.querySelector<HTMLElement>('[data-act="sfx"]');
+      mu?.setAttribute('aria-pressed', String(store.settings.music));
+      if (sf) {
+        sf.setAttribute('aria-pressed', String(store.settings.sfx));
+        sf.innerHTML = icon(store.settings.sfx ? 'volume-2' : 'volume-x');
+      }
+    };
+    cleanups.push(store.subscribe('settings', syncTop));
     cleanups.push(() => top?.removeEventListener('click', onTop));
 
     const onKey = (e: KeyboardEvent): void => {
@@ -259,7 +267,8 @@ export function bahasPage(route: Route): PageView {
     cleanups.push(onOrientation((portrait) => portrait && p.setAuto(false)));
 
     // mulai: lobi, atau langsung ke ?b=&l= (tautan dalam, PRD §7.1)
-    const b = Number(route.query.b);
+    // #/soal/n/catatan → langsung ke bagian Catatan lengkap
+    const b = route.name === 'catatan' ? notesCh(content) : Number(route.query.b);
     if (b > 0) {
       const ids = p.stepsOfCh(b);
       const l = Math.max(0, Number(route.query.l ?? 0));
@@ -327,8 +336,8 @@ export function bahasPage(route: Route): PageView {
           );
           if (!toLobby) requestAnimationFrame(() => scene!.layout());
         },
-        done() {
-          store.markDone(no);
+        done(first) {
+          if (first) store.markDone(no);
           openDone(content, p);
         },
         closeOverlays() {

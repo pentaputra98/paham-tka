@@ -20,8 +20,8 @@ export interface PlayerHooks {
   chrome: () => void;
   /** pindah antara lobi dan panggung utama */
   stage: (lobby: boolean, dir: 1 | -1) => void;
-  /** langkah SELESAI tercapai saat maju */
-  done: () => void;
+  /** pop-up SELESAI: first = langkah SELESAI dicapai saat maju (hitung kemajuan); false = dibuka ulang dari tombol */
+  done: (first: boolean) => void;
   /** tutup lembar/pop-up apa pun saat pindah langkah */
   closeOverlays: () => void;
   /** posisi terakhir (disimpan lokal) */
@@ -40,6 +40,8 @@ export class Player {
   private started = false;
   pending = false;
   auto = false;
+  /** langkah saat ini sudah selesai dijalankan (syarat putar otomatis menjadwalkan langkah berikut) */
+  private stepDone = false;
   path: Path;
 
   constructor(
@@ -86,6 +88,7 @@ export class Player {
     this.board.cancelAsk();
     this.hooks.closeOverlays();
     this.pending = false;
+    this.stepDone = false;
     this.run++;
     const run = this.run;
     this.board.flush();
@@ -109,14 +112,17 @@ export class Player {
     this.hooks.chrome();
     void this.exec(st as Step, c)
       .then((completed) => {
-        if (completed && this.live(run)) this.afterStep(run);
+        if (completed && this.live(run)) {
+          this.stepDone = true;
+          this.afterStep(run);
+        }
       })
       .catch((e: unknown) => console.error(e));
   }
 
   next(): void {
     if (!this.isLast) this.go(this.i + 1, 1);
-    else this.hooks.done();
+    else this.hooks.done(false);
   }
 
   prev(): void {
@@ -126,7 +132,8 @@ export class Player {
   setAuto(on: boolean): void {
     this.auto = on;
     this.hooks.chrome();
-    if (on && !this.pending && this.started && this.current.ch !== 0) this.afterStep(this.run);
+    // jadwalkan hanya bila langkah sudah selesai; bila belum, afterStep dipanggil saat exec selesai
+    if (on && this.stepDone && !this.pending && this.current.ch !== 0) this.afterStep(this.run);
   }
 
   /** Jalankan satu langkah sesuai data. Mengembalikan true bila selesai tanpa disela. */
@@ -169,7 +176,7 @@ export class Player {
 
     if (st.visual.kind === 'done' && c.dir > 0) {
       if (!(await sleep(1300)) || !c.live()) return false;
-      this.hooks.done();
+      this.hooks.done(true);
     }
     return c.live();
   }

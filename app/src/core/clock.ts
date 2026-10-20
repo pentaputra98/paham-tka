@@ -5,7 +5,7 @@
  * - `dur(ms)` = durasi dasar × faktor hemat gerak (≈25 %). Kecepatan TIDAK dipanggang ke durasi.
  * - `sleep(ms)` menghitung waktu dengan laju yang sama (ikut dipercepat/dijeda).
  */
-import { addLoop } from './loop';
+import { addLoop, wake } from './loop';
 import { store } from './store';
 
 const mq = typeof matchMedia === 'function' ? matchMedia('(prefers-reduced-motion: reduce)') : null;
@@ -27,6 +27,7 @@ export const isPaused = (): boolean => paused;
 
 function emitRate(): void {
   const r = rate();
+  wake();
   rateListeners.forEach((f) => f(r));
 }
 
@@ -57,7 +58,8 @@ interface Timer {
 const timers = new Set<Timer>();
 addLoop((dt) => {
   const r = rate();
-  if (!r || !timers.size) return;
+  // dijeda: diam sampai laju berubah (emitRate membangunkan loop)
+  if (!r || !timers.size) return false;
   for (const t of [...timers]) {
     t.left -= dt * 1000 * r;
     if (t.left <= 0) {
@@ -65,11 +67,15 @@ addLoop((dt) => {
       t.res(true);
     }
   }
+  return timers.size > 0;
 });
 
 /** Jeda yang mengikuti kecepatan dan tombol jeda. Hasil false = dipotong oleh flushSleeps(). */
 export function sleep(ms: number): Promise<boolean> {
-  return new Promise((res) => timers.add({ left: dur(ms), res }));
+  return new Promise((res) => {
+    timers.add({ left: dur(ms), res });
+    wake();
+  });
 }
 
 /** Selesaikan semua jeda seketika (dipakai saat siswa pindah langkah). */

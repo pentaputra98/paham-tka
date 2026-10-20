@@ -49,7 +49,7 @@ export function detailPage(route: Route): PageView {
         <button type="button" class="btn btn--block" aria-disabled="true" title="Tersedia setelah mesin latihan selesai">${icon('pen-line')}<span>Coba latihan serupa</span></button>
         ${
           ready
-            ? `<a class="btn btn--block" href="#/soal/${s.no}/bahas?b=${'{notes}'}">${icon('file-text')}<span>Catatan lengkap</span></a>`
+            ? `<a class="btn btn--block" href="#/soal/${s.no}/catatan">${icon('file-text')}<span>Catatan lengkap</span></a>`
             : `<button type="button" class="btn btn--block" aria-disabled="true">${icon('file-text')}<span>Catatan lengkap</span></button>`
         }
       </div>
@@ -68,9 +68,6 @@ export function detailPage(route: Route): PageView {
       renderMath(host);
       // kertas detail hanya dibaca: tanpa sumber terbang dan tanpa stabilo
       host.querySelectorAll('[data-src]').forEach((e) => e.removeAttribute('data-src'));
-      const notes = c.steps.find((st) => st.visual.kind === 'notes');
-      const link = el.querySelector<HTMLAnchorElement>('a[href*="{notes}"]');
-      if (link) link.href = `#/soal/${s.no}/bahas?b=${notes?.ch ?? 1}`;
     });
   }
 

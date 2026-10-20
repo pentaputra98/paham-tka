@@ -184,6 +184,15 @@ function sharedRenderer(): { renderer: WebGLRenderer; canvas: HTMLCanvasElement 
   return shared;
 }
 
+/**
+ * Lepas memori gambar renderer bersama saat adegan 3D tidak dipakai (buffer diperkecil ke 1×1).
+ * Konteks WebGL dipertahankan agar tidak terkena kebocoran LUT tingkat-modul Three.js r186.
+ */
+export function releaseShared(): void {
+  shared?.renderer.setSize(1, 1, false);
+  shared?.renderer.renderLists.dispose();
+}
+
 export function createDoor(host: HTMLElement): DoorApi {
   const { renderer, canvas } = sharedRenderer();
   const off = new AbortController();

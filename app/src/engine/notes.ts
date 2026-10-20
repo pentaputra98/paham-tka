@@ -4,7 +4,7 @@
  * (satu sumber kebenaran; template menulis ulang manual, di sini tidak).
  */
 import { esc } from '../core/dom';
-import { tex } from '../core/math';
+import { mathHtml, tex } from '../core/math';
 import type { Card, Piece, Row, SoalContent } from './types';
 
 const isFrac = (p: Piece): p is { frac: [Piece[], Piece[]] } => 'frac' in p;
@@ -45,7 +45,7 @@ function cardsTable(cards: Card[], labels: [string, string]): string {
   return `<table class="n-table"><tbody>${cards
     .map(
       (c) =>
-        `<tr><td>${esc(c.label)} ${c.statement.replace(/\$([^$]+)\$/g, (_m, s: string) => tex(s))}</td><td class="${c.ok ? 'ok' : 'no'}">${c.ok ? labels[0] : labels[1]}</td></tr>`,
+        `<tr><td>${esc(c.label)} ${mathHtml(c.statement)}</td><td class="${c.ok ? 'ok' : 'no'}">${c.ok ? labels[0] : labels[1]}</td></tr>`,
     )
     .join('')}</tbody></table>`;
 }
@@ -60,8 +60,8 @@ export function buildNotes(c: SoalContent, sketches: Record<string, () => string
     .map((s, i) => {
       const rows = s.lists.flatMap((id) => c.lists[id] ?? []);
       const sketch = s.sketch && sketches[s.sketch] ? sketches[s.sketch]!() : '';
-      return `<section class="${sketch ? '' : 'full'}"><h2><span>${i + 1}</span>${esc(s.title)}</h2>
-        <div>${rows.length ? tex(alignedTex(rows), true) : ''}${s.why ? `<p class="why">${s.why.replace(/\$([^$]+)\$/g, (_m, x: string) => tex(x))}</p>` : ''}</div>${sketch}</section>`;
+      return `<section class="${sketch ? '' : 'full'}"><h2><span>${i + 1}</span>${mathHtml(s.title)}</h2>
+        <div>${rows.length ? tex(alignedTex(rows), true) : ''}${s.why ? `<p class="why">${mathHtml(s.why)}</p>` : ''}</div>${sketch}</section>`;
     })
     .join('');
   return `<article class="nsheet" aria-label="Catatan lengkap">
@@ -70,6 +70,6 @@ export function buildNotes(c: SoalContent, sketches: Record<string, () => string
     ${sections}
     <section class="full"><h2><span>${c.notes.sections.length + 1}</span>${c.meta.response === 'single' ? 'Cocokkan dengan pilihan' : 'Analisis'}</h2>
       ${cardsTable(c.cards, labels)}
-      <p class="ans">${c.notes.answer.replace(/\$([^$]+)\$/g, (_m, x: string) => tex(x))}</p></section>
+      <p class="ans">${mathHtml(c.notes.answer)}</p></section>
   </article>`;
 }

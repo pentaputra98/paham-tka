@@ -3,7 +3,7 @@
  * sehingga ikut kecepatan dan jeda. Hemat gerak memangkas durasi lewat `dur()`.
  */
 import { dur, rate } from './clock';
-import { addLoop } from './loop';
+import { addLoop, wake } from './loop';
 
 export type EaseFn = (t: number) => number;
 const clamp01 = (x: number): number => Math.max(0, Math.min(1, x));
@@ -41,7 +41,7 @@ const active = new Set<Tw>();
 
 addLoop((dt) => {
   const r = rate();
-  if (!r || !active.size) return;
+  if (!r || !active.size) return false;
   for (const tw of [...active]) {
     const step = dt * 1000 * r;
     if (tw.wait > 0) {
@@ -56,12 +56,14 @@ addLoop((dt) => {
       tw.res(true);
     }
   }
+  return active.size > 0;
 });
 
 export function tween(o: TweenOpts): Promise<boolean> {
   if (o.tag) killTween(o.tag);
   return new Promise((res) => {
     active.add({ ...o, t: 0, total: dur(o.dur), wait: o.delay ? dur(o.delay) : 0, res });
+    wake();
   });
 }
 

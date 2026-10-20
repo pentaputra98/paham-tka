@@ -8,11 +8,12 @@
  *  - sumber tidak terlihat → token ditulis dengan efek kapur.
  */
 import { SND } from '../core/audio';
-import { dur, reducedMotion, sleep } from '../core/clock';
+import { reducedMotion, sleep } from '../core/clock';
 import { esc, html } from '../core/dom';
-import { mathLabel, tex } from '../core/math';
+import { mathHtml, mathLabel, tex } from '../core/math';
 import { completeAll, play } from '../core/motion';
-import { DUR, EASE, EASE_OUT } from '../core/tokens';
+import { DUR, EASE_OUT } from '../core/tokens';
+import { flyClone } from './fly';
 import type { Ask, Piece, Pin, Row, Tok } from './types';
 
 export interface Ctx {
@@ -135,16 +136,25 @@ export class Board {
 
   /** Perkecil huruf baris yang lebih lebar dari papan (min 60 %), tidak pernah memotong rumus. */
   private fit(row: RowView): void {
-    row.m.style.removeProperty('--fit');
-    const avail = this.body.clientWidth - 2 * parseFloat(getComputedStyle(this.body).paddingLeft || '0');
-    const need = row.m.scrollWidth;
-    if (avail > 0 && need > avail)
-      row.m.style.setProperty('--fit', String(Math.max(0.6, avail / need).toFixed(3)));
+    this.fitRows([row]);
   }
 
   /** Hitung ulang penyesuaian saat ukuran papan berubah. */
   refit(): void {
-    this.rows.forEach((r) => this.fit(r));
+    this.fitRows(this.rows);
+  }
+
+  /** Tulis–baca–tulis berkelompok (bukan per baris) agar tidak memicu reflow berulang. */
+  private fitRows(rows: RowView[]): void {
+    if (!rows.length) return;
+    rows.forEach((r) => r.m.style.removeProperty('--fit'));
+    const pad = parseFloat(getComputedStyle(this.body).paddingLeft || '0');
+    const avail = this.body.clientWidth - 2 * pad;
+    const need = rows.map((r) => r.m.scrollWidth);
+    rows.forEach((r, i) => {
+      const n = need[i]!;
+      if (avail > 0 && n > avail) r.m.style.setProperty('--fit', Math.max(0.6, avail / n).toFixed(3));
+    });
   }
 
   private dimPast(): void {
@@ -297,46 +307,11 @@ export class Board {
 
   private fly(s: HTMLElement, tk: HTMLElement, c: Ctx): Promise<void> {
     return new Promise((res) => {
-      const a = s.getBoundingClientRect();
-      const b = tk.getBoundingClientRect();
-      const g = tk.cloneNode(true) as HTMLElement;
-      g.classList.remove('hid');
-      g.classList.add('fly-tok');
+      const { g, k } = flyClone(s, tk, { tag: 'fly', scaleFromSource: true });
       g.dataset.run = String(c.run);
-      Object.assign(g.style, {
-        left: `${b.left}px`,
-        top: `${b.top}px`,
-        width: `${b.width}px`,
-        height: `${b.height}px`,
-        margin: '0',
-        fontSize: getComputedStyle(tk).fontSize,
-      });
-      document.body.append(g);
-      s.classList.remove('src-glow');
-      void s.offsetWidth;
-      s.classList.add('src-glow');
-      const dx = a.left + a.width / 2 - (b.left + b.width / 2);
-      const dy = a.top + a.height / 2 - (b.top + b.height / 2);
-      const sc = Math.max(0.6, Math.min(1.5, a.height / Math.max(b.height, 1)));
-      const dist = Math.hypot(dx, dy);
-      const arc = Math.min(80, dist * 0.22);
-      const D = Math.max(DUR.flyMin, Math.min(DUR.flyMax, dist * 0.95));
       SND.whoosh(0.55);
       const rec: Flying = { g, tk, res: () => res() };
       this.flying.add(rec);
-      const k = play(
-        g,
-        [
-          { transform: `translate(${dx}px, ${dy}px) scale(${sc})`, opacity: 0.85 },
-          {
-            transform: `translate(${dx * 0.5}px, ${dy * 0.5 - arc}px) scale(${(sc + 1.15) / 2})`,
-            opacity: 1,
-            offset: 0.5,
-          },
-          { transform: 'none', opacity: 1 },
-        ],
-        { duration: D, easing: EASE, tag: 'fly' },
-      );
       void k.finished.then(() => {
         if (!this.flying.has(rec)) return;
         this.flying.delete(rec);
@@ -348,7 +323,7 @@ export class Board {
             easing: 'ease-out',
           });
           SND.tick();
-          setTimeout(res, dur(120));
+          void sleep(120).then(() => res());
         } else res();
       });
     });
@@ -431,9 +406,7 @@ export class Board {
 }
 
 /** Teks bercampur $…$ (konten bundel tepercaya). */
-export function mathText(s: string): string {
-  return s.replace(/\$([^$]+)\$/g, (_m, x: string) => tex(x));
-}
+export const mathText = mathHtml;
 
 /** '@nama' → elemen [data-src=nama] di halaman; selain itu id token di papan (baris atau pin). */
 export function srcEl(src: string | undefined, board: HTMLElement): HTMLElement | null {

@@ -6,12 +6,12 @@ import { SND } from '../core/audio';
 import { dur, sleep, speed } from '../core/clock';
 import { esc } from '../core/dom';
 import { icon } from '../core/icons';
-import { tex } from '../core/math';
+import { mathHtml, tex } from '../core/math';
 import { DUR } from '../core/tokens';
 import type { Ctx } from './board';
 import type { Card } from './types';
 
-const mt = (s: string): string => s.replace(/\$([^$]+)\$/g, (_m, x: string) => tex(x));
+const mt = mathHtml;
 
 export class Cards {
   readonly el: HTMLElement;

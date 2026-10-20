@@ -111,6 +111,7 @@ export function createDoor3d(): VisualScene & {
     destroy() {
       ro.disconnect();
       door?.dispose();
+      if (door) void import('./door3d-scene').then((m) => m.releaseShared());
       door = null;
       loading = null;
     },
