@@ -20,6 +20,10 @@ const SCREENS: Array<[string, string, number]> = [
   ['faktor', '#/soal/25/bahas?m=amati&b=3&l=1', 6500],
   ['kartu', '#/soal/25/bahas?m=amati&b=6&l=5', 5000],
   ['catatan', '#/soal/25/bahas?m=amati&b=5', 1200],
+  ['24-pahami', '#/soal/24/bahas?m=amati&b=1&l=1', 5000],
+  ['24-rumus', '#/soal/24/bahas?m=amati&b=2&l=0', 6500],
+  ['24-lab', '#/soal/24/bahas?m=amati&b=2&l=3', 2500],
+  ['24-pernyataan', '#/soal/24/bahas?m=amati&b=3&l=3', 6500],
 ];
 const NO_CLIP = '.btn, .seg button, .cap-k, .bd-t, .tblock .tb-n, .stamp, .front .num, .facts dd';
 

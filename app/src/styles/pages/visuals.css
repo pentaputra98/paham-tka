@@ -1,0 +1,255 @@
+/* Adegan visual SVG (soal 24: kerucut es krim). Warna bermakna: biru = variabel/hasil antara,
+   merah = jari-jari AM yang menjadi kendala tinggi, emas tidak dipakai sebagai hiasan. */
+@layer pages {
+  .vis-cone {
+    height: 100%;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: var(--space-2);
+  }
+
+  .vis-cone svg {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .c-semi {
+    fill: var(--a-sky-15);
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-2);
+  }
+
+  .c-tri {
+    fill: var(--a-blue-24);
+    stroke: var(--color-on-stage);
+    stroke-width: var(--bw-2);
+    stroke-linejoin: round;
+  }
+
+  .c-half {
+    fill: transparent;
+    stroke: none;
+    transition: fill var(--dur-slow) var(--ease);
+  }
+
+  .show-half .c-half {
+    fill: var(--a-blue-45);
+  }
+
+  .c-ab {
+    stroke: var(--color-on-stage);
+    stroke-width: var(--bw-2);
+  }
+
+  .c-cm {
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 6 5;
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-height .c-cm {
+    opacity: 1;
+  }
+
+  .c-am {
+    stroke: var(--color-constraint-on-stage);
+    stroke-width: var(--bw-4);
+    stroke-linecap: round;
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-half .c-am {
+    opacity: 1;
+  }
+
+  .c-arc {
+    fill: none;
+    stroke: var(--color-on-stage);
+    stroke-width: var(--bw-2);
+  }
+
+  .c-arc-half {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-2);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-half .c-arc-half {
+    opacity: 1;
+  }
+
+  .c-ticks path {
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-3);
+  }
+
+  .c-pt {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-sm);
+    fill: var(--color-on-stage);
+  }
+
+  .c-var {
+    font-family: var(--font-math);
+    font-style: italic;
+    font-size: var(--svg-fs-md);
+    fill: var(--color-on-stage);
+  }
+
+  .c-lbl {
+    font-family: var(--font-mono);
+    font-size: var(--svg-fs-xs);
+    fill: var(--color-on-stage-muted);
+  }
+
+  .c-m,
+  .c-r,
+  .c-halfth {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-height .c-m,
+  .show-half .c-r,
+  .show-half .c-halfth {
+    opacity: 1;
+  }
+
+  .c-r {
+    fill: var(--color-constraint-on-stage);
+  }
+
+  .c-halfth {
+    fill: var(--color-stage-accent);
+    font-size: var(--svg-fs-sm);
+  }
+
+  .c-x,
+  .c-y {
+    opacity: 0;
+    font-size: var(--svg-fs-lg);
+    font-weight: var(--fw-bold);
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-areas .c-x,
+  .show-areas .c-y {
+    opacity: 1;
+  }
+
+  .flat .c-theta,
+  .flat .c-x {
+    opacity: 0;
+  }
+
+  /* lab: slider dan nilai langsung */
+  .labctl {
+    display: none;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-1) var(--space-4);
+    align-items: center;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-lg);
+    background: var(--color-glass-strong);
+    color: var(--color-text);
+    box-shadow: var(--shadow-2);
+  }
+
+  .lab-on .labctl {
+    display: grid;
+  }
+
+  .lab-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+    grid-column: 1;
+  }
+
+  .lab-row label {
+    min-width: var(--space-8);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-small);
+    color: var(--color-brand);
+    white-space: nowrap;
+  }
+
+  .lab-row output {
+    min-width: var(--space-8);
+    text-align: right;
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-brand);
+  }
+
+  .hud {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: var(--space-1) var(--space-4);
+  }
+
+  .hud dt {
+    font-size: var(--fs-small);
+    color: var(--color-text-muted);
+  }
+
+  .hud dd {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-brand);
+    white-space: nowrap;
+  }
+
+  .hud-main dd {
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-ui);
+    font-weight: var(--fw-black);
+    font-size: var(--fs-title);
+    color: var(--color-intermediate);
+  }
+
+  .n-sketch {
+    width: 100%;
+    max-width: var(--size-sketch);
+    height: auto;
+    background: var(--color-stage);
+    border-radius: var(--radius-md);
+  }
+
+  @media (max-height: 520px) {
+    .labctl {
+      padding: var(--space-1) var(--space-3);
+      gap: 0 var(--space-3);
+    }
+
+    .lab-row .slider {
+      height: var(--size-touch);
+    }
+
+    .hud {
+      grid-template-columns: repeat(3, auto);
+    }
+
+    .hud dt,
+    .hud dd {
+      font-size: var(--fs-caption);
+    }
+
+    .hud-main dd {
+      font-size: var(--fs-body);
+    }
+  }
+}

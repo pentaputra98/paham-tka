@@ -162,6 +162,11 @@
     --fs-h2: clamp(22px, 2.2vw, 30px);
     --fs-card-num: clamp(30px, 3vw, 42px);
     --fs-hero: clamp(34px, 5.2vw, 84px);
+    /* ukuran huruf dalam satuan viewBox SVG (ikut skala gambar) */
+    --svg-fs-xs: 12px;
+    --svg-fs-sm: 15px;
+    --svg-fs-md: 20px;
+    --svg-fs-lg: 26px;
     --lh-tight: 0.93;
     --lh-heading: 1.15;
     --lh-math: 1.3;

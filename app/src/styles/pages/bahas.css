@@ -397,14 +397,25 @@
     color: var(--color-brand);
   }
 
-  /* stabilo: lapisan semu yang direntang dengan transform (bukan background-size) */
+  /* stabilo. Teks biasa (bisa lintas baris): sorotan statis yang ikut setiap baris.
+     Di dalam rumus (selalu satu baris): lapisan semu direntang dengan transform. */
   .hl {
     --hc: var(--color-highlight-red);
 
     position: relative;
+    border-radius: var(--radius-xs);
+    box-decoration-break: clone;
   }
 
-  .hl::before {
+  .hl.on {
+    background: linear-gradient(transparent 52%, var(--hc) 52%, var(--hc) 96%, transparent 96%);
+  }
+
+  .katex .hl.on {
+    background: none;
+  }
+
+  .katex .hl::before {
     content: '';
     position: absolute;
     left: calc(-1 * var(--space-0-5));
@@ -419,7 +430,7 @@
     transition: transform var(--dur-reveal) var(--ease);
   }
 
-  .hl.on::before {
+  .katex .hl.on::before {
     transform: scaleX(1);
   }
 
@@ -431,7 +442,11 @@
     --hc: var(--color-highlight-gold);
   }
 
-  .hl.focus::before {
+  .hl.focus.on {
+    background: var(--hc);
+  }
+
+  .katex .hl.focus::before {
     top: 4%;
   }
 
@@ -1519,5 +1534,51 @@
   .print-root .nsheet {
     max-width: none;
     padding: 0;
+  }
+}
+
+/* kertas soal dengan gambar sumber dan daftar pernyataan (hanya dibaca) */
+@layer pages {
+  .soal-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 34%);
+    gap: var(--space-4);
+    align-items: start;
+  }
+
+  .soal-fig img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-sm);
+  }
+
+  .checks {
+    list-style: none;
+    display: grid;
+    gap: var(--space-1);
+    margin-top: var(--space-2);
+  }
+
+  .checks li {
+    display: flex;
+    gap: var(--space-2-5);
+    align-items: baseline;
+  }
+
+  .checks li::before {
+    content: '';
+    flex: none;
+    width: var(--space-4);
+    height: var(--space-4);
+    border: var(--bw-2) solid var(--color-text-muted);
+    border-radius: var(--radius-xs);
+    transform: translateY(var(--space-0-5));
+  }
+
+  @media (max-height: 520px) {
+    .soal-split {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 28%);
+      gap: var(--space-2);
+    }
   }
 }

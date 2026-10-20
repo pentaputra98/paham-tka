@@ -2554,6 +2554,12 @@ Pin: $\frac XY=\frac2\pi\cot\frac\theta2$.
 | (4) | $\lim_{\theta\to\frac\pi6}\frac XY=\frac2\pi$. | SALAH | $\frac2\pi(2+\sqrt3)\approx2{,}38$ | $\frac2\pi$ adalah nilai di $\theta=\frac\pi2$ ($\cot\frac\pi4=1$). |
 | (5) | Jika $\theta=\pi$ maka $\frac XY=0$. | BENAR | $\cot\frac\pi2=0$ | Segitiga menjadi garis lurus: luas $X=0$. |
 
+*Ditambahkan M1 (20 Okt 2026; kunci tidak berubah), dipakai di `app/src/content/soal/q24.ts`:*
+- **Bagian 1, papan:** k1 Diketahui · k2 $X=$ luas segitiga $ABC$ (`@s-X`) · k3 $Y=$ luas setengah lingkaran (`@s-Y`) · k4 $AB=$ diameter (`@s-semi`) · k5 $\theta=\angle ACB$ (di titik $C$) · k6 Ditanya $\lim_{\theta\to a}\frac XY$ (`@s-tanya`). Label $\theta$ pada gambar SVG menjadi sumber `@g-theta` untuk baris a3.
+- **Bagian 2, pop-up 2.2–2.4:** "Luas segitiga memakai alas $AB$ dan tinggi $CM$. Luas setengah lingkaran adalah $\frac12\pi r^2$." · "Bagi $X$ dengan $Y$. Jari-jari $r^2$ saling menghilang." · "Coba sendiri: geser jari-jari, nilai $\frac XY$ tidak berubah. Geser sudut $\theta$, nilainya berubah." (dari *Sorotan*).
+- **Bagian 3:** satu langkah per baris d1–d5; visual mengatur $\theta$ = 60°, 120°, 90°, 30°, 180° (dan $r$ 4,5 cm pada d1). Pin: $\frac XY=\frac2\pi\cot\frac\theta2$. Tabel nilai *Visual* Bagian 3 ditawarkan sebagai konten opsional pada d3.
+- **Bagian 5:** pop-up per kartu dari kolom *Alasan/jebakan*; papan ringkasan s1–s5 + s6 "Jawaban: hanya pernyataan (5)"; pertanyaan kesimpulan: (1) dan (5) · (2) dan (5) · (3) dan (5) · (4) dan (5) · **(5) saja**, petunjuk tiap pilihan salah dari kolom alasan.
+
 ### Bagian 6 — Selesai
 - **Segel:** **(5)**
 - **Pop-up:** "$\frac XY=\frac2\pi\cot\frac\theta2$: bebas dari jari-jari, tetapi bergantung pada sudut. Hanya pernyataan (5) yang benar."

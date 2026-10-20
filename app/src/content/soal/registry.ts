@@ -5,6 +5,7 @@
 import type { SoalContent } from '../../engine/types';
 
 const LOADERS: Partial<Record<number, () => Promise<{ default: SoalContent }>>> = {
+  24: () => import('./q24'),
   25: () => import('./q25'),
 };
 

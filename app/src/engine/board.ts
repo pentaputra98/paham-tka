@@ -438,8 +438,11 @@ export function mathText(s: string): string {
 /** '@nama' → elemen [data-src=nama] di halaman; selain itu id token di papan (baris atau pin). */
 export function srcEl(src: string | undefined, board: HTMLElement): HTMLElement | null {
   if (!src) return null;
-  if (src.startsWith('@'))
-    return document.querySelector<HTMLElement>(`[data-src="${CSS.escape(src.slice(1))}"]`);
+  if (src.startsWith('@')) {
+    // nama yang sama bisa ada di kertas soal dan di label visual: pakai yang terlihat
+    const all = [...document.querySelectorAll<HTMLElement>(`[data-src="${CSS.escape(src.slice(1))}"]`)];
+    return all.find(visibleEnough) ?? all[0] ?? null;
+  }
   return board.querySelector<HTMLElement>(`[data-k="${CSS.escape(src)}"]`);
 }
 
