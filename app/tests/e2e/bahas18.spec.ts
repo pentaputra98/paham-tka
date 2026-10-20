@@ -25,6 +25,7 @@ async function settled(page: Page, i: number): Promise<void> {
   const want = expectedRows(i);
   if (!want) {
     await expect(page.locator('.board')).toBeHidden({ timeout: 10_000 });
+    await expect(page.locator('.bnav[data-running]')).toHaveCount(0, { timeout: 10_000 });
     return;
   }
   await expect
@@ -35,10 +36,11 @@ async function settled(page: Page, i: number): Promise<void> {
         ),
         hid: await page.locator('.board .tk.hid').count(),
         fly: await page.locator('.fly-tok').count(),
+        run: await page.locator('.bnav[data-running]').count(),
       }),
       { timeout: 30_000 },
     )
-    .toEqual({ rows: want, hid: 0, fly: 0 });
+    .toEqual({ rows: want, hid: 0, fly: 0, run: 0 });
 }
 
 async function walk(page: Page): Promise<void> {
@@ -73,10 +75,10 @@ test.describe('Pembahasan soal 18 (G-Gerak, 3D pelengkap)', () => {
     await settled(page, 3);
     await expect(page.locator('.vis-door')).toHaveClass(/is-2d/);
     await expect(page.locator('.ribbon18 [data-src="l3-merah"]')).toBeVisible();
-    await page.locator('[data-next]').click();
-    await page.locator('[data-next]').click();
-    await page.locator('[data-next]').click();
-    await settled(page, 6);
+    for (const i of [4, 5, 6]) {
+      await page.locator('[data-next]').click();
+      await settled(page, i);
+    }
     await expect(page.locator('.ribbon18')).toContainText('251,2');
     expect(three).toEqual([]);
     expect(errors).toEqual([]);

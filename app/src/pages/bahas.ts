@@ -14,6 +14,7 @@ import { DUR, EASE_OUT, SLIDE_PX } from '../core/tokens';
 import { getSoal, RELEASE_1 } from '../content';
 import { loadContent } from '../content/soal/registry';
 import { Board } from '../engine/board';
+import { Ink } from '../engine/ink';
 import { buildNotes } from '../engine/notes';
 import { Player, type PlayerHooks } from '../engine/player';
 import { Scene } from '../engine/scene';
@@ -26,9 +27,13 @@ import { toast } from '../shell/toast';
 import { VISUALS } from '../visuals';
 
 const KEYS: Array<[string, string]> = [
-  ['← →', 'langkah sebelumnya / berikutnya'],
+  [
+    '← →',
+    'langkah sebelumnya / berikutnya (Lanjut saat animasi berjalan: tampilkan langkah ini sampai selesai)',
+  ],
   ['Spasi', 'putar otomatis atau jeda'],
-  ['R', 'ulangi langkah ini'],
+  ['R', 'ulangi animasi langkah ini'],
+  ['C', 'coretan di layar'],
   ['F', 'layar penuh'],
   ['M', 'musik latar'],
   ['Esc', 'tutup lembar'],
@@ -58,7 +63,8 @@ export function bahasPage(route: Route): PageView {
   const header = {
     back: { label: 'Soal', href: `#/soal/${no}` },
     block: { k: 'BAGIAN', n: '00/00', t: 'Lobi' },
-    extra: `<button type="button" class="icon-btn" data-act="menu" aria-label="Daftar bagian" title="Daftar bagian">${icon('list')}</button>
+    extra: `<button type="button" class="btn top-ink" data-act="ink" aria-pressed="false" title="Coretan (C)">${icon('pen-line')}<span>Coretan</span></button>
+      <button type="button" class="icon-btn" data-act="menu" aria-label="Daftar bagian" title="Daftar bagian">${icon('list')}</button>
       <button type="button" class="icon-btn" data-act="music" aria-pressed="${store.settings.music}" aria-label="Musik latar" title="Musik latar (M)">${icon('music')}</button>
       <button type="button" class="icon-btn" data-act="sfx" aria-pressed="${store.settings.sfx}" aria-label="Efek suara" title="Efek suara">${icon(store.settings.sfx ? 'volume-2' : 'volume-x')}</button>`,
   };
@@ -122,6 +128,7 @@ export function bahasPage(route: Route): PageView {
     main.append(scene.root);
     const nav = html(`<nav class="bnav" aria-label="Navigasi langkah">
       <button type="button" class="btn" data-prev>${icon('arrow-left')}<span class="btn-label">Kembali</span></button>
+      <button type="button" class="icon-btn" data-replay aria-label="Ulangi animasi langkah ini" title="Ulangi langkah (R)">${icon('rotate-ccw')}</button>
       <button type="button" class="icon-btn" data-auto aria-pressed="false" aria-label="Putar otomatis" title="Putar otomatis (Spasi)">${icon('play')}</button>
       <div class="seg bnav-speed" role="radiogroup" aria-label="Kecepatan animasi">
         ${SPEEDS.map(([v, t]) => `<button type="button" role="radio" data-speed="${v}" aria-checked="${store.settings.speed === v}">${t}</button>`).join('')}
@@ -131,6 +138,13 @@ export function bahasPage(route: Route): PageView {
       <button type="button" class="btn btn--primary" data-next><span data-next-t>Lanjut</span>${icon('arrow-right')}</button>
     </nav>`);
     el.replaceChildren(lobby, main, nav);
+
+    const ink = new Ink(scene.root, no);
+    cleanups.push(() => ink.destroy());
+    const syncInk = (on: boolean): void => {
+      document.querySelector('.top [data-act="ink"]')?.setAttribute('aria-pressed', String(on));
+    };
+    ink.onChange = syncInk;
 
     const queryPath = route.query.m === 'amati' || route.query.m === 'ikut' ? (route.query.m as Path) : null;
     const p = new Player(content, board, scene, hooks(), queryPath ?? store.settings.defaultMode);
@@ -174,6 +188,9 @@ export function bahasPage(route: Route): PageView {
       if (t.closest('[data-prev]')) {
         SND.click();
         p.prev();
+      } else if (t.closest('[data-replay]')) {
+        SND.click();
+        if (p.current.ch !== 0) p.go(p.i, 1, { replay: true });
       } else if (t.closest('[data-next]')) {
         SND.init();
         SND.click();
@@ -218,7 +235,10 @@ export function bahasPage(route: Route): PageView {
       const t = (e.target as Element).closest<HTMLElement>('[data-act]');
       if (!t) return;
       if (t.dataset.act === 'menu') openMenu();
-      else if (t.dataset.act === 'music') {
+      else if (t.dataset.act === 'ink') {
+        if (p.current.ch === 0) toast('Coretan tersedia setelah pembahasan dimulai.');
+        else ink.setActive(!ink.isActive);
+      } else if (t.dataset.act === 'music') {
         SND.init();
         store.updateSettings({ music: !store.settings.music });
       } else if (t.dataset.act === 'sfx') {
@@ -257,6 +277,10 @@ export function bahasPage(route: Route): PageView {
       } else if (e.key === ' ' && !(tg && tg.closest('button, a'))) {
         e.preventDefault();
         if (p.current.ch !== 0) p.setAuto(!p.auto);
+      } else if (e.key === 'c' || e.key === 'C') {
+        if (p.current.ch !== 0) ink.setActive(!ink.isActive);
+      } else if (e.key === 'Escape' && ink.isActive) {
+        ink.setActive(false);
       } else if (e.key === 'r' || e.key === 'R') {
         if (p.current.ch !== 0) p.go(p.i, 1, { replay: true });
       } else if (e.key === 'f' || e.key === 'F') void toggleFullscreen();
@@ -287,6 +311,7 @@ export function bahasPage(route: Route): PageView {
         tb.querySelector('.tb-t')!.textContent = content.chapters[st.ch]?.t ?? '';
       }
       el.classList.toggle('is-lobby', st.ch === 0);
+      if (st.ch === 0 && ink.isActive) ink.setActive(false);
       const ids = p.stepsOfCh(st.ch);
       const pos = ids.indexOf(p.i);
       nav.querySelector('.navlabel')!.textContent = st.ch
@@ -301,14 +326,17 @@ export function bahasPage(route: Route): PageView {
         .join('');
       const lastOfCh = pos === ids.length - 1;
       nav.querySelector('[data-next-t]')!.textContent = p.pending
-        ? 'Lewati soal'
+        ? 'Lihat jawaban'
         : p.isLast
           ? 'Selesai'
           : lastOfCh
             ? 'Bagian berikutnya'
             : 'Lanjut';
       nav.querySelector('[data-next]')!.classList.toggle('is-skip', p.pending);
+      // animasi langkah sedang berjalan: Lanjut akan menyelesaikannya dulu (juga penanda bagi uji)
+      nav.toggleAttribute('data-running', p.running);
       (nav.querySelector('[data-prev]') as HTMLButtonElement).disabled = p.i === 0;
+      (nav.querySelector('[data-replay]') as HTMLButtonElement).disabled = st.ch === 0;
       const auto = nav.querySelector<HTMLElement>('[data-auto]')!;
       auto.setAttribute('aria-pressed', String(p.auto));
       auto.innerHTML = icon(p.auto ? 'pause' : 'play');
@@ -347,6 +375,7 @@ export function bahasPage(route: Route): PageView {
           if (isSheetOpen()) closeSheet();
         },
         save(i) {
+          ink.setPage(String(i));
           const st = p.steps[i]!;
           const ids = p.stepsOfCh(st.ch);
           store.setLastStep(no, st.ch, ids.indexOf(i));

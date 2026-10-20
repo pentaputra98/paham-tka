@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test';
 
-test.describe('Hero angka terbang (FR-HOME-5, PRD §6.2)', () => {
-  test('siklus berjalan: token terbang dari kertas, baris emas muncul, lalu berulang', async ({ page }) => {
+/** Hero beranda (revisi PRD v1.4): pola biji bunga matahari, bukan soal. */
+test.describe('Hero beranda: pola filotaksis', () => {
+  test('titik tumbuh bertahap lalu pola utuh berputar pelan', async ({ page }) => {
     await page.addInitScript(() =>
       localStorage.setItem(
         'pahamtka:v1:ui',
@@ -9,26 +10,36 @@ test.describe('Hero angka terbang (FR-HOME-5, PRD §6.2)', () => {
       ),
     );
     await page.goto('./#/');
-    await expect.poll(() => page.locator('.fly-tok').count(), { timeout: 8000 }).toBeGreaterThan(0);
-    await expect(page.locator('.fly-board .box-gold')).toHaveCount(1, { timeout: 15_000 });
-    // siklus diulang: papan dikosongkan lalu ditulis lagi
-    await expect(page.locator('.fly-board .bl')).toHaveCount(0, { timeout: 10_000 });
-    await expect.poll(() => page.locator('.fly-board .bl').count(), { timeout: 8000 }).toBeGreaterThan(0);
+    await expect(page.locator('.hero-art .hd')).toHaveCount(340);
+    // tidak ada isi soal di beranda
+    await expect(page.locator('.hero .katex')).toHaveCount(0);
+    const running = () =>
+      page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running').length);
+    await expect.poll(running, { timeout: 4000 }).toBeGreaterThan(10);
+    await expect(page.locator('.hero-stage')).toHaveClass(/is-live/);
   });
 
-  test('hemat gerak: keadaan akhir statis, tanpa token terbang', async ({ page }) => {
+  test('hemat gerak: pola utuh statis, tanpa animasi', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('./#/');
-    await page.waitForTimeout(2500);
-    await expect(page.locator('.fly-tok')).toHaveCount(0);
-    await expect(page.locator('.fly-board .box-gold')).toHaveCount(1);
+    await page.waitForTimeout(800);
+    await expect(page.locator('.hero-stage')).toHaveClass(/is-still/);
+    const n = await page.evaluate(
+      () =>
+        document
+          .getAnimations()
+          .filter(
+            (a) => a.playState === 'running' && (a.effect as KeyframeEffect)?.target?.closest?.('.hero-art'),
+          ).length,
+    );
+    expect(n).toBe(0);
   });
 
-  test('meninggalkan beranda menghentikan siklus', async ({ page }) => {
+  test('meninggalkan beranda menghentikan animasi tumbuh', async ({ page }) => {
     await page.goto('./#/');
-    await page.waitForTimeout(1200);
+    await page.waitForTimeout(600);
     await page.goto('./#/tentang');
-    await page.waitForTimeout(1500);
-    await expect(page.locator('.fly-tok')).toHaveCount(0);
+    await page.waitForTimeout(600);
+    await expect(page.locator('.hero-art')).toHaveCount(0);
   });
 });

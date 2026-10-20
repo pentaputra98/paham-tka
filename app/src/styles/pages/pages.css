@@ -11,9 +11,12 @@
 
   /* kertas ujian dengan garis margin merah (pembahasan.md §10) */
   .paper {
+    container-type: inline-size;
     position: relative;
     min-height: 0;
     overflow: auto;
+    display: flex;
+    flex-direction: column;
     border-radius: var(--radius-xl);
     background: var(--color-surface);
     box-shadow: var(--shadow-2);
@@ -53,6 +56,12 @@
     line-height: var(--lh-heading);
     color: var(--color-brand);
     margin-bottom: var(--space-2);
+  }
+
+  /* layar lebar: teks soal membesar mengikuti lebar kertas, dan soal pendek berada di tengah kertas */
+  .paper-body {
+    margin-block: auto;
+    font-size: var(--fs-paper-detail);
   }
 
   .paper-src {
@@ -195,10 +204,6 @@
     display: flex;
     justify-content: space-between;
     gap: var(--space-2);
-    margin-top: var(--space-2);
-  }
-
-  .paper-body {
     margin-top: var(--space-2);
   }
 }

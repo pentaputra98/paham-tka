@@ -115,6 +115,12 @@ export function verdictLabels(meta: SoalMeta): [string, string] {
 
 export interface SoalContent {
   meta: SoalMeta;
+  /**
+   * 'full' = satu panggung besar tanpa panel papan (soal aljabar/perhitungan tanpa 3D, revisi pemilik
+   * PRD v1.4): visual di atas, baris rumus besar di bawahnya pada panggung gelap yang sama.
+   * Tanpa nilai = tata letak bawaan (papan di kanan).
+   */
+  layout?: 'full';
   /** HTML kertas soal; rumus $…$, stabilo lewat \htmlClass/\htmlData (KaTeX trust terbatas) */
   paper: { html: string; srcNames: string[] };
   lobby: { eyebrow: string; titleLines: [string, string, string]; lede: string; facts: [Fact, Fact, Fact] };

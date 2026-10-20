@@ -74,26 +74,29 @@
     --a-black-45: rgb(0 0 0 / 0.45);
     --a-black-65: rgb(0 0 0 / 0.65);
 
+    /* skala antarmuka: 1 di HP/tablet/laptop; naik di monitor lebar agar layar terisi proporsional */
+    --ui: 1;
+
     /* jarak (skala 4/8) */
-    --space-0-5: 2px;
-    --space-1: 4px;
-    --space-1-5: 6px;
-    --space-2: 8px;
-    --space-2-5: 10px;
-    --space-3: 12px;
-    --space-3-5: 14px;
-    --space-4: 16px;
-    --space-5: 24px;
-    --space-6: 32px;
-    --space-7: 48px;
-    --space-8: 64px;
+    --space-0-5: calc(2px * var(--ui));
+    --space-1: calc(4px * var(--ui));
+    --space-1-5: calc(6px * var(--ui));
+    --space-2: calc(8px * var(--ui));
+    --space-2-5: calc(10px * var(--ui));
+    --space-3: calc(12px * var(--ui));
+    --space-3-5: calc(14px * var(--ui));
+    --space-4: calc(16px * var(--ui));
+    --space-5: calc(24px * var(--ui));
+    --space-6: calc(32px * var(--ui));
+    --space-7: calc(48px * var(--ui));
+    --space-8: calc(64px * var(--ui));
 
     /* radius */
-    --radius-xs: 6px;
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 22px;
+    --radius-xs: calc(6px * var(--ui));
+    --radius-sm: calc(8px * var(--ui));
+    --radius-md: calc(12px * var(--ui));
+    --radius-lg: calc(16px * var(--ui));
+    --radius-xl: calc(22px * var(--ui));
     --radius-pill: 999px;
 
     /* garis */
@@ -104,52 +107,71 @@
     --bw-4: 4px;
 
     /* ukuran */
-    --size-touch: 44px;
-    --size-touch-lg: 48px;
-    --size-icon-sm: 16px;
-    --size-icon-md: 18px;
-    --size-icon-lg: 24px;
-    --size-mark: 36px;
-    --size-thumb: 26px;
-    --size-track: 8px;
-    --size-switch-w: 32px;
-    --size-switch-h: 19px;
-    --size-switch-knob: 15px;
-    --size-ring: 22px;
-    --size-hatch: 10px;
-    --size-grid-major: 80px;
-    --size-grid-minor: 16px;
-    --size-dot-grid: 22px;
-    --size-crop: 16px;
-    --size-sheet-w: 560px;
+    --size-touch: calc(44px * var(--ui));
+    --size-touch-lg: calc(48px * var(--ui));
+    --size-icon-sm: calc(16px * var(--ui));
+    --size-icon-md: calc(18px * var(--ui));
+    --size-icon-lg: calc(24px * var(--ui));
+    --size-mark: calc(36px * var(--ui));
+    --size-thumb: calc(26px * var(--ui));
+    --size-track: calc(8px * var(--ui));
+    --size-switch-w: calc(32px * var(--ui));
+    --size-switch-h: calc(19px * var(--ui));
+    --size-switch-knob: calc(15px * var(--ui));
+    --size-ring: calc(22px * var(--ui));
+    --size-hatch: calc(10px * var(--ui));
+    --size-grid-major: calc(80px * var(--ui));
+    --size-grid-minor: calc(16px * var(--ui));
+    --size-dot-grid: calc(22px * var(--ui));
+    --size-crop: calc(16px * var(--ui));
+    --size-sheet-w: calc(560px * var(--ui));
     --size-measure: 34em;
-    --size-page-max: 880px;
-    --size-qcard-h: 148px;
-    --size-qcard-h-sm: 128px;
-    --size-search-w: 260px;
-    --size-key-col: 220px;
-    --size-hero-board: 236px;
-    --size-cap-max: 540px;
-    --size-seal: 58px;
-    --size-row: 42px;
-    --size-row-sm: 32px;
-    --size-dot-w: 24px;
-    --size-stamp-room: 124px;
+    --size-page-max: calc(880px * var(--ui));
+    --size-qcard-h: calc(148px * var(--ui));
+    --size-qcard-h-sm: calc(128px * var(--ui));
+    --size-key-col: calc(220px * var(--ui));
+    --size-cap-max: calc(540px * var(--ui));
+    --size-full-lines: calc(1180px * var(--ui));
+    /* animasi beranda: putaran dan napas yang sangat pelan (menenangkan) */
+    --dur-hero-spin: 240s;
+    /* teks kertas soal di halaman Detail: ikut lebar kertas (kueri kontainer) */
+    --fs-paper-detail: clamp(calc(16px * var(--ui)), 2.3cqi, calc(30px * var(--ui)));
+    /* judul hero maks. selebar panelnya ("Soal TKA 2025," muat satu baris) */
+    --hero-title-max: 12.5cqi;
+    --dur-hero-breath: 9s;
+    /* batas ukuran angka matriks relatif tinggi zona visual (2×2 dan 3×3) */
+    --mat-fit-2: 19cqh;
+    --mat-fit-3: 13cqh;
+    /* baris "F = … → F⁻¹ = …" ≈ 17 em (2×2) atau 21 em (3×3) lebarnya */
+    --mat-fit-w2: 5.6cqi;
+    --mat-fit-w3: 4.4cqi;
+    /* warna coretan (PRD FR-COR-2: tanpa emas, karena emas bermakna jawaban) */
+    --ink-red: var(--red-400);
+    --ink-blue: var(--blue-300);
+    --ink-white: var(--paper-0);
+    --ink-grey: var(--metal-400);
+    /* angka matriks pada adegan soal 1: besar, dibaca dari jauh */
+    --fs-mat: calc(clamp(24px, 2.9vw, 52px) * var(--ui));
+    --size-seal: calc(58px * var(--ui));
+    --size-row: calc(42px * var(--ui));
+    --size-row-sm: calc(32px * var(--ui));
+    --size-dot-w: calc(24px * var(--ui));
+    --size-stamp-room: calc(124px * var(--ui));
     /* rumus kartu tidak boleh lebih lebar dari kartu: batas atas relatif lebar kartu */
     --card-formula-max: 10cqi;
     --size-perspective: 1300px;
-    --size-sketch: 300px;
-    --size-ft-0: 132px;
-    --size-fr-0: 500px;
-    --gap-lobby: clamp(20px, 4vw, 64px);
-    --pad-lobby-y: clamp(18px, 3.5vw, 48px);
+    --size-sketch: calc(300px * var(--ui));
+    --size-ft-0: calc(132px * var(--ui));
+    --size-fr-0: calc(500px * var(--ui));
+    --gap-lobby: calc(clamp(20px, 4vw, 64px) * var(--ui));
+    --pad-lobby-y: calc(clamp(18px, 3.5vw, 48px) * var(--ui));
     --blur-glass: 12px;
-    --size-card-min: 168px;
-    --size-hero-max: 560px;
-    --size-toast-max: 560px;
-    --size-phone-w: 64px;
-    --size-phone-h: 112px;
-    --size-phone-wrap: 170px;
+    --size-card-min: calc(168px * var(--ui));
+    --size-hero-max: calc(560px * var(--ui));
+    --size-toast-max: calc(560px * var(--ui));
+    --size-phone-w: calc(64px * var(--ui));
+    --size-phone-h: calc(112px * var(--ui));
+    --size-phone-wrap: calc(170px * var(--ui));
     --lift-1: -1px;
     --lift-2: -2px;
     --nudge-4: 4px;
@@ -161,17 +183,19 @@
     --font-body: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', system-ui, sans-serif;
     --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
     --font-math: 'KaTeX_Math', 'Times New Roman', serif;
-    --fs-micro: 10.5px;
-    --fs-label: 12px;
-    --fs-caption: 13px;
-    --fs-small: 14px;
-    --fs-body: 16px;
-    --fs-lead: clamp(15.5px, 1.25vw, 18px);
-    --fs-board: clamp(17px, 1.55vw, 23px);
-    --fs-title: clamp(18px, 1.6vw, 22px);
-    --fs-h2: clamp(22px, 2.2vw, 30px);
-    --fs-card-num: clamp(30px, 3vw, 42px);
-    --fs-hero: clamp(34px, 5.2vw, 84px);
+    --fs-micro: calc(10.5px * var(--ui));
+    --fs-label: calc(12px * var(--ui));
+    --fs-caption: calc(13px * var(--ui));
+    --fs-small: calc(14px * var(--ui));
+    --fs-body: calc(16px * var(--ui));
+    --fs-lead: calc(clamp(15.5px, 1.25vw, 18px) * var(--ui));
+    --fs-board: calc(clamp(17px, 1.55vw, 23px) * var(--ui));
+    /* baris rumus pada panggung penuh (tanpa panel papan): lebih besar, dibaca dari jauh */
+    --fs-board-full: calc(clamp(20px, 2.1vw, 38px) * var(--ui));
+    --fs-title: calc(clamp(18px, 1.6vw, 22px) * var(--ui));
+    --fs-h2: calc(clamp(22px, 2.2vw, 30px) * var(--ui));
+    --fs-card-num: calc(clamp(30px, 3vw, 42px) * var(--ui));
+    --fs-hero: calc(clamp(34px, 5.2vw, 84px) * var(--ui));
     /* ukuran huruf dalam satuan viewBox SVG (ikut skala gambar) */
     --svg-fs-xs: 12px;
     --svg-fs-sm: 15px;
@@ -303,10 +327,10 @@
     --focus-offset: var(--space-0-5);
 
     /* tata letak shell */
-    --header-h: 60px;
-    --footer-h: 44px;
-    --gutter: clamp(12px, 2vw, 26px);
-    --board-w: clamp(270px, 33vw, 480px);
+    --header-h: calc(60px * var(--ui));
+    --footer-h: calc(44px * var(--ui));
+    --gutter: calc(clamp(12px, 2vw, 26px) * var(--ui));
+    --board-w: calc(clamp(270px, 33vw, 480px) * var(--ui));
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-right: env(safe-area-inset-right, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -325,6 +349,8 @@
       --fs-hero: min(9vh, 7vw);
       --fs-card-num: 26px;
       --fs-board: 15.5px;
+      --fs-board-full: 18px;
+      --fs-mat: 24px;
       --gutter: 10px;
     }
   }
@@ -353,5 +379,20 @@
     --dur-line-up: 1ms;
     --dur-loop: 1ms;
     --stagger: 0ms;
+  }
+}
+
+/* monitor lebar dan tinggi: seluruh ukuran berbasis --ui ikut membesar (revisi pemilik, PRD v1.4) */
+@layer tokens {
+  @media (min-width: 1680px) and (min-height: 940px) {
+    :root {
+      --ui: 1.2;
+    }
+  }
+
+  @media (min-width: 2300px) and (min-height: 1300px) {
+    :root {
+      --ui: 1.45;
+    }
   }
 }

@@ -41,6 +41,7 @@ async function settled(page: Page, i: number): Promise<void> {
     // langkah tanpa papan (catatan lengkap): papan disembunyikan, tidak ada token terbang
     await expect(page.locator('.board')).toBeHidden({ timeout: 10_000 });
     await expect(page.locator('.fly-tok')).toHaveCount(0);
+    await expect(page.locator('.bnav[data-running]')).toHaveCount(0, { timeout: 10_000 });
     return;
   }
   const want = expectedRows(i);
@@ -50,10 +51,11 @@ async function settled(page: Page, i: number): Promise<void> {
         rows: await rowIds(page),
         hid: await page.locator('.board .tk.hid').count(),
         fly: await page.locator('.fly-tok').count(),
+        run: await page.locator('.bnav[data-running]').count(),
       }),
       { timeout: 30_000 },
     )
-    .toEqual({ rows: want, hid: 0, fly: 0 });
+    .toEqual({ rows: want, hid: 0, fly: 0, run: 0 });
 }
 
 const label = (page: Page): Promise<string> => page.locator('.navlabel').innerText();
@@ -78,17 +80,22 @@ test.describe('Pembahasan soal 25 (G-Gerak)', () => {
     expect(prog.items['25'].done).toBe(true);
   });
 
-  test('Lanjut 10 kali cepat saat papan menulis: tepat di langkah ke-10, tanpa baris ganda', async ({
+  // Lanjut saat animasi berjalan = selesaikan langkah itu dulu; klik berikutnya baru pindah (runtut, PRD v1.4)
+  test('Lanjut beruntun saat papan menulis: tiap langkah diselesaikan berurutan, tanpa baris ganda', async ({
     page,
   }) => {
     await setup(page, { speed: 1 });
     await page.goto('./#/soal/25/bahas?m=amati');
     await page.getByRole('button', { name: 'Mulai' }).click();
     await page.waitForTimeout(300);
-    for (let k = 0; k < 9; k++) await page.locator('[data-next]').click({ delay: 20 });
-    await settled(page, 10);
-    const st = steps[9]!;
-    await expect.poll(async () => (await label(page)).toLowerCase()).toContain(`bagian ${st.ch}`);
+    for (let k = 0; k < 18; k++) await page.locator('[data-next]').click({ delay: 20 });
+    await expect(page.locator('.bnav[data-running]')).toHaveCount(0, { timeout: 30_000 });
+    // tidak ada baris ganda dan tidak ada token yang tertinggal tersembunyi/terbang
+    const ids = await rowIds(page);
+    expect(new Set(ids).size).toBe(ids.length);
+    await expect(page.locator('.board .tk.hid')).toHaveCount(0);
+    await expect(page.locator('.fly-tok')).toHaveCount(0);
+    // posisi akhir bergantung pada langkah mana yang masih beranimasi saat diklik; yang dijamin: runtut, tanpa sisa
   });
 
   test('mundur ke setiap langkah: keadaan akhir langsung, tanpa animasi', async ({ page }) => {
@@ -147,7 +154,7 @@ test.describe('Pembahasan soal 25 (G-Gerak)', () => {
     await page.goto('./#/soal/25/bahas?m=ikut&b=2&l=1');
     const foot = page.locator('.bd-foot');
     await expect(foot).toContainText('Coba jawab', { timeout: 20_000 });
-    await expect(page.locator('[data-next-t]')).toHaveText('Lewati soal');
+    await expect(page.locator('[data-next-t]')).toHaveText('Lihat jawaban');
     await foot.getByRole('button', { name: /cot/ }).click();
     await expect(foot.locator('.ask-h')).toContainText('Belum tepat');
     await foot.getByRole('button', { name: /tan/ }).click();
@@ -160,12 +167,16 @@ test.describe('Pembahasan soal 25 (G-Gerak)', () => {
     await expect(foot).toBeEmpty();
   });
 
-  test('Lewati soal saat pertanyaan terbuka tidak menyisakan pertanyaan', async ({ page }) => {
+  test('Lihat jawaban saat pertanyaan terbuka: langkah ini selesai dulu, klik berikutnya pindah', async ({
+    page,
+  }) => {
     await setup(page);
     await page.goto('./#/soal/25/bahas?m=ikut&b=2&l=1');
     await expect(page.locator('.bd-foot')).toContainText('Coba jawab', { timeout: 20_000 });
     await page.locator('[data-next]').click();
-    await settled(page, 5);
+    await settled(page, 4);
     await expect(page.locator('.bd-foot')).toBeEmpty();
+    await page.locator('[data-next]').click();
+    await settled(page, 5);
   });
 });

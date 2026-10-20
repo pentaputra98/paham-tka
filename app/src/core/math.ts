@@ -48,7 +48,13 @@ export function renderMath(el: Element): void {
     if (n.nodeValue?.includes('$')) hits.push(n as Text);
   for (const t of hits) {
     const span = document.createElement('span');
-    span.innerHTML = mathHtml(esc(t.nodeValue ?? ''));
+    // hanya teks di luar rumus yang diloloskan; isi rumus diberikan mentah ke KaTeX
+    // (meloloskan seluruh teks mengubah "&" pemisah kolom matriks menjadi "&amp;")
+    span.innerHTML = (t.nodeValue ?? '').replace(
+      /\$\$([\s\S]+?)\$\$|\$([^$]+?)\$|([^$]+|\$)/g,
+      (_m, d: string | undefined, i: string | undefined, plain: string | undefined) =>
+        d !== undefined ? tex(d, true) : i !== undefined ? tex(i) : esc(plain ?? ''),
+    );
     t.replaceWith(...span.childNodes);
   }
 }

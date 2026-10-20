@@ -9,6 +9,7 @@ import pause from 'lucide-static/icons/pause.svg?raw';
 import rotateCcw from 'lucide-static/icons/rotate-ccw.svg?raw';
 import penLine from 'lucide-static/icons/pen-line.svg?raw';
 import eraser from 'lucide-static/icons/eraser.svg?raw';
+import highlighter from 'lucide-static/icons/highlighter.svg?raw';
 import undo2 from 'lucide-static/icons/undo-2.svg?raw';
 import redo2 from 'lucide-static/icons/redo-2.svg?raw';
 import trash2 from 'lucide-static/icons/trash-2.svg?raw';
@@ -56,6 +57,7 @@ const RAW = {
   'rotate-ccw': rotateCcw,
   'pen-line': penLine,
   eraser: eraser,
+  highlighter: highlighter,
   'undo-2': undo2,
   'redo-2': redo2,
   'trash-2': trash2,

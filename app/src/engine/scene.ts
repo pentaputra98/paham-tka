@@ -47,12 +47,16 @@ export class Scene {
   private readonly capA: HTMLElement;
   private mode: Mode | null = null;
   private lastKey = '';
+  /** langkah yang pop-up-nya sedang tampil (diselesaikan/diulang: pop-up tidak berkedip ulang) */
+  private capStep: Step | null = null;
   /** pembangun HTML catatan lengkap; dijalankan sekali saat bagian catatan pertama dibuka */
   notesBuilder: (() => string) | null = null;
   private hlLevel = -1;
   private visuals = new Map<string, VisualScene>();
   private currentVisual: string | null = null;
   private readonly ro: ResizeObserver;
+  /** satu panggung besar tanpa panel papan */
+  private readonly full: boolean;
 
   constructor(
     private readonly content: SoalContent,
@@ -74,6 +78,8 @@ export class Scene {
     this.capT = this.cap.querySelector('.cap-t')!;
     this.capA = this.cap.querySelector('.cap-a')!;
     this.root.append(this.paper, this.svgHost, this.cards.el, this.notes, this.cap, board.el);
+    this.full = content.layout === 'full';
+    this.root.classList.toggle('lay-full', this.full);
     this.ro = new ResizeObserver(() => this.layout());
     this.ro.observe(this.root);
     // font KaTeX/tampilan bisa selesai dimuat setelah baris ditulis (kunjungan pertama): ukur ulang
@@ -99,6 +105,8 @@ export class Scene {
     if (this.mode === m) return;
     this.mode = m;
     for (const x of MODES) this.root.classList.toggle(`m-${x}`, x === m);
+    // tinggi zona visual bergantung pada mode: hitung sebelum visual baru dianimasikan
+    if (this.full) this.layout();
   }
 
   /** Stabilo bertahap (≤ level menyala). */
@@ -157,6 +165,8 @@ export class Scene {
   }
 
   setCap(step: Step, chapterTitle: string, actions: CapAction[]): void {
+    const again = this.capStep === step;
+    this.capStep = step;
     this.capK.textContent = `Bagian ${step.ch} · ${chapterTitle}`;
     this.capT.innerHTML = mathHtml(step.cap);
     this.capA.replaceChildren();
@@ -168,6 +178,7 @@ export class Scene {
       b.addEventListener('click', a.onClick);
       this.capA.append(b);
     }
+    if (again) return;
     play(
       this.cap,
       [
@@ -187,17 +198,32 @@ export class Scene {
     const W = this.root.clientWidth;
     const H = this.root.clientHeight;
     if (!W || !H) return;
-    const css = getComputedStyle(this.root);
-    const bw = this.board.el.getBoundingClientRect().width || parseFloat(css.getPropertyValue('--bw')) || 320;
-    const gap = H < 420 ? 18 : 34;
-    const fr = Math.round(bw + gap);
     const capBottom = this.cap.offsetTop + this.cap.offsetHeight;
     const ft = this.mode === 'notes' ? 0 : Math.round((capBottom || 120) + 10);
-    const key = `${fr}|${ft}`;
+    let fr: number;
+    let vz = 0;
+    if (this.full) {
+      // layar pendek (HP mendatar): visual kiri, baris rumus kanan; selain itu bertumpuk atas–bawah
+      const side = H < 460;
+      this.root.classList.toggle('full-side', side);
+      if (side) fr = Math.round(W * (this.mode === 'cards' ? 0.42 : 0.5));
+      else {
+        fr = 24;
+        const share = this.mode === 'cards' ? 0.56 : this.mode === 'notes' ? 0 : 0.42;
+        vz = Math.round((H - ft) * share);
+      }
+    } else {
+      const css = getComputedStyle(this.root);
+      const bw =
+        this.board.el.getBoundingClientRect().width || parseFloat(css.getPropertyValue('--bw')) || 320;
+      fr = Math.round(bw + (H < 420 ? 18 : 34));
+    }
+    const key = `${fr}|${ft}|${vz}`;
     if (key !== this.lastKey) {
       this.lastKey = key;
       this.root.style.setProperty('--fr', `${fr}px`);
       this.root.style.setProperty('--ft', `${ft}px`);
+      this.root.style.setProperty('--vz', `${vz}px`);
     }
     if (this.mode === 'cards') this.cards.fit();
     const vis = this.currentVisual ? this.visuals.get(this.currentVisual) : undefined;

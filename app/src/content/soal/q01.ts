@@ -1,24 +1,28 @@
 /**
- * SOAL 1 — Invers Matriks Diagonal (matriks 2×2, pilihan tunggal).
- * Sumber: docs/pembahasan25.md "SOAL 1", docs/soal25.md no. 1. Kunci: E.
+ * SOAL 1 — Invers Matriks Diagonal (matriks 2×2, pilihan tunggal). Kunci: E.
+ * Sumber: docs/pembahasan25.md "SOAL 1", docs/soal25.md no. 1.
+ * Alur mengikuti cara Pak Penta membahas di kelas (revisi 20 Okt 2026, dicatat di dokumen):
+ * pahami (ordo, jenis matriks diagonal) → cara cepat (balik pembilang–penyebut elemen diagonal, ordo berapa pun)
+ * → contoh lain → "hanya untuk matriks diagonal": uji dengan rumus umum → cocokkan pilihan → selesai.
+ * Tata letak: panggung penuh (tanpa panel papan).
  */
 import { H, O, T } from '../../engine/dsl';
 import type { SoalContent, Visual } from '../../engine/types';
-import type { Mat1Stage } from '../../visuals/mat1';
+import type { Mat1State } from '../../visuals/mat1';
 import { getSoal } from '../index';
 
-const mat = (stage: Mat1Stage): Visual => ({ kind: 'svg', scene: 'mat1', state: { stage } });
+const mat = (state: Mat1State): Visual => ({ kind: 'svg', scene: 'mat1', state });
 const F = '\\begin{pmatrix}2&0\\\\0&\\frac12\\end{pmatrix}';
 const INV = '\\begin{pmatrix}\\frac12&0\\\\0&2\\end{pmatrix}';
-const ADJ = '\\begin{pmatrix}d&-b\\\\-c&a\\end{pmatrix}';
 
-const q1: SoalContent = {
+const q01: SoalContent = {
   meta: getSoal(1)!,
   sourceRef: 'docs/pembahasan25.md#soal-1',
+  layout: 'full',
   paper: {
     html: `<p>Perhatikan <span class="hl hl-red" data-hl="1"><span data-src="s-F">matriks</span></span> berikut!</p>
 <div class="soal-math">$$F=\\begin{pmatrix}\\htmlData{src=Fa}{2}&\\htmlData{src=Fb}{0}\\\\\\htmlData{src=Fc}{0}&\\htmlData{src=Fd}{\\frac{1}{2}}\\end{pmatrix}$$</div>
-<p><span class="hl hl-gold" data-hl="2"><span data-src="s-inv">Invers</span></span> dari matriks F adalah ....</p>
+<p><span class="hl hl-gold" data-hl="1"><span data-src="s-inv">Invers</span></span> dari matriks F adalah ....</p>
 <ol class="abc">
 <li><span>A.</span>$\\begin{pmatrix}1&0\\\\0&2\\end{pmatrix}$</li>
 <li><span>B.</span>$\\begin{pmatrix}-1&0\\\\0&-2\\end{pmatrix}$</li>
@@ -31,204 +35,234 @@ const q1: SoalContent = {
   lobby: {
     eyebrow: 'Kelas 12 · Matematika Lanjut · Matriks',
     titleLines: ['Pembahasan Soal', 'Invers <span class="accent">Matriks</span>', 'Diagonal'],
-    lede: 'Matriks $F$ hanya punya dua angka di diagonal. Kita cari matriks yang jika dikalikan dengan $F$ menghasilkan matriks identitas.',
+    lede: 'Matriks $F$ hanya punya dua angka di diagonal. Ada cara cepat untuk mencari inversnya, dan kita uji dengan rumus umum.',
     facts: [
       { dt: 'Ordo', dd: '2 × 2' },
-      { dt: 'Elemen diagonal', dd: '2 dan 1/2' },
+      { dt: 'Jenis', dd: 'matriks diagonal' },
       { dt: 'Dicari', dd: 'F⁻¹' },
     ],
   },
   chapters: [
     { t: 'Lobi', d: 'Halaman awal' },
-    { t: 'Pahami soal', d: 'Diketahui dan ditanya' },
-    { t: 'Menghitung invers', d: 'Determinan, adjoin, invers' },
-    { t: 'Periksa dengan perkalian', d: 'Opsional: F · F⁻¹ = I' },
+    { t: 'Pahami soal', d: 'Ordo 2×2, matriks diagonal' },
+    { t: 'Cara cepat matriks diagonal', d: 'Balik pembilang dan penyebut' },
+    { t: 'Uji dengan rumus umum', d: 'Hasilnya sama' },
     { t: 'Catatan lengkap', d: 'Simpan dan cetak' },
     { t: 'Cocokkan dengan pilihan', d: 'Kartu A–E' },
     { t: 'Selesai', d: 'Jawaban E' },
   ],
   pins: {
-    pF: { id: 'pF', toks: [T('PF1', 'F'), O('PF2', '='), T('PF3', F)] },
-    pDet: { id: 'pDet', toks: [T('PD1', '\\det F'), O('PD2', '='), T('PD3', '1')] },
     pInv: { id: 'pInv', gold: true, toks: [T('PI1', 'F^{-1}'), O('PI2', '='), T('PI3', INV)] },
   },
   lists: {
     LK: [
-      { id: 'k1', toks: [H('k1a', 'Diketahui', 'lbl')] },
       {
-        id: 'k2',
-        toks: [T('k2a', 'F'), O('k2b', '='), T('k2c', F, 'red', '@s-F')],
-        note: 'matriks diagonal',
+        id: 'k1',
+        toks: [H('k1a', 'Diketahui', 'lbl'), T('k1b', 'F'), O('k1c', '='), T('k1d', F, '', '@s-F')],
       },
+      { id: 'k2', toks: [H('k2a', 'ordo', 'tx'), T('k2b', '2\\times2')], note: 'dua baris, dua kolom' },
       {
         id: 'k3',
-        toks: [H('k3a', 'Ditanya', 'lbl'), T('k3b', 'F^{-1}', 'gold', '@s-inv')],
+        toks: [H('k3a', 'jenis', 'tx'), H('k3b', 'matriks diagonal', 'blue')],
+        note: 'semua elemen di luar diagonal utama bernilai $0$',
+      },
+      {
+        id: 'k4',
+        toks: [H('k4a', 'Ditanya', 'lbl'), T('k4b', 'F^{-1}', 'gold', '@s-inv')],
         note: 'invers matriks $F$',
       },
     ],
     L2: [
       {
-        id: 'a1',
-        toks: [T('a1a', '\\det F'), O('a1b', '='), T('a1c', 'ad-bc')],
-        note: 'rumus determinan 2×2',
-      },
-      {
-        id: 'a2',
+        id: 'q1',
         toks: [
-          T('a2a', '\\det F'),
-          O('a2b', '='),
-          T('a2c', '2', 'blue', '@Fa'),
-          T('a2d', '\\cdot'),
-          T('a2e', '\\tfrac12', 'blue', '@Fd'),
-          O('a2f', '-'),
-          T('a2g', '0', 'red', '@Fb'),
-          T('a2h', '\\cdot'),
-          T('a2i', '0', 'red', '@Fc'),
+          T('q1a', '\\begin{pmatrix}a&0\\\\0&d\\end{pmatrix}^{-1}'),
+          O('q1b', '='),
+          T('q1c', '\\begin{pmatrix}\\frac1a&0\\\\0&\\frac1d\\end{pmatrix}', 'blue'),
         ],
-        note: 'masukkan elemen $F$',
-      },
-      {
-        id: 'a3',
-        toks: [T('a3a', '\\det F'), O('a3b', '='), T('a3c', '1-0')],
-        note: '$2\\cdot\\frac12=1$',
-      },
-      {
-        id: 'a4',
-        toks: [T('a4a', '\\det F'), O('a4b', '='), T('a4c', '1', 'blue')],
-        note: 'tidak nol, jadi $F$ punya invers',
-        box: 'navy',
-      },
-    ],
-    L2b: [
-      { id: 'b1', toks: [T('b1a', ADJ)], note: 'pola adjoin' },
-      { id: 'b2', toks: [T('b2a', '\\begin{pmatrix}\\frac12&-0\\\\-0&2\\end{pmatrix}')], note: '$-0=0$' },
-      {
-        id: 'b3',
-        toks: [T('b3a', INV, 'blue')],
-        note: 'tanda minus pada nol tidak berpengaruh',
+        note: 'cara cepat, berlaku untuk matriks diagonal ordo berapa pun',
         box: 'navy',
       },
       {
         id: 'c1',
-        toks: [T('c1a', 'F^{-1}'), O('c1b', '='), T('c1c', '\\dfrac{1}{\\det F}'), T('c1d', ADJ)],
-        note: 'rumus invers',
+        toks: [
+          T('c1a', '2', 'blue', '@Fa'),
+          O('c1b', '='),
+          T('c1c', '\\tfrac21'),
+          O('c1d', '\\;\\longrightarrow\\;'),
+          T('c1e', '\\tfrac12', 'blue'),
+        ],
+        note: 'pembilang dan penyebut ditukar',
       },
       {
         id: 'c2',
         toks: [
-          T('c2a', 'F^{-1}'),
-          O('c2b', '='),
-          T('c2c', '\\dfrac{1}{1}', '', 'PD3'),
-          T('c2d', INV, '', 'b3a'),
+          T('c2a', '\\tfrac12', 'blue', '@Fd'),
+          O('c2b', '\\;\\longrightarrow\\;'),
+          T('c2c', '\\tfrac21'),
+          O('c2d', '='),
+          T('c2e', '2', 'blue'),
         ],
-        note: 'masukkan hasil sebelumnya',
       },
       {
         id: 'c3',
         toks: [T('c3a', 'F^{-1}'), O('c3b', '='), T('c3c', INV, 'gold')],
-        note: 'dikali $1$ tidak mengubah apa pun',
+        note: 'cepat, tanpa menghitung determinan',
         box: 'gold',
       },
     ],
-    L5: [
+    LE: [
       {
-        id: 's1',
+        id: 'e1',
         toks: [
-          T('s1a', '\\text{A}', 'sp'),
-          T('s1b', 'F\\cdot A=\\begin{pmatrix}2&0\\\\0&1\\end{pmatrix}\\ne I'),
-          T('s1c', '\\;\\times', 'red'),
+          T('e1a', '\\begin{pmatrix}4&0\\\\0&\\frac13\\end{pmatrix}^{-1}'),
+          O('e1b', '='),
+          T('e1c', '\\begin{pmatrix}\\frac14&0\\\\0&3\\end{pmatrix}', 'blue'),
         ],
-        note: '<b class="k-red">SALAH</b>',
+        note: 'contoh ordo $2\\times2$',
       },
       {
-        id: 's2',
+        id: 'e2',
         toks: [
-          T('s2a', '\\text{B}', 'sp'),
-          T('s2b', 'F\\cdot B=\\begin{pmatrix}-2&0\\\\0&-1\\end{pmatrix}\\ne I'),
-          T('s2c', '\\;\\times', 'red'),
+          T('e2a', '\\begin{pmatrix}3&0&0\\\\0&-2&0\\\\0&0&\\frac15\\end{pmatrix}^{-1}'),
+          O('e2b', '='),
+          T('e2c', '\\begin{pmatrix}\\frac13&0&0\\\\0&-\\frac12&0\\\\0&0&5\\end{pmatrix}', 'blue'),
         ],
-        note: '<b class="k-red">SALAH</b>',
+        note: 'ordo $3\\times3$: tanda tetap, angka dibalik',
       },
-      {
-        id: 's3',
-        toks: [
-          T('s3a', '\\text{C}', 'sp'),
-          T('s3b', 'F\\cdot C=\\begin{pmatrix}4&0\\\\0&\\frac12\\end{pmatrix}\\ne I'),
-          T('s3c', '\\;\\times', 'red'),
-        ],
-        note: '<b class="k-red">SALAH</b>',
-      },
-      {
-        id: 's4',
-        toks: [T('s4a', '\\text{D}', 'sp'), T('s4b', 'F\\cdot D=-I'), T('s4c', '\\;\\times', 'red')],
-        note: '<b class="k-red">SALAH</b>',
-      },
-      {
-        id: 's5',
-        toks: [T('s5a', '\\text{E}', 'sp'), T('s5b', 'F\\cdot E=I'), T('s5c', '\\;\\checkmark', 'gold')],
-        note: '<b class="k-gold">BENAR</b>',
-      },
-      { id: 's6', toks: [H('s6a', 'Jawaban', 'lbl'), T('s6b', '\\textbf{E}'), T('s6c', INV)], box: 'gold' },
     ],
-    LP: [
+    LU: [
       {
-        id: 'p1',
-        toks: [T('p1a', 'FF^{-1}'), O('p1b', '='), T('p1c', F), T('p1d', INV, '', 'PI3')],
+        id: 'g1',
+        toks: [
+          T('g1a', 'A^{-1}'),
+          O('g1b', '='),
+          T('g1c', '\\dfrac{1}{ad-bc}'),
+          T('g1d', '\\begin{pmatrix}d&-b\\\\-c&a\\end{pmatrix}'),
+        ],
+        note: 'rumus umum invers $2\\times2$, untuk matriks apa pun',
+        box: 'navy',
       },
       {
-        id: 'p2',
+        id: 'g2',
         toks: [
-          T('p2a', 'FF^{-1}'),
-          O('p2b', '='),
-          T('p2c', '\\begin{pmatrix}2\\cdot\\frac12&0\\\\0&\\frac12\\cdot2\\end{pmatrix}'),
+          T('g2a', '\\det F'),
+          O('g2b', '='),
+          T('g2c', '2', 'blue', '@Fa'),
+          T('g2d', '\\cdot'),
+          T('g2e', '\\tfrac12', 'blue', '@Fd'),
+          O('g2f', '-'),
+          T('g2g', '0', 'red', '@Fb'),
+          T('g2h', '\\cdot'),
+          T('g2i', '0', 'red', '@Fc'),
         ],
-        note: 'baris × kolom',
+        note: '$ad-bc$',
       },
       {
-        id: 'p3',
+        id: 'g3',
+        toks: [T('g3a', '\\det F'), O('g3b', '='), T('g3c', '1', 'blue')],
+        note: 'tidak nol, jadi $F$ punya invers',
+        box: 'navy',
+      },
+      {
+        id: 'g4',
         toks: [
-          T('p3a', 'FF^{-1}'),
-          O('p3b', '='),
-          T('p3c', '\\begin{pmatrix}1&0\\\\0&1\\end{pmatrix}=I', 'blue'),
+          T('g4a', 'F^{-1}'),
+          O('g4b', '='),
+          T('g4c', '\\dfrac11', '', 'g3c'),
+          T('g4d', '\\begin{pmatrix}\\frac12&-0\\\\-0&2\\end{pmatrix}'),
+          O('g4e', '='),
+          T('g4f', INV, 'blue'),
         ],
-        note: 'terbukti',
+        note: 'tukar $a,d$; tanda minus pada $b,c$ → sama dengan cara cepat',
         box: 'navy',
       },
     ],
+    // semua kartu sudah terbuka dengan stempelnya: papan cukup memuat jawaban
+    L5: [
+      { id: 's6', toks: [H('s6a', 'Jawaban', 'lbl'), T('s6b', '\\textbf{E}'), T('s6c', INV)], box: 'gold' },
+    ],
     LR: [
-      { id: 'r1', toks: [T('r1a', '\\det F=1')], box: 'navy' },
-      { id: 'r2', toks: [T('r2a', `F^{-1}=${INV}`)], note: 'elemen diagonal dibalik', box: 'gold' },
-      { id: 'r3', toks: [H('r3a', 'Jawaban', 'lbl'), T('r3b', '\\textbf{E}')], box: 'gold' },
+      {
+        id: 'z1',
+        toks: [H('z1a', 'cara cepat', 'tx'), T('z1b', 'a\\to\\tfrac1a,\\ d\\to\\tfrac1d')],
+        note: 'khusus matriks diagonal',
+        box: 'navy',
+      },
+      { id: 'z2', toks: [T('z2a', `F^{-1}=${INV}`)], box: 'gold' },
+      { id: 'z3', toks: [H('z3a', 'Jawaban', 'lbl'), T('z3b', '\\textbf{E}')], box: 'gold' },
     ],
   },
   steps: [
     // ---- 1 · Pahami soal ----
     {
       ch: 1,
-      cap: 'Baca soalnya dulu. Santai, belum perlu menghitung apa pun.',
-      visual: { kind: 'soal', hl: 0 },
-      board: { title: 'Diketahui dan ditanya', list: 'LK', upTo: 0, from: 0 },
-    },
-    {
-      ch: 1,
-      cap: 'Yang <b>diketahui</b>: matriks $F$ berukuran 2×2.',
+      cap: 'Perhatikan matriks $F$ ini. Ordonya $2\\times2$: dua baris dan dua kolom.',
       visual: { kind: 'soal', hl: 1 },
-      board: { title: 'Diketahui dan ditanya', list: 'LK', upTo: 2, from: 0 },
+      board: { title: 'Pahami soal', list: 'LK', upTo: 2, from: 0 },
     },
     {
       ch: 1,
-      cap: 'Yang <b>ditanya</b>: invers $F$, yaitu matriks yang jika dikali $F$ menghasilkan $I$.',
-      visual: { kind: 'soal', hl: 2 },
-      board: { title: 'Diketahui dan ditanya', list: 'LK', upTo: 3, from: 2 },
+      cap: 'Elemen di luar diagonal utama semuanya $0$, jadi $F$ adalah <b>matriks diagonal</b>. Yang ditanya: inversnya, $F^{-1}$.',
+      visual: mat({ m: 'F', hl: true }),
+      board: { title: 'Pahami soal', list: 'LK', upTo: 4, from: 2 },
     },
-    // ---- 2 · Menghitung invers ----
+    // ---- 2 · Cara cepat matriks diagonal ----
     {
       ch: 2,
-      cap: 'Rumus invers membutuhkan determinan. Hitung $ad-bc$ dari $F$.',
-      visual: mat('diag'),
-      board: { title: 'Determinan F', pins: ['pF'], list: 'L2', upTo: 4, from: 0 },
+      cap: 'Tahukah kalian? Untuk matriks diagonal ordo berapa pun, inversnya bisa dicari dengan cara cepat ini.',
+      visual: mat({ m: 'G', hl: true, flip: true }),
+      board: { title: 'Cara cepat matriks diagonal', list: 'L2', upTo: 1, from: 0 },
+    },
+    {
+      ch: 2,
+      cap: 'Caranya: tukar posisi pembilang dan penyebut elemen $a$ dan $d$. Perhatikan animasinya, cepat bukan?',
+      visual: mat({ m: 'F', hl: true, flip: true }),
+      board: { title: 'Cara cepat matriks diagonal', list: 'L2', upTo: 4, from: 1 },
       ask: {
-        before: 'a3',
+        before: 'c1',
+        q: 'Elemen $2$ ditulis $\\frac21$. Setelah pembilang dan penyebutnya ditukar, menjadi…',
+        opts: [
+          { tex: '\\tfrac12', ok: true },
+          { tex: '-2', hint: 'Itu lawan dari $2$ (invers penjumlahan). Yang dicari invers perkalian.' },
+          { tex: '2', hint: 'Itu belum ditukar. Pembilang $2$ pindah ke bawah, penyebut $1$ naik ke atas.' },
+        ],
+      },
+    },
+    {
+      ch: 2,
+      cap: 'Contoh lain: matriks diagonal berikut juga cukup dibalik elemen diagonalnya.',
+      visual: mat({ m: 'ex2', hl: true, flip: true }),
+      board: { title: 'Contoh lain', list: 'LE', upTo: 1, from: 0 },
+    },
+    {
+      ch: 2,
+      cap: 'Ordo $3\\times3$ pun sama, tiap elemen diagonal dibalik dan tandanya tetap. Mau tahu kenapa bisa begitu?',
+      visual: mat({ m: 'ex3', hl: true, flip: true }),
+      board: { title: 'Contoh lain', list: 'LE', upTo: 2, from: 1 },
+      optional: {
+        label: 'Kenapa bisa begitu?',
+        yes: 'Ya, tunjukkan alasannya',
+        panel: `<p>Invers adalah matriks yang jika dikalikan menghasilkan matriks identitas $I$. Untuk matriks diagonal:</p>
+<p>$$\\begin{pmatrix}a&0\\\\0&d\\end{pmatrix}\\begin{pmatrix}\\frac1a&0\\\\0&\\frac1d\\end{pmatrix}=\\begin{pmatrix}a\\cdot\\frac1a&0\\\\0&d\\cdot\\frac1d\\end{pmatrix}=\\begin{pmatrix}1&0\\\\0&1\\end{pmatrix}=I$$</p>
+<p>Lewat rumus umum hasilnya sama: $\\dfrac{1}{ad}\\begin{pmatrix}d&0\\\\0&a\\end{pmatrix}=\\begin{pmatrix}\\frac1a&0\\\\0&\\frac1d\\end{pmatrix}$, dengan syarat $a\\ne0$ dan $d\\ne0$.</p>
+<p>Pada soal ini: $FF^{-1}=\\begin{pmatrix}2\\cdot\\frac12&0\\\\0&\\frac12\\cdot2\\end{pmatrix}=I$. Terbukti.</p>`,
+      },
+    },
+    // ---- 3 · Uji dengan rumus umum ----
+    {
+      ch: 3,
+      cap: 'Ingat, cara cepat ini hanya berlaku untuk matriks diagonal. Untuk matriks lain, pakai rumus umum invers $2\\times2$.',
+      visual: mat({ m: 'F' }),
+      board: { title: 'Uji dengan rumus umum', list: 'LU', upTo: 1, from: 0 },
+    },
+    {
+      ch: 3,
+      cap: 'Mari kita uji pada $F$, hasilnya harus sama. Pertama, hitung determinannya: $ad-bc$.',
+      visual: mat({ m: 'F', hl: true }),
+      board: { title: 'Uji dengan rumus umum', list: 'LU', upTo: 3, from: 1 },
+      ask: {
+        before: 'g3',
         q: 'Berapa $2\\cdot\\frac{1}{2}-0\\cdot0$?',
         opts: [
           { tex: '1', ok: true },
@@ -242,31 +276,10 @@ const q1: SoalContent = {
       },
     },
     {
-      ch: 2,
-      cap: 'Tukar posisi $a$ dan $d$, lalu ubah tanda $b$ dan $c$.',
-      visual: mat('adj'),
-      board: { title: 'Adjoin dan invers', pins: ['pDet'], list: 'L2b', upTo: 3, from: 0 },
-    },
-    {
-      ch: 2,
-      cap: 'Kalikan adjoin dengan $\\frac{1}{\\det F}=\\frac{1}{1}$. Hasilnya langsung invers $F$.',
-      visual: mat('compare'),
-      board: { title: 'Adjoin dan invers', pins: ['pDet'], list: 'L2b', upTo: 6, from: 3 },
-    },
-    // ---- 3 · Periksa dengan perkalian (opsional) ----
-    {
       ch: 3,
-      cap: 'Mau memeriksa hasilnya dengan perkalian $FF^{-1}$?',
-      visual: mat('compare'),
-      // baris p1–p3 ada di catatan; di langkah ini ditawarkan lewat panel Ya/Tidak
-      board: { title: 'Pemeriksaan', pins: ['pInv'], list: 'LP', upTo: 0, from: 0 },
-      optional: {
-        label: 'Pemeriksaan F · F⁻¹',
-        yes: 'Ya, periksa',
-        panel: `<p>Kalikan $F$ dengan $F^{-1}$ (baris × kolom):</p>
-<p>$$FF^{-1}=\\begin{pmatrix}2&0\\\\0&\\frac12\\end{pmatrix}\\begin{pmatrix}\\frac12&0\\\\0&2\\end{pmatrix}=\\begin{pmatrix}2\\cdot\\frac12&0\\\\0&\\frac12\\cdot2\\end{pmatrix}=\\begin{pmatrix}1&0\\\\0&1\\end{pmatrix}=I$$</p>
-<p>Terbukti: hasilnya matriks identitas.</p>`,
-      },
+      cap: 'Tukar $a$ dan $d$, beri tanda minus pada $b$ dan $c$, lalu bagi dengan $\\det F=1$. Hasilnya sama dengan cara cepat.',
+      visual: mat({ m: 'F', adj: true }),
+      board: { title: 'Uji dengan rumus umum', list: 'LU', upTo: 4, from: 3 },
     },
     // ---- 4 · Catatan lengkap ----
     {
@@ -274,42 +287,12 @@ const q1: SoalContent = {
       cap: 'Semua langkah dari awal sampai akhir. Simpan untuk belajar lagi.',
       visual: { kind: 'notes' },
     },
-    // ---- 5 · Cocokkan dengan pilihan (kartu A–E) ----
+    // ---- 5 · Cocokkan dengan pilihan ----
     {
       ch: 5,
-      cap: 'Setiap pilihan diuji dengan mengalikannya dengan $F$. Hasilnya harus $I$.',
-      visual: { kind: 'cards', flip: 0 },
-      board: { title: 'Cocokkan dengan pilihan', pins: ['pInv'], list: 'L5', upTo: 0, from: 0 },
-    },
-    {
-      ch: 5,
-      cap: 'Pilihan A: hanya elemen $d$ yang dibalik; elemen $a$ seharusnya $\\frac12$. <b class="k-red">Salah.</b>',
-      visual: { kind: 'cards', flip: 1 },
-      board: { title: 'Cocokkan dengan pilihan', pins: ['pInv'], list: 'L5', upTo: 1, from: 0 },
-    },
-    {
-      ch: 5,
-      cap: 'Pilihan B: jebakan, invers dikira lawan (dinegatifkan), padahal itu invers penjumlahan. <b class="k-red">Salah.</b>',
-      visual: { kind: 'cards', flip: 2 },
-      board: { title: 'Cocokkan dengan pilihan', pins: ['pInv'], list: 'L5', upTo: 2, from: 1 },
-    },
-    {
-      ch: 5,
-      cap: 'Pilihan C: bukan hasil rumus; elemen $2$ tidak berubah. <b class="k-red">Salah.</b>',
-      visual: { kind: 'cards', flip: 3 },
-      board: { title: 'Cocokkan dengan pilihan', pins: ['pInv'], list: 'L5', upTo: 3, from: 2 },
-    },
-    {
-      ch: 5,
-      cap: 'Pilihan D: angkanya benar tetapi tandanya salah; hasilnya $-I$. <b class="k-red">Salah.</b>',
-      visual: { kind: 'cards', flip: 4 },
-      board: { title: 'Cocokkan dengan pilihan', pins: ['pInv'], list: 'L5', upTo: 4, from: 3 },
-    },
-    {
-      ch: 5,
-      cap: 'Pilihan E: kebalikan tiap elemen diagonal (<b class="k-gold">benar</b>). Pilih jawabannya di papan tulis.',
+      cap: 'Cocokkan dengan pilihan: hanya E yang sama dengan $F^{-1}$. Pilih jawabannya di bawah.',
       visual: { kind: 'cards', flip: 5 },
-      board: { title: 'Cocokkan dengan pilihan', pins: ['pInv'], list: 'L5', upTo: 6, from: 4 },
+      board: { title: 'Cocokkan dengan pilihan', pins: ['pInv'], list: 'L5', upTo: 1, from: 0 },
       ask: {
         before: 's6',
         q: 'Jawaban yang tepat adalah…',
@@ -319,7 +302,7 @@ const q1: SoalContent = {
         opts: [
           {
             tex: '\\begin{pmatrix}1&0\\\\0&2\\end{pmatrix}',
-            hint: 'Hanya elemen $d$ yang dibalik; elemen $a$ seharusnya $\\frac12$.',
+            hint: 'Hanya elemen $d$ yang dibalik; elemen $a=2$ seharusnya menjadi $\\frac12$.',
           },
           {
             tex: '\\begin{pmatrix}-1&0\\\\0&-2\\end{pmatrix}',
@@ -351,35 +334,35 @@ const q1: SoalContent = {
       statement: '$\\begin{pmatrix}1&0\\\\0&2\\end{pmatrix}$',
       ok: false,
       formula: 'F\\cdot A\\ne I',
-      why: 'Hanya elemen $d$ yang dibalik; elemen $a$ seharusnya $\\frac12$.',
+      why: 'Hanya elemen $d$ yang dibalik.',
     },
     {
       label: 'B',
       statement: '$\\begin{pmatrix}-1&0\\\\0&-2\\end{pmatrix}$',
       ok: false,
       formula: 'F\\cdot B\\ne I',
-      why: 'Jebakan: invers dikira lawan. Itu invers penjumlahan.',
+      why: 'Jebakan: invers dikira lawan.',
     },
     {
       label: 'C',
       statement: '$\\begin{pmatrix}2&0\\\\0&1\\end{pmatrix}$',
       ok: false,
       formula: 'F\\cdot C\\ne I',
-      why: 'Bukan hasil rumus; elemen $2$ tidak berubah.',
+      why: 'Elemen $2$ tidak dibalik.',
     },
     {
       label: 'D',
       statement: '$\\begin{pmatrix}-\\frac12&0\\\\0&-2\\end{pmatrix}$',
       ok: false,
       formula: 'F\\cdot D=-I',
-      why: 'Angkanya benar tetapi tandanya salah.',
+      why: 'Angkanya benar, tandanya salah.',
     },
     {
       label: 'E',
       statement: `$${INV}$`,
       ok: true,
       formula: 'F\\cdot E=I',
-      why: 'Kebalikan tiap elemen diagonal.',
+      why: 'Tiap elemen diagonal dibalik.',
     },
   ],
   notes: {
@@ -388,12 +371,16 @@ const q1: SoalContent = {
     sections: [
       { title: 'Pahami soal', lists: ['LK'] },
       {
-        title: 'Menghitung invers',
-        lists: ['L2', 'L2b'],
+        title: 'Cara cepat matriks diagonal',
+        lists: ['L2', 'LE'],
         sketch: 'mat1',
-        why: 'Untuk $A=\\begin{pmatrix}a&b\\\\c&d\\end{pmatrix}$ berlaku $A^{-1}=\\frac{1}{ad-bc}\\begin{pmatrix}d&-b\\\\-c&a\\end{pmatrix}$ asalkan $ad-bc\\ne0$. Invers matriks diagonal adalah matriks diagonal dengan elemen kebalikan.',
+        why: 'Untuk matriks diagonal ordo berapa pun, invers diperoleh dengan membalik tiap elemen diagonal (tukar pembilang dan penyebut); elemen di luar diagonal tetap $0$. Cara ini hanya berlaku untuk matriks diagonal.',
       },
-      { title: 'Periksa dengan perkalian', lists: ['LP'] },
+      {
+        title: 'Uji dengan rumus umum',
+        lists: ['LU'],
+        why: 'Untuk $A=\\begin{pmatrix}a&b\\\\c&d\\end{pmatrix}$ berlaku $A^{-1}=\\frac{1}{ad-bc}\\begin{pmatrix}d&-b\\\\-c&a\\end{pmatrix}$ asalkan $ad-bc\\ne0$.',
+      },
     ],
     answer: `Jawaban: <b>E</b>, $F^{-1}=${INV}$.`,
   },
@@ -404,15 +391,14 @@ const q1: SoalContent = {
   key: {
     answer: 'E',
     cardOk: [false, false, false, false, true],
-    goldRows: ['c3', 's6', 'r2', 'r3'],
+    goldRows: ['c3', 's6', 'z2', 'z3'],
   },
   authorNotes: [
-    'Bagian 2: papan dibagi dua judul ("Determinan F" untuk a1–a4, "Adjoin dan invers" untuk b1–c3) agar baris matriks muat; pin det F menjadi sumber 1/1 pada c2.',
-    'Baris b2 ditulis kapur sebagai satu matriks (elemen tidak dapat terbang satu per satu di dalam satu matriks KaTeX); pertukaran a ↔ d diperlihatkan oleh adegan grid matriks.',
-    'Bagian 3 (opsional): baris p1–p3 ditampilkan sebagai panel Ya/Tidak.',
-    'Ringkasan LR: det F memakai kotak navy (bukan emas) karena emas hanya untuk jawaban (PRD).',
-    'Bagian 5: pop-up per kartu dari kolom alasan; papan ringkasan s1–s6 dan pertanyaan berhuruf A–E.',
+    'Alur Bagian 1–3 mengikuti cara Pak Penta membahas di kelas (pesan 20 Okt 2026): ordo dan jenis matriks → cara cepat matriks diagonal → contoh lain → "hanya untuk matriks diagonal", uji dengan rumus umum.',
+    'Contoh tambahan diminta pemilik: diag(4, 1/3) → diag(1/4, 3) dan diag(3, −2, 1/5) → diag(1/3, −1/2, 5); dicatat di dokumen.',
+    'Konten opsional "Kenapa bisa begitu?" menggabungkan pemeriksaan F·F⁻¹ (Bagian 3 lama) dan penurunan dari rumus umum.',
+    'Analisis kartu dipadatkan menjadi satu langkah (semua kartu terbuka) dengan pertanyaan berhuruf A–E.',
   ],
 };
 
-export default q1;
+export default q01;

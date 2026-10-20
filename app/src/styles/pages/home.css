@@ -11,6 +11,7 @@
 
   /* ---------- hero ---------- */
   .hero {
+    container-type: inline-size;
     position: relative;
     min-height: 0;
     overflow: hidden;
@@ -31,8 +32,10 @@
     font-family: var(--font-display);
     font-weight: var(--fw-black);
     font-stretch: var(--stretch-hero);
-    font-size: min(var(--fs-hero), 7.2vh, 4.6vw);
+    /* baris judul tidak dipatahkan: ukuran mengikuti lebar panel hero (kueri kontainer) */
+    font-size: min(var(--fs-hero), 7.2vh, var(--hero-title-max));
     line-height: var(--lh-tight);
+    white-space: nowrap;
     letter-spacing: var(--tracking-hero);
     color: var(--color-on-stage);
   }
@@ -86,107 +89,90 @@
     }
   }
 
-  /* panggung kecil "angka terbang": kertas soal → papan */
-  .fly-stage {
+  /* animasi beranda: pola biji bunga matahari (bukan soal), berputar dan "bernapas" pelan */
+  .hero-stage {
     position: relative;
     min-height: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
-    grid-template-rows: auto auto;
-    align-content: center;
-  }
-
-  .fly-stage .fly-paper {
-    grid-column: 1 / 3;
-    grid-row: 1;
-    justify-self: start;
-    max-width: 92%;
-  }
-
-  .fly-stage .fly-board {
-    grid-column: 2;
-    grid-row: 2;
-    margin-top: calc(-1 * var(--space-3));
-    z-index: var(--z-raised);
-  }
-
-  .fly-paper,
-  .fly-board {
-    position: relative;
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-    color: var(--color-text);
-    box-shadow: var(--shadow-2);
-    padding: var(--space-3) var(--space-3-5);
-    font-size: var(--fs-small);
-    min-width: 0;
-  }
-
-  .fly-paper {
-    padding-left: var(--space-6);
-    line-height: var(--lh-paper);
-  }
-
-  .fly-paper::before {
-    content: '';
-    position: absolute;
-    left: var(--space-4);
-    top: 0;
-    bottom: 0;
-    width: var(--bw-1);
-    background: var(--color-margin-line);
-  }
-
-  .fly-label {
-    display: block;
-    font-family: var(--font-mono);
-    font-size: var(--fs-micro);
-    letter-spacing: var(--tracking-wide);
-    text-transform: uppercase;
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-1);
-  }
-
-  .fly-paper .katex,
-  .fly-board .katex {
-    font-size: 1.05em;
-  }
-
-  .fly-src {
-    border-radius: var(--radius-xs);
-    padding: 0 var(--space-0-5);
-    background: linear-gradient(var(--color-highlight-red), var(--color-highlight-red)) no-repeat 0 90% / 100%
-      44%;
-  }
-
-  .fly-board .bl {
-    display: flex;
-    align-items: center;
+    grid-template-rows: minmax(0, 1fr) auto;
+    justify-items: center;
     gap: var(--space-2);
-    min-height: var(--size-touch);
-    white-space: nowrap;
-    overflow: hidden;
   }
 
-  .fly-board .bl + .bl {
-    border-top: var(--bw-hair) dashed var(--color-line);
+  .hero-art {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: visible;
   }
 
-  .fly-board .bl.past {
+  .ha-spin {
+    transform-box: view-box;
+    transform-origin: 50% 50%;
+    animation: ha-spin var(--dur-hero-spin) linear infinite;
+  }
+
+  .ha-breath {
+    transform-box: view-box;
+    transform-origin: 50% 50%;
+    animation: ha-breath var(--dur-hero-breath) var(--ease) infinite alternate;
+  }
+
+  @keyframes ha-spin {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+
+  @keyframes ha-breath {
+    from {
+      transform: scale(0.96);
+    }
+
+    to {
+      transform: scale(1.03);
+    }
+  }
+
+  .is-still .ha-spin,
+  .is-still .ha-breath {
+    animation: none;
+  }
+
+  .hd {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .hd.h-a {
+    fill: var(--color-stage-accent);
+  }
+
+  .hd.h-b {
+    fill: var(--paper-0);
+  }
+
+  .hd.h-c {
+    fill: var(--blue-300);
     opacity: 0.55;
   }
 
-  .fly-board .box-gold {
-    padding: var(--space-0-5) var(--space-2);
-    border-radius: var(--radius-sm);
-    box-shadow: 0 0 0 var(--bw-2) var(--color-result);
-    background: var(--color-result-bg);
+  .hd.h-d {
+    fill: var(--bp-ink-300);
+    opacity: 0.8;
   }
 
-  .fly-board .note {
-    margin-left: auto;
-    font-size: var(--fs-label);
-    color: var(--color-text-muted);
+  .ha-core {
+    fill: var(--paper-0);
+  }
+
+  .ha-cap {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--color-on-stage-muted);
   }
 
   .hero-foot {
@@ -252,11 +238,6 @@
     font-size: var(--fs-label);
     color: var(--color-text-muted);
     white-space: nowrap;
-  }
-
-  .catalog-head .search {
-    margin-left: auto;
-    flex: 0 1 var(--size-search-w);
   }
 
   .filters {
@@ -379,9 +360,10 @@
 
   .qcard-meta {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-2);
+    gap: var(--space-0-5) var(--space-2);
     font-size: var(--fs-label);
     color: var(--color-text-muted);
   }
@@ -396,6 +378,39 @@
   .qcard-resp .lucide {
     width: var(--size-icon-sm);
     height: var(--size-icon-sm);
+  }
+
+  /* Sudah dibahas: kartu terisi biru tua merek (mencolok, tanpa emas: emas hanya untuk jawaban) */
+  .qcard.is-done {
+    --qc-bg: var(--color-brand);
+    --qc-border: var(--color-brand);
+
+    color: var(--color-on-brand);
+    box-shadow: var(--shadow-2);
+  }
+
+  .qcard.is-done .qcard-no,
+  .qcard.is-done .qcard-title {
+    color: var(--color-on-brand);
+  }
+
+  .qcard.is-done .qcard-domain {
+    color: var(--color-stage-accent);
+  }
+
+  .qcard.is-done .qcard-meta {
+    color: var(--color-on-stage-muted);
+  }
+
+  .qcard.is-done .pill {
+    --pill-fg: var(--color-on-brand);
+    --pill-bg: var(--a-white-20);
+  }
+
+  @media (hover: hover) {
+    .qcard.is-done[data-status='ready']:hover {
+      --qc-border: var(--color-stage-accent);
+    }
   }
 
   /* Segera hadir: arsiran blueprint tipis + gembok + teks */
@@ -453,34 +468,11 @@
 
     .hero-title {
       margin-top: 0;
-      font-size: min(var(--fs-hero), 4.6vw);
+      font-size: min(var(--fs-hero), var(--hero-title-max));
     }
 
-    /* layar pendek: papan mini hanya menampilkan baris hasil (tanda khas tetap terlihat) */
-    .fly-board .fly-label,
-    .fly-board .bl.past {
+    .ha-cap {
       display: none;
-    }
-
-    .fly-board {
-      padding: var(--space-1) var(--space-3);
-    }
-
-    .fly-stage {
-      grid-template-columns: minmax(0, 1fr);
-    }
-
-    .fly-paper {
-      display: none;
-    }
-
-    .fly-stage .fly-board {
-      grid-column: 1 / 3;
-      margin-top: 0;
-    }
-
-    .fly-board .bl {
-      min-height: var(--space-6);
     }
 
     .hero-stats {
@@ -505,41 +497,6 @@
   @media (max-width: 760px) {
     .catalog-head .count {
       display: none;
-    }
-  }
-}
-
-@layer pages {
-  .fly-board .ht {
-    display: inline-block;
-    margin: 0 0.05em;
-  }
-
-  .fly-board .ht.op {
-    margin: 0 0.2em;
-  }
-
-  .fly-board .bl-m {
-    display: inline-flex;
-    align-items: center;
-    padding: var(--space-0-5) var(--space-2);
-    border-radius: var(--radius-sm);
-  }
-}
-
-/* ruang papan mini dipesan agar siklus tidak menggeser tata letak (CLS) */
-@layer pages {
-  .fly-stage {
-    align-content: start;
-  }
-
-  .fly-stage .fly-board {
-    min-height: var(--size-hero-board);
-  }
-
-  @media (max-height: 520px) {
-    .fly-stage .fly-board {
-      min-height: var(--size-touch);
     }
   }
 }

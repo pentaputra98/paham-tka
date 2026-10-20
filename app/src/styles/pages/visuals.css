@@ -574,41 +574,62 @@
   }
 }
 
-/* ---------- soal 1: grid matriks 2×2 ----------
-   Sorotan memakai cincin pseudo-elemen yang hanya berubah opacity; pertukaran a ↔ d memakai FLIP (transform). */
+/* ---------- soal 1: matriks diagonal ----------
+   Elemen diagonal berupa pecahan; invers = pembilang dan penyebut bertukar (gerak transform).
+   Sorotan diagonal memakai cincin pseudo-elemen (opacity); F⁻¹ adalah jawaban: bingkai emas. */
 @layer pages {
+  .p-svg {
+    container-type: size;
+  }
+
   .vis-mat {
     height: 100%;
     display: grid;
     align-content: center;
     justify-items: center;
-    gap: var(--space-4);
+    gap: var(--space-3);
     color: var(--color-on-stage);
-    font-size: var(--fs-h2);
+    font-family: var(--font-math);
+    font-size: min(var(--fs-mat), var(--mat-fit-2), var(--mat-fit-w2));
   }
 
+  .vis-mat.n3 {
+    font-size: min(var(--fs-mat), var(--mat-fit-3), var(--mat-fit-w3));
+  }
+
+  /* semua ukuran grid dalam em: matriks mengecil utuh bersama angkanya di zona yang sempit */
   .mx-row {
     display: flex;
     align-items: center;
-    gap: var(--space-6);
+    justify-content: center;
+    gap: 0.7em;
   }
 
   .mx {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: 0.3em;
+  }
+
+  .mx-name {
+    white-space: nowrap;
+  }
+
+  .mx-name sup {
+    font-size: 0.6em;
   }
 
   .mx-b {
-    padding: var(--space-1) var(--space-2-5);
+    padding: 0.15em 0.3em;
     border-inline: var(--bw-3) solid var(--color-on-stage);
     border-radius: var(--radius-xl);
   }
 
   .mx-g {
     display: grid;
-    grid-template-columns: repeat(2, minmax(var(--size-touch), auto));
-    gap: var(--space-1) var(--space-4);
+    grid-template-columns: repeat(var(--n, 2), minmax(1.3em, auto));
+    gap: 0.2em 0.6em;
+    align-items: center;
   }
 
   .mx-c {
@@ -616,28 +637,73 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: var(--size-touch);
+    min-height: 1.9em;
   }
 
   .mx-c::before {
     content: '';
     position: absolute;
-    inset: calc(var(--space-1) * -1);
+    inset: -0.08em -0.18em;
     border: var(--bw-3) solid var(--color-stage-accent);
     border-radius: var(--radius-md);
     opacity: 0;
     transition: opacity var(--dur-slow) var(--ease);
   }
 
-  .vis-mat[data-stage='diag'] .mk-a::before,
-  .vis-mat[data-stage='diag'] .mk-d::before {
+  .is-hl .mx-c.dg::before {
     opacity: 1;
   }
 
-  .vis-mat[data-stage='diag'] .mk-b::before,
-  .vis-mat[data-stage='diag'] .mk-c::before {
-    border-color: var(--color-constraint-on-stage);
-    opacity: 1;
+  .mx-c.off {
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .is-hl .mx-c.off {
+    opacity: 0.45;
+  }
+
+  .fr {
+    display: inline-grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto auto;
+    align-items: center;
+    justify-items: center;
+    column-gap: 0.06em;
+    line-height: 1;
+  }
+
+  .fr-s {
+    grid-row: 1 / 4;
+    grid-column: 1;
+  }
+
+  .fr-n,
+  .fr-d {
+    grid-column: 2;
+    display: inline-block;
+    padding-inline: 0.08em;
+  }
+
+  .fr-n {
+    grid-row: 1;
+  }
+
+  .fr-bar {
+    grid-row: 2;
+    grid-column: 2;
+    width: 100%;
+    height: var(--bw-2);
+    margin-block: 0.08em;
+    background: currentcolor;
+  }
+
+  .fr-d {
+    grid-row: 3;
+  }
+
+  /* bilangan bulat = pecahan berpenyebut 1: penyebut dan garisnya dipudarkan */
+  .fr-d.one {
+    opacity: 0.35;
   }
 
   .mx-neg {
@@ -645,59 +711,53 @@
     transition: opacity var(--dur-slow) var(--ease);
   }
 
-  .vis-mat[data-stage='adj'] .mk-b .mx-neg,
-  .vis-mat[data-stage='adj'] .mk-c .mx-neg {
+  .is-adj .mx-c[data-k='b'] .mx-neg,
+  .is-adj .mx-c[data-k='c'] .mx-neg {
     opacity: 1;
     color: var(--color-constraint-on-stage);
   }
 
-  .mx-tag {
-    position: absolute;
-    right: calc(var(--space-3) * -1);
-    top: calc(var(--space-2) * -1);
-    font-size: var(--fs-caption);
-    color: var(--color-on-stage-muted);
-    opacity: 0;
-    transition: opacity var(--dur-slow) var(--ease);
-  }
-
-  .vis-mat[data-stage='diag'] .mx-tag,
-  .vis-mat[data-stage='adj'] .mx-tag {
-    opacity: 1;
-  }
-
   .mx-to,
-  .mx-inv,
-  .nm-adj,
-  .vis-mat[data-stage='adj'] .nm-F {
+  .mx-inv {
     display: none;
   }
 
-  .vis-mat[data-stage='adj'] .nm-adj {
-    display: inline;
-  }
-
-  .vis-mat[data-stage='compare'] .mx-to {
+  .is-flip .mx-to {
     display: grid;
-    gap: var(--space-2);
-    font-size: var(--fs-body);
+    justify-items: center;
+    gap: var(--space-1);
     color: var(--color-stage-accent);
   }
 
-  .vis-mat[data-stage='compare'] .mx-inv {
+  .mx-arrow {
+    font-size: 1.4em;
+    line-height: 1;
+  }
+
+  .mx-to-t {
+    font-family: var(--font-body);
+    font-size: var(--fs-caption);
+    text-align: center;
+  }
+
+  .is-flip .mx-inv {
     display: flex;
   }
 
-  /* F⁻¹ adalah jawaban: satu-satunya tempat emas di adegan ini */
   .mx-inv .mx-b {
     border-color: var(--color-result);
   }
 
-  .mx-note {
-    min-height: var(--size-touch);
-    font-size: var(--fs-small);
+  .mx-ordo {
+    font-family: var(--font-mono);
+    font-size: var(--fs-caption);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
     color: var(--color-on-stage-muted);
-    text-align: center;
+  }
+
+  .is-flip .mx-ordo {
+    display: none;
   }
 
   .n-sketch-mat {
@@ -705,17 +765,7 @@
     padding: var(--space-4);
     background: var(--color-stage);
     border-radius: var(--radius-md);
-  }
-
-  @media (max-height: 520px) {
-    .vis-mat {
-      font-size: var(--fs-title);
-      gap: var(--space-2);
-    }
-
-    .mx-row {
-      gap: var(--space-3);
-    }
+    font-size: var(--fs-title);
   }
 }
 

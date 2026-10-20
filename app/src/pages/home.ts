@@ -1,11 +1,10 @@
 /**
- * Beranda (FR-HOME-1…5): panggung hero "angka terbang" di kiri, katalog 25 soal di kanan.
- * M0: hero menampilkan keadaan akhir statis; siklus terbang dipasang pada M1 (1.7).
+ * Beranda (FR-HOME-1…5): panggung hero di kiri (animasi pola biji bunga matahari, bukan soal: revisi
+ * pemilik PRD v1.4), katalog 25 soal di kanan.
  */
 import { esc, html, pad2 } from '../core/dom';
 import { icon, type IconName } from '../core/icons';
-import { tex } from '../core/math';
-import { startHero } from './hero';
+import { heroArt, startHero } from './hero';
 import { progressSummary, store } from '../core/store';
 import {
   DOMAIN_LABEL,
@@ -46,7 +45,8 @@ function card(s: SoalMeta, i: number): string {
   const meta = ready
     ? `<span class="qcard-resp">${icon(RESP_ICON[s.response])}${esc(s.response === 'truefalse' && s.labels ? s.labels.join(' / ') : RESPONSE_LABEL[s.response])}</span>${statusPill(s.no)}`
     : `<span class="soon-tag">${icon('lock')}Segera hadir</span>`;
-  const attrs = `class="qcard" data-no="${s.no}" data-status="${s.status}" style="--i:${i}"`;
+  const done = ready && !!store.progress.items[String(s.no)]?.done;
+  const attrs = `class="qcard${done ? ' is-done' : ''}" data-no="${s.no}" data-status="${s.status}" style="--i:${i}"`;
   const inner = `<span class="qcard-top"><span class="qcard-no"><span class="sr-only">Soal </span>${pad2(s.no)}</span></span>
       <span class="qcard-domain">${esc(DOMAIN_LABEL[s.domain])}</span>
       <span class="qcard-title">${esc(s.title)}</span>
@@ -62,27 +62,18 @@ function heroHtml(): string {
   const cta = last
     ? `<a class="btn btn--primary btn--lg" href="#/soal/${last}">${icon('play')}<span>Lanjutkan soal ${last}</span></a>`
     : `<a class="btn btn--primary btn--lg" href="#/soal/1">${icon('play')}<span>Mulai dari soal 1</span></a>`;
-  // keadaan akhir tanda khas: angka dari soal 25 sudah "mendarat" di papan (docs/pembahasan25.md, e3)
   return `<section class="hero bp crop" aria-labelledby="hero-t">
     <div>
       <p class="eyebrow">TKA Matematika Tingkat Lanjut · 2025</p>
       <h1 class="hero-title" id="hero-t">
-        <span class="ln"><span>Dari bingung</span></span>
-        <span class="ln"><span>jadi <span class="accent">paham</span>,</span></span>
-        <span class="ln"><span class="sub">langkah demi langkah</span></span>
+        <span class="ln"><span>Yuk <span class="accent">Pahami</span></span></span>
+        <span class="ln"><span>Soal TKA 2025,</span></span>
+        <span class="ln"><span class="sub">step by step</span></span>
       </h1>
     </div>
-    <div class="fly-stage" aria-hidden="true" data-hero-stage>
-      <div class="fly-paper">
-        <span class="fly-label">Soal 25</span>
-        ${tex('\\lim_{\\htmlData{h=x3}{x\\to 3}}\\dfrac{1-\\cos(\\htmlData{h=pem}{6x-18})}{\\left(x-\\frac{9}{x}\\right)\\sin(6x-18)}')}
-      </div>
-      <div class="fly-board">
-        <span class="fly-label">Papan tulis</span>
-        <div class="bl past">${tex('\\lim_{u\\to0}\\dfrac{\\tan 3u}{u}=3')}</div>
-        <div class="bl past">${tex('\\lim_{x\\to3}\\dfrac{x}{x+3}=\\dfrac12')}</div>
-        <div class="bl"><span class="box-gold">${tex('3\\cdot\\dfrac12=\\dfrac32')}</span><span class="note">jawaban E</span></div>
-      </div>
+    <div class="hero-stage" data-hero-stage>
+      ${heroArt()}
+      <p class="ha-cap">Pola biji bunga matahari · tiap titik berputar 137,5° dari titik sebelumnya</p>
     </div>
     <div class="hero-foot">
       ${cta}
@@ -97,7 +88,6 @@ function heroHtml(): string {
 
 export function homePage(): PageView {
   let filter = 'semua';
-  let query = '';
   const readyCount = SOAL.filter((s) => s.status === 'ready').length;
   const el = html(`<div class="home">
     ${heroHtml()}
@@ -105,8 +95,6 @@ export function homePage(): PageView {
       <div class="catalog-head">
         <h2 id="cat-t">25 soal TKA 2025</h2>
         <span class="count">${readyCount} dibuka · ${25 - readyCount} segera hadir</span>
-        <label class="search"><span class="sr-only">Cari judul atau nomor soal</span>${icon('search')}
-          <input type="search" inputmode="search" autocomplete="off" placeholder="Cari judul atau nomor" data-search /></label>
       </div>
       <div class="filters" role="group" aria-label="Saring menurut ranah materi">
         <button type="button" class="chip" data-filter="semua" aria-pressed="true">Semua</button>
@@ -120,15 +108,9 @@ export function homePage(): PageView {
 
   const renderGrid = (): void => {
     const f = FILTERS.find((x) => x.id === filter);
-    const q = query.trim().toLowerCase();
-    const list = SOAL.filter(
-      (s) =>
-        (!f || f.domains.includes(s.domain)) &&
-        (!q || s.title.toLowerCase().includes(q) || String(s.no) === q.replace(/^0+/, '')),
-    );
-    grid.innerHTML = list.length
-      ? list.map((s, i) => card(s, i)).join('')
-      : `<p class="grid-empty">Tidak ada soal yang cocok. Coba kata lain atau pilih <b>Semua</b>.</p>`;
+    // tanpa kolom cari: papan ketik layar sentuh merusak tata letak landscape (revisi pemilik, PRD v1.4)
+    const list = SOAL.filter((s) => !f || f.domains.includes(s.domain));
+    grid.innerHTML = list.map((s, i) => card(s, i)).join('');
   };
   renderGrid();
 
@@ -137,10 +119,6 @@ export function homePage(): PageView {
     if (!b) return;
     filter = b.dataset.filter!;
     el.querySelectorAll('[data-filter]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-    renderGrid();
-  });
-  el.querySelector<HTMLInputElement>('[data-search]')!.addEventListener('input', (e) => {
-    query = (e.target as HTMLInputElement).value;
     renderGrid();
   });
   grid.addEventListener('click', (e) => {

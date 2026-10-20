@@ -25,6 +25,7 @@ async function settled(page: Page, i: number): Promise<void> {
   const want = expectedRows(i);
   if (!want) {
     await expect(page.locator('.board')).toBeHidden({ timeout: 10_000 });
+    await expect(page.locator('.bnav[data-running]')).toHaveCount(0, { timeout: 10_000 });
     return;
   }
   await expect
@@ -35,10 +36,11 @@ async function settled(page: Page, i: number): Promise<void> {
         ),
         hid: await page.locator('.board .tk.hid').count(),
         fly: await page.locator('.fly-tok').count(),
+        run: await page.locator('.bnav[data-running]').count(),
       }),
       { timeout: 30_000 },
     )
-    .toEqual({ rows: want, hid: 0, fly: 0 });
+    .toEqual({ rows: want, hid: 0, fly: 0, run: 0 });
 }
 
 test.describe('Pembahasan soal 17 (G-Gerak, rambu SVG)', () => {
@@ -63,7 +65,7 @@ test.describe('Pembahasan soal 17 (G-Gerak, rambu SVG)', () => {
     await page.getByRole('button', { name: 'Mulai' }).click();
     const on = (): Promise<string | null> =>
       page.locator('.vis-sign [data-layer].on').getAttribute('data-layer', { timeout: 5000 });
-    for (let k = 0; k < 4; k++) await page.locator('[data-next]').click({ delay: 15 });
+    for (let k = 0; k < 8; k++) await page.locator('[data-next]').click({ delay: 15 });
     await settled(page, 5);
     expect(await on()).toBe('blue');
     await expect(page.locator('.vis-sign [data-val="black"]')).toHaveClass(/on/);

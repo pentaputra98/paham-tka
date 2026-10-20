@@ -34,7 +34,7 @@ export function aboutPage(): PageView {
     <h1 class="page-title">Tentang Paham TKA</h1>
     <section class="panel">
       <h2>Paham TKA</h2>
-      <p>Pembahasan interaktif TKA Matematika Tingkat Lanjut 2025. <i>Dari bingung jadi paham, langkah demi langkah.</i></p>
+      <p>Pembahasan interaktif TKA Matematika Tingkat Lanjut 2025. <i>Yuk pahami soal TKA 2025, step by step.</i></p>
       <p class="muted">Versi ${__APP_VERSION__}</p>
       <p><b>© 2026 Penta Putra Purnomo, S.Pd., Gr. | SMA Vidatra Bontang</b></p>
     </section>

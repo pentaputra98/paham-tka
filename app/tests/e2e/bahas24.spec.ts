@@ -25,6 +25,7 @@ async function settled(page: Page, i: number): Promise<void> {
   const want = expectedRows(i);
   if (!want) {
     await expect(page.locator('.board')).toBeHidden({ timeout: 10_000 });
+    await expect(page.locator('.bnav[data-running]')).toHaveCount(0, { timeout: 10_000 });
     return;
   }
   await expect
@@ -35,10 +36,11 @@ async function settled(page: Page, i: number): Promise<void> {
         ),
         hid: await page.locator('.board .tk.hid').count(),
         fly: await page.locator('.fly-tok').count(),
+        run: await page.locator('.bnav[data-running]').count(),
       }),
       { timeout: 30_000 },
     )
-    .toEqual({ rows: want, hid: 0, fly: 0 });
+    .toEqual({ rows: want, hid: 0, fly: 0, run: 0 });
 }
 
 test.describe('Pembahasan soal 24 (G-Gerak, SVG interaktif)', () => {
@@ -60,7 +62,7 @@ test.describe('Pembahasan soal 24 (G-Gerak, SVG interaktif)', () => {
     await setup(page);
     await page.goto('./#/soal/24/bahas?m=amati');
     await page.getByRole('button', { name: 'Mulai' }).click();
-    for (let k = 0; k < 9; k++) await page.locator('[data-next]').click({ delay: 15 });
+    for (let k = 0; k < 18; k++) await page.locator('[data-next]').click({ delay: 15 });
     await settled(page, 10);
     // langkah 10 = pernyataan (4): θ = 30°
     await expect(page.locator('[data-o="th"]')).toHaveText('30°', { timeout: 5000 });
@@ -87,7 +89,9 @@ test.describe('Pembahasan soal 24 (G-Gerak, SVG interaktif)', () => {
     await setup(page);
     await page.goto('./#/soal/24/bahas?m=amati');
     await page.getByRole('button', { name: 'Mulai' }).click();
+    await settled(page, 1);
     await page.locator('[data-next]').click();
+    await settled(page, 2);
     await page.locator('[data-next]').click();
     // baris a3: token θ/2 terbang dari label SVG [data-src=g-theta]
     await expect.poll(() => page.locator('.fly-tok').count(), { timeout: 15_000 }).toBeGreaterThan(0);

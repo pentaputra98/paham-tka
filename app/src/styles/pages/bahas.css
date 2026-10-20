@@ -1307,7 +1307,21 @@
     text-align: center;
   }
 
+  /* judul SELESAI tepat di tengah kartu: tombol tutup dikeluarkan dari alur */
+  .sheet--done .sheet-head {
+    position: relative;
+    justify-content: center;
+  }
+
+  .sheet--done .sheet-head .icon-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
   .sheet--done .sheet-title {
+    flex: none;
+    padding-inline: var(--size-touch);
     font-stretch: var(--stretch-hero);
     font-weight: var(--fw-black);
     font-size: var(--fs-h2);
@@ -1629,5 +1643,229 @@
       grid-template-columns: minmax(0, 1fr) minmax(0, 28%);
       gap: var(--space-2);
     }
+  }
+}
+
+/* ---------- panggung penuh (tanpa panel papan; soal aljabar tanpa 3D, PRD v1.4) ----------
+   Satu panggung gelap: pop-up di atas, zona visual (--vz) di bawahnya, baris rumus besar di bawah zona.
+   Token semantik ditimpa di dalam papan sehingga semua isi (baris, pin, pertanyaan) terang seperti kapur. */
+@layer pages {
+  .scene.lay-full {
+    --vz: 0px;
+  }
+
+  .lay-full .inFree {
+    right: max(var(--space-5), var(--safe-right));
+    bottom: auto;
+    height: var(--vz);
+  }
+
+  .lay-full .board {
+    --color-text: var(--color-on-stage);
+    --color-text-secondary: var(--color-on-stage);
+    --color-text-muted: var(--color-on-stage-muted);
+    --color-brand: var(--color-on-stage);
+    --color-intermediate: var(--color-stage-accent);
+    --color-intermediate-bg: var(--a-sky-09);
+    --color-constraint: var(--color-constraint-on-stage);
+    --color-constraint-bg: var(--a-red-20);
+    --color-result-ink: var(--color-result-soft);
+    --color-result-bg: var(--a-gold-20);
+    --color-line: var(--a-white-20);
+    --color-surface: var(--a-white-05);
+    --color-surface-sunken: transparent;
+    --color-track: var(--a-white-20);
+
+    left: max(var(--space-5), var(--safe-left));
+    right: max(var(--space-5), var(--safe-right));
+    top: calc(var(--ft) + var(--vz));
+    width: auto;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .lay-full .bd-head {
+    width: 100%;
+    max-width: var(--size-full-lines);
+    margin-inline: auto;
+    padding: var(--space-1) 0;
+    border-bottom: var(--bw-hair) solid var(--a-white-20);
+    background: transparent;
+  }
+
+  .lay-full .bd-k {
+    display: none;
+  }
+
+  .lay-full .bd-t {
+    font-size: var(--fs-small);
+    color: var(--color-stage-accent);
+  }
+
+  .lay-full .bd-pins,
+  .lay-full .bd-lines,
+  .lay-full .bd-foot {
+    width: 100%;
+    max-width: var(--size-full-lines);
+    margin-inline: auto;
+    padding-inline: 0;
+  }
+
+  .lay-full .bd-pins {
+    border-bottom-color: var(--a-white-20);
+  }
+
+  .lay-full .bl-m {
+    font-size: calc(var(--fs-board-full) * var(--fit, 1));
+  }
+
+  .lay-full .bl-n {
+    font-size: var(--fs-small);
+  }
+
+  .lay-full .bl.past {
+    opacity: 0.62;
+  }
+
+  /* layar pendek: berdampingan (visual kiri, baris rumus kanan) pada panggung yang sama */
+  /* visual memakai tinggi penuh kolom kiri; pop-up dan baris rumus berada di kolom kanan */
+  .lay-full.full-side .inFree {
+    top: var(--space-3);
+    right: var(--fr);
+    bottom: var(--space-3);
+    height: auto;
+  }
+
+  .lay-full.full-side .cap {
+    left: calc(100% - var(--fr) + var(--space-3));
+    right: max(var(--space-4), var(--safe-right));
+    width: auto;
+  }
+
+  .lay-full.full-side .board {
+    left: calc(100% - var(--fr) + var(--space-3));
+  }
+
+  .lay-full.full-side .mx-to-t {
+    display: none;
+  }
+
+  /* baris kartu ringkas di bawah kartu: tetap terbaca dari jauh */
+  .lay-full.m-cards .bl-m {
+    font-size: calc(var(--fs-board) * var(--fit, 1));
+  }
+}
+
+/* ---------- coretan (PRD §12) ---------- */
+@layer pages {
+  .ink {
+    position: absolute;
+    inset: 0;
+    z-index: var(--z-sketch);
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    touch-action: none;
+    transition: opacity var(--dur-base) var(--ease);
+  }
+
+  .ink-on .ink {
+    pointer-events: auto;
+    cursor: crosshair;
+  }
+
+  .ink.is-hidden {
+    opacity: 0;
+  }
+
+  .ink-bar {
+    position: absolute;
+    left: 50%;
+    bottom: var(--space-3);
+    z-index: var(--z-sketch-bar);
+    display: none;
+    align-items: center;
+    gap: var(--space-2);
+    max-width: calc(100% - var(--space-6));
+    padding: var(--space-1-5) var(--space-2-5);
+    border-radius: var(--radius-pill);
+    background: var(--color-glass-strong);
+    box-shadow: var(--shadow-2);
+    transform: translateX(-50%);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .ink-on .ink-bar {
+    display: flex;
+  }
+
+  .ink-tools button,
+  .ink-widths button {
+    display: grid;
+    place-items: center;
+    min-width: var(--size-touch);
+  }
+
+  .ink-colors {
+    display: flex;
+    gap: var(--space-0-5);
+  }
+
+  .ink-sw {
+    position: relative;
+    width: var(--size-touch);
+    height: var(--size-touch);
+    border-radius: 50%;
+  }
+
+  .ink-sw::after {
+    content: '';
+    position: absolute;
+    inset: var(--space-2-5);
+    border-radius: 50%;
+    background: var(--sw);
+    box-shadow: 0 0 0 var(--bw-1) var(--color-line);
+  }
+
+  .ink-sw[aria-checked='true']::after {
+    box-shadow:
+      0 0 0 var(--bw-2) var(--color-surface),
+      0 0 0 var(--bw-4) var(--color-brand);
+  }
+
+  .ink-dot {
+    display: block;
+    width: calc(var(--d) * 1.5px);
+    height: calc(var(--d) * 1.5px);
+    border-radius: 50%;
+    background: currentcolor;
+  }
+
+  .ink-done {
+    flex: none;
+  }
+
+  .top-ink {
+    min-height: var(--size-touch);
+  }
+
+  .top [data-act='ink'][aria-pressed='true'] {
+    background: var(--color-brand);
+    color: var(--color-on-brand);
+  }
+}
+
+@layer pages {
+  /* panggung penuh: keterangan menempel di samping rumus, bukan di ujung kanan layar */
+  .lay-full .bl {
+    justify-content: flex-start;
+    column-gap: var(--space-5);
+  }
+
+  .lay-full .bl-n {
+    margin-left: 0;
+    text-align: left;
   }
 }

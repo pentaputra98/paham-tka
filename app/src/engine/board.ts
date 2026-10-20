@@ -247,7 +247,7 @@ export class Board {
     for (let i = k; i < want.length; i++) {
       if (!c.live()) return false;
       const anim = c.dir > 0 && (c.seq || c.replay || i >= from);
-      await this.write(want[i]!, anim, c);
+      await this.write(want[i]!, anim, c, i === want.length - 1);
     }
     this.dimPast();
     // satu pengukuran akhir untuk semua baris (tata letak papan bisa bergeser selama langkah berjalan)
@@ -255,7 +255,7 @@ export class Board {
     return c.live();
   }
 
-  private async write(spec: Row, anim: boolean, c: Ctx): Promise<void> {
+  private async write(spec: Row, anim: boolean, c: Ctx, last = false): Promise<void> {
     const row = this.mkRow(spec);
     this.body.append(row.el);
     this.rows.push(row);
@@ -293,7 +293,8 @@ export class Board {
     await sleep(140);
     this.finish(row, true);
     this.announce(row);
-    await sleep(spec.box ? 650 : 330);
+    // jeda antarbaris; baris terakhir tidak ditunggu (langkah dianggap selesai saat baris terakhir tampil)
+    if (!last) await sleep(spec.box ? 650 : 330);
   }
 
   private fly(s: HTMLElement, tk: HTMLElement, c: Ctx): Promise<void> {

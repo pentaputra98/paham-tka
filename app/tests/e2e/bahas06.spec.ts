@@ -25,6 +25,7 @@ async function settled(page: Page, i: number): Promise<void> {
   const want = expectedRows(i);
   if (!want) {
     await expect(page.locator('.board')).toBeHidden({ timeout: 10_000 });
+    await expect(page.locator('.bnav[data-running]')).toHaveCount(0, { timeout: 10_000 });
     return;
   }
   await expect
@@ -35,10 +36,11 @@ async function settled(page: Page, i: number): Promise<void> {
         ),
         hid: await page.locator('.board .tk.hid').count(),
         fly: await page.locator('.fly-tok').count(),
+        run: await page.locator('.bnav[data-running]').count(),
       }),
       { timeout: 30_000 },
     )
-    .toEqual({ rows: want, hid: 0, fly: 0 });
+    .toEqual({ rows: want, hid: 0, fly: 0, run: 0 });
 }
 
 test.describe('Pembahasan soal 6 (G-Gerak, papan saja)', () => {

@@ -3,8 +3,8 @@
 | | |
 |---|---|
 | **Nama produk** | **Paham TKA** — Pembahasan Interaktif TKA Matematika Tingkat Lanjut 2025 |
-| **Tagline** | Dari bingung jadi paham, langkah demi langkah. |
-| **Versi dokumen** | 1.3 (revisi 1.3, 19 Oktober 2026: CSP `connect-src 'self'` agar service worker dapat melakukan *precache*; cadangan `file://` (`dist-single`) dipindah dari kriteria M0 ke M5. Revisi 1.2: Vercel subdomain gratis, kebijakan tanpa izin, tiga perangkat uji, 3D rendah-poligon, offline-first, lapisan gerak Motion) |
+| **Tagline** | Yuk pahami soal TKA 2025, step by step. |
+| **Versi dokumen** | 1.4 (revisi 1.4, 21 Oktober 2026: masukan uji pemilik produk — panggung penuh tanpa panel papan untuk soal non-3D, navigasi "selesaikan langkah dulu", Coretan inti dimajukan, beranda tanpa kolom cari dan hero bukan soal, skala antarmuka layar lebar; lihat §20.2. Revisi 1.3, 19 Oktober 2026: CSP `connect-src 'self'` agar service worker dapat melakukan *precache*; cadangan `file://` (`dist-single`) dipindah dari kriteria M0 ke M5. Revisi 1.2: Vercel subdomain gratis, kebijakan tanpa izin, tiga perangkat uji, 3D rendah-poligon, offline-first, lapisan gerak Motion) |
 | **Distribusi** | Hosting statis Vercel (PWA); cadangan: satu berkas HTML dan ZIP |
 | **Dokumen pendamping** | `SUPER-PROMPT.md` (arahan sesi produksi pertama: M0 dan M1) |
 | **Tanggal** | 19 Oktober 2026 |
@@ -353,10 +353,10 @@ Setiap kebutuhan memiliki ID (FR-…) dan kriteria penerimaan (KP). Prioritas: *
 | ID | Kebutuhan | Prio |
 |----|-----------|------|
 | FR-HOME-1 | Menampilkan 25 kartu soal berurutan 1–25. Kartu berisi nomor, judul, ranah materi, ikon bentuk respons (pilih satu / pilih banyak / benar-salah), status siswa (§7.4), dan penanda **Segera hadir** untuk 15 soal. | P0 |
-| FR-HOME-2 | Filter ranah materi (Matriks, Suku banyak, Fungsi dan grafik, Trigonometri, Vektor, Geometri, Transformasi, Limit) dan pencarian judul/nomor. | P1 |
+| FR-HOME-2 | Filter ranah materi (Matriks, Suku banyak, Fungsi dan grafik, Trigonometri, Vektor, Geometri, Transformasi, Limit). **Tanpa kolom cari** (v1.4: papan ketik layar sentuh merusak tata letak landscape). | P1 |
 | FR-HOME-3 | Tombol **Lanjutkan** membuka soal dan langkah terakhir yang dibuka (disimpan lokal). Bila belum ada, tombol berbunyi **Mulai dari soal 1**. | P0 |
 | FR-HOME-4 | Ringkasan kemajuan: jumlah soal dibahas, jumlah latihan benar/total, dan waktu belajar total. | P0 |
-| FR-HOME-5 | Panggung hero memutar siklus "angka terbang" (§6.2); berhenti otomatis bila tab tidak terlihat; statis bila hemat gerak aktif. | P0 |
+| FR-HOME-5 | Panggung hero menampilkan animasi yang menenangkan dan memukau, **bukan soal** (v1.4: pola biji bunga matahari/filotaksis yang tumbuh lalu berputar pelan); berhenti saat beranda ditinggalkan; statis bila hemat gerak aktif. Kartu soal yang sudah dibahas tampil berbeda dan mencolok (biru tua merek, bukan emas). | P0 |
 
 KP: kartu **Segera hadir** tidak dapat dibuka dan tidak dapat diakses lewat URL (`#/soal/1` mengalihkan ke beranda dengan lembar "sedang disiapkan"). Seluruh kartu dapat dijangkau dengan keyboard, urutan fokus sama dengan urutan visual.
 
@@ -1194,6 +1194,15 @@ Pada revisi 1.2 **tidak ada hal terbuka yang menghalangi produksi**. Semua perta
 - **Revisi 1.1:** nama menjadi **Paham TKA**; sepuluh soal Rilis 1 menjadi 1, 2, 5, 6, 13, 16, 17, 18, 24, 25; soal 12 tidak lagi dirancang 3D; 3D dipakai sebagai animasi pelengkap (soal 18 pada Rilis 1, soal 14 kelak); distribusi utama Vercel; sumber soal Kemendikdasmen; perangkat HP Android/iPhone kelas menengah dan satu tablet. Konten `pembahasan25.md` untuk soal 6, 13, 18, 24 sudah memuat dasar matematis yang dipakai generator; bila ditemukan perbaikan yang tidak mengubah kunci, perbaikan dilakukan pada `pembahasan25.md` dan data aplikasi sekaligus.
 - **Revisi 1.2 (final untuk produksi):** hosting Vercel dengan subdomain gratis; kebijakan sumber soal tanpa izin; tiga perangkat uji; 3D rendah-poligon; strategi offline-first "online sekali" (§14.12); lapisan gerak Motion vanilla dengan cadangan WAAPI + tween (§13.5a); butir terbuka ditutup (§19); `SUPER-PROMPT.md` dibuat untuk sesi produksi M0–M1.
 - **Revisi 1.3 (19 Oktober 2026, disetujui pemilik produk pada awal sesi M0):** (a) CSP `connect-src 'self'` menggantikan `'none'` (§14.9) karena `'none'` memblokir *precache* service worker; (b) cadangan `file://` (`dist-single`) dipindah dari kriteria keluar M0 ke M5 (§14.1, §17); jalur utama `dist/` memakai modul ES. Temuan yang dicatat, belum diubah: §11.4 soal 18 menyebut "$\sqrt2=1{,}41$ diberikan di soal", padahal `docs/soal25.md` tidak memberikannya (pembahasan memakai $1{,}414$; kunci tidak berubah); diputuskan pada M3.
+
+- **Revisi 1.4 (21 Oktober 2026, permintaan langsung pemilik produk setelah uji di HP, tablet, dan laptop):**
+  - (a) **Panggung penuh** untuk soal aljabar/perhitungan tanpa 3D (`layout: 'full'`): tidak ada panel papan; visual di atas dan baris rumus besar di bawahnya pada satu panggung gelap ("papan kapur"). Mulai dari soal 1; soal lain menyusul. Soal ber-3D tetap memakai ruang tersendiri.
+  - (b) **Navigasi langkah:** menekan Lanjut saat animasi masih berjalan menyelesaikan langkah itu dulu (keadaan akhir); tekanan berikutnya baru pindah langkah, sehingga Lanjut beruntun tetap runtut. Pop-up SELESAI hanya tampil setelah langkah terakhir selesai. Ditambah tombol **Ulangi langkah** di navigasi bawah (selain R).
+  - (c) **Coretan** (§12) dimajukan dari M4 dalam versi inti: pena, penanda, penghapus goresan, empat warna tanpa emas, tiga ketebalan, urungkan/ulangi, hapus semua, sembunyikan, pintasan C, penolakan telapak tangan. Goresan vektor ternormalisasi disimpan per soal **per langkah** di penyimpanan lokal, agar coretan tetap menempel pada layar yang dicoret. IndexedDB, simpan PNG, dan coretan di Detail/Latihan tetap di M4.
+  - (d) **Beranda:** judul hero "Yuk Pahami Soal TKA 2025, step by step" (juga tagline); kolom cari dihapus; hero bukan soal; kartu yang sudah dibahas bergaya mencolok.
+  - (e) **Layar lebar:** token ukuran (huruf, jarak, radius, komponen) mengikuti `--ui`: 1 di HP/tablet/laptop, 1,2 pada ≥1680×940, dan 1,45 pada ≥2300×1300. Kertas Detail menskalakan teks dengan lebar kertas.
+  - (f) **Soal 1:** alur pembahasan ditulis ulang mengikuti cara guru (lihat `docs/pembahasan25.md` soal 1). Contoh tambahan diminta pemilik; kunci tetap E.
+  - (g) **Perbaikan:** `&` di matriks pada kertas soal tidak lagi tampil sebagai "amp;"; judul pop-up SELESAI rata tengah.
 
 ### 20.3 Glosarium
 | Istilah | Arti |

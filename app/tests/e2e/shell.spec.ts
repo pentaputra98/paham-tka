@@ -37,14 +37,13 @@ test.describe('Beranda dan rute (M0)', () => {
     await expect(page.getByRole('dialog')).toContainText('sedang disiapkan');
   });
 
-  test('filter dan pencarian', async ({ page }) => {
+  test('filter ranah materi; tanpa kolom cari (papan ketik layar sentuh, PRD v1.4)', async ({ page }) => {
     await page.goto('./#/');
+    await expect(page.locator('input[type="search"]')).toHaveCount(0);
     await page.getByRole('button', { name: 'Limit', exact: true }).click();
     await expect(page.locator('.qcard')).toHaveCount(4);
     await page.getByRole('button', { name: 'Semua', exact: true }).click();
-    await page.getByLabel('Cari judul atau nomor soal').fill('kaca');
-    await expect(page.locator('.qcard')).toHaveCount(1);
-    await expect(page.locator('.qcard')).toHaveAttribute('data-no', '18');
+    await expect(page.locator('.qcard')).toHaveCount(25);
   });
 
   test('detail soal Rilis 1, Tentang, Pengaturan dapat dibuka', async ({ page }) => {

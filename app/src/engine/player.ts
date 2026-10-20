@@ -4,7 +4,9 @@
  *  - konteks c = {run, dir, seq, replay, entered, live};
  *  - setiap langkah idempoten; mundur = keadaan akhir tanpa animasi;
  *  - pertanyaan hanya muncul bila jawabannya belum ditulis, maju, dan jalur "Ikut berpikir";
- *  - putar otomatis: jeda 1,2 s × kecepatan, berhenti pada pertanyaan, konten opsional, dan langkah terakhir.
+ *  - putar otomatis: jeda 1,2 s × kecepatan, berhenti pada pertanyaan, konten opsional, dan langkah terakhir;
+ *  - Lanjut saat animasi langkah masih berjalan = selesaikan langkah itu dulu (keadaan akhir tanpa animasi);
+ *    tekanan berikutnya baru pindah langkah. Ditekan beruntun pun setiap langkah tampil selesai, berurutan.
  */
 import { flushSleeps, sleep } from '../core/clock';
 import { cancelAll, completeAll } from '../core/motion';
@@ -41,6 +43,12 @@ export class Player {
   auto = false;
   /** langkah saat ini sudah selesai dijalankan (syarat putar otomatis menjadwalkan langkah berikut) */
   private stepDone = false;
+  /** pop-up SELESAI sudah pernah tampil di halaman ini (kemajuan dihitung sekali) */
+  private doneSeen = false;
+  /** animasi langkah (visual + penulisan papan + pertanyaan) sedang berlangsung */
+  private animating = false;
+  /** run tempat pop-up SELESAI terakhir dibuka (cegah dibuka dua kali oleh tombol dan jeda akhir) */
+  private doneRun = -1;
   path: Path;
 
   constructor(
@@ -89,6 +97,7 @@ export class Player {
     this.board.cancelAsk();
     this.hooks.closeOverlays();
     this.stepDone = false;
+    this.animating = true;
     this.run++;
     const run = this.run;
     this.board.flush();
@@ -114,15 +123,34 @@ export class Player {
       .then((completed) => {
         if (completed && this.live(run)) {
           this.stepDone = true;
+          this.hooks.chrome();
           this.afterStep(run);
         }
       })
       .catch((e: unknown) => console.error(e));
   }
 
+  /** Animasi langkah ini masih berjalan (atau menunggu jawaban pertanyaan cepat). */
+  get running(): boolean {
+    return this.started && this.current.ch !== 0 && this.animating;
+  }
+
   next(): void {
+    // animasi belum selesai: tampilkan dulu keadaan akhir langkah ini, jangan melompat
+    if (this.running) return this.settle();
     if (!this.isLast) this.go(this.i + 1, 1);
-    else this.hooks.done(false);
+    else this.showDone();
+  }
+
+  /** Selesaikan langkah saat ini seketika (baris lengkap, visual di keadaan akhir). */
+  settle(): void {
+    this.go(this.i, -1);
+  }
+
+  private showDone(): void {
+    this.doneRun = this.run;
+    this.hooks.done(!this.doneSeen);
+    this.doneSeen = true;
   }
 
   prev(): void {
@@ -174,9 +202,14 @@ export class Player {
       } else if (!(await this.board.to(list, b.upTo, b.from, c))) return false;
     }
 
+    // animasi langkah selesai: Lanjut berikutnya pindah langkah (jeda di bawah ini hanya irama)
+    if (c.live()) {
+      this.animating = false;
+      this.hooks.chrome();
+    }
     if (st.visual.kind === 'done' && c.dir > 0) {
       if (!(await sleep(1300)) || !c.live()) return false;
-      this.hooks.done(true);
+      if (this.doneRun !== c.run) this.showDone();
     }
     return c.live();
   }

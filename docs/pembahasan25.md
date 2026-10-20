@@ -177,28 +177,60 @@ Pin: $F^{-1}=\begin{pmatrix}\frac12&0\\0&2\end{pmatrix}$. Setiap kartu diuji den
 | D | $\begin{pmatrix}-\frac12&0\\0&-2\end{pmatrix}$ | SALAH | $F\cdot D=\begin{pmatrix}-1&0\\0&-1\end{pmatrix}=-I$ | Angkanya benar tetapi tandanya salah; hasilnya $-I$, bukan $I$. |
 | E | $\begin{pmatrix}\frac12&0\\0&2\end{pmatrix}$ | BENAR | $F\cdot E=I$ | Kebalikan tiap elemen diagonal. |
 
-*Ditambahkan M2 (20 Okt 2026; kunci tidak berubah), dipakai di `app/src/content/soal/q01.ts`:*
-- **Visual Bagian 2:** adegan grid matriks dengan tiga tahap:
-  - `diag` (2.1): diagonal utama biru, diagonal samping merah, label $a,b,c,d$;
-  - `adj` (2.2): $a\leftrightarrow d$ bertukar dengan animasi, $-$ muncul pada $b$ dan $c$, nama berubah menjadi $\operatorname{adj}F$;
-  - `compare` (2.3 dan Bagian 3): $F$ dan $F^{-1}$ berdampingan dengan panah $2\to\frac12$, $\frac12\to2$ (= *Sorotan akhir*).
-  - Sel matriks dan elemen $F$ di kertas soal memakai sumber `@Fa`, `@Fb`, `@Fc`, `@Fd` yang sama. Mesin memilih yang sedang terlihat.
-- **Papan Bagian 2** dibagi dua judul agar baris matriks muat: "Determinan F" untuk a1–a4 (pin $F$), lalu "Adjoin dan invers" untuk b1–c3 (pin $\det F=1$). $\frac11$ pada c2 terbang dari pin.
-  - Baris b2 ditulis kapur sebagai satu matriks, karena elemen di dalam satu matriks tidak dapat terbang satu per satu.
-  - Pertukaran $a\leftrightarrow d$ diperlihatkan oleh adegan.
-- **Bagian 3 (opsional):**
-  - Papan "Pemeriksaan" dengan pin $F^{-1}$. Baris p1–p3 ditampilkan di panel **Ya, periksa** dan di catatan lengkap.
-- **Bagian 1:** langkah 1.1 menampilkan papan kosong "Diketahui dan ditanya"; k1–k2 muncul di 1.2, k3 di 1.3.
-- **Bagian 5:**
-  - Pop-up per kartu dari kolom *Alasan*. Kalimat B digabung menjadi satu agar tetap ≤ 2 kalimat.
-  - Papan ringkasan s1–s5, ditambah s6 "Jawaban E".
-  - Pertanyaan berhuruf A–E, dengan petunjuk dari kolom alasan.
-- **Ringkasan `LR`:** $\det F=1$ memakai kotak **navy** (diubah dari emas: emas hanya untuk jawaban, PRD).
+*Revisi alur oleh pemilik materi (21 Okt 2026; kunci tidak berubah), dipakai di `app/src/content/soal/q01.ts`. Menggantikan blok "Ditambahkan M2" sebelumnya.*
+
+Alur ini mengikuti cara Pak Penta membahas soal di kelas:
+1. Kenali matriksnya: ordo $2\times2$, matriks diagonal.
+2. Pakai cara cepat untuk matriks diagonal.
+3. Lihat contoh lain.
+4. Tegaskan bahwa cara cepat hanya berlaku untuk matriks diagonal.
+5. Uji dengan rumus umum, hasilnya harus sama.
+6. Cocokkan dengan pilihan.
+
+Tata letak: **panggung penuh tanpa panel papan** (PRD v1.4). Visual berada di atas, baris rumus besar di bawahnya.
+
+- **Bagian 1 — Pahami soal**
+  - 1.1 "Perhatikan matriks $F$ ini. Ordonya $2\times2$: dua baris dan dua kolom." Baris: Diketahui $F$ (`@s-F`), ordo $2\times2$.
+  - 1.2 "Elemen di luar diagonal utama semuanya $0$, jadi $F$ adalah **matriks diagonal**. Yang ditanya: inversnya, $F^{-1}$." Baris: jenis matriks diagonal, Ditanya $F^{-1}$ (`@s-inv`).
+- **Bagian 2 — Cara cepat matriks diagonal**
+  - 2.1 "Tahukah kalian? Untuk matriks diagonal ordo berapa pun, inversnya bisa dicari dengan cara cepat ini."
+    - Baris q1: $\begin{pmatrix}a&0\0&d\end{pmatrix}^{-1}=\begin{pmatrix}\frac1a&0\0&\frac1d\end{pmatrix}$ (navy).
+  - 2.2 "Caranya: tukar posisi pembilang dan penyebut elemen $a$ dan $d$. Perhatikan animasinya, cepat bukan?"
+    - Adegan: elemen diagonal ditulis sebagai pecahan ($2=\frac21$). Pada $F^{-1}$, pembilang turun dan penyebut naik.
+    - Baris c1 $2=\frac21\to\frac12$ (`@Fa`), c2 $\frac12\to\frac21=2$ (`@Fd`), c3 $F^{-1}=\begin{pmatrix}\frac12&0\0&2\end{pmatrix}$ (emas).
+    - Pertanyaan cepat sebelum c1: "Elemen $2$ ditulis $\frac21$. Setelah pembilang dan penyebutnya ditukar, menjadi…"
+      - $\frac12$ benar.
+      - $-2$: "Itu lawan dari $2$ (invers penjumlahan). Yang dicari invers perkalian."
+      - $2$: "Itu belum ditukar. Pembilang $2$ pindah ke bawah, penyebut $1$ naik ke atas."
+  - 2.3 "Contoh lain: matriks diagonal berikut juga cukup dibalik elemen diagonalnya."
+    - Baris e1: $\begin{pmatrix}4&0\0&\frac13\end{pmatrix}^{-1}=\begin{pmatrix}\frac14&0\0&3\end{pmatrix}$.
+  - 2.4 "Ordo $3\times3$ pun sama, tiap elemen diagonal dibalik dan tandanya tetap. Mau tahu kenapa bisa begitu?"
+    - Baris e2: $\operatorname{diag}(3,-2,\frac15)^{-1}=\operatorname{diag}(\frac13,-\frac12,5)$.
+    - Contoh e1 dan e2 diminta pemilik ("berikut contoh lainnya").
+    - Konten opsional **"Ya, tunjukkan alasannya" / "Tidak, lanjut saja"**:
+      - $\begin{pmatrix}a&0\0&d\end{pmatrix}\begin{pmatrix}\frac1a&0\0&\frac1d\end{pmatrix}=I$;
+      - lewat rumus umum $\frac1{ad}\begin{pmatrix}d&0\0&a\end{pmatrix}=\begin{pmatrix}\frac1a&0\0&\frac1d\end{pmatrix}$ (syarat $a,d\ne0$);
+      - pada soal, $FF^{-1}=I$ (menggantikan Bagian 3 opsional lama).
+- **Bagian 3 — Uji dengan rumus umum**
+  - 3.1 "Ingat, cara cepat ini hanya berlaku untuk matriks diagonal. Untuk matriks lain, pakai rumus umum invers $2\times2$."
+    - Baris g1: $A^{-1}=\frac{1}{ad-bc}\begin{pmatrix}d&-b\-c&a\end{pmatrix}$.
+  - 3.2 "Mari kita uji pada $F$, hasilnya harus sama. Pertama, hitung determinannya: $ad-bc$."
+    - Baris g2 $\det F=2\cdot\frac12-0\cdot0$, g3 $\det F=1$.
+    - Pertanyaan cepat lama ("Berapa $2\cdot\frac12-0\cdot0$?") muncul sebelum g3.
+  - 3.3 "Tukar $a$ dan $d$, beri tanda minus pada $b$ dan $c$, lalu bagi dengan $\det F=1$. Hasilnya sama dengan cara cepat."
+    - Adegan: $a\leftrightarrow d$ bertukar posisi dan tanda minus muncul.
+    - Baris g4: $F^{-1}=\frac11\begin{pmatrix}\frac12&-0\-0&2\end{pmatrix}=\begin{pmatrix}\frac12&0\0&2\end{pmatrix}$ (navy).
+- **Bagian 4 — Catatan lengkap.**
+- **Bagian 5 — Cocokkan dengan pilihan**
+  - Satu langkah: kelima kartu dibuka bersama dengan stempelnya. Papan memuat jawaban E.
+  - Pertanyaan berhuruf A–E dengan petunjuk dari kolom alasan.
+  - Pop-up: "Cocokkan dengan pilihan: hanya E yang sama dengan $F^{-1}$. Pilih jawabannya di bawah."
+- **Ringkasan `LR`:** cara cepat $a\to\frac1a,\ d\to\frac1d$ (khusus matriks diagonal, navy) · $F^{-1}$ (emas) · **Jawaban E** (emas).
 
 ### Bagian 6 — Selesai
 - **Segel:** **E**
 - **Pop-up:** "Invers $F$ adalah $\begin{pmatrix}\frac12&0\\0&2\end{pmatrix}$. Elemen diagonalnya dibalik: $2\to\frac12$ dan $\frac12\to2$."
-- **Ringkasan papan (`LR`):** $\det F=1$ (navy, *diubah M2*) · $F^{-1}=\begin{pmatrix}\frac12&0\\0&2\end{pmatrix}$ (emas) · **Jawaban E** (emas).
+- **Ringkasan papan (`LR`):** cara cepat $a\to\frac1a,\ d\to\frac1d$ (navy, *revisi alur 21 Okt*) · $F^{-1}=\begin{pmatrix}\frac12&0\\0&2\end{pmatrix}$ (emas) · **Jawaban E** (emas).
 
 ### Pemeriksaan hasil
 Substitusi balik: $FF^{-1}=I$ (lihat Bagian 3). Metode kedua: matriks diagonal $\mathrm{diag}(p,q)$ memiliki invers $\mathrm{diag}(1/p,\,1/q)$, yaitu $\mathrm{diag}(\frac12,\,2)$. Kedua metode cocok dengan opsi E saja.
