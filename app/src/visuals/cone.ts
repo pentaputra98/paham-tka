@@ -121,10 +121,13 @@ export function createCone(): VisualScene {
   const thIn = lab.querySelector<HTMLInputElement>('#cone-th')!;
   const rIn = lab.querySelector<HTMLInputElement>('#cone-r')!;
   const out = (k: string): HTMLElement => lab.querySelector<HTMLElement>(`[data-o="${k}"]`)!;
+  const o = { th: out('th'), r: out('r'), x: out('x'), y: out('y'), q: out('q') };
+  let labOn = false;
 
   function draw(): void {
     const g = geometry(st.theta, st.r);
     const { cx, yAB, rPx, yC } = g;
+    const flat = st.theta >= 179.9;
     const Ax = cx - rPx;
     const Bx = cx + rPx;
     semi.setAttribute('d', `M${Ax} ${yAB} A${rPx} ${rPx} 0 0 1 ${Bx} ${yAB} Z`);
@@ -144,9 +147,9 @@ export function createCone(): VisualScene {
     const ra = Math.min(34, Math.max(14, g.h * 0.28 + 10));
     const half = (Math.min(st.theta, 179.9) * Math.PI) / 360;
     const p = (ang: number, rr: number): string => `${cx + rr * Math.sin(ang)} ${yC - rr * Math.cos(ang)}`;
-    arcT.setAttribute('d', st.theta >= 179.9 ? '' : `M${p(-half, ra)} A${ra} ${ra} 0 0 1 ${p(half, ra)}`);
+    arcT.setAttribute('d', flat ? '' : `M${p(-half, ra)} A${ra} ${ra} 0 0 1 ${p(half, ra)}`);
     const rh = ra + 12;
-    arcH.setAttribute('d', st.theta >= 179.9 ? '' : `M${p(-half, rh)} A${rh} ${rh} 0 0 1 ${p(0, rh)}`);
+    arcH.setAttribute('d', flat ? '' : `M${p(-half, rh)} A${rh} ${rh} 0 0 1 ${p(0, rh)}`);
     // tanda sama panjang pada kaki
     const tickAt = (x0: number): string => {
       const mx = (x0 + cx) / 2;
@@ -156,8 +159,8 @@ export function createCone(): VisualScene {
       const dy = Math.sin(ang) * 6;
       return `M${mx - dx} ${my - dy} L${mx + dx} ${my + dy}`;
     };
-    tick1.setAttribute('d', st.theta >= 179.9 ? '' : tickAt(Ax));
-    tick2.setAttribute('d', st.theta >= 179.9 ? '' : tickAt(Bx));
+    tick1.setAttribute('d', flat ? '' : tickAt(Ax));
+    tick2.setAttribute('d', flat ? '' : tickAt(Bx));
     const at = (t: SVGTextElement, x: number, y: number): void => {
       t.setAttribute('x', String(x));
       t.setAttribute('y', String(y));
@@ -172,20 +175,18 @@ export function createCone(): VisualScene {
     at(t2r, cx, yAB - 12);
     at(tX, cx + rPx * 0.3, yAB + g.h * 0.36);
     at(tY, cx, yAB - rPx * 0.5);
-    el.classList.toggle('show-height', !!st.height);
-    el.classList.toggle('show-half', !!st.half);
-    el.classList.toggle('show-areas', !!st.areas);
-    el.classList.toggle('flat', st.theta >= 179.9);
-    // HUD
+    el.classList.toggle('flat', flat);
+    // HUD hanya saat lab tampil
+    if (!labOn) return;
     const X = st.r * st.r * (st.theta >= 180 ? 0 : 1 / Math.tan(half));
     const Y = 0.5 * Math.PI * st.r * st.r;
     thIn.value = String(Math.round(st.theta));
     rIn.value = String(st.r);
-    out('th').textContent = `${Math.round(st.theta)}°`;
-    out('r').textContent = `${fmt(st.r, 1)} cm`;
-    out('x').textContent = `${fmt(X, 2)} cm²`;
-    out('y').textContent = `${fmt(Y, 2)} cm²`;
-    out('q').textContent = fmt(X / Y, 3);
+    o.th.textContent = `${Math.round(st.theta)}°`;
+    o.r.textContent = `${fmt(st.r, 1)} cm`;
+    o.x.textContent = `${fmt(X, 2)} cm²`;
+    o.y.textContent = `${fmt(Y, 2)} cm²`;
+    o.q.textContent = fmt(X / Y, 3);
     thIn.setAttribute('aria-valuetext', `${Math.round(st.theta)} derajat`);
   }
 
@@ -204,10 +205,11 @@ export function createCone(): VisualScene {
     el,
     async apply(state, c: Ctx) {
       const s = state as ConeState;
-      st.height = !!s.height;
-      st.half = !!s.half;
-      st.areas = !!s.areas;
-      el.classList.toggle('lab-on', !!s.lab);
+      el.classList.toggle('show-height', !!s.height);
+      el.classList.toggle('show-half', !!s.half);
+      el.classList.toggle('show-areas', !!s.areas);
+      labOn = !!s.lab;
+      el.classList.toggle('lab-on', labOn);
       const th0 = st.theta;
       const r0 = st.r;
       const th1 = s.theta ?? th0;

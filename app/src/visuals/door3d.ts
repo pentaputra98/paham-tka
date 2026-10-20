@@ -12,13 +12,21 @@ import { toast } from '../shell/toast';
 import type { DoorApi, Stage } from './door3d-scene';
 import { createRibbon } from './ribbon18';
 
+let webgl: boolean | undefined;
+/** Diperiksa sekali; konteks uji langsung dilepas agar tidak menghabiskan jatah konteks WebGL. */
 export const hasWebGL = (): boolean => {
-  try {
-    const c = document.createElement('canvas');
-    return !!(c.getContext('webgl2') ?? c.getContext('webgl'));
-  } catch {
-    return false;
+  if (webgl === undefined) {
+    try {
+      const gl =
+        document.createElement('canvas').getContext('webgl2') ??
+        document.createElement('canvas').getContext('webgl');
+      gl?.getExtension('WEBGL_lose_context')?.loseContext();
+      webgl = !!gl;
+    } catch {
+      webgl = false;
+    }
   }
+  return webgl;
 };
 
 export function createDoor3d(): VisualScene & {
@@ -39,7 +47,6 @@ export function createDoor3d(): VisualScene & {
   let door: DoorApi | null = null;
   let loading: Promise<DoorApi | null> | null = null;
   let forced2d = false;
-  let stage: Stage = 'door';
   const ro = new ResizeObserver(() => door?.resize(host3d.clientWidth, host3d.clientHeight));
   ro.observe(host3d);
 
@@ -52,45 +59,38 @@ export function createDoor3d(): VisualScene & {
     else door?.start();
   }
 
+  function force2d(on: boolean): void {
+    forced2d = on;
+    show2d(on);
+  }
+
   function load(): Promise<DoorApi | null> {
     loading ??= import('./door3d-scene')
       .then((m) => {
         door = m.createDoor(host3d);
         door.resize(host3d.clientWidth, host3d.clientHeight);
         door.onLowFps = () => {
-          forced2d = true;
-          show2d(true);
-          const t = toast('Animasi 3D terasa berat. Kami beralih ke gambar 2D.', {
+          force2d(true);
+          toast('Animasi 3D terasa berat. Kami beralih ke gambar 2D.', {
             duration: 6000,
-            action: {
-              label: 'Tetap 3D',
-              onClick: () => {
-                forced2d = false;
-                show2d(false);
-              },
-            },
+            action: { label: 'Tetap 3D', onClick: () => force2d(false) },
           });
-          void t;
         };
         return door;
       })
       .catch(() => {
-        forced2d = true;
-        show2d(true);
+        force2d(true);
         return null;
       });
     return loading;
   }
 
-  skip.addEventListener('click', () => {
-    forced2d = true;
-    show2d(true);
-  });
+  skip.addEventListener('click', () => force2d(true));
 
   return {
     el,
     async apply(state, c: Ctx) {
-      stage = (state.stage as Stage) ?? 'door';
+      const stage = (state.stage as Stage | undefined) ?? 'door';
       ribbon.set(stage);
       if (use2d()) {
         show2d(true);
@@ -102,16 +102,12 @@ export function createDoor3d(): VisualScene & {
       d.start();
       await d.setStage(stage, c.dir > 0);
     },
-    resize() {
-      door?.resize(host3d.clientWidth, host3d.clientHeight);
-    },
     sketch: () => ribbon.sketch(),
     info: () => door?.info() ?? null,
     fps: () => door?.fps() ?? 0,
     destroy() {
       ro.disconnect();
       door?.dispose();
-      if (door) void import('./door3d-scene').then((m) => m.releaseShared());
       door = null;
       loading = null;
     },

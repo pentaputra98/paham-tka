@@ -7,9 +7,7 @@
  * - cap ≤ 2 kalimat dan ≤ 220 karakter (peringatan > 160);
  * - jumlah kartu 3–5 dan sesuai kunci; baris emas hanya yang dideklarasikan sebagai hasil akhir.
  */
-import type { Piece, Row, SoalContent, Tok } from './types';
-
-const isFrac = (p: Piece): p is { frac: [Piece[], Piece[]] } => 'frac' in p;
+import { isFrac, type Piece, type Row, type SoalContent, type Tok } from './types';
 
 function flatToks(ps: Piece[]): Tok[] {
   return ps.flatMap((p) => (isFrac(p) ? [...flatToks(p.frac[0]), ...flatToks(p.frac[1])] : [p]));

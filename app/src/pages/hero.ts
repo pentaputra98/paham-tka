@@ -7,7 +7,7 @@
  */
 import { reducedMotion, sleep } from '../core/clock';
 import { mathHtml, tex } from '../core/math';
-import { flyClone } from '../engine/fly';
+import { flyClone, visibleEnough } from '../engine/fly';
 import { play } from '../core/motion';
 import { DUR, EASE_OUT } from '../core/tokens';
 
@@ -60,18 +60,6 @@ const ROWS: HRow[] = [
   },
 ];
 
-const mt = mathHtml;
-
-function visible(el: Element): boolean {
-  const r = el.getBoundingClientRect();
-  return (
-    r.width > 0 &&
-    r.height > 0 &&
-    getComputedStyle(el).visibility !== 'hidden' &&
-    (el as HTMLElement).offsetParent !== null
-  );
-}
-
 /** Mulai siklus; mengembalikan fungsi berhenti. */
 export function startHero(stage: HTMLElement): () => void {
   const board = stage.querySelector<HTMLElement>('.fly-board');
@@ -106,7 +94,8 @@ export function startHero(stage: HTMLElement): () => void {
           s.style.visibility = 'hidden';
           m.append(s);
         }
-        if (spec.note) row.insertAdjacentHTML('beforeend', `<span class="note">${mt(spec.note)}</span>`);
+        if (spec.note)
+          row.insertAdjacentHTML('beforeend', `<span class="note">${mathHtml(spec.note)}</span>`);
         board.append(row);
         board.querySelectorAll('.bl').forEach((r, j, all) => r.classList.toggle('past', j < all.length - 1));
         for (const t of spec.toks) {
@@ -117,7 +106,7 @@ export function startHero(stage: HTMLElement): () => void {
             : t.src
               ? board.querySelector(`[data-hk="${t.src.slice(2)}"]`)
               : null;
-          if (from && visible(from)) await fly(from, el);
+          if (from && visibleEnough(from as HTMLElement)) await fly(from, el);
           else {
             el.style.visibility = '';
             await play(

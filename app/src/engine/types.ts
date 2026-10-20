@@ -19,6 +19,8 @@ export interface Frac {
   frac: [Array<Tok | Frac>, Array<Tok | Frac>];
 }
 export type Piece = Tok | Frac;
+
+export const isFrac = (p: Piece): p is Frac => 'frac' in p;
 export interface Row {
   id: string;
   toks: Piece[];
@@ -65,7 +67,6 @@ export interface Card {
 export type Visual =
   | { kind: 'soal'; hl?: number; focus?: string }
   | { kind: 'svg'; scene: string; state: Record<string, unknown> }
-  | { kind: 'solid3d'; state: Record<string, unknown> }
   | { kind: 'cards'; flip: number }
   | { kind: 'notes' }
   | { kind: 'done' };
@@ -105,10 +106,17 @@ export interface NotesSection {
   sketch?: string;
 }
 
+/** Label stempel kartu: BENAR/SALAH, atau label soal dua kolom (mis. PAS/TIDAK PAS). */
+export function verdictLabels(meta: SoalMeta): [string, string] {
+  return meta.response === 'truefalse' && meta.labels
+    ? [meta.labels[0].toUpperCase(), meta.labels[1].toUpperCase()]
+    : ['BENAR', 'SALAH'];
+}
+
 export interface SoalContent {
   meta: SoalMeta;
   /** HTML kertas soal; rumus $…$, stabilo lewat \htmlClass/\htmlData (KaTeX trust terbatas) */
-  paper: { html: string; srcNames: string[]; hlLevels: number };
+  paper: { html: string; srcNames: string[] };
   lobby: { eyebrow: string; titleLines: [string, string, string]; lede: string; facts: [Fact, Fact, Fact] };
   chapters: Array<{ t: string; d: string }>;
   pins: Record<string, Pin>;

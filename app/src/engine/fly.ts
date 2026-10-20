@@ -53,3 +53,19 @@ export function flyClone(from: Element, to: HTMLElement, o: FlyOptions): { g: HT
   );
   return { g, k };
 }
+
+/** Sumber hanya dipakai bila benar-benar terlihat di layar (template visibleEnough). */
+export function visibleEnough(el: HTMLElement): boolean {
+  const r = el.getBoundingClientRect();
+  if (r.width < 1 || r.height < 1) return false;
+  if (r.bottom < 0 || r.top > innerHeight || r.right < 0 || r.left > innerWidth) return false;
+  if (el.closest('.tk.hid')) return false;
+  const hidden = el.closest<HTMLElement>('[hidden], .is-hidden');
+  if (hidden) return false;
+  const lines = el.closest('.bd-lines');
+  if (lines) {
+    const lr = lines.getBoundingClientRect();
+    if (r.bottom < lr.top || r.top > lr.bottom) return false;
+  }
+  return getComputedStyle(el).visibility !== 'hidden';
+}

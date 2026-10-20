@@ -13,8 +13,8 @@ import { esc, html } from '../core/dom';
 import { mathHtml, mathLabel, tex } from '../core/math';
 import { completeAll, play } from '../core/motion';
 import { DUR, EASE_OUT } from '../core/tokens';
-import { flyClone } from './fly';
-import type { Ask, Piece, Pin, Row, Tok } from './types';
+import { flyClone, visibleEnough } from './fly';
+import { isFrac, type Ask, type Piece, type Pin, type Row, type Tok } from './types';
 
 export interface Ctx {
   run: number;
@@ -38,8 +38,6 @@ interface Flying {
   tk: HTMLElement;
   res: () => void;
 }
-
-const isFrac = (p: Piece): p is { frac: [Piece[], Piece[]] } => 'frac' in p;
 
 export class Board {
   readonly el: HTMLElement;
@@ -114,9 +112,7 @@ export class Board {
     if (spec.note) {
       const n = document.createElement('div');
       n.className = 'bl-n';
-      n.innerHTML = spec.note.includes('$')
-        ? spec.note.replace(/\$([^$]+)\$/g, (_x, s: string) => tex(s))
-        : spec.note;
+      n.innerHTML = mathHtml(spec.note);
       el.append(n);
     }
     return { id: spec.id, spec, el, m, boxed: false };
@@ -124,10 +120,6 @@ export class Board {
 
   has(id: string): boolean {
     return this.rows.some((r) => r.id === id);
-  }
-
-  rowIds(): string[] {
-    return this.rows.map((r) => r.id);
   }
 
   private scroll(): void {
@@ -196,19 +188,6 @@ export class Board {
     });
     this.flying.clear();
     this.rows.forEach((r) => this.finish(r, false));
-  }
-
-  /** Bersihkan papan sepenuhnya (masuk lobi atau ganti soal). */
-  reset(): void {
-    this.flush();
-    this.cancelAsk();
-    this.rows.forEach((r) => r.el.remove());
-    this.rows = [];
-    this.title = null;
-    this.pinKey = '';
-    this.pinsEl.replaceChildren();
-    this.titleEl.textContent = '–';
-    this.foot.replaceChildren();
   }
 
   chapter(title: string, pins: Pin[], c: Ctx): void {
@@ -332,9 +311,8 @@ export class Board {
   // ---------- pertanyaan cepat (template B.ask) ----------
   ask(a: Ask, c: Ctx): Promise<boolean> {
     return new Promise((resolve) => {
-      this.onPending(true);
       const f = this.foot;
-      f.innerHTML = `<div class="ask"><p class="ask-q"><span class="ask-k">Coba jawab</span>${mathText(a.q)}</p>
+      f.innerHTML = `<div class="ask"><p class="ask-q"><span class="ask-k">Coba jawab</span>${mathHtml(a.q)}</p>
         <div class="ask-o${a.col ? ' col' : ''}" role="group"></div>
         <div class="ask-h" role="status" aria-live="polite"></div>
         <div class="ask-x"><button type="button" class="link-btn" data-skip>Lihat jawabannya saja</button></div></div>`;
@@ -348,6 +326,8 @@ export class Board {
         resolve(v);
       };
       this.askRes = done;
+      // beri tahu setelah askRes diisi: `pending` diturunkan dari askRes
+      this.onPending(true);
       a.opts.forEach((op, i) => {
         const b = document.createElement('button');
         b.type = 'button';
@@ -372,14 +352,14 @@ export class Board {
               },
             );
             hint.className = 'ask-h no';
-            hint.innerHTML = `<b class="k-red">Belum tepat.</b> ${mathText(op.hint ?? '')}`;
+            hint.innerHTML = `<b class="k-red">Belum tepat.</b> ${mathHtml(op.hint ?? '')}`;
             return;
           }
           SND.correct();
           b.classList.add('right');
           box.querySelectorAll('button').forEach((x) => (x.disabled = true));
           hint.className = 'ask-h ok';
-          hint.innerHTML = `<b class="k-gold">Benar.</b> ${mathText(a.win ?? 'Kita tulis langkahnya.')}`;
+          hint.innerHTML = `<b class="k-gold">Benar.</b> ${mathHtml(a.win ?? 'Kita tulis langkahnya.')}`;
           void sleep(1100).then(() => done(true));
         });
         // KaTeX di dalam tombol tidak memberi nama aksesibel di Chrome: ambil teks MathML
@@ -405,9 +385,6 @@ export class Board {
   }
 }
 
-/** Teks bercampur $…$ (konten bundel tepercaya). */
-export const mathText = mathHtml;
-
 /** '@nama' → elemen [data-src=nama] di halaman; selain itu id token di papan (baris atau pin). */
 export function srcEl(src: string | undefined, board: HTMLElement): HTMLElement | null {
   if (!src) return null;
@@ -417,20 +394,4 @@ export function srcEl(src: string | undefined, board: HTMLElement): HTMLElement 
     return all.find(visibleEnough) ?? all[0] ?? null;
   }
   return board.querySelector<HTMLElement>(`[data-k="${CSS.escape(src)}"]`);
-}
-
-/** Sumber hanya dipakai bila benar-benar terlihat di layar (template visibleEnough). */
-export function visibleEnough(el: HTMLElement): boolean {
-  const r = el.getBoundingClientRect();
-  if (r.width < 1 || r.height < 1) return false;
-  if (r.bottom < 0 || r.top > innerHeight || r.right < 0 || r.left > innerWidth) return false;
-  if (el.closest('.tk.hid')) return false;
-  const hidden = el.closest<HTMLElement>('[hidden], .is-hidden');
-  if (hidden) return false;
-  const lines = el.closest('.bd-lines');
-  if (lines) {
-    const lr = lines.getBoundingClientRect();
-    if (r.bottom < lr.top || r.top > lr.bottom) return false;
-  }
-  return getComputedStyle(el).visibility !== 'hidden';
 }

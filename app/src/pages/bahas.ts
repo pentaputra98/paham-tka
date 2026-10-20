@@ -7,16 +7,16 @@ import { SND } from '../core/audio';
 import { esc, html, pad2 } from '../core/dom';
 import { toggleFullscreen, enterFullscreenLandscape } from '../core/fullscreen';
 import { icon } from '../core/icons';
-import { renderMath } from '../core/math';
+import { mathHtml } from '../core/math';
 import { play } from '../core/motion';
 import { store, type Path, type Speed } from '../core/store';
 import { DUR, EASE_OUT, SLIDE_PX } from '../core/tokens';
 import { getSoal, RELEASE_1 } from '../content';
 import { loadContent } from '../content/soal/registry';
-import { Board, mathText } from '../engine/board';
+import { Board } from '../engine/board';
 import { buildNotes } from '../engine/notes';
-import { Player, type PlayStep } from '../engine/player';
-import { Scene, type VisualFactory } from '../engine/scene';
+import { Player, type PlayerHooks } from '../engine/player';
+import { Scene } from '../engine/scene';
 import type { SoalContent, Step } from '../engine/types';
 import type { Route } from '../router/router';
 import { navigate, type PageView } from '../shell/app';
@@ -74,11 +74,11 @@ export function bahasPage(route: Route): PageView {
   function mount(content: SoalContent): void {
     const board = new Board();
     board.setReplayIcon(icon('rotate-ccw'));
-    const factories: Record<string, VisualFactory> = VISUALS;
-    scene = new Scene(content, board, factories);
+    scene = new Scene(content, board, VISUALS);
     const sketches: Record<string, () => string> = {};
-    for (const name of Object.keys(factories)) sketches[name] = () => scene!.visual(name)?.sketch?.() ?? '';
-    scene.notes.innerHTML = `<div class="notes-bar"><p class="t">Catatan lengkap<small>Semua langkah dari awal sampai akhir. Simpan untuk belajar lagi.</small></p>
+    for (const name of Object.keys(VISUALS)) sketches[name] = () => scene!.visual(name)?.sketch?.() ?? '';
+    scene.notesBuilder =
+      () => `<div class="notes-bar"><p class="t">Catatan lengkap<small>Semua langkah dari awal sampai akhir. Simpan untuk belajar lagi.</small></p>
       <button type="button" class="btn btn--primary" data-print>${icon('printer')}<span>Cetak / simpan PDF</span></button></div>
       <div class="notes-host">${buildNotes(content, sketches)}</div>`;
 
@@ -91,7 +91,7 @@ export function bahasPage(route: Route): PageView {
           <span class="ln"><span>${content.lobby.titleLines[1]}</span></span>
           <span class="ln"><span class="sub">${content.lobby.titleLines[2]}</span></span>
         </h1>
-        <p class="lede">${mathText(content.lobby.lede)}</p>
+        <p class="lede">${mathHtml(content.lobby.lede)}</p>
         <dl class="facts">${content.lobby.facts.map((f) => `<div><dt>${esc(f.dt)}</dt><dd>${esc(f.dd)}</dd></div>`).join('')}</dl>
         <div class="lobby-path" role="radiogroup" aria-label="Jalur pembahasan">
           <span class="lp-k">Jalur</span>
@@ -111,9 +111,10 @@ export function bahasPage(route: Route): PageView {
         </div>
       </div>
       <div class="lobby-art bp crop" aria-hidden="true"><span class="figcap"><b>GBR. 00</b> ${esc(meta.title)}</span>
-        <div class="lobby-paper">${content.paper.html}</div></div>
+        <div class="lobby-paper"></div></div>
     </section>`);
-    renderMath(lobby.querySelector('.lobby-paper')!);
+    // salin kertas yang sudah dirender panggung (tidak menyusun ulang KaTeX)
+    lobby.querySelector('.lobby-paper')!.append(scene.paper.querySelector('.soal-b')!.cloneNode(true));
     // kertas di lobi tidak boleh menjadi sumber terbang (sumber hanya di panggung)
     lobby.querySelectorAll('[data-src]').forEach((e) => e.removeAttribute('data-src'));
 
@@ -208,7 +209,9 @@ export function bahasPage(route: Route): PageView {
     scene.root.addEventListener('pointerdown', () => {
       if (p.auto) p.setAuto(false);
     });
-    scene.notes.querySelector('[data-print]')!.addEventListener('click', () => printNotes(scene!.notes));
+    scene.notes.addEventListener('click', (e) => {
+      if ((e.target as Element).closest('[data-print]')) printNotes(scene!.notes);
+    });
 
     const top = document.querySelector<HTMLElement>('.top');
     const onTop = (e: Event): void => {
@@ -314,7 +317,7 @@ export function bahasPage(route: Route): PageView {
       nav.querySelector('[data-mark]')!.setAttribute('aria-pressed', String(marked));
     }
 
-    function hooks(): ConstructorParameters<typeof Player>[3] {
+    function hooks(): PlayerHooks {
       return {
         chrome,
         stage(toLobby, dir) {
@@ -344,14 +347,14 @@ export function bahasPage(route: Route): PageView {
           if (isSheetOpen()) closeSheet();
         },
         save(i) {
-          const st = p.steps[i] as PlayStep;
+          const st = p.steps[i]!;
           const ids = p.stepsOfCh(st.ch);
           store.setLastStep(no, st.ch, ids.indexOf(i));
         },
         optional(panel, title) {
           openSheet({
             title,
-            body: `<div class="opt-panel">${mathText(panel)}</div>`,
+            body: `<div class="opt-panel">${mathHtml(panel)}</div>`,
             closeLabel: 'Paham, lanjut',
           });
         },
@@ -395,7 +398,7 @@ export function bahasPage(route: Route): PageView {
       title: 'SELESAI',
       body: `<div class="done-body"><span class="seal" aria-hidden="true">${esc(content.done.seal)}</span>
         <p>Kamu sudah menuntaskan pembahasan ini dari awal sampai akhir.</p>
-        <p class="done-msg">${mathText(content.done.message)}</p>
+        <p class="done-msg">${mathHtml(content.done.message)}</p>
         <p class="muted small">Latihan serupa dibuka pada tahap berikutnya (mesin latihan).</p></div>`,
       actions: [
         { label: 'Coba latihan serupa', kind: 'gold', icon: 'pen-line', onClick: () => false },

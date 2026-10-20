@@ -25,6 +25,7 @@ import {
   type BufferGeometry,
   type Material,
 } from 'three';
+import { Ease, killTween, tween } from '../core/tween';
 
 export type Stage = 'door' | 'ornament' | 'unglass' | 'radius' | 'unroll' | 'ruler' | 'match';
 
@@ -48,9 +49,6 @@ const RING_LEN = 2 * 3.14 * R; // 251,2 cm (π = 3,14 sesuai soal)
 const DIAM = 2 * R;
 const TOTAL = RING_LEN + 4 * SIDE + 2 * DIAM; // ≈ 63,75 satuan = 637,5 cm
 
-const css = (name: string): Color =>
-  new Color(getComputedStyle(document.documentElement).getPropertyValue(name).trim() || 'white');
-
 interface Params {
   glass: number; // 0 terpasang → 1 terbongkar
   unroll: number; // 0 ornamen → 1 batang per kelompok
@@ -66,99 +64,31 @@ interface Params {
   look: number;
 }
 
-const STAGES: Record<Stage, Params> = {
-  door: {
-    glass: 0,
-    unroll: 0,
-    line: 0,
-    ruler: 0,
-    metals: 0,
-    door: 1,
-    camX: 0,
-    span: 16,
-    camZ: 34,
-    camY: 2,
-    look: 0,
-  },
-  ornament: {
-    glass: 0,
-    unroll: 0,
-    line: 0,
-    ruler: 0,
-    metals: 0,
-    door: 1,
-    camX: 0,
-    span: 10,
-    camZ: 15,
-    camY: 0.5,
-    look: 0,
-  },
-  unglass: {
-    glass: 1,
-    unroll: 0,
-    line: 0,
-    ruler: 0,
-    metals: 0,
-    door: 1,
-    camX: 0,
-    span: 10,
-    camZ: 15,
-    camY: 0.5,
-    look: 0,
-  },
-  radius: {
-    glass: 1,
-    unroll: 0,
-    line: 0,
-    ruler: 0,
-    metals: 0,
-    door: 1,
-    camX: 0,
-    span: 9,
-    camZ: 13,
-    camY: 0.5,
-    look: 0,
-  },
-  unroll: {
-    glass: 1,
-    unroll: 1,
-    line: 0,
-    ruler: 0,
-    metals: 0,
-    door: 0,
-    camX: 0,
-    span: 30,
-    camZ: 30,
-    camY: 3,
-    look: 3,
-  },
-  ruler: {
-    glass: 1,
-    unroll: 1,
-    line: 1,
-    ruler: 1,
-    metals: 0,
-    door: 0,
-    camX: -5,
-    span: 74,
-    camZ: 62,
-    camY: 1,
-    look: 0,
-  },
-  match: {
-    glass: 1,
-    unroll: 1,
-    line: 1,
-    ruler: 1,
-    metals: 1,
-    door: 0,
-    camX: 0,
-    span: 88,
-    camZ: 92,
-    camY: -3,
-    look: -3,
-  },
+const DOOR: Params = {
+  glass: 0,
+  unroll: 0,
+  line: 0,
+  ruler: 0,
+  metals: 0,
+  door: 1,
+  camX: 0,
+  span: 16,
+  camZ: 34,
+  camY: 2,
+  look: 0,
 };
+const ORNAMENT: Params = { ...DOOR, span: 10, camZ: 15, camY: 0.5 };
+const UNROLL: Params = { ...ORNAMENT, glass: 1, unroll: 1, door: 0, span: 30, camZ: 30, camY: 3, look: 3 };
+const STAGES: Record<Stage, Params> = {
+  door: DOOR,
+  ornament: ORNAMENT,
+  unglass: { ...ORNAMENT, glass: 1 },
+  radius: { ...ORNAMENT, glass: 1, span: 9, camZ: 13 },
+  unroll: UNROLL,
+  ruler: { ...UNROLL, line: 1, ruler: 1, camX: -5, span: 74, camZ: 62, camY: 1, look: 0 },
+  match: { ...UNROLL, line: 1, ruler: 1, metals: 1, span: 88, camZ: 92, camY: -3, look: -3 },
+};
+const TAG = 'door3d';
 
 /**
  * Satu WebGLRenderer dipakai ulang (pola C3.attach/detach di template). Alasan: Three.js r186 memakai
@@ -184,18 +114,11 @@ function sharedRenderer(): { renderer: WebGLRenderer; canvas: HTMLCanvasElement 
   return shared;
 }
 
-/**
- * Lepas memori gambar renderer bersama saat adegan 3D tidak dipakai (buffer diperkecil ke 1×1).
- * Konteks WebGL dipertahankan agar tidak terkena kebocoran LUT tingkat-modul Three.js r186.
- */
-export function releaseShared(): void {
-  shared?.renderer.setSize(1, 1, false);
-  shared?.renderer.renderLists.dispose();
-}
-
 export function createDoor(host: HTMLElement): DoorApi {
   const { renderer, canvas } = sharedRenderer();
   const off = new AbortController();
+  const rootStyle = getComputedStyle(document.documentElement);
+  const css = (name: string): Color => new Color(rootStyle.getPropertyValue(name).trim() || 'white');
   const labels = document.createElement('div');
   labels.className = 'l3wrap';
   const scene = new Scene();
@@ -408,7 +331,7 @@ export function createDoor(host: HTMLElement): DoorApi {
   const one = new Vector3(1, 1, 1);
   const Z = new Vector3(0, 0, 1);
   const lerp = (a: number, b: number, t: number): number => a + (b - a) * t;
-  const ease = (t: number): number => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const ease = Ease.io;
 
   // baris tujuan saat terurai (unroll) dan saat berjajar di penggaris (line)
   const rowY = { ring: 6.2, sides: 3.9, diam: 1.6 };
@@ -520,7 +443,14 @@ export function createDoor(host: HTMLElement): DoorApi {
   let frames = 0;
   let fpsNow = 60;
   let lowFor = 0;
-  let tw: { from: Params; to: Params; t: number; dur: number; res: () => void } | null = null;
+  /** ada perubahan yang belum digambar (tween, ukuran, tahap) */
+  let dirty = true;
+  const draw = (): void => {
+    applyParams();
+    renderer.render(scene, camera);
+    projectLabels();
+    dirty = false;
+  };
   const api: DoorApi = {
     canvas,
     labels,
@@ -534,6 +464,16 @@ export function createDoor(host: HTMLElement): DoorApi {
         if (!running) return;
         const dt = Math.min(0.1, (now - last) / 1000);
         last = now;
+        const target = cur.unroll > 0.05 ? 0 : spin + Math.sin(now / 2600) * 0.12 * cur.door;
+        const moving = Math.abs(target - root.rotation.y) > 1e-4;
+        raf = requestAnimationFrame(loop);
+        if (!dirty && !moving) {
+          // diam: tidak menggambar dan tidak menghitung fps
+          acc = 0;
+          frames = 0;
+          if (lowFor > 0) lowFor = 0;
+          return;
+        }
         acc += dt;
         frames++;
         if (acc >= 1) {
@@ -546,26 +486,8 @@ export function createDoor(host: HTMLElement): DoorApi {
           acc = 0;
           frames = 0;
         }
-        if (tw) {
-          tw.t = Math.min(1, tw.t + (dt * 1000) / tw.dur);
-          const k = ease(tw.t);
-          for (const key of Object.keys(cur) as Array<keyof Params>)
-            cur[key] = lerp(tw.from[key], tw.to[key], k);
-          if (tw.t >= 1) {
-            const done = tw.res;
-            tw = null;
-            done();
-          }
-        }
-        root.rotation.y = lerp(
-          root.rotation.y,
-          cur.unroll > 0.05 ? 0 : spin + Math.sin(now / 2600) * 0.12 * cur.door,
-          0.08,
-        );
-        applyParams();
-        renderer.render(scene, camera);
-        projectLabels();
-        raf = requestAnimationFrame(loop);
+        root.rotation.y = lerp(root.rotation.y, target, 0.08);
+        draw();
       };
       raf = requestAnimationFrame(loop);
     },
@@ -576,18 +498,25 @@ export function createDoor(host: HTMLElement): DoorApi {
     setStage(stage, animate) {
       const to = STAGES[stage];
       if (!animate) {
-        tw?.res();
-        tw = null;
+        killTween(TAG);
         Object.assign(cur, to);
-        applyParams();
-        renderer.render(scene, camera);
-        projectLabels();
+        draw();
         return Promise.resolve();
       }
-      tw?.res();
-      return new Promise((res) => {
-        tw = { from: { ...cur }, to, t: 0, dur: 1600, res };
-      });
+      const from = { ...cur };
+      // tween inti: ikut kecepatan/jeda dan diselesaikan seketika saat pindah langkah
+      return tween({
+        from: 0,
+        to: 1,
+        dur: 1600,
+        ease: Ease.lin,
+        tag: TAG,
+        update: (_, p) => {
+          const k = ease(p);
+          for (const key of Object.keys(cur) as Array<keyof Params>) cur[key] = lerp(from[key], to[key], k);
+          dirty = true;
+        },
+      }).then(() => undefined);
     },
     resize(nw, nh) {
       w = Math.max(1, nw);
@@ -595,14 +524,17 @@ export function createDoor(host: HTMLElement): DoorApi {
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
+      dirty = true;
     },
     dispose() {
       api.stop();
+      killTween(TAG);
       disposables.forEach((d) => d.dispose());
       ring.dispose();
       off.abort();
-      // renderer bersama tidak dibuang; hanya isi adegan dan daftar render
+      // renderer bersama tidak dibuang (kebocoran LUT r186); buffer gambar diperkecil ke 1×1
       renderer.renderLists.dispose();
+      renderer.setSize(1, 1, false);
       canvas.remove();
       labels.remove();
     },

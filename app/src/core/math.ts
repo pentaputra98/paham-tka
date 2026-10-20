@@ -5,7 +5,20 @@
 import katex from 'katex';
 import { esc } from './dom';
 
+const cache = new Map<string, string>();
+const CACHE_MAX = 4000;
+
 export function tex(src: string, displayMode = false): string {
+  const key = (displayMode ? 'D' : 'I') + src;
+  const hit = cache.get(key);
+  if (hit !== undefined) return hit;
+  const out = render(src, displayMode);
+  if (cache.size >= CACHE_MAX) cache.clear();
+  cache.set(key, out);
+  return out;
+}
+
+function render(src: string, displayMode: boolean): string {
   try {
     return katex.renderToString(src, {
       throwOnError: false,

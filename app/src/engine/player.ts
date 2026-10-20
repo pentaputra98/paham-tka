@@ -38,7 +38,6 @@ export class Player {
   i = 0;
   private run = 0;
   private started = false;
-  pending = false;
   auto = false;
   /** langkah saat ini sudah selesai dijalankan (syarat putar otomatis menjadwalkan langkah berikut) */
   private stepDone = false;
@@ -53,14 +52,16 @@ export class Player {
   ) {
     this.steps = [{ ch: 0, lobby: true }, ...content.steps];
     this.path = path;
-    board.onPending = (p) => {
-      this.pending = p;
-      hooks.chrome();
-    };
+    board.onPending = () => hooks.chrome();
     board.onReplay = () => this.go(this.i, 1, { replay: true });
   }
 
   readonly live = (run: number): boolean => run === this.run;
+
+  /** pertanyaan cepat sedang terbuka (satu sumber: papan) */
+  get pending(): boolean {
+    return this.board.pending;
+  }
 
   stepsOfCh(ch: number): number[] {
     return this.steps.map((s, i) => (s.ch === ch ? i : -1)).filter((i) => i >= 0);
@@ -87,7 +88,6 @@ export class Player {
     // jangan percaya animasi lama
     this.board.cancelAsk();
     this.hooks.closeOverlays();
-    this.pending = false;
     this.stepDone = false;
     this.run++;
     const run = this.run;

@@ -19,7 +19,6 @@ const q25: SoalContent = {
 <li><span>D.</span>$\\frac{2}{3}$</li><li><span>E.</span>$\\frac{3}{2}$</li>
 </ol>`,
     srcNames: ['s-tanya', 's-x3', 's-pem', 's-faktor', 's-sin'],
-    hlLevels: 2,
   },
   lobby: {
     eyebrow: 'Kelas 12 · Matematika Lanjut · Limit trigonometri',

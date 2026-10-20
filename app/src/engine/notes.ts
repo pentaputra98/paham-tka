@@ -5,9 +5,7 @@
  */
 import { esc } from '../core/dom';
 import { mathHtml, tex } from '../core/math';
-import type { Card, Piece, Row, SoalContent } from './types';
-
-const isFrac = (p: Piece): p is { frac: [Piece[], Piece[]] } => 'frac' in p;
+import { isFrac, verdictLabels, type Card, type Piece, type Row, type SoalContent } from './types';
 
 /** Teks HTML pendek → \text{} yang aman untuk LaTeX. */
 function textTex(h: string): string {
@@ -52,10 +50,7 @@ function cardsTable(cards: Card[], labels: [string, string]): string {
 
 /** HTML lembar catatan (dipakai di layar, cetak, dan unduhan). */
 export function buildNotes(c: SoalContent, sketches: Record<string, () => string> = {}): string {
-  const labels: [string, string] =
-    c.meta.response === 'truefalse' && c.meta.labels
-      ? [c.meta.labels[0].toUpperCase(), c.meta.labels[1].toUpperCase()]
-      : ['BENAR', 'SALAH'];
+  const labels = verdictLabels(c.meta);
   const sections = c.notes.sections
     .map((s, i) => {
       const rows = s.lists.flatMap((id) => c.lists[id] ?? []);

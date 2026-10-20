@@ -27,7 +27,6 @@ const q24: SoalContent = {
 <li>Jika $\\theta=\\pi$ maka $\\frac{X}{Y}=0$</li>
 </ul>`,
     srcNames: ['s-semi', 's-tri', 's-X', 's-Y', 's-tanya'],
-    hlLevels: 2,
   },
   visualSrc: ['g-theta'],
   lobby: {

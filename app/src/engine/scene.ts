@@ -10,8 +10,8 @@ import { play } from '../core/motion';
 import { DUR, EASE_OUT } from '../core/tokens';
 import type { Board, Ctx } from './board';
 import { Cards } from './cards';
-import { mathText } from './board';
-import type { SoalContent, Step, Visual } from './types';
+import { mathHtml } from '../core/math';
+import { verdictLabels, type SoalContent, type Step, type Visual } from './types';
 
 export interface VisualScene {
   el: HTMLElement;
@@ -32,7 +32,8 @@ export interface CapAction {
   onClick: () => void;
 }
 
-type Mode = 'soal' | 'svg' | 'cards' | 'notes' | 'done' | '3d';
+const MODES = ['soal', 'svg', 'cards', 'notes', 'done'] as const;
+type Mode = (typeof MODES)[number];
 
 export class Scene {
   readonly root: HTMLElement;
@@ -45,6 +46,10 @@ export class Scene {
   private readonly capT: HTMLElement;
   private readonly capA: HTMLElement;
   private mode: Mode | null = null;
+  private lastKey = '';
+  private lastBw = -1;
+  /** pembangun HTML catatan lengkap; dijalankan sekali saat bagian catatan pertama dibuka */
+  notesBuilder: (() => string) | null = null;
   private hlLevel = -1;
   private visuals = new Map<string, VisualScene>();
   private currentVisual: string | null = null;
@@ -61,11 +66,7 @@ export class Scene {
       <div class="soal-b">${content.paper.html}</div></article></div>`);
     renderMath(this.paper);
     this.svgHost = html('<div class="p-svg inFree"></div>');
-    const labels: [string, string] =
-      content.meta.response === 'truefalse' && content.meta.labels
-        ? [content.meta.labels[0].toUpperCase(), content.meta.labels[1].toUpperCase()]
-        : ['BENAR', 'SALAH'];
-    this.cards = new Cards(content.cards, labels);
+    this.cards = new Cards(content.cards, verdictLabels(content.meta));
     this.notes = html('<div class="notes-ov" tabindex="-1"></div>');
     this.cap = html(
       `<div class="cap" role="status" aria-live="polite"><div class="cap-k"></div><div class="cap-t"></div><div class="cap-a"></div></div>`,
@@ -92,8 +93,7 @@ export class Scene {
   private setMode(m: Mode): void {
     if (this.mode === m) return;
     this.mode = m;
-    for (const x of ['soal', 'svg', 'cards', 'notes', 'done', '3d'])
-      this.root.classList.toggle(`m-${x}`, x === m);
+    for (const x of MODES) this.root.classList.toggle(`m-${x}`, x === m);
   }
 
   /** Stabilo bertahap (≤ level menyala). */
@@ -127,7 +127,6 @@ export class Scene {
         if (this.currentVisual !== v.scene) {
           this.svgHost.replaceChildren(vis.el);
           this.currentVisual = v.scene;
-          this.layout();
         }
         await vis.apply(v.state, c);
         return false;
@@ -137,22 +136,23 @@ export class Scene {
         this.cards.flip(v.flip, c);
         return false;
       case 'notes':
+        // catatan dibangun saat pertama kali dibuka (bukan saat halaman dimuat)
+        if (this.notesBuilder) {
+          this.notes.innerHTML = this.notesBuilder();
+          this.notesBuilder = null;
+        }
         this.setMode('notes');
         this.notes.scrollTop = 0;
         return false;
       case 'done':
         this.setMode('done');
-        this.cards.flip(this.content.cards.length, { ...c, dir: -1 });
-        return false;
-      case 'solid3d':
-        this.setMode('3d');
         return false;
     }
   }
 
   setCap(step: Step, chapterTitle: string, actions: CapAction[]): void {
     this.capK.textContent = `Bagian ${step.ch} · ${chapterTitle}`;
-    this.capT.innerHTML = mathText(step.cap);
+    this.capT.innerHTML = mathHtml(step.cap);
     this.capA.replaceChildren();
     for (const a of actions) {
       const b = document.createElement('button');
@@ -187,9 +187,17 @@ export class Scene {
     const fr = Math.round(bw + gap);
     const capBottom = this.cap.offsetTop + this.cap.offsetHeight;
     const ft = this.mode === 'notes' ? 0 : Math.round((capBottom || 120) + 10);
-    this.root.style.setProperty('--fr', `${fr}px`);
-    this.root.style.setProperty('--ft', `${ft}px`);
-    this.board.refit();
+    const key = `${fr}|${ft}`;
+    if (key !== this.lastKey) {
+      this.lastKey = key;
+      this.root.style.setProperty('--fr', `${fr}px`);
+      this.root.style.setProperty('--ft', `${ft}px`);
+    }
+    // baris papan hanya perlu disesuaikan ulang bila lebar papan berubah
+    if (bw !== this.lastBw) {
+      this.lastBw = bw;
+      this.board.refit();
+    }
     const vis = this.currentVisual ? this.visuals.get(this.currentVisual) : undefined;
     vis?.resize?.();
   }
