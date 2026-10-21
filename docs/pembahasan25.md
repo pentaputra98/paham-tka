@@ -1430,7 +1430,7 @@ Uji tiap nilai $m$: $6m^2+6m+9=81$?
 | B | −4 atau 3 | BENAR | $m=-4$: $96-24+9=81$; $m=3$: $54+18+9=81$ | Kedua akar memenuhi. |
 | C | −3 atau 4 | SALAH | $m=4$: $96+24+9=129\ne81$ | Tanda kedua akar terbalik. |
 | D | 3 atau 4 | SALAH | $m=4$ tidak memenuhi | $4$ bukan akar. |
-| E | 4 atau 3 | SALAH | $m=4$ tidak memenuhi | Urutan berbeda tetapi isinya sama dengan D. |
+| E | −4 atau 4 | SALAH | $m=4$: $96+24+9=129\ne81$ | Hanya $-4$ yang akar; jebakan menganggap akarnya $\pm4$. *(Opsi E naskah asli "4 atau 3" sama isinya dengan D; diganti 20 Okt 2026, kunci tetap B.)* |
 
 ### Bagian 5 — Selesai
 - **Segel:** **B**

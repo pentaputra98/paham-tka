@@ -150,7 +150,7 @@ A. -4 atau -3
 B. -4 atau 3
 C. -3 atau 4
 D. 3 atau 4
-E. 4 atau 3
+E. -4 atau 4
 
 13. Diketahui trapesium sama kaki ABCD dengan $AD=BC$ dan titik $A(0, 0)$. Vektor-vektor posisi pembentuk trapesium adalah $\vec{AD}=\begin{pmatrix} 1 \\ 4 \end{pmatrix}$, $\vec{AB}=\begin{pmatrix} 6 \\ 0 \end{pmatrix}$ dan $\vec{BC}=\begin{pmatrix} a \\ b \end{pmatrix}$. 
 Nilai dari $a^{2}+2b=....$
