@@ -73,7 +73,7 @@ test.describe('Pembahasan soal 13 (G-Gerak, bidang koordinat)', () => {
   test('Ikut berpikir: alasan C di y = 4', async ({ page }) => {
     await setup(page);
     await page.goto('./#/soal/13/bahas?m=ikut&b=2&l=1');
-    const foot = page.locator('.bd-foot');
+    const foot = page.locator('.ask-ov');
     await expect(foot).toContainText('ketinggian', { timeout: 20_000 });
     await foot.locator('.opt').nth(1).click();
     await expect(foot.locator('.ask-h')).toContainText('kaki');

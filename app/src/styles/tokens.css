@@ -26,6 +26,7 @@
     /* blueprint */
     --bp-900: #0a1830;
     --bp-800: #0f2244;
+    --bp-700: #16305c;
     --bp-ink-100: #e8eef9;
     --bp-ink-300: #b9c7df;
     /* merah = kendala/salah/jebakan */
@@ -56,6 +57,8 @@
     --a-sky-09: rgb(127 178 255 / 0.085);
     --a-sky-15: rgb(127 178 255 / 0.15);
     --a-sky-30: rgb(127 178 255 / 0.3);
+    --a-sky-45: rgb(127 178 255 / 0.45);
+    --a-navy-35: rgb(14 42 92 / 0.35);
     --a-blue-45: rgb(42 91 176 / 0.45);
     --a-blue-24: rgb(42 91 176 / 0.24);
     --a-red-20: rgb(200 16 46 / 0.2);
@@ -131,7 +134,14 @@
     --size-qcard-h-sm: calc(128px * var(--ui));
     --size-key-col: calc(220px * var(--ui));
     --size-cap-max: calc(540px * var(--ui));
-    --size-full-lines: calc(1180px * var(--ui));
+    --size-ask-w: calc(660px * var(--ui));
+    --size-tile: calc(76px * var(--ui));
+    /* lembar catatan lengkap: dua kolom bila tiap kolom ≥ 340 px */
+    --size-notes-max: calc(1180px * var(--ui));
+    --size-notes-col: calc(340px * var(--ui));
+    --fs-notes: calc(clamp(16px, 1.25vw, 19px) * var(--ui));
+    --size-opt-min: calc(112px * var(--ui));
+    --size-opt-abc: calc(100px * var(--ui));
     /* animasi beranda: putaran dan napas yang sangat pelan (menenangkan) */
     --dur-hero-spin: 240s;
     /* teks kertas soal di halaman Detail: ikut lebar kertas (kueri kontainer) */
@@ -139,6 +149,8 @@
     /* judul hero maks. selebar panelnya ("Soal TKA 2025," muat satu baris) */
     --hero-title-max: 10.4cqi;
     --dur-hero-breath: 9s;
+    /* tebal benang string art dalam satuan viewBox (100 × 100) */
+    --sa-thread: 0.22;
     /* batas ukuran angka matriks relatif tinggi zona visual (2×2 dan 3×3) */
     --mat-fit-2: 19cqh;
     --mat-fit-3: 13cqh;
@@ -195,6 +207,11 @@
     --fs-title: calc(clamp(18px, 1.6vw, 22px) * var(--ui));
     --fs-h2: calc(clamp(22px, 2.2vw, 30px) * var(--ui));
     --fs-card-num: calc(clamp(30px, 3vw, 42px) * var(--ui));
+    /* isi kartu analisis: ikut lebar kartu (cqi), dibatasi agar tetap terbaca */
+    --fs-card: clamp(calc(13px * var(--ui)), 5.6cqi, calc(24px * var(--ui)));
+    --fs-card-sm: clamp(12px, 6cqi, 16px);
+    /* kolom pilihan A–E pada kertas soal di panggung penuh (lima pilihan sebaris bila muat) */
+    --size-key-col-sm: calc(118px * var(--ui));
     --fs-hero: calc(clamp(34px, 5.2vw, 84px) * var(--ui));
     /* ukuran huruf dalam satuan viewBox SVG (ikut skala gambar) */
     --svg-fs-xs: 12px;
@@ -255,6 +272,7 @@
     --z-panel: 10;
     --z-sticky: 11;
     --z-notes: 12;
+    --z-ask: 20;
     --z-graph: 30;
     --z-sketch: 40;
     --z-sketch-bar: 41;
@@ -322,6 +340,17 @@
     --color-nudge: var(--a-gold-40);
     --color-ring-soft: var(--a-gold-20);
     --color-src-glow: var(--blue-300);
+    /* papan kapur pada panggung penuh: sedikit lebih terang dari panggung */
+    --color-slate: linear-gradient(170deg, var(--bp-700), var(--bp-800) 60%);
+    /* pop-up pertanyaan: panggung di belakangnya digelapkan dan diburamkan */
+    --color-scrim-ask: var(--a-bp-62);
+    --blur-ask: 7px;
+    /* bilah gulir mengikuti tema: biru tua di permukaan terang, biru langit di panggung gelap */
+    --color-scroll-thumb: var(--a-navy-35);
+    --color-scroll-thumb-hover: var(--blue-900);
+    --color-scroll-thumb-stage: var(--a-sky-45);
+    --color-scroll-thumb-stage-hover: var(--blue-300);
+    --size-scrollbar: calc(10px * var(--ui));
 
     --focus-ring: var(--bw-3) solid var(--color-focus);
     --focus-offset: var(--space-0-5);

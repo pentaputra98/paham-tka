@@ -6,7 +6,7 @@
 import { SND } from '../core/audio';
 import { esc, html, pad2 } from '../core/dom';
 import { toggleFullscreen, enterFullscreenLandscape } from '../core/fullscreen';
-import { icon } from '../core/icons';
+import { icon, type IconName } from '../core/icons';
 import { mathHtml } from '../core/math';
 import { play } from '../core/motion';
 import { store, type Path, type Speed } from '../core/store';
@@ -63,7 +63,7 @@ export function bahasPage(route: Route): PageView {
   const header = {
     back: { label: 'Soal', href: `#/soal/${no}` },
     block: { k: 'BAGIAN', n: '00/00', t: 'Lobi' },
-    extra: `<button type="button" class="btn top-ink" data-act="ink" aria-pressed="false" title="Coretan (C)">${icon('pen-line')}<span>Coretan</span></button>
+    extra: `<button type="button" class="btn top-ink" data-act="ink" aria-pressed="false" aria-label="Coretan" title="Coretan (C)">${icon('pen-line')}<span class="btn-label">Coretan</span></button>
       <button type="button" class="icon-btn" data-act="menu" aria-label="Daftar bagian" title="Daftar bagian">${icon('list')}</button>
       <button type="button" class="icon-btn" data-act="music" aria-pressed="${store.settings.music}" aria-label="Musik latar" title="Musik latar (M)">${icon('music')}</button>
       <button type="button" class="icon-btn" data-act="sfx" aria-pressed="${store.settings.sfx}" aria-label="Efek suara" title="Efek suara">${icon(store.settings.sfx ? 'volume-2' : 'volume-x')}</button>`,
@@ -420,40 +420,50 @@ export function bahasPage(route: Route): PageView {
     });
   }
 
+  /**
+   * Pop-up SELESAI: satu aksi utama (soal berikutnya, atau beranda bila ini soal terakhir), latihan serupa
+   * (emas, dibuka setelah mesin latihan M3 selesai), lalu tiga aksi sekunder sebagai ubin sejajar.
+   */
   function openDone(content: SoalContent, p: Player): void {
     SND.fanfare();
     const nx = nextReady(no);
+    const tile = (a: string, ic: IconName, t: string): string =>
+      `<button type="button" class="done-tile" data-a="${a}">${icon(ic)}<span>${t}</span></button>`;
     const { root } = openSheet({
       title: 'SELESAI',
       body: `<div class="done-body"><span class="seal" aria-hidden="true">${esc(content.done.seal)}</span>
-        <p>Kamu sudah menuntaskan pembahasan ini dari awal sampai akhir.</p>
-        <p class="done-msg">${mathHtml(content.done.message)}</p>
-        <p class="muted small">Latihan serupa dibuka pada tahap berikutnya (mesin latihan).</p></div>`,
-      actions: [
-        { label: 'Coba latihan serupa', kind: 'gold', icon: 'pen-line', onClick: () => false },
-        {
-          label: 'Lihat catatan lengkap',
-          icon: 'file-text',
-          onClick: () => p.go(p.indexOfCh(notesCh(content)), -1),
-        },
-        { label: 'Ulang pembahasan', icon: 'rotate-ccw', onClick: () => p.go(1, 1) },
-        ...(nx
-          ? [
-              {
-                label: 'Soal berikutnya',
-                icon: 'arrow-right' as const,
-                onClick: () => navigate(`#/soal/${nx}`),
-              },
-            ]
-          : []),
-      ],
+        <p class="done-lead">Kamu sudah menuntaskan pembahasan ini dari awal sampai akhir.</p>
+        <p class="done-msg">${mathHtml(content.done.message)}</p></div>
+        <div class="done-acts">
+          ${
+            nx
+              ? `<button type="button" class="btn btn--primary done-main" data-a="next">${icon('arrow-right')}<span>Soal berikutnya<small>Soal ${nx} · ${esc(getSoal(nx)!.title)}</small></span></button>`
+              : `<button type="button" class="btn btn--primary done-main" data-a="home">${icon('house')}<span>Kembali ke beranda<small>Pilih soal lain</small></span></button>`
+          }
+          <button type="button" class="btn btn--gold done-main" data-a="practice" aria-disabled="true" title="Tersedia setelah mesin latihan selesai">${icon('pen-line')}<span>Coba latihan serupa<small>Segera hadir</small></span></button>
+          <div class="done-tiles">
+            ${tile('notes', 'file-text', 'Lihat catatan lengkap')}
+            ${tile('again', 'rotate-ccw', 'Ulang pembahasan')}
+            ${nx ? tile('home', 'house', 'Beranda') : ''}
+          </div>
+        </div>`,
       closeLabel: null,
     });
-    const card = root.querySelector('.sheet-card');
-    card?.classList.add('sheet--done');
-    const gold = card?.querySelector<HTMLButtonElement>('.btn--gold');
-    gold?.setAttribute('aria-disabled', 'true');
-    gold?.setAttribute('title', 'Tersedia setelah mesin latihan selesai');
+    const card = root.querySelector<HTMLElement>('.sheet-card')!;
+    card.classList.add('sheet--done');
+    card.querySelector('.done-acts')!.addEventListener('click', (e) => {
+      const a = (e.target as Element).closest<HTMLElement>('[data-a]')?.dataset.a;
+      if (!a || a === 'practice') return;
+      SND.click();
+      closeSheet();
+      if (a === 'next') navigate(`#/soal/${nx}`);
+      else if (a === 'home') navigate('#/');
+      else if (a === 'notes') p.go(p.indexOfCh(notesCh(content)), -1);
+      else if (a === 'again') p.go(1, 1);
+    });
+    requestAnimationFrame(() =>
+      card.querySelector<HTMLElement>('.done-main')?.focus({ preventScroll: true }),
+    );
   }
 
   return {

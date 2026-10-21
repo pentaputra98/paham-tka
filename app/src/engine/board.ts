@@ -12,7 +12,7 @@ import { reducedMotion, sleep } from '../core/clock';
 import { esc, html } from '../core/dom';
 import { mathHtml, mathLabel, tex } from '../core/math';
 import { completeAll, play } from '../core/motion';
-import { DUR, EASE_OUT } from '../core/tokens';
+import { DUR, EASE_OUT, RISE_PX } from '../core/tokens';
 import { flyClone, visibleEnough } from './fly';
 import { isFrac, type Ask, type Piece, type Pin, type Row, type Tok } from './types';
 
@@ -42,6 +42,10 @@ interface Flying {
 export class Board {
   readonly el: HTMLElement;
   readonly foot: HTMLElement;
+  /** lapisan pertanyaan cepat: pop-up di tengah panggung, latar diburamkan (dipasang Scene di atas panggung) */
+  readonly askEl: HTMLElement;
+  /** panggung penuh: semua baris diperkecil bersama agar muat setinggi papan tanpa gulir */
+  fitHeight = false;
   private readonly titleEl: HTMLElement;
   private readonly pinsEl: HTMLElement;
   readonly body: HTMLElement;
@@ -69,6 +73,7 @@ export class Board {
     this.body = this.el.querySelector('.bd-lines')!;
     this.foot = this.el.querySelector('.bd-foot')!;
     this.live = this.el.querySelector('[aria-live]')!;
+    this.askEl = html('<div class="ask-ov" hidden></div>');
     this.el.querySelector('.bd-re')!.addEventListener('click', () => this.onReplay());
     // lebar isi papan berubah saat papan diubah ukurannya atau scrollbar muncul: ukur ulang baris
     this.ro = new ResizeObserver(() => this.refit());
@@ -137,12 +142,28 @@ export class Board {
 
   /** Perkecil huruf baris yang lebih lebar dari papan (min 60 %), tidak pernah memotong rumus. */
   private fit(row: RowView): void {
+    if (this.fitHeight) return this.refit();
     this.fitRows([row]);
   }
 
   /** Hitung ulang penyesuaian saat ukuran papan berubah. */
   refit(): void {
+    if (this.fitHeight) this.fitV();
     this.fitRows(this.rows);
+  }
+
+  /**
+   * Skala bersama --fitv (62–100 %) untuk semua baris, agar isi papan muat setinggi kolomnya.
+   * Ukuran huruf tidak persis linear terhadap tinggi (jarak, tinggi minimum), jadi diukur ulang maksimal tiga kali.
+   */
+  private fitV(): void {
+    const b = this.body;
+    b.style.removeProperty('--fitv');
+    let k = 1;
+    for (let n = 0; n < 3 && b.clientHeight > 0 && b.scrollHeight > b.clientHeight + 1 && k > 0.62; n++) {
+      k = Math.max(0.62, k * (b.clientHeight / b.scrollHeight));
+      b.style.setProperty('--fitv', k.toFixed(3));
+    }
   }
 
   /** Tulis–baca–tulis berkelompok (bukan per baris) agar tidak memicu reflow berulang. */
@@ -322,18 +343,46 @@ export class Board {
   }
 
   // ---------- pertanyaan cepat (template B.ask) ----------
+  /**
+   * Pop-up di tengah panggung; panggung di belakangnya diburamkan agar perhatian hanya pada pertanyaan.
+   * Fokus terperangkap di kartu (Tab berputar); jawaban benar menutup pop-up lalu baris ditulis.
+   */
   ask(a: Ask, c: Ctx): Promise<boolean> {
     return new Promise((resolve) => {
-      const f = this.foot;
-      f.innerHTML = `<div class="ask"><p class="ask-q"><span class="ask-k">Coba jawab</span>${mathHtml(a.q)}</p>
-        <div class="ask-o${a.col ? ' col' : ''}" role="group"></div>
+      const f = this.askEl;
+      f.innerHTML = `<div class="ask" role="dialog" aria-modal="true" aria-labelledby="ask-q">
+        <p class="ask-k">Coba jawab dulu</p>
+        <p class="ask-q" id="ask-q">${mathHtml(a.q)}</p>
+        <div class="ask-o${a.col ? ' col' : ''}${a.letters ? ' abc' : ''}" role="group"></div>
         <div class="ask-h" role="status" aria-live="polite"></div>
         <div class="ask-x"><button type="button" class="link-btn" data-skip>Lihat jawabannya saja</button></div></div>`;
       const box = f.querySelector<HTMLElement>('.ask-o')!;
       const hint = f.querySelector<HTMLElement>('.ask-h')!;
+      const card = f.querySelector<HTMLElement>('.ask')!;
+      f.hidden = false;
+      play(f, [{ opacity: 0 }, { opacity: 1 }], { duration: DUR.base, ui: true });
+      play(
+        card,
+        [
+          { opacity: 0, transform: `translateY(${RISE_PX}px) scale(.97)` },
+          { opacity: 1, transform: 'none' },
+        ],
+        { duration: DUR.slow, easing: EASE_OUT, ui: true },
+      );
+      const trap = (e: KeyboardEvent): void => {
+        if (e.key !== 'Tab') return;
+        const items = [...card.querySelectorAll<HTMLButtonElement>('button:not(:disabled)')];
+        if (!items.length) return;
+        const i = items.indexOf(document.activeElement as HTMLButtonElement);
+        const j = e.shiftKey ? (i <= 0 ? items.length - 1 : i - 1) : i === items.length - 1 ? 0 : i + 1;
+        e.preventDefault();
+        items[j]!.focus();
+      };
+      card.addEventListener('keydown', trap);
       const done = (v: boolean): void => {
         if (this.askRes !== done) return;
         this.askRes = null;
+        f.hidden = true;
         f.replaceChildren();
         this.onPending(false);
         resolve(v);

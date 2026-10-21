@@ -94,7 +94,7 @@ test.describe('Pembahasan soal 18 (G-Gerak, 3D pelengkap)', () => {
   test('Ikut berpikir: pertanyaan r²', async ({ page }) => {
     await setup(page, true);
     await page.goto('./#/soal/18/bahas?m=ikut&b=2&l=1');
-    const foot = page.locator('.bd-foot');
+    const foot = page.locator('.ask-ov');
     await expect(foot).toContainText('nilai', { timeout: 20_000 });
     await foot.getByRole('button', { name: /2079/ }).click();
     await expect(foot.locator('.ask-h')).toContainText('Belum tepat');

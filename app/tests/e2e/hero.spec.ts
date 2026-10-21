@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 
-/** Hero beranda (revisi PRD v1.4): pola biji bunga matahari, bukan soal. */
-test.describe('Hero beranda: pola filotaksis', () => {
-  test('titik tumbuh bertahap lalu pola utuh berputar pelan', async ({ page }) => {
+/** Hero beranda (revisi PRD v1.5): string art (kapal, kardioid, bintang), bukan soal. */
+test.describe('Hero beranda: string art', () => {
+  test('benang ditarik satu per satu; tiga karya bergantian', async ({ page }) => {
     await page.addInitScript(() =>
       localStorage.setItem(
         'pahamtka:v1:ui',
@@ -10,7 +10,9 @@ test.describe('Hero beranda: pola filotaksis', () => {
       ),
     );
     await page.goto('./#/');
-    await expect(page.locator('.hero-art .hd')).toHaveCount(340);
+    await expect(page.locator('.hero-art .sa-shape')).toHaveCount(3);
+    await expect(page.locator('.hero-art .sa-shape.on')).toHaveCount(1);
+    expect(await page.locator('.hero-art .sa-shape.on .sa-l').count()).toBeGreaterThan(100);
     // tidak ada isi soal di beranda
     await expect(page.locator('.hero .katex')).toHaveCount(0);
     const running = () =>
@@ -19,7 +21,7 @@ test.describe('Hero beranda: pola filotaksis', () => {
     await expect(page.locator('.hero-stage')).toHaveClass(/is-live/);
   });
 
-  test('hemat gerak: pola utuh statis, tanpa animasi', async ({ page }) => {
+  test('hemat gerak: kapal utuh statis, tanpa animasi', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('./#/');
     await page.waitForTimeout(800);
@@ -35,7 +37,7 @@ test.describe('Hero beranda: pola filotaksis', () => {
     expect(n).toBe(0);
   });
 
-  test('meninggalkan beranda menghentikan animasi tumbuh', async ({ page }) => {
+  test('meninggalkan beranda menghentikan animasi', async ({ page }) => {
     await page.goto('./#/');
     await page.waitForTimeout(600);
     await page.goto('./#/tentang');

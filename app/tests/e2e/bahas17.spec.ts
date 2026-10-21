@@ -82,7 +82,7 @@ test.describe('Pembahasan soal 17 (G-Gerak, rambu SVG)', () => {
   test('Ikut berpikir: pertanyaan luas putih', async ({ page }) => {
     await setup(page);
     await page.goto('./#/soal/17/bahas?m=ikut&b=2&l=3');
-    const foot = page.locator('.bd-foot');
+    const foot = page.locator('.ask-ov');
     await expect(foot).toContainText('Luas putih', { timeout: 20_000 });
     await foot.getByRole('button', { name: /persegi dikurangi/ }).click();
     await expect(foot.locator('.ask-h')).toContainText('Belum tepat');

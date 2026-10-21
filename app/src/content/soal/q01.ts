@@ -4,7 +4,7 @@
  * Alur mengikuti cara Pak Penta membahas di kelas (revisi 20 Okt 2026, dicatat di dokumen):
  * pahami (ordo, jenis matriks diagonal) → cara cepat (balik pembilang–penyebut elemen diagonal, ordo berapa pun)
  * → contoh lain → "hanya untuk matriks diagonal": uji dengan rumus umum → cocokkan pilihan → selesai.
- * Tata letak: panggung penuh (tanpa panel papan).
+ * Tata letak: panggung penuh dua kolom (pop-up + visual kiri, papan kapur kanan; PRD v1.5).
  */
 import { H, O, T } from '../../engine/dsl';
 import type { SoalContent, Visual } from '../../engine/types';

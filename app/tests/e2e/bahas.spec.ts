@@ -150,7 +150,7 @@ test.describe('Pembahasan soal 25 (G-Gerak)', () => {
   }) => {
     await setup(page);
     await page.goto('./#/soal/25/bahas?m=ikut&b=2&l=1');
-    const foot = page.locator('.bd-foot');
+    const foot = page.locator('.ask-ov');
     await expect(foot).toContainText('Coba jawab', { timeout: 20_000 });
     await expect(page.locator('[data-next-t]')).toHaveText('Lihat jawaban');
     await foot.getByRole('button', { name: /cot/ }).click();
@@ -170,10 +170,10 @@ test.describe('Pembahasan soal 25 (G-Gerak)', () => {
   }) => {
     await setup(page);
     await page.goto('./#/soal/25/bahas?m=ikut&b=2&l=1');
-    await expect(page.locator('.bd-foot')).toContainText('Coba jawab', { timeout: 20_000 });
+    await expect(page.locator('.ask-ov')).toContainText('Coba jawab', { timeout: 20_000 });
     await page.locator('[data-next]').click();
     await settled(page, 4);
-    await expect(page.locator('.bd-foot')).toBeEmpty();
+    await expect(page.locator('.ask-ov')).toBeEmpty();
     await page.locator('[data-next]').click();
     await settled(page, 5);
   });

@@ -1,6 +1,7 @@
 /**
  * Adegan satu layar (PRD §9.3, §9.4; template setScene/setCap/layout):
  * panggung blueprint, pop-up kiri atas, papan kanan, area bebas = panggung − papan − pop-up.
+ * Panggung penuh (layout 'full', PRD v1.5): grid dua kolom tanpa area bebas; kertas dan baris papan diskalakan agar muat.
  * Jenis adegan: soal (kertas), svg (visual interaktif), cards, notes, done. Mode `.narrow` dihapus (K4).
  */
 import { esc, html } from '../core/dom';
@@ -55,7 +56,7 @@ export class Scene {
   private visuals = new Map<string, VisualScene>();
   private currentVisual: string | null = null;
   private readonly ro: ResizeObserver;
-  /** satu panggung besar tanpa panel papan */
+  /** panggung penuh dua kolom (pop-up + visual kiri, papan kapur kanan), tanpa area bebas */
   private readonly full: boolean;
 
   constructor(
@@ -77,16 +78,18 @@ export class Scene {
     this.capK = this.cap.querySelector('.cap-k')!;
     this.capT = this.cap.querySelector('.cap-t')!;
     this.capA = this.cap.querySelector('.cap-a')!;
-    this.root.append(this.paper, this.svgHost, this.cards.el, this.notes, this.cap, board.el);
+    this.root.append(this.paper, this.svgHost, this.cards.el, this.notes, this.cap, board.el, board.askEl);
     this.full = content.layout === 'full';
     this.root.classList.toggle('lay-full', this.full);
+    // panggung penuh: semua baris rumus harus muat setinggi kolom papan (tanpa gulir)
+    board.fitHeight = this.full;
     this.ro = new ResizeObserver(() => this.layout());
     this.ro.observe(this.root);
     // font KaTeX/tampilan bisa selesai dimuat setelah baris ditulis (kunjungan pertama): ukur ulang
     document.fonts?.addEventListener('loadingdone', this.onFonts);
   }
 
-  private readonly onFonts = (): void => this.board.refit();
+  private readonly onFonts = (): void => (this.full ? this.layout() : this.board.refit());
 
   destroy(): void {
     this.ro.disconnect();
@@ -193,37 +196,53 @@ export class Scene {
     );
   }
 
+  /**
+   * Panggung penuh: kertas soal diskalakan utuh agar muat di kolom visual tanpa gulir (62–125 %).
+   * Lebar kertas dikompensasi (100 % / k) sehingga setelah diskalakan tetap selebar kolom; teks ditata ulang
+   * pada lebar itu, jadi diukur dua kali. Bila batas bawah tercapai, kolom boleh digulir (sisa ruang dipangkas).
+   */
+  private fitPaper(): void {
+    const art = this.paper.querySelector<HTMLElement>('.soal');
+    const H = this.paper.clientHeight;
+    if (!art || !H) return;
+    let k = 1;
+    art.style.setProperty('--paper-k', '1');
+    art.style.removeProperty('margin-bottom');
+    for (let n = 0; n < 2; n++) {
+      const h = art.offsetHeight;
+      if (!h) return;
+      // offsetHeight = tinggi sebelum transform; tinggi tampil = h × k
+      k = Math.min(1.25, Math.max(0.62, H / h));
+      art.style.setProperty('--paper-k', k.toFixed(3));
+    }
+    const over = art.offsetHeight * k > H + 1;
+    this.paper.classList.toggle('is-scroll', over);
+    // ruang tata letak = tinggi asli; pangkas agar gulir berakhir tepat di bawah kertas yang diskalakan
+    art.style.marginBottom = `${Math.round(art.offsetHeight * (k - 1))}px`;
+  }
+
   /** Hitung area bebas (template layout()): dipanggil saat ukuran berubah dan tiap ganti langkah. */
   layout(): void {
     const W = this.root.clientWidth;
     const H = this.root.clientHeight;
     if (!W || !H) return;
-    const capBottom = this.cap.offsetTop + this.cap.offsetHeight;
-    const ft = this.mode === 'notes' ? 0 : Math.round((capBottom || 120) + 10);
-    let fr: number;
-    let vz = 0;
     if (this.full) {
-      // layar pendek (HP mendatar): visual kiri, baris rumus kanan; selain itu bertumpuk atas–bawah
-      const side = H < 460;
-      this.root.classList.toggle('full-side', side);
-      if (side) fr = Math.round(W * (this.mode === 'cards' ? 0.42 : 0.5));
-      else {
-        fr = 24;
-        const share = this.mode === 'cards' ? 0.56 : this.mode === 'notes' ? 0 : 0.42;
-        vz = Math.round((H - ft) * share);
-      }
+      // dua kolom pada satu panggung (CSS grid): pop-up + visual di kiri, papan di kanan; tanpa area bebas
+      if (this.mode === 'soal' || this.mode === 'done') this.fitPaper();
+      this.board.refit();
     } else {
+      const capBottom = this.cap.offsetTop + this.cap.offsetHeight;
+      const ft = this.mode === 'notes' ? 0 : Math.round((capBottom || 120) + 10);
       const css = getComputedStyle(this.root);
       const bw =
         this.board.el.getBoundingClientRect().width || parseFloat(css.getPropertyValue('--bw')) || 320;
-      fr = Math.round(bw + (H < 420 ? 18 : 34));
-    }
-    const key = `${fr}|${ft}|${vz}`;
-    if (key !== this.lastKey) {
-      this.lastKey = key;
-      this.root.style.setProperty('--fr', `${fr}px`);
-      this.root.style.setProperty('--ft', `${ft}px`);
-      this.root.style.setProperty('--vz', `${vz}px`);
+      const fr = Math.round(bw + (H < 420 ? 18 : 34));
+      const key = `${fr}|${ft}`;
+      if (key !== this.lastKey) {
+        this.lastKey = key;
+        this.root.style.setProperty('--fr', `${fr}px`);
+        this.root.style.setProperty('--ft', `${ft}px`);
+      }
     }
     if (this.mode === 'cards') this.cards.fit();
     const vis = this.currentVisual ? this.visuals.get(this.currentVisual) : undefined;

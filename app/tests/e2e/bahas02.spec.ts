@@ -62,7 +62,7 @@ test.describe('Pembahasan soal 2 (G-Gerak, gambar sumber + papan)', () => {
   test('Ikut berpikir: persamaan gajah lalu determinan', async ({ page }) => {
     await setup(page);
     await page.goto('./#/soal/2/bahas?m=ikut&b=2&l=0');
-    const foot = page.locator('.bd-foot');
+    const foot = page.locator('.ask-ov');
     await expect(foot).toContainText('total rumput gajah', { timeout: 20_000 });
     await foot.locator('.opt').nth(3).click();
     await expect(foot.locator('.ask-h')).toContainText('kilogram');

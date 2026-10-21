@@ -1,10 +1,10 @@
 /**
- * Beranda (FR-HOME-1…5): panggung hero di kiri (animasi pola biji bunga matahari, bukan soal: revisi
- * pemilik PRD v1.4), katalog 25 soal di kanan.
+ * Beranda (FR-HOME-1…5): panggung hero di kiri (animasi string art, bukan soal: revisi pemilik
+ * PRD v1.5), katalog 25 soal di kanan.
  */
 import { esc, html, pad2 } from '../core/dom';
 import { icon, type IconName } from '../core/icons';
-import { heroArt, startHero } from './hero';
+import { HERO_CAPTION, heroArt, startHero } from './hero';
 import { progressSummary, store } from '../core/store';
 import {
   DOMAIN_LABEL,
@@ -73,7 +73,7 @@ function heroHtml(): string {
     </div>
     <div class="hero-stage" data-hero-stage>
       ${heroArt()}
-      <p class="ha-cap">Pola biji bunga matahari · tiap titik berputar 137,5° dari titik sebelumnya</p>
+      <p class="ha-cap" aria-live="off">${HERO_CAPTION}</p>
     </div>
     <div class="hero-foot">
       ${cta}

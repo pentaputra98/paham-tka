@@ -106,63 +106,57 @@
     overflow: visible;
   }
 
-  .ha-spin {
-    transform-box: view-box;
-    transform-origin: 50% 50%;
-    animation: ha-spin var(--dur-hero-spin) linear infinite;
-  }
-
   .ha-breath {
     transform-box: view-box;
     transform-origin: 50% 50%;
     animation: ha-breath var(--dur-hero-breath) var(--ease) infinite alternate;
   }
 
-  @keyframes ha-spin {
-    to {
-      transform: rotate(1turn);
-    }
-  }
-
   @keyframes ha-breath {
     from {
-      transform: scale(0.96);
+      transform: scale(0.97);
     }
 
     to {
-      transform: scale(1.03);
+      transform: scale(1.02);
     }
   }
 
-  .is-still .ha-spin,
   .is-still .ha-breath {
     animation: none;
   }
 
-  .hd {
-    transform-box: fill-box;
-    transform-origin: center;
+  /* string art: satu karya tampil; benang tipis tiga nada di atas panggung blueprint, paku putih kecil */
+  .sa-shape {
+    opacity: 0;
+    visibility: hidden;
   }
 
-  .hd.h-a {
-    fill: var(--color-stage-accent);
+  .sa-shape.on {
+    opacity: 1;
+    visibility: visible;
   }
 
-  .hd.h-b {
-    fill: var(--paper-0);
+  .sa-l {
+    stroke-width: var(--sa-thread);
+    stroke-linecap: round;
+    transform-box: view-box;
   }
 
-  .hd.h-c {
-    fill: var(--blue-300);
-    opacity: 0.55;
+  .sa-l.t-a {
+    stroke: var(--color-stage-accent);
   }
 
-  .hd.h-d {
-    fill: var(--bp-ink-300);
-    opacity: 0.8;
+  .sa-l.t-b {
+    stroke: var(--color-on-stage);
+    opacity: 0.85;
   }
 
-  .ha-core {
+  .sa-l.t-c {
+    stroke: var(--color-scroll-thumb-stage);
+  }
+
+  .sa-n {
     fill: var(--paper-0);
   }
 

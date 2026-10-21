@@ -54,16 +54,38 @@ test.describe('Pembahasan soal 1 (G-Gerak, grid matriks)', () => {
       await settled(page, i);
       if (i < steps.length) await page.locator('[data-next]').click();
     }
-    await expect(page.getByRole('dialog')).toContainText('SELESAI', { timeout: 10_000 });
-    await expect(page.getByRole('dialog')).toContainText('E');
+    const dlg = page.getByRole('dialog');
+    await expect(dlg).toContainText('SELESAI', { timeout: 10_000 });
+    await expect(dlg).toContainText('E');
+    // aksi SELESAI: soal berikutnya, latihan serupa (segera hadir), catatan, ulang, beranda
+    for (const t of [
+      'Soal berikutnya',
+      'Coba latihan serupa',
+      'Lihat catatan lengkap',
+      'Ulang pembahasan',
+      'Beranda',
+    ])
+      await expect(dlg.getByRole('button', { name: new RegExp(t) })).toBeVisible();
+    await dlg.getByRole('button', { name: /Beranda/ }).click();
+    await expect(page).toHaveURL(/#\/$/);
     expect(errors).toEqual([]);
   });
 
-  test('panggung penuh tanpa panel papan; cara cepat: pembilang dan penyebut bertukar', async ({ page }) => {
+  test('dua kolom: visual kiri, papan kanan, tanpa gulir; cara cepat: pembilang dan penyebut bertukar', async ({
+    page,
+  }) => {
     await setup(page);
     await page.goto('./#/soal/1/bahas?m=amati&b=2&l=1');
     await settled(page, 4);
     await expect(page.locator('.scene')).toHaveClass(/lay-full/);
+    const vis = (await page.locator('.p-svg').boundingBox())!;
+    const board = (await page.locator('.board').boundingBox())!;
+    expect(board.x).toBeGreaterThan(vis.x + vis.width - 1);
+    // semua baris papan muat tanpa gulir
+    const over = await page.locator('.bd-lines').evaluate((e) => e.scrollHeight - e.clientHeight);
+    expect(over).toBeLessThanOrEqual(1);
+    // tombol Beranda di tengah header
+    await expect(page.getByRole('link', { name: 'Beranda' })).toBeVisible();
     await expect(page.locator('.vis-mat')).toHaveClass(/is-flip/);
     // F⁻¹: elemen kiri atas 1/2, kanan bawah 2/1 (penyebut 1 dipudarkan)
     const inv = page.locator('.mx-inv .dg');
@@ -121,8 +143,13 @@ test.describe('Pembahasan soal 1 (G-Gerak, grid matriks)', () => {
   test('Ikut berpikir: tukar pembilang-penyebut lalu determinan', async ({ page }) => {
     await setup(page);
     await page.goto('./#/soal/1/bahas?m=ikut&b=2&l=1');
-    const foot = page.locator('.bd-foot');
+    const foot = page.locator('.ask-ov');
     await expect(foot).toContainText('Coba jawab', { timeout: 20_000 });
+    // pop-up di tengah panggung, menutupi seluruh panggung (latar diburamkan)
+    const ov = (await foot.boundingBox())!;
+    const sc = (await page.locator('.scene').boundingBox())!;
+    expect(Math.abs(ov.width - sc.width)).toBeLessThan(2);
+    await expect(foot.getByRole('dialog')).toBeVisible();
     await foot.locator('.opt').nth(1).click();
     await expect(foot.locator('.ask-h')).toContainText('lawan');
     await foot.locator('.opt').first().click();

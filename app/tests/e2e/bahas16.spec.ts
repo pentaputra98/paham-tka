@@ -74,7 +74,7 @@ test.describe('Pembahasan soal 16 (G-Gerak, garis dan lingkaran)', () => {
   test('Ikut berpikir: gradien dan jari-jari sejajar f', async ({ page }) => {
     await setup(page);
     await page.goto('./#/soal/16/bahas?m=ikut&b=2&l=0');
-    const foot = page.locator('.bd-foot');
+    const foot = page.locator('.ask-ov');
     await expect(foot).toContainText('Gradien', { timeout: 20_000 });
     await foot.locator('.opt').nth(1).click();
     await expect(foot.locator('.ask-h')).toContainText('perubahan');

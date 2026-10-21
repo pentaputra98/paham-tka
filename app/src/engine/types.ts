@@ -116,8 +116,8 @@ export function verdictLabels(meta: SoalMeta): [string, string] {
 export interface SoalContent {
   meta: SoalMeta;
   /**
-   * 'full' = satu panggung besar tanpa panel papan (soal aljabar/perhitungan tanpa 3D, revisi pemilik
-   * PRD v1.4): visual di atas, baris rumus besar di bawahnya pada panggung gelap yang sama.
+   * 'full' = panggung penuh dua kolom (soal aljabar/perhitungan tanpa 3D, revisi pemilik PRD v1.5):
+   * pop-up + visual di kiri, papan kapur di kanan, pada panggung gelap yang sama; tanpa gulir.
    * Tanpa nilai = tata letak bawaan (papan di kanan).
    */
   layout?: 'full';

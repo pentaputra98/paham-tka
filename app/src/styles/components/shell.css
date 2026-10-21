@@ -103,6 +103,14 @@
     min-width: 0;
   }
 
+  /* tombol Beranda tepat di tengah header (selain di beranda) */
+  .top-home {
+    position: absolute;
+    left: 50%;
+    top: calc(var(--safe-top) + (var(--header-h) - var(--size-touch)) / 2);
+    transform: translateX(-50%);
+  }
+
   .top-ctrls {
     display: flex;
     align-items: center;
@@ -297,6 +305,13 @@
     .brand-sub,
     .top-ctrls .btn .btn-label,
     .offline-badge .ob-text {
+      display: none;
+    }
+  }
+
+  /* ruang untuk tombol Beranda di tengah: judul bagian sudah tertulis di pop-up langkah */
+  @media (max-width: 1100px) {
+    .tblock .tb-t {
       display: none;
     }
   }

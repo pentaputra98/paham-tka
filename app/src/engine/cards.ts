@@ -27,11 +27,14 @@ export class Cards {
       const c = document.createElement('div');
       c.className = 'card';
       c.setAttribute('role', 'listitem');
+      // pilihan berupa rumus saja (mis. matriks) ditata di tengah dan lebih besar; pernyataan teks rata kiri
+      const math = /^\$[^$]+\$$/.test(d.statement.trim()) ? ' is-math' : '';
+      const kind = d.label.startsWith('(') ? 'Pernyataan' : 'Pilihan';
       c.innerHTML = `<div class="card-in">
-        <div class="face front"><div class="num">${esc(d.label)}</div><div class="st">${mathHtml(d.statement)}</div><div class="wait">belum diperiksa</div></div>
-        <div class="face back ${d.ok ? 'ok' : 'no'}" aria-hidden="true">
-          <div class="stamp ${d.ok ? 'ok' : 'no'}">${icon(d.ok ? 'check' : 'x')}${esc(d.ok ? labels[0] : labels[1])}</div>
-          <div class="bn">${d.label.startsWith('(') ? 'Pernyataan' : 'Pilihan'} ${esc(d.label)}</div>
+        <div class="face front${math}"><div class="c-head"><span class="num">${esc(d.label)}</span><span class="wait">belum diperiksa</span></div><div class="st">${mathHtml(d.statement)}</div></div>
+        <div class="face back ${d.ok ? 'ok' : 'no'}${math}" aria-hidden="true">
+          <div class="c-head"><span class="bn"><b>${esc(d.label)}</b><span class="bn-t">${kind}</span></span>
+            <span class="stamp ${d.ok ? 'ok' : 'no'}">${icon(d.ok ? 'check' : 'x')}${esc(d.ok ? labels[0] : labels[1])}</span></div>
           <div class="bs">${mathHtml(d.statement)}</div>
           <div class="bc">${tex(d.formula)}</div>
           <div class="bw">${mathHtml(d.why)}</div>
@@ -44,22 +47,29 @@ export class Cards {
 
   /**
    * Perkecil isi kartu yang lebih lebar atau lebih tinggi dari ruangnya (min 50 %), tidak pernah memotong rumus.
-   * Dipanggil saat kartu tampil dan saat ukuran area berubah; tulis–baca–tulis berkelompok.
+   * Satu skala --k untuk semua muka depan dan satu untuk semua muka belakang, agar kelima kartu seragam
+   * (isi kartu memakai em). Diukur ulang sekali karena teks bisa ditata ulang; tulis–baca–tulis berkelompok.
    */
   fit(): void {
-    const els = [...this.el.querySelectorAll<HTMLElement>('.front .st, .back .bc')];
-    els.forEach((e) => e.style.removeProperty('font-size'));
-    const need = els.map((e) => ({
-      k: Math.min(
-        e.clientWidth && e.scrollWidth ? e.clientWidth / e.scrollWidth : 1,
-        e.clientHeight && e.scrollHeight ? e.clientHeight / e.scrollHeight : 1,
-      ),
-      fs: parseFloat(getComputedStyle(e).fontSize),
-    }));
-    els.forEach((e, i) => {
-      const { k, fs } = need[i]!;
-      if (k < 0.99) e.style.fontSize = `${(fs * Math.max(0.5, k)).toFixed(1)}px`;
-    });
+    for (const side of ['.front', '.back']) {
+      const faces = [...this.el.querySelectorAll<HTMLElement>(`.face${side}`)];
+      faces.forEach((f) => f.style.removeProperty('--k'));
+      let k = 1;
+      for (let n = 0; n < 2; n++) {
+        const need = Math.min(
+          ...faces.map((f) =>
+            Math.min(
+              f.clientHeight && f.scrollHeight ? f.clientHeight / f.scrollHeight : 1,
+              f.clientWidth && f.scrollWidth ? f.clientWidth / f.scrollWidth : 1,
+            ),
+          ),
+        );
+        if (need >= 0.99) break;
+        k = Math.max(0.5, k * need);
+        faces.forEach((f) => f.style.setProperty('--k', k.toFixed(3)));
+        if (k === 0.5) break;
+      }
+    }
   }
 
   /** Idempoten: kartu 0..k-1 terbuka; kartu terakhir yang baru dibuka berbunyi bila maju. */

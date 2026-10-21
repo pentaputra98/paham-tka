@@ -62,7 +62,7 @@ test.describe('Pembahasan soal 6 (G-Gerak, papan saja)', () => {
   test('Ikut berpikir: dua pertanyaan (suku x, nilai p)', async ({ page }) => {
     await setup(page);
     await page.goto('./#/soal/6/bahas?m=ikut&b=2&l=0');
-    const foot = page.locator('.bd-foot');
+    const foot = page.locator('.ask-ov');
     await expect(foot).toContainText('Suku', { timeout: 20_000 });
     await foot.locator('.opt').nth(1).click();
     await expect(foot.locator('.ask-h')).toContainText('dikurangkan');

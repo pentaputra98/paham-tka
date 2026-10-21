@@ -187,7 +187,7 @@ Alur ini mengikuti cara Pak Penta membahas soal di kelas:
 5. Uji dengan rumus umum, hasilnya harus sama.
 6. Cocokkan dengan pilihan.
 
-Tata letak: **panggung penuh tanpa panel papan** (PRD v1.4). Visual berada di atas, baris rumus besar di bawahnya.
+Tata letak: **panggung penuh dua kolom** (PRD v1.5, menggantikan susunan atas–bawah v1.4). Kiri: pop-up guru di atas visual; kanan: papan kapur dengan baris rumus. Semua muat tanpa gulir. Pertanyaan cepat tampil sebagai pop-up di tengah panggung. Isi langkah dan kunci tidak berubah.
 
 - **Bagian 1 — Pahami soal**
   - 1.1 "Perhatikan matriks $F$ ini. Ordonya $2\times2$: dua baris dan dua kolom." Baris: Diketahui $F$ (`@s-F`), ordo $2\times2$.

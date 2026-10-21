@@ -43,7 +43,8 @@ let router: ReturnType<typeof createRouter>;
 export const navigate = (hash: string, opts?: { replace?: boolean }): void => router.go(hash, opts);
 export const currentRoute = (): Route => router.current();
 
-function headerHtml(h: HeaderSpec): string {
+/** home = tampilkan tombol Beranda (ikon rumah) di tengah header; semua halaman selain beranda. */
+function headerHtml(h: HeaderSpec, home: boolean): string {
   const left = h.back
     ? `<a class="btn top-back" href="${esc(h.back.href)}">${icon('arrow-left')}<span class="btn-label">${esc(h.back.label)}</span></a>`
     : `<a class="brand" href="#/">${wordmark()}<span class="brand-sub">Pembahasan TKA Mat. Lanjut 2025</span></a>`;
@@ -53,7 +54,10 @@ function headerHtml(h: HeaderSpec): string {
   const fs = canFullscreen()
     ? `<button class="icon-btn" type="button" data-act="fs" aria-label="${isFullscreen() ? 'Keluar dari layar penuh' : 'Layar penuh'}" title="Layar penuh (F)">${icon(isFullscreen() ? 'minimize' : 'maximize')}</button>`
     : '';
-  return `${left}${block}<div class="top-spacer"></div>
+  const homeBtn = home
+    ? `<a class="icon-btn top-home" href="#/" aria-label="Beranda" title="Beranda">${icon('house')}</a>`
+    : '';
+  return `${left}${block}${homeBtn}<div class="top-spacer"></div>
     <div class="top-ctrls">
       <span class="offline-badge" data-offline-badge hidden></span>
       ${h.extra ?? ''}
@@ -97,7 +101,7 @@ function render(route: Route, prev: Route | null): void {
   const old = current;
   current = next;
 
-  top.innerHTML = headerHtml(next.header);
+  top.innerHTML = headerHtml(next.header, route.name !== 'home');
   const badge = top.querySelector<HTMLElement>('[data-offline-badge]');
   if (badge) mountBadge(badge);
   foot.innerHTML = footerHtml();

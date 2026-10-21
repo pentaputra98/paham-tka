@@ -4,7 +4,7 @@
 |---|---|
 | **Nama produk** | **Paham TKA** — Pembahasan Interaktif TKA Matematika Tingkat Lanjut 2025 |
 | **Tagline** | Yuk pahami soal TKA 2025, step by step. |
-| **Versi dokumen** | 1.4 (revisi 1.4, 21 Oktober 2026: masukan uji pemilik produk — panggung penuh tanpa panel papan untuk soal non-3D, navigasi "selesaikan langkah dulu", Coretan inti dimajukan, beranda tanpa kolom cari dan hero bukan soal, skala antarmuka layar lebar; lihat §20.2. Revisi 1.3, 19 Oktober 2026: CSP `connect-src 'self'` agar service worker dapat melakukan *precache*; cadangan `file://` (`dist-single`) dipindah dari kriteria M0 ke M5. Revisi 1.2: Vercel subdomain gratis, kebijakan tanpa izin, tiga perangkat uji, 3D rendah-poligon, offline-first, lapisan gerak Motion) |
+| **Versi dokumen** | 1.5 (revisi 1.5, 21 Oktober 2026: daftar revisi pemilik untuk soal 1 — panggung penuh dua kolom tanpa gulir, pertanyaan cepat sebagai pop-up, kartu dan catatan dirapikan, aksi SELESAI, tombol Beranda, bilah gulir bertema, hero string art; lihat §20.2. Revisi 1.4, 21 Oktober 2026: masukan uji pemilik produk — panggung penuh tanpa panel papan untuk soal non-3D, navigasi "selesaikan langkah dulu", Coretan inti dimajukan, beranda tanpa kolom cari dan hero bukan soal, skala antarmuka layar lebar; lihat §20.2. Revisi 1.3, 19 Oktober 2026: CSP `connect-src 'self'` agar service worker dapat melakukan *precache*; cadangan `file://` (`dist-single`) dipindah dari kriteria M0 ke M5. Revisi 1.2: Vercel subdomain gratis, kebijakan tanpa izin, tiga perangkat uji, 3D rendah-poligon, offline-first, lapisan gerak Motion) |
 | **Distribusi** | Hosting statis Vercel (PWA); cadangan: satu berkas HTML dan ZIP |
 | **Dokumen pendamping** | `SUPER-PROMPT.md` (arahan sesi produksi pertama: M0 dan M1) |
 | **Tanggal** | 19 Oktober 2026 |
@@ -356,7 +356,7 @@ Setiap kebutuhan memiliki ID (FR-…) dan kriteria penerimaan (KP). Prioritas: *
 | FR-HOME-2 | Filter ranah materi (Matriks, Suku banyak, Fungsi dan grafik, Trigonometri, Vektor, Geometri, Transformasi, Limit). **Tanpa kolom cari** (v1.4: papan ketik layar sentuh merusak tata letak landscape). | P1 |
 | FR-HOME-3 | Tombol **Lanjutkan** membuka soal dan langkah terakhir yang dibuka (disimpan lokal). Bila belum ada, tombol berbunyi **Mulai dari soal 1**. | P0 |
 | FR-HOME-4 | Ringkasan kemajuan: jumlah soal dibahas, jumlah latihan benar/total, dan waktu belajar total. | P0 |
-| FR-HOME-5 | Panggung hero menampilkan animasi yang menenangkan dan memukau, **bukan soal** (v1.4: pola biji bunga matahari/filotaksis yang tumbuh lalu berputar pelan); berhenti saat beranda ditinggalkan; statis bila hemat gerak aktif. Kartu soal yang sudah dibahas tampil berbeda dan mencolok (biru tua merek, bukan emas). | P0 |
+| FR-HOME-5 | Panggung hero menampilkan animasi yang menenangkan dan memukau, **bukan soal** (v1.5: string art — kapal layar, kardioid, bintang — benang ditarik satu per satu lalu berganti karya; v1.4 memakai pola biji bunga matahari); berhenti saat beranda ditinggalkan; statis bila hemat gerak aktif. Kartu soal yang sudah dibahas tampil berbeda dan mencolok (biru tua merek, bukan emas). | P0 |
 
 KP: kartu **Segera hadir** tidak dapat dibuka dan tidak dapat diakses lewat URL (`#/soal/1` mengalihkan ke beranda dengan lembar "sedang disiapkan"). Seluruh kartu dapat dijangkau dengan keyboard, urutan fokus sama dengan urutan visual.
 
@@ -1203,6 +1203,17 @@ Pada revisi 1.2 **tidak ada hal terbuka yang menghalangi produksi**. Semua perta
   - (e) **Layar lebar:** token ukuran (huruf, jarak, radius, komponen) mengikuti `--ui`: 1 di HP/tablet/laptop, 1,2 pada ≥1680×940, dan 1,45 pada ≥2300×1300. Kertas Detail menskalakan teks dengan lebar kertas.
   - (f) **Soal 1:** alur pembahasan ditulis ulang mengikuti cara guru (lihat `docs/pembahasan25.md` soal 1). Contoh tambahan diminta pemilik; kunci tetap E.
   - (g) **Perbaikan:** `&` di matriks pada kertas soal tidak lagi tampil sebagai "amp;"; judul pop-up SELESAI rata tengah.
+
+- **Revisi 1.5 (21 Oktober 2026, daftar revisi langsung pemilik produk setelah meninjau soal 1):**
+  - (a) **Panggung penuh dua kolom** (menggantikan tumpukan atas–bawah Revisi 1.4a, yang membuat jendela pembahasan kecil dan perlu digulir): satu panggung gelap dibagi dua kolom, kiri = pop-up guru di atas visual, kanan = papan kapur. Tidak ada yang perlu digulir: kertas soal diskalakan utuh agar muat (62–125 %), baris papan diperkecil bersama (min 62 %), dan baris yang sedang ditulis diberi penanda di kiri. Kolom kiri melebar pada kertas soal dan kartu. Berlaku untuk soal ber-`layout: 'full'` (saat ini soal 1).
+  - (b) **Pertanyaan cepat menjadi pop-up** di tengah panggung; panggung di belakangnya digelapkan dan diburamkan, fokus terperangkap di kartu pertanyaan. Berlaku untuk semua soal (mesin).
+  - (c) **Kartu analisis dirapikan:** kepala kartu berisi huruf pilihan dan stempel tegak (tidak lagi miring menimpa isi); pilihan berupa rumus ditata di tengah; ukuran huruf mengikuti lebar kartu dan satu skala untuk semua kartu; lima kartu tersusun 3 + 2 dengan baris kedua di tengah. Berlaku untuk semua soal.
+  - (d) **Pop-up SELESAI** memuat aksi tertata: Soal berikutnya (utama; beranda bila soal terakhir), Coba latihan serupa (emas, "Segera hadir" sampai M3), lalu ubin Lihat catatan lengkap, Ulang pembahasan, Beranda.
+  - (e) **Catatan lengkap** menjadi lembar ringkas dua kolom: kepala dengan jawaban, tiap bagian berupa kartu, tiap baris papan menjadi satu baris catatan (rumus rata kiri, keterangan di bawahnya, kotak biru/emas sama dengan papan); cetak A4 tegak dua kolom.
+  - (f) **Tombol Beranda** (ikon rumah) di tengah header pada semua halaman selain beranda. Agar muat di layar ≤ 1100 px, judul bagian di blok header disembunyikan (judul tetap tertulis di pop-up langkah); label tombol Coretan menjadi ikon saja pada layar pendek.
+  - (g) **Bilah gulir bertema** di seluruh aplikasi: tipis dan membulat, biru tua di permukaan terang, biru langit di panggung gelap.
+  - (h) **Hero beranda: string art** menggantikan pola biji bunga matahari. Tiga karya bergantian (kapal layar, kardioid paku n → 2n, bintang empat sumbu); benang ditarik satu per satu dari paku ke paku. Hemat gerak: kapal utuh statis.
+  - (i) **Perbaikan:** bingkai invers pada contoh lain (bukan jawaban) kini biru; emas hanya untuk $F^{-1}$ soal 1.
 
 ### 20.3 Glosarium
 | Istilah | Arti |

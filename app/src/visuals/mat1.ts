@@ -105,6 +105,7 @@ export function createMat1(): VisualScene {
         : `Contoh matriks diagonal ${name}`,
     );
     el.classList.toggle('n3', MATS[k].diag.length === 3);
+    el.classList.toggle('is-ans', k === 'F');
     key = k;
     flipped = false;
     adj = false;
@@ -192,7 +193,7 @@ export function createMat1(): VisualScene {
     },
     sketch: () => {
       const tmp = document.createElement('div');
-      tmp.innerHTML = `<div class="vis-mat is-hl is-flip n-sketch-mat"><div class="mx-row">
+      tmp.innerHTML = `<div class="vis-mat is-hl is-flip is-ans n-sketch-mat"><div class="mx-row">
         <div class="mx mx-src"><span class="mx-name"><i>F</i> =</span>${matrix('F', false, false)}</div>
         <div class="mx-to"><span class="mx-arrow">→</span><span class="mx-to-t">balik pembilang<br>dan penyebut</span></div>
         <div class="mx mx-inv"><span class="mx-name"><i>F</i><sup>−1</sup> =</span>${matrix('F', true, false)}</div></div></div>`;

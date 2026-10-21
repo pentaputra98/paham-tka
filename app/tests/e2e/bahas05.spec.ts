@@ -75,7 +75,7 @@ test.describe('Pembahasan soal 5 (G-Gerak, grafik kubik)', () => {
   test('Ikut berpikir: f(x) = 0 dan slider', async ({ page }) => {
     await setup(page);
     await page.goto('./#/soal/5/bahas?m=ikut&b=2&l=0');
-    const foot = page.locator('.bd-foot');
+    const foot = page.locator('.ask-ov');
     await expect(foot).toContainText('Coba jawab', { timeout: 20_000 });
     await foot.locator('.opt').nth(2).click();
     await expect(foot.locator('.ask-h')).toContainText('sumbu Y');
