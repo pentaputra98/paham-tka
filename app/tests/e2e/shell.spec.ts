@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { OPEN } from '../../src/content';
 
 const cspErrors = (page: Page): string[] => {
   const errs: string[] = [];
@@ -10,12 +11,12 @@ const cspErrors = (page: Page): string[] => {
 };
 
 test.describe('Beranda dan rute (M0)', () => {
-  test('25 kartu: 10 dibuka, 15 segera hadir; tanpa pelanggaran CSP', async ({ page }) => {
+  test('25 kartu: hanya soal OPEN dibuka, sisanya segera hadir; tanpa pelanggaran CSP', async ({ page }) => {
     const errs = cspErrors(page);
     await page.goto('./#/');
     await expect(page.locator('.qcard')).toHaveCount(25);
-    await expect(page.locator('.qcard[data-status="ready"]')).toHaveCount(10);
-    await expect(page.locator('.qcard[data-status="soon"]')).toHaveCount(15);
+    await expect(page.locator('.qcard[data-status="ready"]')).toHaveCount(OPEN.length);
+    await expect(page.locator('.qcard[data-status="soon"]')).toHaveCount(25 - OPEN.length);
     await expect(page.locator('.foot-copy')).toHaveText(
       '© 2026 Penta Putra Purnomo, S.Pd., Gr. | SMA Vidatra Bontang',
     );
@@ -47,8 +48,8 @@ test.describe('Beranda dan rute (M0)', () => {
   });
 
   test('detail soal Rilis 1, Tentang, Pengaturan dapat dibuka', async ({ page }) => {
-    await page.goto('./#/soal/25');
-    await expect(page.locator('h1')).toHaveText('Limit Trigonometri');
+    await page.goto('./#/soal/1');
+    await expect(page.locator('h1')).toHaveText('Invers Matriks Diagonal');
     await page.goto('./#/tentang');
     await expect(page.locator('body')).toContainText(
       'Kementerian Pendidikan Dasar dan Menengah (Kemendikdasmen)',

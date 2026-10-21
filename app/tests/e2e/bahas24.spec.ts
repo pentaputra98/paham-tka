@@ -1,5 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
 import q24 from '../../src/content/soal/q24';
+import { isReady } from '../../src/content';
+
+// dikunci sementara oleh pemilik sampai soal 1 selesai seluruh fiturnya (PRD v1.6, daftar OPEN)
+test.skip(!isReady(24), 'Soal 24 dikunci sementara (PRD v1.6)');
 
 /** G-Gerak dan interaksi SVG untuk pilot soal 24 (mesin visual). */
 const steps = q24.steps;

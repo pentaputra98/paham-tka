@@ -6,14 +6,15 @@ import { esc, html, pad2 } from '../core/dom';
 import { icon } from '../core/icons';
 import { renderMath } from '../core/math';
 import { store } from '../core/store';
-import { DOMAIN_LABEL, RELEASE_1, RESPONSE_LABEL, getSoal } from '../content';
+import { DOMAIN_LABEL, OPEN, RESPONSE_LABEL, getSoal } from '../content';
 import { hasContent, loadContent, prefetchContent } from '../content/soal/registry';
+import { hasPractice } from '../practice/registry';
 import type { Route } from '../router/router';
 import type { PageView } from '../shell/app';
 
 function neighbour(no: number, d: -1 | 1): number | null {
-  const i = RELEASE_1.indexOf(no) + d;
-  return i >= 0 && i < RELEASE_1.length ? RELEASE_1[i]! : null;
+  const i = OPEN.indexOf(no) + d;
+  return i >= 0 && i < OPEN.length ? OPEN[i]! : null;
 }
 
 export function detailPage(route: Route): PageView {
@@ -46,7 +47,11 @@ export function detailPage(route: Route): PageView {
             ? `<a class="btn btn--primary btn--lg btn--block" href="#/soal/${s.no}/bahas">${icon('play')}<span>Bahas</span></a>`
             : `<button type="button" class="btn btn--primary btn--lg btn--block" aria-disabled="true">${icon('play')}<span>Bahas</span></button>`
         }
-        <button type="button" class="btn btn--block" aria-disabled="true" title="Tersedia setelah mesin latihan selesai">${icon('pen-line')}<span>Coba latihan serupa</span></button>
+        ${
+          ready && hasPractice(s.no)
+            ? `<a class="btn btn--block" href="#/soal/${s.no}/latihan">${icon('pen-line')}<span>Coba latihan serupa</span></a>`
+            : `<button type="button" class="btn btn--block" aria-disabled="true" title="Segera hadir">${icon('pen-line')}<span>Coba latihan serupa</span></button>`
+        }
         ${
           ready
             ? `<a class="btn btn--block" href="#/soal/${s.no}/catatan">${icon('file-text')}<span>Catatan lengkap</span></a>`

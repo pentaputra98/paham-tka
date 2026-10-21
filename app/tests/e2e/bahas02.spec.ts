@@ -1,5 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
 import q02 from '../../src/content/soal/q02';
+import { isReady } from '../../src/content';
+
+// dikunci sementara oleh pemilik sampai soal 1 selesai seluruh fiturnya (PRD v1.6, daftar OPEN)
+test.skip(!isReady(2), 'Soal 2 dikunci sementara (PRD v1.6)');
 
 /** G-Gerak soal 2 (SPL dan invers matriks, pilihan tunggal). */
 const steps = q02.steps;

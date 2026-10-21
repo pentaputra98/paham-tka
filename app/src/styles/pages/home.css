@@ -255,6 +255,8 @@
     overscroll-behavior: contain;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(var(--size-card-min), 1fr));
+    /* baris setinggi isi kartu tertinggi (auto berhenti di min-height karena katalog dapat digulir) */
+    grid-auto-rows: max-content;
     align-content: start;
     gap: var(--space-3);
     padding: var(--space-0-5) var(--space-0-5) var(--space-4);
@@ -275,7 +277,8 @@
 
     position: relative;
     display: grid;
-    grid-template-rows: auto auto 1fr auto;
+    /* judul tidak pernah dipangkas: baris judul auto, sisa ruang di atas meta (meta rata bawah) */
+    grid-template-rows: auto auto auto 1fr;
     gap: var(--space-1);
     min-height: var(--size-qcard-h);
     padding: var(--space-3) var(--space-3-5) var(--space-3);
@@ -286,8 +289,6 @@
     text-align: left;
     text-decoration: none;
     color: var(--color-text);
-    content-visibility: auto;
-    contain-intrinsic-size: auto var(--size-qcard-h);
     transition:
       transform var(--dur-fast) var(--ease-out),
       border-color var(--dur-fast) var(--ease-out);
@@ -350,9 +351,12 @@
     -webkit-line-clamp: 2;
     line-clamp: 2;
     overflow: hidden;
+    /* ruang dua baris dijamin (overflow tersembunyi membuat tingginya bisa diperas jadi nol) */
+    min-height: calc(2em * var(--lh-heading));
   }
 
   .qcard-meta {
+    align-self: end;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -484,7 +488,6 @@
     .qcard {
       min-height: var(--size-qcard-h-sm);
       padding: var(--space-2) var(--space-3);
-      contain-intrinsic-size: auto var(--size-qcard-h-sm);
     }
   }
 

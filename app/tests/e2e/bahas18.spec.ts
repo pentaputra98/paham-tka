@@ -1,5 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
 import q18 from '../../src/content/soal/q18';
+import { isReady } from '../../src/content';
+
+// dikunci sementara oleh pemilik sampai soal 1 selesai seluruh fiturnya (PRD v1.6, daftar OPEN)
+test.skip(!isReady(18), 'Soal 18 dikunci sementara (PRD v1.6)');
 
 /** G-Gerak soal 18 (adegan 3D pelengkap + padanan 2D, tabel Pas/Tidak Pas). */
 const steps = q18.steps;

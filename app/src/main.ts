@@ -9,6 +9,7 @@ import { report } from './core/diag';
 import { store } from './core/store';
 import { aboutPage, progressPage } from './pages/info';
 import { bahasPage } from './pages/bahas';
+import { latihanPage } from './pages/latihan';
 import { detailPage } from './pages/detail';
 import { homePage } from './pages/home';
 import { settingsPage } from './pages/settings';
@@ -58,6 +59,7 @@ startShell({
   detail: detailPage,
   bahas: bahasPage,
   catatan: bahasPage,
+  latihan: latihanPage,
   kemajuan: progressPage,
   pengaturan: settingsPage,
   tentang: aboutPage,

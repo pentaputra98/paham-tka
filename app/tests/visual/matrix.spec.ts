@@ -21,7 +21,7 @@ const PORTRAIT: Array<[number, number]> = [
 ];
 const ROUTES = [
   ['beranda', '#/'],
-  ['detail-25', '#/soal/25'],
+  ['detail-1', '#/soal/1'],
   ['tentang', '#/tentang'],
   ['pengaturan', '#/pengaturan'],
 ] as const;

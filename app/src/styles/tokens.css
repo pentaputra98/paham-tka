@@ -136,6 +136,17 @@
     --size-cap-max: calc(540px * var(--ui));
     --size-ask-w: calc(660px * var(--ui));
     --size-tile: calc(76px * var(--ui));
+    --size-tip-max: calc(260px * var(--ui));
+    /* latihan serupa */
+    --size-lat-lbl: calc(128px * var(--ui));
+    --size-lat-opt: calc(150px * var(--ui));
+    --size-lat-opt-sm: calc(112px * var(--ui));
+    --size-lat-opt-h: calc(64px * var(--ui));
+    --size-lat-sol: calc(920px * var(--ui));
+    --size-lat-sol-h: calc(660px * var(--ui));
+    --fs-lat-mat: calc(clamp(18px, 1.6vw, 28px) * var(--ui));
+    --fs-lat-opt: calc(clamp(15px, 1.25vw, 22px) * var(--ui));
+    --fs-lat-big: calc(clamp(56px, 7vw, 120px) * var(--ui));
     /* lembar catatan lengkap: dua kolom bila tiap kolom ≥ 340 px */
     --size-notes-max: calc(1180px * var(--ui));
     --size-notes-col: calc(340px * var(--ui));
@@ -281,6 +292,7 @@
     --z-header: 100;
     --z-drawer: 120;
     --z-toast: 130;
+    --z-tip: 140;
     --z-done: 150;
     --z-confetti: 200;
     --z-rotate: 300;

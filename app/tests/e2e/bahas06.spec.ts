@@ -1,5 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
 import q06 from '../../src/content/soal/q06';
+import { isReady } from '../../src/content';
+
+// dikunci sementara oleh pemilik sampai soal 1 selesai seluruh fiturnya (PRD v1.6, daftar OPEN)
+test.skip(!isReady(6), 'Soal 6 dikunci sementara (PRD v1.6)');
 
 /** G-Gerak soal 6 (papan saja, pilihan tunggal). */
 const steps = q06.steps;

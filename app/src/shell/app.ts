@@ -11,6 +11,7 @@ import { getSoal, isReady, SOON_MESSAGE } from '../content';
 import { createRouter, type Route } from '../router/router';
 import { mountBadge } from './offline';
 import { openSheet, closeSheet, isSheetOpen } from './sheet';
+import { initTooltips } from './tooltip';
 import { wordmark } from './wordmark';
 
 export interface HeaderSpec {
@@ -152,6 +153,7 @@ export function startShell(registry: Partial<Record<Route['name'], PageFactory>>
     b.innerHTML = icon(on ? 'minimize' : 'maximize');
     b.setAttribute('aria-label', on ? 'Keluar dari layar penuh' : 'Layar penuh');
   });
+  initTooltips();
   router = createRouter(render);
   router.start();
 }

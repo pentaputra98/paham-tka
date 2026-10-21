@@ -1,5 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
 import q17 from '../../src/content/soal/q17';
+import { isReady } from '../../src/content';
+
+// dikunci sementara oleh pemilik sampai soal 1 selesai seluruh fiturnya (PRD v1.6, daftar OPEN)
+test.skip(!isReady(17), 'Soal 17 dikunci sementara (PRD v1.6)');
 
 /** G-Gerak soal 17 (rambu SVG berlapis, multi-jawaban). */
 const steps = q17.steps;

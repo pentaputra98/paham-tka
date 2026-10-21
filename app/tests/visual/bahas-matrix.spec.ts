@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { isReady } from '../../src/content';
 
 /** Matriks viewport PRD §16.2 untuk pembahasan (G-Visual): lobi, papan, kartu, catatan. */
 const SIZES: Array<[number, number]> = [
@@ -14,7 +15,13 @@ const SIZES: Array<[number, number]> = [
   [1440, 860],
   [1920, 1080],
 ];
-const SCREENS: Array<[string, string, number]> = [
+const ALL: Array<[string, string, number]> = [
+  ['1-lobi', '#/soal/1/bahas?m=amati', 900],
+  ['1-catatan', '#/soal/1/bahas?m=amati&b=4', 1200],
+  ['1-selesai', '#/soal/1/bahas?m=amati&b=6', 3500],
+  ['1-latihan-siap', '#/soal/1/latihan', 1500],
+  ['1-latihan-soal', '#/soal/1/latihan?s=00ABCD-T', 1500],
+  ['1-latihan-mudah', '#/soal/1/latihan?s=000777-M', 1500],
   ['lobi', '#/soal/25/bahas?m=amati', 900],
   ['papan', '#/soal/25/bahas?m=amati&b=2&l=1', 6500],
   ['faktor', '#/soal/25/bahas?m=amati&b=3&l=1', 6500],
@@ -55,7 +62,10 @@ const SCREENS: Array<[string, string, number]> = [
   ['6-hasilbagi', '#/soal/6/bahas?m=amati&b=2&l=1', 6500],
   ['6-ab', '#/soal/6/bahas?m=amati&b=3&l=1', 7000],
 ];
-const NO_CLIP = '.btn, .seg button, .cap-k, .bd-t, .tblock .tb-n, .stamp, .front .num, .facts dd';
+// hanya soal yang dibuka (PRD v1.6: soal lain dikunci sementara)
+const SCREENS = ALL.filter(([, hash]) => isReady(Number(/soal\/(\d+)/.exec(hash)![1])));
+const NO_CLIP =
+  '.btn, .seg button, .cap-k, .bd-t, .tblock .tb-n, .stamp, .front .num, .facts dd, .lat-opt-m, .lat-level';
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {

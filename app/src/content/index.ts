@@ -64,8 +64,14 @@ export const RESPONSE_LABEL: Record<Response, string> = {
   truefalse: 'Tabel dua kolom',
 };
 
-/** Sepuluh soal Rilis 1 (K10). */
+/** Sepuluh soal Rilis 1 (K10): kontennya sudah ada dan tetap diverifikasi (verify:content, uji unit). */
 export const RELEASE_1: readonly number[] = [1, 2, 5, 6, 13, 16, 17, 18, 24, 25];
+
+/**
+ * Soal yang DIBUKA untuk siswa (revisi pemilik PRD v1.6): sementara hanya soal 1, sampai seluruh fiturnya
+ * (pembahasan, latihan serupa, catatan) selesai dan disetujui; soal lain tampil "Segera hadir".
+ */
+export const OPEN: readonly number[] = [1];
 
 type Row = [no: number, title: string, domain: Domain, response: Response, labels?: [string, string]];
 
@@ -104,7 +110,7 @@ export const SOAL: readonly SoalMeta[] = ROWS.map(([no, title, domain, response,
   domain,
   response,
   labels,
-  status: RELEASE_1.includes(no) ? 'ready' : 'soon',
+  status: OPEN.includes(no) ? 'ready' : 'soon',
   sourceRef: `docs/pembahasan25.md#soal-${no}`,
 }));
 

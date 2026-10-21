@@ -9,7 +9,8 @@ import { progressSummary, store } from '../core/store';
 import {
   DOMAIN_LABEL,
   FILTERS,
-  RELEASE_1,
+  OPEN,
+  isReady,
   RESPONSE_LABEL,
   SOAL,
   type Response,
@@ -57,11 +58,13 @@ function card(s: SoalMeta, i: number): string {
 }
 
 function heroHtml(): string {
-  const sum = progressSummary(RELEASE_1.length);
-  const last = store.progress.lastOpened;
+  const sum = progressSummary(OPEN.length);
+  // soal terakhir yang dibuka bisa saja sudah dikunci kembali (daftar OPEN): mulai dari soal pertama yang dibuka
+  const lo = store.progress.lastOpened;
+  const last = lo && isReady(lo) ? lo : null;
   const cta = last
     ? `<a class="btn btn--primary btn--lg" href="#/soal/${last}">${icon('play')}<span>Lanjutkan soal ${last}</span></a>`
-    : `<a class="btn btn--primary btn--lg" href="#/soal/1">${icon('play')}<span>Mulai dari soal 1</span></a>`;
+    : `<a class="btn btn--primary btn--lg" href="#/soal/${OPEN[0]}">${icon('play')}<span>Mulai dari soal ${OPEN[0]}</span></a>`;
   return `<section class="hero bp crop" aria-labelledby="hero-t">
     <div>
       <p class="eyebrow">TKA Matematika Tingkat Lanjut · 2025</p>

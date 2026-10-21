@@ -1,7 +1,7 @@
 /**
  * Coretan (PRD §12, inti FR-COR-1…5, 7, 8): kanvas di atas panggung pembahasan.
  * - alat: pena, penanda (semitransparan), penghapus per goresan; warna merah, biru, putih, abu (tanpa emas);
- *   3 ketebalan; urungkan, ulangi, hapus semua (konfirmasi), sembunyikan;
+ *   3 ketebalan; urungkan, ulangi, hapus semua (konfirmasi lewat lembar aplikasi, bukan dialog bawaan peramban), sembunyikan;
  * - Pointer Events (sentuh, stylus, mouse); penolakan telapak tangan: setelah stylus terdeteksi, jari diabaikan;
  * - goresan disimpan sebagai vektor ternormalisasi 0–1 per soal dan per langkah (localStorage), tajam di layar
  *   mana pun; menggambar tidak memicu layout (hanya kanvas digambar ulang).
@@ -9,6 +9,7 @@
  */
 import { icon } from '../core/icons';
 import { storage } from '../core/storage';
+import { openSheet } from '../shell/sheet';
 
 type Tool = 'pen' | 'mark' | 'erase';
 interface Stroke {
@@ -201,11 +202,28 @@ export class Ink {
       if (s) this.strokes.push(s);
       this.commit();
     } else if (t.dataset.ink === 'clear') {
-      if (this.strokes.length && confirm('Hapus semua coretan di langkah ini?')) {
-        this.redo = [];
-        this.strokes = [];
-        this.commit();
-      }
+      if (this.strokes.length)
+        openSheet({
+          title: 'Hapus semua coretan?',
+          body: '<p>Semua coretan di langkah ini akan dihapus dan tidak bisa diurungkan.</p>',
+          // Batal lebih dulu: fokus awal jatuh pada aksi yang aman
+          actions: [
+            { label: 'Batal', kind: 'secondary' },
+            {
+              label: 'Hapus semua',
+              kind: 'danger',
+              icon: 'trash-2',
+              onClick: () => {
+                this.redo = [];
+                this.strokes = [];
+                this.commit();
+                this.sync();
+                this.draw();
+              },
+            },
+          ],
+          closeLabel: null,
+        });
     } else if (t.dataset.ink === 'hide') this.setHidden(!this.hidden);
     else if (t.dataset.ink === 'done') this.setActive(false);
     this.sync();

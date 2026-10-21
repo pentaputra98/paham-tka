@@ -5,7 +5,7 @@
 import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { RELEASE_1, SOAL } from '../src/content/index';
+import { OPEN, RELEASE_1, SOAL } from '../src/content/index';
 
 const errors: string[] = [];
 const warns: string[] = [];
@@ -18,8 +18,11 @@ SOAL.forEach((s, i) => {
   if (s.response === 'truefalse' && !s.labels) errors.push(`soal ${s.no}: truefalse tanpa labels`);
 });
 const ready = SOAL.filter((s) => s.status === 'ready').map((s) => s.no);
-if (ready.join() !== [...RELEASE_1].sort((a, b) => a - b).join())
-  errors.push(`status ready (${ready.join(', ')}) tidak sama dengan Rilis 1 (K10)`);
+// yang dibuka harus persis daftar OPEN, dan hanya soal yang kontennya ada (Rilis 1)
+if (ready.join() !== [...OPEN].sort((a, b) => a - b).join())
+  errors.push(`status ready (${ready.join(', ')}) tidak sama dengan daftar dibuka (OPEN)`);
+const notInRelease = OPEN.filter((n) => !RELEASE_1.includes(n));
+if (notInRelease.length) errors.push(`soal dibuka tanpa konten Rilis 1: ${notInRelease.join(', ')}`);
 
 // ---- modul konten soal ----
 const dir = join(process.cwd(), 'src/content/soal');

@@ -11,8 +11,9 @@ import { mathHtml } from '../core/math';
 import { play } from '../core/motion';
 import { store, type Path, type Speed } from '../core/store';
 import { DUR, EASE_OUT, SLIDE_PX } from '../core/tokens';
-import { getSoal, RELEASE_1 } from '../content';
+import { getSoal, OPEN } from '../content';
 import { loadContent } from '../content/soal/registry';
+import { hasPractice } from '../practice/registry';
 import { Board } from '../engine/board';
 import { Ink } from '../engine/ink';
 import { buildNotes } from '../engine/notes';
@@ -47,8 +48,8 @@ const SPEEDS: Array<[Speed, string]> = [
 ];
 
 function nextReady(no: number): number | null {
-  const i = RELEASE_1.indexOf(no);
-  return i >= 0 && i < RELEASE_1.length - 1 ? RELEASE_1[i + 1]! : null;
+  const i = OPEN.indexOf(no);
+  return i >= 0 && i < OPEN.length - 1 ? OPEN[i + 1]! : null;
 }
 
 export function bahasPage(route: Route): PageView {
@@ -440,7 +441,11 @@ export function bahasPage(route: Route): PageView {
               ? `<button type="button" class="btn btn--primary done-main" data-a="next">${icon('arrow-right')}<span>Soal berikutnya<small>Soal ${nx} · ${esc(getSoal(nx)!.title)}</small></span></button>`
               : `<button type="button" class="btn btn--primary done-main" data-a="home">${icon('house')}<span>Kembali ke beranda<small>Pilih soal lain</small></span></button>`
           }
-          <button type="button" class="btn btn--gold done-main" data-a="practice" aria-disabled="true" title="Tersedia setelah mesin latihan selesai">${icon('pen-line')}<span>Coba latihan serupa<small>Segera hadir</small></span></button>
+          ${
+            hasPractice(no)
+              ? `<button type="button" class="btn btn--gold done-main" data-a="practice">${icon('pen-line')}<span>Coba latihan serupa<small>Soal baru, angka berbeda</small></span></button>`
+              : `<button type="button" class="btn btn--gold done-main" data-a="practice-soon" aria-disabled="true" title="Segera hadir">${icon('pen-line')}<span>Coba latihan serupa<small>Segera hadir</small></span></button>`
+          }
           <div class="done-tiles">
             ${tile('notes', 'file-text', 'Lihat catatan lengkap')}
             ${tile('again', 'rotate-ccw', 'Ulang pembahasan')}
@@ -453,10 +458,11 @@ export function bahasPage(route: Route): PageView {
     card.classList.add('sheet--done');
     card.querySelector('.done-acts')!.addEventListener('click', (e) => {
       const a = (e.target as Element).closest<HTMLElement>('[data-a]')?.dataset.a;
-      if (!a || a === 'practice') return;
+      if (!a || a === 'practice-soon') return;
       SND.click();
       closeSheet();
-      if (a === 'next') navigate(`#/soal/${nx}`);
+      if (a === 'practice') navigate(`#/soal/${no}/latihan`);
+      else if (a === 'next') navigate(`#/soal/${nx}`);
       else if (a === 'home') navigate('#/');
       else if (a === 'notes') p.go(p.indexOfCh(notesCh(content)), -1);
       else if (a === 'again') p.go(1, 1);

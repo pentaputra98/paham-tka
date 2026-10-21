@@ -1,0 +1,839 @@
+/* Latihan serupa (PRD §8.4, §11; v1.6): penyiapan, sesi dua kolom di panggung blueprint, ringkasan.
+   Kiri = kertas soal baru + petunjuk; kanan = papan jawaban (pilihan, umpan balik). Emas hanya untuk kunci. */
+@layer pages {
+  .lat {
+    height: 100%;
+    min-height: 0;
+  }
+
+  /* ---------- penyiapan ---------- */
+  .lat-setup {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: var(--space-5);
+    height: 100%;
+    padding: var(--space-4) max(var(--gutter), var(--safe-right)) var(--space-4)
+      max(var(--gutter), var(--safe-left));
+    overflow: auto;
+  }
+
+  .lat-intro {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    border-radius: var(--radius-xl);
+    background: var(--color-stage);
+    color: var(--color-on-stage);
+    box-shadow: var(--shadow-art);
+  }
+
+  .lat-intro .eyebrow {
+    color: var(--color-constraint-on-stage);
+  }
+
+  .lat-title {
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-title);
+    font-weight: var(--fw-black);
+    font-size: var(--fs-h2);
+    line-height: var(--lh-heading);
+    color: var(--color-on-stage);
+  }
+
+  .lat-lede {
+    max-width: var(--size-measure);
+    font-size: var(--fs-lead);
+    color: var(--color-on-stage-muted);
+  }
+
+  .lat-feats {
+    list-style: none;
+    display: grid;
+    gap: var(--space-2-5);
+    margin-top: var(--space-2);
+  }
+
+  .lat-feats li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2-5);
+    font-size: var(--fs-small);
+    color: var(--color-on-stage-muted);
+  }
+
+  .lat-feats .lucide {
+    margin-top: var(--space-0-5);
+    color: var(--color-stage-accent);
+  }
+
+  .lat-feats b {
+    color: var(--color-on-stage);
+  }
+
+  .lat-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    border: var(--bw-1) solid var(--color-line);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-1);
+  }
+
+  .lat-lbl {
+    margin-bottom: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .lat-inline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+  }
+
+  .lat-inline .lat-lbl {
+    min-width: var(--size-lat-lbl);
+    margin-bottom: 0;
+  }
+
+  .lat-inline[hidden] {
+    display: none;
+  }
+
+  .lat-advice {
+    flex-basis: 100%;
+    font-size: var(--fs-caption);
+    color: var(--color-text-muted);
+  }
+
+  .lat-levels {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-2-5);
+  }
+
+  .lat-level {
+    display: grid;
+    align-content: start;
+    gap: var(--space-1);
+    min-height: var(--size-touch-lg);
+    padding: var(--space-3) var(--space-3-5);
+    border: var(--bw-2) solid var(--color-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    text-align: left;
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .lat-level:hover {
+      border-color: var(--color-brand);
+    }
+  }
+
+  .lat-level:active {
+    transform: scale(var(--press-scale));
+  }
+
+  .lat-level[aria-checked='true'] {
+    border-color: var(--color-brand);
+    background: var(--color-intermediate-bg);
+  }
+
+  .lat-level-t {
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-ui);
+    font-weight: var(--fw-heavy);
+    font-size: var(--fs-body);
+    color: var(--color-brand);
+  }
+
+  .lat-level-d {
+    font-size: var(--fs-caption);
+    line-height: var(--lh-math);
+    color: var(--color-text-secondary);
+  }
+
+  .lat-start {
+    align-self: flex-start;
+  }
+
+  /* ---------- sesi ---------- */
+  .lat-play {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    height: 100%;
+  }
+
+  .lat-stage {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: var(--space-4);
+    min-height: 0;
+    padding: var(--space-4) max(var(--space-4), var(--safe-right)) var(--space-4)
+      max(var(--space-4), var(--safe-left));
+    overflow: hidden;
+    background-color: var(--color-stage);
+  }
+
+  .lat-left {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-height: 0;
+    overflow: hidden auto;
+  }
+
+  .lat-paper {
+    flex: none;
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: var(--shadow-2);
+  }
+
+  .lat-paper .soal-math {
+    font-size: var(--fs-lat-mat);
+  }
+
+  .lat-hints {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .lat-hints:empty {
+    display: none;
+  }
+
+  .lat-hint {
+    padding: var(--space-2-5) var(--space-3-5);
+    border: var(--bw-1) solid var(--color-stage-border);
+    border-left: var(--bw-4) solid var(--color-stage-accent);
+    border-radius: var(--radius-md);
+    background: var(--color-stage-surface);
+    color: var(--color-on-stage);
+    font-size: var(--fs-small);
+  }
+
+  .lat-hint-k {
+    display: block;
+    margin-bottom: var(--space-0-5);
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-stage-accent);
+  }
+
+  /* papan jawaban: panel kapur seperti papan pembahasan */
+  .lat-right {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-height: 0;
+    padding: var(--space-3) var(--space-4) var(--space-4);
+    overflow: hidden auto;
+    border: var(--bw-1) solid var(--color-stage-border);
+    border-radius: var(--radius-xl);
+    background: var(--color-slate);
+    color: var(--color-on-stage);
+    box-shadow: var(--shadow-2);
+  }
+
+  .lat-ans-h {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  .lat-k {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-stage-accent);
+  }
+
+  .lat-opts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--size-lat-opt), 1fr));
+    gap: var(--space-2-5);
+  }
+
+  .lat-opt {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2-5);
+    min-height: var(--size-lat-opt-h);
+    padding: var(--space-2) var(--space-3);
+    border: var(--bw-2) solid transparent;
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    color: var(--color-text);
+    text-align: left;
+    box-shadow: var(--shadow-1);
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out),
+      opacity var(--dur-fast) var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .lat-opt:hover:not(:disabled) {
+      border-color: var(--color-stage-accent);
+      transform: translateY(var(--lift-1));
+    }
+  }
+
+  .lat-opt:active:not(:disabled) {
+    transform: scale(var(--press-scale));
+  }
+
+  .lat-opt .ol {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: var(--size-ring);
+    height: var(--size-ring);
+    border-radius: 50%;
+    background: var(--color-track);
+    font-family: var(--font-display);
+    font-weight: var(--fw-black);
+    font-size: var(--fs-label);
+    color: var(--color-brand);
+  }
+
+  .lat-opt-m {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    font-size: calc(var(--fs-lat-opt) * var(--k, 1));
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  .lat-opt[aria-checked='true'] {
+    border-color: var(--color-stage-accent);
+    box-shadow:
+      0 0 0 var(--bw-4) var(--a-sky-30),
+      var(--shadow-1);
+  }
+
+  .lat-opt[aria-checked='true'] .ol {
+    background: var(--color-brand);
+    color: var(--color-on-brand);
+  }
+
+  .lat-opt:disabled {
+    cursor: default;
+    opacity: 0.55;
+  }
+
+  .lat-opt.is-wrong {
+    border-color: var(--color-constraint);
+    background: var(--color-constraint-bg);
+    opacity: 1;
+  }
+
+  .lat-opt.is-wrong .ol {
+    background: var(--color-constraint);
+    color: var(--color-on-brand);
+  }
+
+  /* kunci (jawaban): emas */
+  .lat-opt.is-key {
+    border-color: var(--color-result);
+    background: var(--color-result-bg);
+    opacity: 1;
+  }
+
+  .lat-opt.is-key .ol {
+    background: var(--color-result);
+    color: var(--color-brand);
+  }
+
+  /* umpan balik */
+  .lat-fb:empty {
+    display: none;
+  }
+
+  .lat-fb {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-3-5);
+    border-left: var(--bw-4) solid var(--color-intermediate);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: var(--fs-small);
+  }
+
+  .lat-fb.is-ok {
+    border-left-color: var(--color-result);
+  }
+
+  .lat-fb.is-no,
+  .lat-fb.is-time {
+    border-left-color: var(--color-constraint);
+  }
+
+  .lat-fb-t .katex {
+    font-size: 1.05em;
+  }
+
+  .lat-fb-s {
+    color: var(--color-text-secondary);
+  }
+
+  .lat-test {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1) var(--space-2-5);
+    padding: var(--space-1-5) var(--space-2-5);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-sunken);
+    overflow-x: auto;
+  }
+
+  .lat-test-k {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .lat-fb-a {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .lat-stage.is-paused::before {
+    content: 'Waktu dijeda';
+    position: absolute;
+    left: 50%;
+    top: var(--space-2);
+    z-index: var(--z-panel);
+    padding: var(--space-0-5) var(--space-3);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    color: var(--color-brand);
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-bold);
+    transform: translateX(-50%);
+  }
+
+  /* navigasi bawah */
+  .lat-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: calc(var(--footer-h) + var(--space-3) + var(--safe-bottom));
+    padding: var(--space-1-5) max(var(--gutter), var(--safe-right)) max(var(--space-1-5), var(--safe-bottom))
+      max(var(--gutter), var(--safe-left));
+    border-top: var(--bw-hair) solid var(--color-line);
+    background: var(--color-glass-strong);
+  }
+
+  .lat-nav [data-check] {
+    margin-left: auto;
+  }
+
+  .lat-dots {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    gap: var(--space-2);
+  }
+
+  .lat-dot {
+    width: var(--space-2-5);
+    height: var(--space-2-5);
+    border-radius: 50%;
+    background: var(--color-track);
+  }
+
+  .lat-dot.ok {
+    background: var(--color-intermediate);
+  }
+
+  .lat-dot.no {
+    background: var(--color-constraint);
+  }
+
+  .lat-dot.is-cur {
+    box-shadow:
+      0 0 0 var(--bw-2) var(--color-surface),
+      0 0 0 var(--bw-4) var(--color-brand);
+  }
+
+  /* timer di header: tidak menutupi soal; peringatan 30 detik terakhir */
+  .lat-timer {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1-5);
+    min-height: var(--size-touch);
+    padding: 0 var(--space-3);
+    border: var(--bw-1) solid var(--color-line);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    color: var(--color-brand);
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lat-timer-k {
+    font-family: var(--font-body);
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-muted);
+  }
+
+  .lat-timer[aria-pressed='true'] {
+    border-color: var(--color-brand);
+    background: var(--color-surface-sunken);
+  }
+
+  .lat-timer.is-warn {
+    border-color: var(--color-constraint);
+    color: var(--color-constraint);
+    background: var(--color-constraint-bg);
+  }
+
+  /* Lihat langkah: papan pembahasan di atas panggung, latar diburamkan */
+  .lat-sol {
+    position: absolute;
+    inset: 0;
+    z-index: var(--z-ask);
+    display: grid;
+    /* baris pasti: tinggi 100 % kartu mengacu ke sini (tanpa ini kartu setinggi isinya dan meluap) */
+    grid-template-rows: minmax(0, 1fr);
+    place-items: center;
+    padding: var(--space-3);
+    background: var(--color-scrim-ask);
+    backdrop-filter: blur(var(--blur-ask));
+  }
+
+  .lat-sol[hidden] {
+    display: none;
+  }
+
+  .lat-sol-card {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: var(--space-2);
+    width: min(100%, var(--size-lat-sol));
+    height: 100%;
+    max-height: var(--size-lat-sol-h);
+  }
+
+  .lat-sol-h {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--color-on-stage);
+  }
+
+  .lat-sol-n {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--fs-small);
+    color: var(--color-on-stage-muted);
+  }
+
+  .lat-sol-h .icon-btn {
+    --ib-fg: var(--color-on-stage);
+
+    border-color: var(--color-stage-border);
+    background: var(--color-stage-surface);
+  }
+
+  /* baris tunggal setinggi sisa kartu: papan memperkecil barisnya (fitHeight), tidak mendorong tombol */
+  .lat-sol-b {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr);
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* papan panggung penuh memakai grid-area: board; di sini satu sel saja */
+  .lat-sol-b .board {
+    grid-area: auto;
+    min-height: 0;
+  }
+
+  .lat-sol-f {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  /* ---------- ringkasan ---------- */
+  .lat-sum {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: var(--space-5);
+    height: 100%;
+    padding: var(--space-4) max(var(--gutter), var(--safe-right)) var(--space-4)
+      max(var(--gutter), var(--safe-left));
+    overflow: auto;
+  }
+
+  .lat-sum-hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    border-radius: var(--radius-xl);
+    background: var(--color-stage);
+    color: var(--color-on-stage);
+    box-shadow: var(--shadow-art);
+  }
+
+  .lat-sum-hero .eyebrow {
+    color: var(--color-constraint-on-stage);
+  }
+
+  .lat-sum-big {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-3);
+    color: var(--color-on-stage);
+  }
+
+  .lat-sum-big .num {
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-hero);
+    font-weight: var(--fw-black);
+    font-size: var(--fs-lat-big);
+    line-height: 1;
+  }
+
+  .lat-sum-of {
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-ui);
+    font-weight: var(--fw-heavy);
+    font-size: var(--fs-title);
+  }
+
+  .lat-sum-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-5);
+  }
+
+  .lat-sum-stats dt {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-on-stage-muted);
+  }
+
+  .lat-sum-stats dd {
+    font-family: var(--font-display);
+    font-weight: var(--fw-black);
+    font-size: var(--fs-title);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lat-sum-note {
+    max-width: var(--size-measure);
+    font-size: var(--fs-small);
+    color: var(--color-on-stage-muted);
+  }
+
+  .lat-sum-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-height: 0;
+  }
+
+  .lat-sum-list ol {
+    list-style: none;
+    display: grid;
+    gap: var(--space-2-5);
+  }
+
+  .lat-sum-row {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    grid-template-areas:
+      'no m meta'
+      'no m acts';
+    align-items: center;
+    gap: var(--space-1-5) var(--space-3-5);
+    padding: var(--space-3) var(--space-3-5);
+    border: var(--bw-1) solid var(--color-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-1);
+  }
+
+  .lat-sum-no {
+    grid-area: no;
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-hero);
+    font-weight: var(--fw-black);
+    font-size: var(--fs-title);
+    color: var(--color-brand);
+  }
+
+  .lat-sum-m {
+    grid-area: m;
+  }
+
+  .lat-sum-meta {
+    grid-area: meta;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1) var(--space-2-5);
+  }
+
+  .lat-sum-code {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    color: var(--color-text-muted);
+  }
+
+  .lat-sum-acts {
+    grid-area: acts;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .lat-sum-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: auto;
+    padding-top: var(--space-2);
+  }
+
+  /* ---------- HP mendatar ---------- */
+  @media (max-height: 520px) {
+    .lat-setup,
+    .lat-sum {
+      gap: var(--space-3);
+      padding-top: var(--space-2);
+      padding-bottom: var(--space-2);
+    }
+
+    .lat-intro,
+    .lat-sum-hero {
+      padding: var(--space-4);
+    }
+
+    .lat-feats,
+    .lat-lede,
+    .lat-sum-note {
+      display: none;
+    }
+
+    .lat-form {
+      gap: var(--space-1-5);
+      padding: var(--space-2-5) var(--space-4);
+    }
+
+    .lat-level {
+      padding: var(--space-1-5) var(--space-2-5);
+    }
+
+    .lat-level-d,
+    .lat-advice {
+      display: none;
+    }
+
+    .lat-stage {
+      gap: var(--space-2-5);
+      padding: var(--space-2) max(var(--space-2-5), var(--safe-right)) var(--space-2)
+        max(var(--space-2-5), var(--safe-left));
+    }
+
+    .lat-left {
+      gap: var(--space-2);
+    }
+
+    .lat-paper {
+      padding: var(--space-3) var(--space-3) var(--space-3) var(--space-6);
+    }
+
+    .lat-right {
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-2-5);
+    }
+
+    .lat-opts {
+      grid-template-columns: repeat(auto-fill, minmax(var(--size-lat-opt-sm), 1fr));
+      gap: var(--space-1-5);
+    }
+
+    .lat-opt {
+      min-height: var(--size-touch);
+      padding: var(--space-1) var(--space-2);
+    }
+
+    .lat-fb {
+      padding: var(--space-2) var(--space-2-5);
+      font-size: var(--fs-caption);
+    }
+
+    .lat-nav {
+      min-height: calc(var(--footer-h) + var(--space-2) + var(--safe-bottom));
+      padding-top: var(--space-1);
+    }
+
+    .lat-timer-k {
+      display: none;
+    }
+
+    .lat-sol {
+      padding: var(--space-2);
+    }
+
+    .lat-sol-card {
+      gap: var(--space-1-5);
+    }
+
+    .lat-sol-h .lat-k {
+      display: none;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .lat-levels {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+}

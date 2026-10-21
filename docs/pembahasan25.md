@@ -227,6 +227,23 @@ Tata letak: **panggung penuh dua kolom** (PRD v1.5, menggantikan susunan atas–
   - Pop-up: "Cocokkan dengan pilihan: hanya E yang sama dengan $F^{-1}$. Pilih jawabannya di bawah."
 - **Ringkasan `LR`:** cara cepat $a\to\frac1a,\ d\to\frac1d$ (khusus matriks diagonal, navy) · $F^{-1}$ (emas) · **Jawaban E** (emas).
 
+*Latihan serupa (PRD v1.6), dipakai di `app/src/practice/gen01.ts`. Kunci soal asli tidak berubah.*
+
+- **Mudah:** $F=\operatorname{diag}(p,q)$ dengan $p,q\in\{2,3,4,5,\frac12,\frac13,\frac23,\frac32\}$, $p\ne q$, $pq\ne1$ (soal asli tidak muncul). Cara cepat: balik tiap elemen diagonal.
+- **Sedang:** $\begin{pmatrix}a&b\\0&d\end{pmatrix}$ dengan $a,d\in\{\pm1,\pm2,\frac12\}$, $b\in\{\pm1,\pm2,\pm3\}$. Cara cepat tidak berlaku; pakai rumus umum.
+- **Menantang:** $\begin{pmatrix}a&b\\c&d\end{pmatrix}$ dengan entri bulat $[-4,4]$, $b,c\ne0$, $\det\in\{\pm1,\pm2,\pm5\}$.
+- **Jebakan distraktor** (dari "Kesalahan umum" dan kartu analisis):
+  - lawan ($-F$) dan tanda ($-F^{-1}$);
+  - hanya sebagian elemen dibalik;
+  - elemen tidak dibalik;
+  - lupa dibagi determinan (adjoin saja);
+  - adjoin tanpa tanda minus;
+  - $a$ dan $d$ tidak ditukar;
+  - "balik tiap elemen" pada matriks bukan diagonal;
+  - transpos.
+- **Petunjuk:** konsep → langkah pertama → arah.
+- **Penyelesaian di papan:** kenali matriks → cara cepat atau rumus umum (determinan, adjoin, bagi determinan) → uji $F\cdot F^{-1}=I$.
+
 ### Bagian 6 — Selesai
 - **Segel:** **E**
 - **Pop-up:** "Invers $F$ adalah $\begin{pmatrix}\frac12&0\\0&2\end{pmatrix}$. Elemen diagonalnya dibalik: $2\to\frac12$ dan $\frac12\to2$."

@@ -33,6 +33,8 @@ export interface PracticeRecord {
   correct: boolean;
   hints: number;
   timeMs: number;
+  /** waktu habis sebelum dijawab (FR-LAT-7) */
+  timeout?: boolean;
 }
 
 export interface ItemProgress {
@@ -200,6 +202,10 @@ export const store = {
   /** Pop-up SELESAI tercapai (status Sudah dibahas, §7.4). */
   markDone(no: number): void {
     store.updateItem(no, (it) => ({ ...it, done: true, watched: it.watched + 1 }));
+  },
+  /** Satu soal latihan selesai (FR-LAT-8); status Sudah paham/Perlu diulang dihitung dari sini (§7.4). */
+  addPractice(no: number, rec: PracticeRecord): void {
+    store.updateItem(no, (it) => ({ ...it, practice: [...it.practice, rec].slice(-50) }));
   },
   /** Tandai/batal tandai bagian sebagai "belum paham" (FR-BAH-2, FR-BAH-12). */
   toggleMark(no: number, ch: number): boolean {

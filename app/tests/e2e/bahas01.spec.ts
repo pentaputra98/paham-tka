@@ -57,16 +57,15 @@ test.describe('Pembahasan soal 1 (G-Gerak, grid matriks)', () => {
     const dlg = page.getByRole('dialog');
     await expect(dlg).toContainText('SELESAI', { timeout: 10_000 });
     await expect(dlg).toContainText('E');
-    // aksi SELESAI: soal berikutnya, latihan serupa (segera hadir), catatan, ulang, beranda
+    // aksi SELESAI: hanya soal 1 yang dibuka (PRD v1.6) → aksi utama Kembali ke beranda; latihan, catatan, ulang
     for (const t of [
-      'Soal berikutnya',
+      'Kembali ke beranda',
       'Coba latihan serupa',
       'Lihat catatan lengkap',
       'Ulang pembahasan',
-      'Beranda',
     ])
       await expect(dlg.getByRole('button', { name: new RegExp(t) })).toBeVisible();
-    await dlg.getByRole('button', { name: /Beranda/ }).click();
+    await dlg.getByRole('button', { name: /Kembali ke beranda/ }).click();
     await expect(page).toHaveURL(/#\/$/);
     expect(errors).toEqual([]);
   });

@@ -74,6 +74,24 @@
     }
   }
 
+  /* tooltip aplikasi (pengganti tooltip bawaan peramban) */
+  .tip {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: var(--z-tip);
+    max-width: var(--size-tip-max);
+    padding: var(--space-1) var(--space-2-5);
+    border-radius: var(--radius-sm);
+    background: var(--color-brand);
+    color: var(--color-on-brand);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-math);
+    box-shadow: var(--shadow-btn);
+    pointer-events: none;
+  }
+
   /* toast: tidak mencuri fokus, hilang otomatis */
   .toast-host {
     position: fixed;
