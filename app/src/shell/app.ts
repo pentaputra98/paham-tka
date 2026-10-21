@@ -57,14 +57,16 @@ function headerHtml(h: HeaderSpec, home: boolean): string {
   const homeBtn = home
     ? `<a class="icon-btn top-home" href="#/" aria-label="Beranda" title="Beranda">${icon('house')}</a>`
     : '';
-  return `${left}${block}${homeBtn}<div class="top-spacer"></div>
-    <div class="top-ctrls">
+  // kelompok kiri dan kanan sama lebar (flex 1 1 0) → tombol Beranda tepat di tengah layar; bila kontrol kanan
+  // lebih lebar dari separuh, tombol bergeser sedikit (tidak pernah menimpa), judul blok kiri yang dipangkas
+  return `<div class="top-side">${left}${block}</div>${homeBtn}
+    <div class="top-side top-side--end"><div class="top-ctrls">
       <span class="offline-badge" data-offline-badge hidden></span>
       ${h.extra ?? ''}
       ${h.progress ? `<a class="btn" href="#/kemajuan">${icon('list-checks')}<span class="btn-label">Kemajuan</span></a>` : ''}
       <a class="icon-btn" href="#/pengaturan" aria-label="Pengaturan" title="Pengaturan">${icon('settings')}</a>
       ${fs}
-    </div>`;
+    </div></div>`;
 }
 
 function footerHtml(): string {
