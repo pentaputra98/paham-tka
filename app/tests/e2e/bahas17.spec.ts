@@ -2,10 +2,10 @@ import { expect, test, type Page } from '@playwright/test';
 import q17 from '../../src/content/soal/q17';
 import { isReady } from '../../src/content';
 
-// dikunci sementara oleh pemilik sampai soal 1 selesai seluruh fiturnya (PRD v1.6, daftar OPEN)
-test.skip(!isReady(17), 'Soal 17 dikunci sementara (PRD v1.6)');
+// soal 17 dibuka (PRD v1.9); tetap dilewati bila suatu saat dikunci lagi lewat daftar OPEN
+test.skip(!isReady(17), 'Soal 17 dikunci sementara');
 
-/** G-Gerak soal 17 (rambu SVG berlapis, multi-jawaban). */
+/** G-Gerak soal 17 (alur guru: rambu = tumpukan bangun, batang pembanding, multi-jawaban). */
 const steps = q17.steps;
 const expectedRows = (i: number): string[] | null => {
   const b = steps[i - 1]!.board;
@@ -49,6 +49,7 @@ async function settled(page: Page, i: number): Promise<void> {
 
 test.describe('Pembahasan soal 17 (G-Gerak, rambu SVG)', () => {
   test('jalan penuh jalur Amati sampai SELESAI tanpa galat', async ({ page }) => {
+    test.setTimeout(180_000);
     const errors: string[] = [];
     page.on('pageerror', (e) => errors.push(e.message));
     await setup(page);
@@ -63,36 +64,51 @@ test.describe('Pembahasan soal 17 (G-Gerak, rambu SVG)', () => {
     expect(errors).toEqual([]);
   });
 
-  test('sorotan warna mengikuti langkah, maju cepat lalu mundur', async ({ page }) => {
+  test('rambu ditumpuk; bangun di atas diangkat sesuai warna; mundur mengembalikan', async ({ page }) => {
     await setup(page);
-    await page.goto('./#/soal/17/bahas?m=amati');
-    await page.getByRole('button', { name: 'Mulai' }).click();
-    const on = (): Promise<string | null> =>
-      page.locator('.vis-sign [data-layer].on').getAttribute('data-layer', { timeout: 5000 });
-    for (let k = 0; k < 8; k++) await page.locator('[data-next]').click({ delay: 15 });
-    await settled(page, 5);
-    expect(await on()).toBe('blue');
-    await expect(page.locator('.vis-sign [data-val="black"]')).toHaveClass(/on/);
-    await page.locator('[data-next]').click();
-    await settled(page, 6);
-    expect(await on()).toBe('red');
+    await page.goto('./#/soal/17/bahas?m=amati&b=1&l=1');
+    await settled(page, 2);
+    await expect(page.locator('.vis-sign.show-legend')).toHaveCount(1);
+    await page.goto('./#/soal/17/bahas?m=amati&b=3&l=2');
+    await settled(page, 9);
+    await expect(page.locator('.vis-sign')).toHaveAttribute('data-lift', 'big');
+    await page.goto('./#/soal/17/bahas?m=amati&b=3&l=4');
+    await settled(page, 11);
+    await expect(page.locator('.vis-sign')).toHaveAttribute('data-lift', 'vbar');
+    await expect(page.locator('.vis-sign.show-dim')).toHaveCount(1);
     await page.locator('[data-prev]').click();
-    await page.locator('[data-prev]').click();
-    await settled(page, 4);
-    expect(await on()).toBe('black');
-    await expect(page.locator('.vis-sign [data-val="black"]')).not.toHaveClass(/on/);
+    await settled(page, 10);
+    await expect(page.locator('.vis-sign')).toHaveAttribute('data-lift', 'big');
+    await expect(page.locator('.vis-sign.show-dim')).toHaveCount(0);
+  });
+
+  test('tiap pilihan: soal tampil lagi, pilihan disorot dan disalin, lalu batang ditumpuk', async ({
+    page,
+  }) => {
+    test.setTimeout(120_000);
+    await setup(page);
+    for (const n of [1, 2, 3, 4, 5]) {
+      const l = 2 * n;
+      await page.goto(`./#/soal/17/bahas?m=amati&b=4&l=${l}`);
+      await settled(page, 16 + l);
+      await expect(page.locator('.hl-q.focus [data-src]')).toHaveAttribute('data-src', `s-o${n}`);
+      await expect(page.locator(`.board .bl[data-row="c${n}"] .tk.q`)).toHaveCount(1);
+      await page.locator('[data-next]').click();
+      await settled(page, 17 + l);
+      await expect(page.locator('.vis-bars .br-opt [data-seg]')).toHaveCount(3);
+    }
   });
 
   test('Ikut berpikir: pertanyaan luas putih', async ({ page }) => {
     await setup(page);
-    await page.goto('./#/soal/17/bahas?m=ikut&b=2&l=3');
+    await page.goto('./#/soal/17/bahas?m=ikut&b=3&l=6');
     const foot = page.locator('.ask-ov');
     await expect(foot).toContainText('Luas putih', { timeout: 20_000 });
     await foot.getByRole('button', { name: /persegi dikurangi/ }).click();
     await expect(foot.locator('.ask-h')).toContainText('Belum tepat');
-    await foot.getByRole('button', { name: /cakram dikurangi/ }).click();
-    await settled(page, 7);
+    await foot.getByRole('button', { name: /lingkaran kecil dikurangi/ }).click();
+    await settled(page, 13);
     await expect(foot).toBeEmpty();
-    await expect(page.locator('[data-row="b5"]')).toContainText('231,44');
+    await expect(page.locator('[data-row="p1"]')).toContainText('lingkaran kecil');
   });
 });

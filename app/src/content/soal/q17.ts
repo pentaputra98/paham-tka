@@ -1,26 +1,80 @@
 /**
- * SOAL 17 — Cat pada Rambu Rumah Makan (geometri bidang, multi-jawaban).
+ * SOAL 17 — Cat pada Rambu Rumah Makan (geometri bidang, multi-jawaban). Kunci: pilihan 1, 2, 5.
  * Sumber: docs/pembahasan25.md "SOAL 17", docs/soal25.md no. 17, docs/rambu_rumah_makan.png.
- * Kunci: pilihan 1, 2, 5. Tafsir: pilihan benar bila jumlah kedua kuantitas > cat hitam (dicatat di dokumen).
+ * Alur gaya mengajar Pak Penta (revisi 21 Okt 2026, dicatat di dokumen): banyak cat ∝ luas → rambu dipandang
+ * sebagai tumpukan empat bangun (warna terlihat = bangunnya − bangun di atasnya) → ukuran dari gambar
+ * (R = 20, r = 14, w = 8) → luas tiap warna dengan "mengangkat" bangun di atasnya → batang pembanding:
+ * cara cepat "warna kedua > setengah hitam" untuk pilihan 1–3, jumlah langsung untuk pilihan 4–5.
+ * Tafsir pilihan: benar bila jumlah kedua kuantitas > cat hitam (dicatat di dokumen).
+ * Tata letak: panggung penuh dua kolom (PRD v1.5).
  */
 import { H, O, T } from '../../engine/dsl';
-import type { SoalContent } from '../../engine/types';
+import type { Row, SoalContent, Step, Visual } from '../../engine/types';
+import type { BarsState } from '../../visuals/bars17';
 import type { SignState } from '../../visuals/sign17';
 import { getSoal } from '../index';
 
-const PIN = ['pH', 'pB', 'pM', 'pP'];
-const ALL: SignState = { vals: ['black', 'blue', 'red', 'white'] };
 /** Gambar asli soal (docs/rambu_rumah_makan.png), dibundel dan ikut precache. */
 const fig = new URL('../../assets/soal/rambu_rumah_makan.png', import.meta.url).href;
-const sign = (state: SignState): { kind: 'svg'; scene: string; state: SignState } => ({
-  kind: 'svg',
-  scene: 'sign',
-  state,
+const sign = (state: SignState): Visual => ({ kind: 'svg', scene: 'sign', state });
+const bars = (state: BarsState): Visual => ({ kind: 'svg', scene: 'bars', state });
+const ALL: SignState = { vals: ['black', 'blue', 'red', 'white'] };
+
+/** Kelima pilihan (docs/soal25.md no. 17): kertas soal dan kutipan di papan memakai teks yang sama. */
+const OPTS = [
+  'Setengah hitam dan biru.',
+  'Setengah hitam dan merah.',
+  'Setengah hitam dan putih.',
+  'Biru dan putih.',
+  'Biru dan merah.',
+];
+/** pin per pilihan: hanya angka yang dipakai pilihan itu */
+const OPIN: Record<number, string[]> = {
+  1: ['pH', 'pS', 'pB'],
+  2: ['pH', 'pS', 'pM'],
+  3: ['pH', 'pS', 'pP'],
+  4: ['pH', 'pB', 'pP'],
+  5: ['pH', 'pB', 'pM'],
+};
+/** Baris kutipan pilihan ke-n: disalin dari kertas soal ke papan sebelum dicek. */
+const quote = (n: number): Row => ({
+  id: `c${n}`,
+  toks: [T(`c${n}a`, `(${n})`, 'sp'), H(`c${n}b`, OPTS[n - 1]!, 'q', `@s-o${n}`)],
 });
+/** Langkah pembuka tiap pilihan: soal tampil lagi, pilihan ke-n disorot, lalu teksnya disalin. */
+const open4 = (n: number, cap: string): Step => ({
+  ch: 4,
+  cap,
+  visual: { kind: 'soal', hl: 0, focus: `s-o${n}` },
+  board: { title: `Pilihan (${n})`, pins: OPIN[n], list: `L4${n}`, upTo: 1, from: 0 },
+});
+/** Langkah analisis pilihan ke-n: batang ditumpuk, lalu baris hitungannya. */
+const check4 = (n: number, cap: string): Step => ({
+  ch: 4,
+  cap,
+  visual: bars({ half: n <= 3, opt: n, cmp: n <= 3 }),
+  board: { title: `Pilihan (${n})`, pins: OPIN[n], list: `L4${n}`, upTo: 2, from: 1 },
+});
+const sum = (
+  id: string,
+  a: [string, string],
+  b: [string, string],
+  total: string,
+  more: boolean,
+): Row['toks'] => [
+  T(`${id}a`, a[0], '', a[1]),
+  O(`${id}b`, '+'),
+  T(`${id}c`, b[0], '', b[1]),
+  O(`${id}d`, '='),
+  T(`${id}e`, total, more ? 'gold' : ''),
+  O(`${id}f`, more ? '>' : '<'),
+  T(`${id}g`, '640{,}56', '', 'PH3'),
+];
 
 const q17: SoalContent = {
   meta: getSoal(17)!,
   sourceRef: 'docs/pembahasan25.md#soal-17',
+  layout: 'full',
   paper: {
     html: `<div class="soal-split"><div>
 <p>Suatu rumah makan terdapat gambar rambu lalu lintas. Gambarnya seperti gambar rambu lalu lintas balai pertolongan pertama, namun tidak sama persis.</p>
@@ -31,302 +85,263 @@ const q17: SoalContent = {
 <p>Pilih semua jawaban yang benar. Jawaban benar lebih dari satu.</p>
 </div><figure class="soal-fig"><img src="${fig}" width="588" height="546" alt="Rambu persegi biru 40 cm × 40 cm dengan cincin hitam, cakram putih berjari-jari 14 cm, dan salib merah; pada tepi atas lengan mendatar tertulis 10 cm di kiri dan kanan lengan tegak." /></figure></div>
 <ul class="checks">
-<li>Setengah hitam dan biru.</li>
-<li>Setengah hitam dan merah.</li>
-<li>Setengah hitam dan putih.</li>
-<li>Biru dan putih.</li>
-<li>Biru dan merah.</li>
+${OPTS.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-src="s-o${i + 1}">${t}</span></span></li>`).join('\n')}
 </ul>`,
-    srcNames: ['s-cat', 's-tanya'],
+    srcNames: ['s-cat', 's-tanya', 's-o1', 's-o2', 's-o3', 's-o4', 's-o5'],
   },
-  visualSrc: ['g-40', 'g-14', 'g-10a', 'g-10b'],
+  visualSrc: ['g-40', 'g-20', 'g-14', 'g-10a', 'g-10b', 'g-w', 'g-28'],
   lobby: {
     eyebrow: 'Kelas 12 · Matematika Lanjut · Geometri bidang',
     titleLines: ['Pembahasan Soal', 'Cat <span class="accent">Rambu</span>', 'Rumah Makan'],
-    lede: 'Satu rambu terdiri dari persegi biru, cincin hitam, salib merah, dan sisa putih. Berapa banyak cat tiap warna, dan mana yang lebih banyak dari cat hitam?',
+    lede: 'Rambu ini sebenarnya tumpukan empat bangun. Hitung luas tiap warna, lalu bandingkan gabungan dua cat dengan cat hitam.',
     facts: [
       { dt: 'Sisi persegi', dd: '40 cm' },
-      { dt: 'Jari-jari cakram', dd: '14 cm' },
-      { dt: 'Dicari', dd: 'bandingkan cat' },
+      { dt: 'Jari-jari putih', dd: '14 cm' },
+      { dt: 'Dicari', dd: 'lebih dari hitam' },
     ],
   },
   chapters: [
     { t: 'Lobi', d: 'Halaman awal' },
-    { t: 'Pahami soal', d: 'Diketahui dan ditanya' },
-    { t: 'Luas tiap warna', d: 'Hitam, biru, merah, putih' },
-    { t: 'Membandingkan dengan hitam', d: 'Setengah hitam = 320,28' },
+    { t: 'Pahami soal', d: 'Cat sebanding luas' },
+    { t: 'Ukuran dari gambar', d: 'R = 20, r = 14, w = 8' },
+    { t: 'Luas tiap warna', d: 'Angkat bangun di atasnya' },
+    { t: 'Bandingkan dengan hitam', d: 'Satu per satu' },
     { t: 'Catatan lengkap', d: 'Simpan dan cetak' },
-    { t: 'Analisis pilihan', d: '5 kartu' },
+    { t: 'Cocokkan pilihan', d: '5 kartu' },
     { t: 'Selesai', d: 'Pilihan 1, 2, dan 5' },
   ],
   pins: {
     pH: { id: 'pH', toks: [H('PH1', 'hitam', 'tx'), O('PH2', '='), T('PH3', '640{,}56')] },
+    pS: {
+      id: 'pS',
+      toks: [T('PS1', '\\tfrac12'), H('PS2', 'hitam', 'tx'), O('PS0', '='), T('PS3', '320{,}28')],
+    },
     pB: { id: 'pB', toks: [H('PB1', 'biru', 'tx'), O('PB2', '='), T('PB3', '344')] },
     pM: { id: 'pM', toks: [H('PM1', 'merah', 'tx'), O('PM2', '='), T('PM3', '384')] },
     pP: { id: 'pP', toks: [H('PP1', 'putih', 'tx'), O('PP2', '='), T('PP3', '231{,}44')] },
   },
   lists: {
     L1: [
-      { id: 'k1', toks: [H('k1a', 'Diketahui', 'lbl')] },
-      { id: 'k2', toks: [H('k2a', 'sisi persegi', 'tx'), O('k2b', '='), T('k2c', '40\\ \\text{cm}')] },
       {
-        id: 'k3',
-        toks: [H('k3a', 'jari-jari cakram putih', 'tx'), O('k3b', '='), T('k3c', '14\\ \\text{cm}')],
-      },
-      {
-        id: 'k4',
-        toks: [H('k4a', 'tepi lengan mendatar', 'tx'), O('k4b', '='), T('k4c', '10\\ \\text{cm}')],
-        note: 'di kiri dan kanan lengan tegak',
-      },
-      {
-        id: 'k5',
-        toks: [H('k5a', 'banyak cat', 'blue', '@s-cat'), O('k5b', '\\propto'), H('k5c', 'luas warna', 'tx')],
+        id: 'k1',
+        toks: [H('k1a', 'banyak cat', 'blue', '@s-cat'), O('k1b', '\\propto'), H('k1c', 'luas warna', 'tx')],
         note: 'cat dibeli dalam ukuran yang sama',
       },
       {
-        id: 'k6',
-        toks: [H('k6a', 'Ditanya', 'lbl'), H('k6b', 'cat yang lebih banyak dari hitam', 'gold', '@s-tanya')],
+        id: 'k2',
+        toks: [
+          H('k2a', 'warna terlihat', 'tx'),
+          O('k2b', '='),
+          H('k2c', 'bangunnya − bangun di atasnya', 'tx'),
+        ],
+        note: 'rambu = tumpukan persegi, lingkaran besar, lingkaran kecil, salib',
       },
       {
-        id: 'k7',
+        id: 'k3',
+        toks: [H('k3a', 'Ditanya', 'lbl'), H('k3b', 'cat yang lebih banyak dari hitam', 'gold', '@s-tanya')],
+      },
+      {
+        id: 'k4',
         toks: [
-          H('k7a', 'Tafsir', 'lbl'),
-          H('k7b', 'jumlah dua kuantitas', 'tx'),
-          O('k7c', '>'),
-          H('k7d', 'hitam', 'tx'),
+          H('k4a', 'tiap pilihan', 'tx'),
+          H('k4b', 'cat 1 + cat 2', 'tx'),
+          O('k4c', '>'),
+          H('k4d', 'hitam?', 'tx'),
         ],
         note: '"setengah hitam" $=\\frac12\\times$ luas hitam',
       },
     ],
-    L2: [
+    LU: [
       {
-        id: 'a1',
+        id: 'u1',
         toks: [
-          H('a1a', 'hitam', 'tx'),
-          O('a1b', '='),
-          T('a1c', '\\pi('),
-          T('a1d', '20^2', 'blue', '@g-40'),
-          O('a1e', '-'),
-          T('a1f', '14^2', 'blue', '@g-14'),
-          T('a1g', ')'),
+          T('u1a', 'R'),
+          O('u1b', '='),
+          T('u1c', '\\tfrac12\\times'),
+          T('u1d', '40', 'blue', '@g-40'),
+          O('u1e', '='),
+          T('u1f', '20\\ \\text{cm}', 'blue'),
         ],
-        note: 'luas cincin; $20$ = setengah sisi $40$',
+        note: 'lingkaran hitam menyentuh sisi persegi',
       },
       {
-        id: 'a2',
-        toks: [
-          H('a2a', 'hitam', 'tx'),
-          O('a2b', '='),
-          T('a2c', '\\pi(400-196)'),
-          O('a2d', '='),
-          T('a2e', '204\\pi'),
-        ],
+        id: 'u2',
+        toks: [T('u2a', 'r'), O('u2b', '='), T('u2c', '14\\ \\text{cm}', 'blue', '@g-14')],
+        note: 'jari-jari lingkaran putih, tertulis di gambar',
       },
       {
-        id: 'a3',
+        id: 'u3',
         toks: [
-          H('a3a', 'hitam', 'tx'),
-          O('a3b', '='),
-          T('a3c', '204(3{,}14)', '', 'a2e'),
-          O('a3d', '='),
-          T('a3e', '640{,}56\\ \\text{cm}^2', 'blue'),
+          T('u3a', '10', '', '@g-10a'),
+          O('u3b', '+'),
+          T('u3c', 'w', '', '@g-w'),
+          O('u3d', '+'),
+          T('u3e', '10', '', '@g-10b'),
+          O('u3f', '='),
+          T('u3g', '28', '', '@g-28'),
+          O('u3h', '\\Rightarrow'),
+          T('u3i', 'w=8\\ \\text{cm}', 'blue'),
         ],
-        box: 'navy',
-      },
-      {
-        id: 'a4',
-        toks: [
-          H('a4a', 'biru', 'tx'),
-          O('a4b', '='),
-          T('a4c', '40^2', 'blue', '@g-40'),
-          O('a4d', '-'),
-          T('a4g', '\\pi\\cdot20^2'),
-          O('a4e', '='),
-          T('a4f', '1600-400\\pi'),
-        ],
-        note: 'persegi dikurangi lingkaran luar',
-      },
-      {
-        id: 'a5',
-        toks: [
-          H('a5a', 'biru', 'tx'),
-          O('a5b', '='),
-          T('a5c', '1600-1256'),
-          O('a5d', '='),
-          T('a5e', '344\\ \\text{cm}^2', 'blue'),
-        ],
-        note: '$400(3{,}14)=1256$',
+        note: '$28=2\\times14$, diameter lingkaran putih',
         box: 'navy',
       },
     ],
-    L2b: [
+    LH: [
+      {
+        id: 'h1',
+        toks: [H('h1a', 'hitam', 'tx'), O('h1b', '='), H('h1c', 'lingkaran besar − lingkaran kecil', 'tx')],
+        note: 'lingkaran putih diangkat, tersisa cincin',
+      },
+      {
+        id: 'h2',
+        toks: [O('h2a', '='), T('h2b', '3{,}14'), O('h2c', '\\times'), T('h2d', '(20^2-14^2)')],
+        note: '$\\pi R^2-\\pi r^2=\\pi(R^2-r^2)$',
+      },
+      {
+        id: 'h3',
+        toks: [
+          O('h3a', '='),
+          T('h3b', '3{,}14\\times204'),
+          O('h3c', '='),
+          T('h3d', '640{,}56\\ \\text{cm}^2', 'blue'),
+        ],
+        note: '$400-196=204$',
+        box: 'navy',
+      },
+    ],
+    LB: [
       {
         id: 'b1',
-        toks: [
-          T('b1a', '10', 'blue', '@g-10a'),
-          O('b1b', '+'),
-          T('b1c', 'w'),
-          O('b1d', '+'),
-          T('b1e', '10', 'blue', '@g-10b'),
-          O('b1f', '='),
-          T('b1g', '28'),
-          O('b1h', '\\Rightarrow'),
-          T('b1i', 'w=8'),
-        ],
-        note: '$28=2\\cdot14$, diameter cakram',
+        toks: [H('b1a', 'biru', 'tx'), O('b1b', '='), H('b1c', 'persegi − lingkaran besar', 'tx')],
+        note: 'lingkaran besar diangkat, tersisa persegi berlubang',
       },
       {
         id: 'b2',
-        toks: [H('b2a', 'merah', 'tx'), O('b2b', '='), T('b2c', '2(28\\cdot8)-8\\cdot8')],
-        note: 'dua lengan dikurangi irisan',
+        toks: [O('b2a', '='), T('b2b', '40^2'), O('b2c', '-'), T('b2d', '3{,}14\\times20^2')],
       },
       {
         id: 'b3',
-        toks: [
-          H('b3a', 'merah', 'tx'),
-          O('b3b', '='),
-          T('b3c', '448-64'),
-          O('b3d', '='),
-          T('b3e', '384\\ \\text{cm}^2', 'blue'),
-        ],
-        box: 'navy',
-      },
-      {
-        id: 'b4',
-        toks: [
-          H('b4a', 'cakram', 'tx'),
-          O('b4b', '='),
-          T('b4c', '\\pi\\cdot'),
-          T('b4d', '14^2', 'blue', '@g-14'),
-          O('b4f', '='),
-          T('b4g', '196(3{,}14)'),
-          O('b4h', '='),
-          T('b4i', '615{,}44'),
-        ],
-      },
-      {
-        id: 'b5',
-        toks: [
-          H('b5a', 'putih', 'tx'),
-          O('b5b', '='),
-          T('b5c', '615{,}44', '', 'b4i'),
-          O('b5d', '-'),
-          T('b5e', '384', '', 'b3e'),
-          O('b5f', '='),
-          T('b5g', '231{,}44\\ \\text{cm}^2', 'blue'),
-        ],
-        note: 'sisa cakram',
+        toks: [O('b3a', '='), T('b3b', '1600-1256'), O('b3c', '='), T('b3d', '344\\ \\text{cm}^2', 'blue')],
         box: 'navy',
       },
     ],
-    L3: [
+    LM: [
       {
-        id: 'c1',
+        id: 'm1',
         toks: [
-          T('c1a', '\\tfrac12\\ \\text{hitam}'),
-          O('c1b', '='),
-          T('c1c', '\\tfrac12'),
-          T('c1d', '(640{,}56)', '', 'PH3'),
-          O('c1e', '='),
-          T('c1f', '320{,}28', 'blue'),
+          H('m1a', 'merah', 'tx'),
+          O('m1b', '='),
+          T('m1c', '28\\times8'),
+          O('m1d', '+'),
+          T('m1e', '28\\times8'),
+        ],
+        note: 'lengan mendatar + lengan tegak',
+      },
+      {
+        id: 'm2',
+        toks: [O('m2a', '='), T('m2b', '224+224'), O('m2c', '-'), T('m2d', '8\\times8', 'red')],
+        note: 'kotak tengah terhitung dua kali, kurangi sekali',
+      },
+      {
+        id: 'm3',
+        toks: [O('m3a', '='), T('m3b', '448-64'), O('m3c', '='), T('m3d', '384\\ \\text{cm}^2', 'blue')],
+        box: 'navy',
+      },
+    ],
+    LP: [
+      {
+        id: 'p1',
+        toks: [H('p1a', 'putih', 'tx'), O('p1b', '='), H('p1c', 'lingkaran kecil − merah', 'tx')],
+        note: 'salib diangkat, tersisa lingkaran putih berlubang',
+      },
+      {
+        id: 'p2',
+        toks: [O('p2a', '='), T('p2b', '3{,}14\\times14^2'), O('p2c', '-'), T('p2d', '384')],
+      },
+      {
+        id: 'p3',
+        toks: [
+          O('p3a', '='),
+          T('p3b', '615{,}44-384'),
+          O('p3c', '='),
+          T('p3d', '231{,}44\\ \\text{cm}^2', 'blue'),
         ],
         box: 'navy',
       },
-      {
-        id: 'c2',
-        toks: [
-          T('c2c', '320{,}28', '', 'c1f'),
-          O('c2d', '+'),
-          T('c2e', '344', '', 'PB3'),
-          O('c2f', '='),
-          T('c2g', '664{,}28', 'gold'),
-          O('c2h', '>'),
-          T('c2i', '640{,}56', '', 'PH3'),
-        ],
-        note: 'pilihan 1, $\\frac12$ hitam + biru: <b class="k-gold">benar</b>',
-        box: 'gold',
-      },
-      {
-        id: 'c3',
-        toks: [
-          T('c3c', '320{,}28', '', 'c1f'),
-          O('c3d', '+'),
-          T('c3e', '384', '', 'PM3'),
-          O('c3f', '='),
-          T('c3g', '704{,}28', 'gold'),
-          O('c3h', '>'),
-          T('c3i', '640{,}56'),
-        ],
-        note: 'pilihan 2, $\\frac12$ hitam + merah: <b class="k-gold">benar</b>',
-        box: 'gold',
-      },
-      {
-        id: 'c4',
-        toks: [
-          T('c4c', '320{,}28', '', 'c1f'),
-          O('c4d', '+'),
-          T('c4e', '231{,}44', '', 'PP3'),
-          O('c4f', '='),
-          T('c4g', '551{,}72'),
-          O('c4h', '<'),
-          T('c4i', '640{,}56'),
-        ],
-        note: 'pilihan 3, $\\frac12$ hitam + putih: <b class="k-red">salah</b>',
-      },
-      {
-        id: 'c5',
-        toks: [
-          T('c5c', '344', '', 'PB3'),
-          O('c5d', '+'),
-          T('c5e', '231{,}44', '', 'PP3'),
-          O('c5f', '='),
-          T('c5g', '575{,}44'),
-          O('c5h', '<'),
-          T('c5i', '640{,}56'),
-        ],
-        note: 'pilihan 4, biru + putih: <b class="k-red">salah</b>',
-      },
-      {
-        id: 'c6',
-        toks: [
-          T('c6c', '344', '', 'PB3'),
-          O('c6d', '+'),
-          T('c6e', '384', '', 'PM3'),
-          O('c6f', '='),
-          T('c6g', '728', 'gold'),
-          O('c6h', '>'),
-          T('c6i', '640{,}56'),
-        ],
-        note: 'pilihan 5, biru + merah: <b class="k-gold">benar</b>',
-        box: 'gold',
-      },
     ],
-    L5: [
+    LW: [
+      { id: 'w1', toks: [H('w1a', 'hitam', 'tx'), O('w1b', '='), T('w1c', '640{,}56\\ \\text{cm}^2')] },
+      { id: 'w2', toks: [H('w2a', 'biru', 'tx'), O('w2b', '='), T('w2c', '344\\ \\text{cm}^2')] },
+      { id: 'w3', toks: [H('w3a', 'merah', 'tx'), O('w3b', '='), T('w3c', '384\\ \\text{cm}^2')] },
+      { id: 'w4', toks: [H('w4a', 'putih', 'tx'), O('w4b', '='), T('w4c', '231{,}44\\ \\text{cm}^2')] },
+    ],
+    LS: [
       {
         id: 's1',
-        toks: [T('s1a', '(1)', 'sp'), T('s1b', '664{,}28>640{,}56'), T('s1c', '\\;\\checkmark', 'gold')],
-        note: '<b class="k-gold">BENAR</b>',
+        toks: [
+          T('s1a', '\\tfrac12'),
+          H('s1b', 'hitam', 'tx'),
+          O('s1c', '='),
+          T('s1d', '\\tfrac12\\times640{,}56', '', 'PH3'),
+          O('s1e', '='),
+          T('s1f', '320{,}28', 'blue'),
+        ],
+        box: 'navy',
       },
       {
         id: 's2',
-        toks: [T('s2a', '(2)', 'sp'), T('s2b', '704{,}28>640{,}56'), T('s2c', '\\;\\checkmark', 'gold')],
-        note: '<b class="k-gold">BENAR</b>',
+        toks: [
+          T('s2a', '\\tfrac12\\text{ hitam}+X>\\text{hitam}'),
+          O('s2b', '\\iff'),
+          T('s2c', 'X>320{,}28', 'blue'),
+        ],
+        note: 'cara cepat, hanya untuk pilihan yang memuat setengah hitam',
       },
+    ],
+    L41: [
+      quote(1),
       {
-        id: 's3',
-        toks: [T('s3a', '(3)', 'sp'), T('s3b', '551{,}72<640{,}56'), T('s3c', '\\;\\times', 'red')],
-        note: '<b class="k-red">SALAH</b>',
+        id: 'o1',
+        toks: sum('o1', ['320{,}28', 'PS3'], ['344', 'PB3'], '664{,}28', true),
+        note: 'biru $344>320{,}28$ → <b class="k-gold">benar</b>',
+        box: 'gold',
       },
+    ],
+    L42: [
+      quote(2),
       {
-        id: 's4',
-        toks: [T('s4a', '(4)', 'sp'), T('s4b', '575{,}44<640{,}56'), T('s4c', '\\;\\times', 'red')],
-        note: '<b class="k-red">SALAH</b>',
+        id: 'o2',
+        toks: sum('o2', ['320{,}28', 'PS3'], ['384', 'PM3'], '704{,}28', true),
+        note: 'merah $384>320{,}28$ → <b class="k-gold">benar</b>',
+        box: 'gold',
       },
+    ],
+    L43: [
+      quote(3),
       {
-        id: 's5',
-        toks: [T('s5a', '(5)', 'sp'), T('s5b', '728>640{,}56'), T('s5c', '\\;\\checkmark', 'gold')],
-        note: '<b class="k-gold">BENAR</b>',
+        id: 'o3',
+        toks: sum('o3', ['320{,}28', 'PS3'], ['231{,}44', 'PP3'], '551{,}72', false),
+        note: 'putih $231{,}44<320{,}28$ → <b class="k-red">salah</b>',
       },
+    ],
+    L44: [
+      quote(4),
+      {
+        id: 'o4',
+        toks: sum('o4', ['344', 'PB3'], ['231{,}44', 'PP3'], '575{,}44', false),
+        note: 'hampir, tetapi kurang → <b class="k-red">salah</b>',
+      },
+    ],
+    L45: [
+      quote(5),
+      {
+        id: 'o5',
+        toks: sum('o5', ['344', 'PB3'], ['384', 'PM3'], '728', true),
+        note: 'melewati batas hitam → <b class="k-gold">benar</b>',
+        box: 'gold',
+      },
+    ],
+    L6: [
       { id: 's6', toks: [H('s6a', 'Jawaban', 'lbl'), H('s6b', 'pilihan 1, 2, dan 5', 'tx')], box: 'gold' },
     ],
     LR: [
@@ -334,138 +349,195 @@ const q17: SoalContent = {
         id: 'r1',
         toks: [T('r1a', '\\text{hitam}\\approx640{,}56\\ \\text{cm}^2')],
         note: '$\\frac12$ hitam + biru, $\\frac12$ hitam + merah, dan biru + merah melebihinya',
-        box: 'gold',
+        box: 'navy',
       },
+      { id: 'r2', toks: [H('r2a', 'Jawaban', 'lbl'), H('r2b', 'pilihan 1, 2, dan 5', 'tx')], box: 'gold' },
     ],
   },
   steps: [
     // ---- 1 · Pahami soal ----
     {
       ch: 1,
-      cap: 'Cat dibeli dalam ukuran yang sama, jadi banyak cat sebanding dengan <b>luas</b> tiap warna.',
+      cap: 'Perhatikan: cat dibeli dalam ukuran yang sama. Jadi warna yang lebih <b>luas</b> butuh cat lebih banyak, dan yang kita bandingkan adalah luasnya.',
       visual: { kind: 'soal', hl: 1 },
-      board: { title: 'Diketahui dan ditanya', list: 'L1', upTo: 5, from: 0 },
+      board: { title: 'Pahami soal', list: 'L1', upTo: 1, from: 0 },
     },
     {
       ch: 1,
-      cap: 'Kita hitung luas hitam, biru, merah, putih, lalu bandingkan dengan hitam.',
-      visual: { kind: 'soal', hl: 2 },
-      board: { title: 'Diketahui dan ditanya', list: 'L1', upTo: 6, from: 5 },
+      cap: 'Tahukah kalian? Rambu ini sebenarnya tumpukan empat bangun: persegi biru, lingkaran hitam, lingkaran putih, lalu salib merah.',
+      visual: sign({ build: true }),
+      board: { title: 'Pahami soal', list: 'L1', upTo: 2, from: 1 },
     },
     {
       ch: 1,
-      cap: 'Setiap pilihan menyebut dua kuantitas cat. Pilihan benar bila jumlah keduanya lebih banyak daripada cat hitam.',
+      cap: 'Yang ditanya: cat mana yang lebih banyak dari cat hitam. Tiap pilihan menyebut dua cat, jadi jumlahkan keduanya lalu bandingkan dengan hitam.',
       visual: { kind: 'soal', hl: 2 },
-      board: { title: 'Diketahui dan ditanya', list: 'L1', upTo: 7, from: 6 },
+      board: { title: 'Pahami soal', list: 'L1', upTo: 4, from: 2 },
     },
-    // ---- 2 · Luas tiap warna ----
+    // ---- 2 · Ukuran dari gambar ----
     {
       ch: 2,
-      cap: 'Hitam adalah cincin antara jari-jari 14 dan 20. Jari-jari 20 adalah setengah sisi persegi 40.',
-      visual: sign({ focus: 'black' }),
-      board: { title: 'Luas hitam dan biru', list: 'L2', upTo: 3, from: 0 },
-    },
-    {
-      ch: 2,
-      cap: 'Biru adalah persegi dikurangi lingkaran besar.',
-      visual: sign({ focus: 'blue', vals: ['black'] }),
-      board: { title: 'Luas hitam dan biru', list: 'L2', upTo: 5, from: 3 },
+      cap: 'Mulai dari ukuran. Lingkaran hitam menyentuh keempat sisi persegi, jadi jari-jarinya setengah dari $40$, yaitu $20$ cm.',
+      visual: sign({ meas: ['40', 'R'] }),
+      board: { title: 'Ukuran dari gambar', list: 'LU', upTo: 1, from: 0 },
     },
     {
       ch: 2,
-      cap: 'Salib: dua persegi panjang $28\\times8$ yang bertumpuk di persegi $8\\times8$.',
-      visual: sign({ focus: 'red', w: true, vals: ['black', 'blue'] }),
-      board: { title: 'Luas merah dan putih', list: 'L2b', upTo: 3, from: 0 },
+      cap: 'Jari-jari lingkaran putih sudah tertulis di gambar: $14$ cm.',
+      visual: sign({ meas: ['40', 'R', 'r'] }),
+      board: { title: 'Ukuran dari gambar', list: 'LU', upTo: 2, from: 1 },
     },
     {
       ch: 2,
-      cap: 'Putih adalah sisa cakram setelah dikurangi salib.',
-      visual: sign({ focus: 'white', vals: ['black', 'blue', 'red'] }),
-      board: { title: 'Luas merah dan putih', list: 'L2b', upTo: 5, from: 3 },
+      cap: 'Lebar lengan salib belum tertulis, kita sebut $w$. Tepi atas lengan mendatar $10+w+10$ sama panjang dengan diameter lingkaran putih, $28$ cm.',
+      visual: sign({ meas: ['r', 'w'] }),
+      board: { title: 'Ukuran dari gambar', list: 'LU', upTo: 3, from: 2 },
       ask: {
-        before: 'b5',
+        before: 'u3',
+        q: '$10+w+10=28$. Lebar lengan $w$ adalah…',
+        opts: [
+          { tex: '8\\ \\text{cm}', ok: true },
+          {
+            tex: '18\\ \\text{cm}',
+            hint: '$28-10$ baru mengurangi satu sisi. Masih ada $10$ cm di sisi lainnya.',
+          },
+          { tex: '14\\ \\text{cm}', hint: '$14$ cm itu jari-jari lingkaran putih, bukan lebar lengan.' },
+        ],
+      },
+    },
+    // ---- 3 · Luas tiap warna ----
+    {
+      ch: 3,
+      cap: 'Hitam dulu. Angkat lingkaran putih dari atasnya: yang tersisa cincin hitam, yaitu lingkaran besar dikurangi lingkaran kecil.',
+      visual: sign({ lift: 'small' }),
+      board: { title: 'Luas hitam', list: 'LH', upTo: 1, from: 0 },
+    },
+    {
+      ch: 3,
+      cap: 'Masukkan angkanya: $3{,}14\\times(20^2-14^2)=3{,}14\\times204$. Luas hitam $640{,}56$ cm².',
+      visual: sign({ lift: 'small' }),
+      board: { title: 'Luas hitam', list: 'LH', upTo: 3, from: 1 },
+    },
+    {
+      ch: 3,
+      cap: 'Sekarang biru. Angkat lingkaran besar: tersisa persegi berlubang, jadi biru = persegi dikurangi lingkaran besar.',
+      visual: sign({ lift: 'big' }),
+      board: { title: 'Luas biru', list: 'LB', upTo: 1, from: 0 },
+    },
+    {
+      ch: 3,
+      cap: 'Hitung: $40^2-3{,}14\\times20^2=1600-1256$. Luas biru $344$ cm².',
+      visual: sign({ lift: 'big' }),
+      board: { title: 'Luas biru', list: 'LB', upTo: 3, from: 1 },
+    },
+    {
+      ch: 3,
+      cap: 'Merah berbentuk salib. Pisahkan lengan tegaknya: ternyata salib terdiri dari dua persegi panjang $28\\times8$.',
+      visual: sign({ lift: 'vbar', dim: true }),
+      board: { title: 'Luas merah', list: 'LM', upTo: 1, from: 0 },
+    },
+    {
+      ch: 3,
+      cap: 'Hati-hati, kotak tengah $8\\times8$ ikut terhitung di kedua lengan, jadi kurangi sekali. Luas merah $448-64=384$ cm².',
+      visual: sign({ lift: 'vbar', dim: true, ov: true }),
+      board: { title: 'Luas merah', list: 'LM', upTo: 3, from: 1 },
+      ask: {
+        before: 'm2',
+        q: 'Kedua lengan sama-sama $28\\times8=224$. Luas salib merah adalah…',
+        opts: [
+          { tex: '448-64=384', ok: true },
+          {
+            tex: '448',
+            hint: 'Kotak tengah $8\\times8$ terhitung dua kali, sekali di tiap lengan. Kurangi sekali.',
+          },
+          { tex: '224', hint: 'Itu baru satu lengan. Salib punya dua lengan.' },
+        ],
+      },
+    },
+    {
+      ch: 3,
+      cap: 'Terakhir putih. Angkat salib merahnya: putih = lingkaran kecil dikurangi merah.',
+      visual: sign({ lift: 'cross' }),
+      board: { title: 'Luas putih', list: 'LP', upTo: 1, from: 0 },
+      ask: {
+        before: 'p1',
         q: 'Luas putih sama dengan…',
         col: true,
         opts: [
-          { txt: 'luas cakram dikurangi luas merah', ok: true },
+          { txt: 'luas lingkaran kecil dikurangi luas merah', ok: true },
           {
             txt: 'luas persegi dikurangi luas merah',
-            hint: 'Persegi juga memuat hitam dan biru. Putih hanya ada di dalam cakram.',
+            hint: 'Persegi juga memuat hitam dan biru. Putih hanya ada di dalam lingkaran kecil.',
           },
           {
-            txt: 'luas cincin dikurangi luas merah',
-            hint: 'Cincin itu hitam; merah dan putih berada di dalam cakram.',
+            txt: 'luas cincin hitam dikurangi luas merah',
+            hint: 'Cincin itu hitam; merah dan putih berada di dalam lingkaran kecil.',
           },
         ],
       },
     },
-    // ---- 3 · Membandingkan dengan hitam ----
     {
       ch: 3,
-      cap: 'Hitung setengah dari cat hitam, lalu jumlahkan dengan tiap kuantitas pada pilihan.',
-      visual: sign(ALL),
-      board: { title: 'Membandingkan dengan hitam', pins: PIN, list: 'L3', upTo: 1, from: 0 },
+      cap: 'Hitung: $3{,}14\\times14^2=615{,}44$, dikurangi merah $384$. Luas putih $231{,}44$ cm².',
+      visual: sign({ lift: 'cross' }),
+      board: { title: 'Luas putih', list: 'LP', upTo: 3, from: 1 },
     },
     {
       ch: 3,
-      cap: 'Pilihan 1 dan 2: setengah hitam ditambah biru, atau ditambah merah, sama-sama melebihi hitam.',
+      cap: 'Ini luas keempat warna. Sekarang kita siap membandingkan setiap pilihan dengan cat hitam.',
       visual: sign(ALL),
-      board: { title: 'Membandingkan dengan hitam', pins: PIN, list: 'L3', upTo: 3, from: 1 },
+      board: { title: 'Luas tiap warna', list: 'LW', upTo: 4, from: 0 },
     },
-    {
-      ch: 3,
-      cap: 'Pilihan 3: putih paling sedikit, sehingga setengah hitam ditambah putih masih kurang dari hitam.',
-      visual: sign(ALL),
-      board: { title: 'Membandingkan dengan hitam', pins: PIN, list: 'L3', upTo: 4, from: 3 },
-    },
-    {
-      ch: 3,
-      cap: 'Pilihan 4 hampir, tetapi masih kurang. Pilihan 5, biru ditambah merah, melebihi hitam.',
-      visual: sign(ALL),
-      board: { title: 'Membandingkan dengan hitam', pins: PIN, list: 'L3', upTo: 6, from: 4 },
-    },
-    // ---- 4 · Catatan lengkap ----
+    // ---- 4 · Bandingkan dengan hitam ----
     {
       ch: 4,
+      cap: 'Gambar banyak cat sebagai batang. Tiga pilihan pertama memuat <b>setengah hitam</b>: setengah dari $640{,}56$ adalah $320{,}28$.',
+      visual: bars({ half: true }),
+      board: { title: 'Setengah hitam', pins: ['pH'], list: 'LS', upTo: 1, from: 0 },
+    },
+    {
+      ch: 4,
+      cap: 'Cara cepat: setengah hitam ada di kedua sisi, jadi cukup cek apakah warna keduanya lebih dari $320{,}28$. Ingat, ini hanya berlaku untuk pilihan yang memuat setengah hitam.',
+      visual: bars({ half: true, cmp: true }),
+      board: { title: 'Setengah hitam', pins: ['pH'], list: 'LS', upTo: 2, from: 1 },
+    },
+    open4(1, 'Kita cek pilihan (1) dulu. Salin ke papan: setengah hitam dan biru.'),
+    check4(
+      1,
+      'Tumpuk setengah hitam dengan biru: ujungnya melewati batas hitam. Cara cepatnya, biru $344>320{,}28$, jadi (1) <b class="k-gold">benar</b>.',
+    ),
+    open4(2, 'Lanjut pilihan (2): setengah hitam dan merah.'),
+    check4(
+      2,
+      'Setengah hitam ditambah merah: $704{,}28>640{,}56$. Merah $384>320{,}28$, jadi (2) <b class="k-gold">benar</b>.',
+    ),
+    open4(3, 'Pilihan (3): setengah hitam dan putih.'),
+    check4(
+      3,
+      'Setengah hitam ditambah putih tidak sampai batas: $551{,}72<640{,}56$. Putih $231{,}44<320{,}28$, jadi (3) <b class="k-red">salah</b>.',
+    ),
+    open4(4, 'Pilihan (4): biru dan putih. Perhatikan, kali ini tidak ada setengah hitam.'),
+    check4(
+      4,
+      'Tanpa setengah hitam, jumlahkan langsung: $344+231{,}44=575{,}44$. Hampir, tetapi kurang dari $640{,}56$, jadi (4) <b class="k-red">salah</b>.',
+    ),
+    open4(5, 'Terakhir, pilihan (5): biru dan merah.'),
+    check4(
+      5,
+      'Biru ditambah merah: $344+384=728$, melewati batas $640{,}56$. Jadi (5) <b class="k-gold">benar</b>.',
+    ),
+    // ---- 5 · Catatan lengkap ----
+    {
+      ch: 5,
       cap: 'Semua langkah dari awal sampai akhir. Simpan untuk belajar lagi.',
       visual: { kind: 'notes' },
     },
-    // ---- 5 · Analisis pilihan (5 kartu) ----
+    // ---- 6 · Cocokkan pilihan ----
     {
-      ch: 5,
-      cap: 'Hitam sekitar $640{,}56$ cm². Sekarang periksa kelima pilihan.',
-      visual: { kind: 'cards', flip: 0 },
-      board: { title: 'Analisis pilihan', pins: PIN, list: 'L5', upTo: 0, from: 0 },
-    },
-    {
-      ch: 5,
-      cap: '(1) $320{,}28+344=664{,}28$, lebih dari hitam. Kebenarannya tidak bergantung ukuran salib (<b class="k-gold">benar</b>).',
-      visual: { kind: 'cards', flip: 1 },
-      board: { title: 'Analisis pilihan', pins: PIN, list: 'L5', upTo: 1, from: 0 },
-    },
-    {
-      ch: 5,
-      cap: '(2) $320{,}28+384=704{,}28$, lebih dari hitam (<b class="k-gold">benar</b>).',
-      visual: { kind: 'cards', flip: 2 },
-      board: { title: 'Analisis pilihan', pins: PIN, list: 'L5', upTo: 2, from: 1 },
-    },
-    {
-      ch: 5,
-      cap: '(3) Putih paling sedikit: $551{,}72<640{,}56$. <b class="k-red">Salah.</b>',
-      visual: { kind: 'cards', flip: 3 },
-      board: { title: 'Analisis pilihan', pins: PIN, list: 'L5', upTo: 3, from: 2 },
-    },
-    {
-      ch: 5,
-      cap: '(4) Hampir, tetapi masih kurang: $575{,}44<640{,}56$. <b class="k-red">Salah.</b>',
-      visual: { kind: 'cards', flip: 4 },
-      board: { title: 'Analisis pilihan', pins: PIN, list: 'L5', upTo: 4, from: 3 },
-    },
-    {
-      ch: 5,
-      cap: '(5) $344+384=728$, lebih dari hitam (<b class="k-gold">benar</b>). Pilih kesimpulannya di papan tulis.',
+      ch: 6,
+      cap: 'Cocokkan dengan kelima pilihan: (1), (2), dan (5) benar. Pilih jawabannya di bawah.',
       visual: { kind: 'cards', flip: 5 },
-      board: { title: 'Analisis pilihan', pins: PIN, list: 'L5', upTo: 6, from: 4 },
+      board: { title: 'Cocokkan pilihan', pins: ['pH', 'pB', 'pM', 'pP'], list: 'L6', upTo: 1, from: 0 },
       ask: {
         before: 's6',
         q: 'Pilihan yang benar adalah…',
@@ -479,12 +551,12 @@ const q17: SoalContent = {
         ],
       },
     },
-    // ---- 6 · Selesai ----
+    // ---- 7 · Selesai ----
     {
-      ch: 6,
+      ch: 7,
       cap: '<span class="verdict"><span class="seal">1 · 2 · 5</span><span>Hitam sekitar $640{,}56$ cm². Gabungan $\\frac12$ hitam + biru, $\\frac12$ hitam + merah, dan biru + merah masing-masing melebihinya.</span></span>',
       visual: { kind: 'done' },
-      board: { title: 'Ringkasan', list: 'LR', upTo: 1, from: 1 },
+      board: { title: 'Ringkasan', list: 'LR', upTo: 2, from: 2 },
     },
   ],
   cards: [
@@ -493,21 +565,21 @@ const q17: SoalContent = {
       statement: 'Setengah hitam dan biru.',
       ok: true,
       formula: '664{,}28>640{,}56',
-      why: 'Kebenarannya tidak bergantung ukuran salib.',
+      why: 'Biru $344$ lebih dari setengah hitam $320{,}28$.',
     },
     {
       label: '2',
       statement: 'Setengah hitam dan merah.',
       ok: true,
       formula: '704{,}28>640{,}56',
-      why: 'Setengah hitam ditambah merah melebihi hitam.',
+      why: 'Merah $384$ lebih dari setengah hitam $320{,}28$.',
     },
     {
       label: '3',
       statement: 'Setengah hitam dan putih.',
       ok: false,
       formula: '551{,}72<640{,}56',
-      why: 'Putih paling sedikit.',
+      why: 'Putih paling sedikit, kurang dari setengah hitam.',
     },
     {
       label: '4',
@@ -529,13 +601,17 @@ const q17: SoalContent = {
     meta: 'TKA Matematika Tingkat Lanjut 2025 · Geometri bidang',
     sections: [
       { title: 'Pahami soal', lists: ['L1'] },
+      { title: 'Ukuran dari gambar', lists: ['LU'], sketch: 'sign' },
       {
         title: 'Luas tiap warna',
-        lists: ['L2', 'L2b'],
-        sketch: 'sign',
-        why: 'Luas lingkaran $\\pi r^2$, luas cincin $\\pi(R^2-r^2)$, dan dua persegi panjang bertumpuk: jumlah kedua luas dikurangi irisan. Dipakai $\\pi=3{,}14$.',
+        lists: ['LH', 'LB', 'LM', 'LP'],
+        why: 'Rambu = tumpukan persegi, lingkaran besar, lingkaran kecil, dan salib. Warna yang terlihat = bangunnya dikurangi bangun di atasnya. Dipakai $\\pi=3{,}14$.',
       },
-      { title: 'Membandingkan dengan hitam', lists: ['L3'] },
+      {
+        title: 'Bandingkan dengan hitam',
+        lists: ['LS', 'L41', 'L42', 'L43', 'L44', 'L45'],
+        why: 'Cara cepat pilihan 1–3: setengah hitam ada di kedua sisi, jadi cukup bandingkan warna kedua dengan $320{,}28$.',
+      },
     ],
     answer:
       'Jawaban: pilihan <b>1, 2, dan 5</b> (setengah hitam dan biru, setengah hitam dan merah, biru dan merah).',
@@ -548,13 +624,12 @@ const q17: SoalContent = {
   key: {
     answer: '1, 2, 5',
     cardOk: [true, true, false, false, true],
-    goldRows: ['c2', 'c3', 'c6', 's6', 'r1'],
+    goldRows: ['o1', 'o2', 'o5', 's6', 'r2'],
   },
   authorNotes: [
-    'Bagian 1: baris papan k1–k7 disusun dari data gambar, pop-up 1.1–1.2, dan tafsir pilihan di dokumen; langkah 1.3 menampilkan tafsir itu.',
-    'Bagian 2: pop-up 2.1 dan 2.2 dokumen masing-masing dipecah menjadi dua langkah (hitam/biru, merah/putih); kalimat "Jari-jari 20 adalah setengah sisi persegi 40" dari kolom "Terbang dari" a1.',
-    'Bagian 3: pin hitam/biru/merah/putih (dari Bagian 5 dokumen) dipasang agar angka terbang ke baris c; pop-up per langkah disusun dari kolom keterangan c2–c6 dan alasan kartu; baris c2–c6 hanya memuat angka, nama kuantitas di keterangan (muat di 667 px).',
-    'Bagian 5: pop-up per kartu dari kolom alasan; papan ringkasan s1–s6 dan pertanyaan kesimpulan disusun dari kartu; rumus kartu diringkas menjadi perbandingan akhir agar muat.',
+    'Alur ditulis ulang dengan gaya mengajar Pak Penta (21 Okt 2026, dicatat di dokumen): rambu sebagai tumpukan empat bangun, ukuran dari gambar, luas tiap warna dengan mengangkat bangun di atasnya, lalu batang pembanding per pilihan.',
+    'Cara cepat pilihan 1–3 (setengah hitam + X > hitam ⇔ X > 320,28) diturunkan dari angka dokumen; batasnya disebut: hanya untuk pilihan yang memuat setengah hitam.',
+    'Pertanyaan cepat baru: lebar lengan w (dari 10 + w + 10 = 28) dan luas salib (448 − 64), dari "Kesalahan umum" dokumen.',
   ],
 };
 

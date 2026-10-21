@@ -4,7 +4,7 @@
 |---|---|
 | **Nama produk** | **Paham TKA** — Pembahasan Interaktif TKA Matematika Tingkat Lanjut 2025 |
 | **Tagline** | Yuk pahami soal TKA 2025, step by step. |
-| **Versi dokumen** | 1.8 (revisi 1.8, 21 Oktober 2026: revisi alur soal 24 (tanpa putaran, potongan segitiga diputar, coretan setelah rumus utuh, olah X/Y bertahap, pernyataan disalin dari soal), tombol muat ulang di header, latihan serupa soal 24 (pilihan banyak); lihat §20.2. Revisi 1.7, 21 Oktober 2026: soal 24 ditulis ulang mengikuti alur guru dan dibuka; token dicoret di papan; lihat §20.2. Revisi 1.6, 21 Oktober 2026: hanya soal 1 dibuka sampai semua fiturnya selesai, tanpa UI bawaan peramban, latihan serupa soal 1 (M3 dimulai); lihat §20.2. Revisi 1.5, 21 Oktober 2026: daftar revisi pemilik untuk soal 1 — panggung penuh dua kolom tanpa gulir, pertanyaan cepat sebagai pop-up, kartu dan catatan dirapikan, aksi SELESAI, tombol Beranda, bilah gulir bertema, hero string art; lihat §20.2. Revisi 1.4, 21 Oktober 2026: masukan uji pemilik produk — panggung penuh tanpa panel papan untuk soal non-3D, navigasi "selesaikan langkah dulu", Coretan inti dimajukan, beranda tanpa kolom cari dan hero bukan soal, skala antarmuka layar lebar; lihat §20.2. Revisi 1.3, 19 Oktober 2026: CSP `connect-src 'self'` agar service worker dapat melakukan *precache*; cadangan `file://` (`dist-single`) dipindah dari kriteria M0 ke M5. Revisi 1.2: Vercel subdomain gratis, kebijakan tanpa izin, tiga perangkat uji, 3D rendah-poligon, offline-first, lapisan gerak Motion) |
+| **Versi dokumen** | 1.9 (revisi 1.9, 21 Oktober 2026: soal 17 ditulis ulang dengan gaya mengajar pemilik (rambu sebagai tumpukan bangun, batang pembanding, cara cepat setengah hitam) dan dibuka; lihat §20.2. Revisi 1.8, 21 Oktober 2026: revisi alur soal 24 (tanpa putaran, potongan segitiga diputar, coretan setelah rumus utuh, olah X/Y bertahap, pernyataan disalin dari soal), tombol muat ulang di header, latihan serupa soal 24 (pilihan banyak); lihat §20.2. Revisi 1.7, 21 Oktober 2026: soal 24 ditulis ulang mengikuti alur guru dan dibuka; token dicoret di papan; lihat §20.2. Revisi 1.6, 21 Oktober 2026: hanya soal 1 dibuka sampai semua fiturnya selesai, tanpa UI bawaan peramban, latihan serupa soal 1 (M3 dimulai); lihat §20.2. Revisi 1.5, 21 Oktober 2026: daftar revisi pemilik untuk soal 1 — panggung penuh dua kolom tanpa gulir, pertanyaan cepat sebagai pop-up, kartu dan catatan dirapikan, aksi SELESAI, tombol Beranda, bilah gulir bertema, hero string art; lihat §20.2. Revisi 1.4, 21 Oktober 2026: masukan uji pemilik produk — panggung penuh tanpa panel papan untuk soal non-3D, navigasi "selesaikan langkah dulu", Coretan inti dimajukan, beranda tanpa kolom cari dan hero bukan soal, skala antarmuka layar lebar; lihat §20.2. Revisi 1.3, 19 Oktober 2026: CSP `connect-src 'self'` agar service worker dapat melakukan *precache*; cadangan `file://` (`dist-single`) dipindah dari kriteria M0 ke M5. Revisi 1.2: Vercel subdomain gratis, kebijakan tanpa izin, tiga perangkat uji, 3D rendah-poligon, offline-first, lapisan gerak Motion) |
 | **Distribusi** | Hosting statis Vercel (PWA); cadangan: satu berkas HTML dan ZIP |
 | **Dokumen pendamping** | `SUPER-PROMPT.md` (arahan sesi produksi pertama: M0 dan M1) |
 | **Tanggal** | 19 Oktober 2026 |
@@ -1251,6 +1251,18 @@ Pada revisi 1.2 **tidak ada hal terbuka yang menghalangi produksi**. Semua perta
     - oracle: luas dari koordinat dan integral numerik; uji properti 1.000 benih × 3 tingkat.
 
     Mesin latihan kini mendukung **pilihan banyak**: pernyataan dicentang (kotak centang, angka 1–5), "Belum tepat" tidak membocorkan pernyataan mana yang benar, dan setelah kunci dibuka tiap pernyataan diberi alasan benar/salah. Pernyataan, sudut, nama titik, dan urutan berbeda dari soal asli; tingkat Mudah tidak memakai $a=\frac\pi6$. Peninjauan 30 contoh acak oleh pemilik (§11.4, catatan prioritas) belum dilakukan.
+
+- **Revisi 1.9 (21 Oktober 2026, pemilik menyetujui soal 24 dan latihannya, lalu meminta soal 17 dikerjakan dengan gaya mengajarnya tanpa transkrip baru):**
+  - (a) **Soal 17 ditulis ulang** (lihat `docs/pembahasan25.md` soal 17, blok *Revisi alur dengan gaya mengajar*). Panggung penuh dua kolom. Animasi:
+    - rambu ditumpuk satu per satu sebagai empat bangun utuh (persegi, lingkaran besar, lingkaran kecil, salib);
+    - ukuran dari gambar ($R=20$, $r=14$, $10+w+10=28$);
+    - tiap warna dihitung dengan mengangkat bangun di atasnya (lubang putus-putus); merah: lengan tegak dipisah dan kotak tengah $8\times8$ disorot;
+    - batang pembanding cat (panjang ∝ luas) dengan garis batas cat hitam; cara cepat "warna kedua > setengah hitam" untuk pilihan 1–3, beserta batas berlakunya;
+    - tiap pilihan disalin dari kertas soal sebelum dicek.
+
+    Kunci tetap: pilihan 1, 2, 5. Dua pertanyaan cepat baru (lebar lengan, luas salib) dari *Kesalahan umum*.
+  - (b) **Soal 17 dibuka** (daftar `OPEN` = 1, 17, 24). Latihan serupa soal 17 belum dibuat (menunggu pemeriksaan pemilik).
+  - (c) **Mesin:** kertas soal yang perlu digulir kini menggulir stabilo fokus ke tengah (naskah soal 17 panjang; pilihan yang disalin tetap terlihat di layar pendek). Adegan baru `bars` (batang pembanding).
 
 ### 20.3 Glosarium
 | Istilah | Arti |

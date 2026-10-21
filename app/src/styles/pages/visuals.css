@@ -688,7 +688,8 @@
 }
 
 /* ---------- soal 17: rambu rumah makan ----------
-   Warna lapisan = warna benda pada gambar soal. Sorotan meredupkan warna lain (bukan emas). */
+   Rambu = tumpukan empat bangun utuh. Warna lapisan = warna benda pada gambar soal (bukan emas).
+   Bangun yang diangkat meninggalkan lubang putus-putus; ukuran dan label muncul lewat opacity. */
 @layer pages {
   .vis-sign {
     height: 100%;
@@ -701,10 +702,6 @@
     height: 100%;
     min-height: 0;
     overflow: visible;
-  }
-
-  .sg-l {
-    transition: opacity var(--dur-slow) var(--ease);
   }
 
   .sg-blue {
@@ -725,8 +722,47 @@
     fill: var(--red-600);
   }
 
-  .has-focus .sg-l:not(.on) {
-    opacity: 0.22;
+  /* lubang yang ditinggalkan bangun yang diangkat */
+  .sg-hole {
+    fill: var(--color-stage);
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 6 5;
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .vis-sign[data-lift='big'] [data-hole='big'],
+  .vis-sign[data-lift='small'] [data-hole='small'],
+  .vis-sign[data-lift='cross'] [data-hole='cross'] {
+    opacity: 1;
+  }
+
+  /* membahas merah: rambu di bawah salib diredupkan */
+  .sg-dimmer {
+    fill: var(--color-stage);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-dim .sg-dimmer {
+    opacity: 0.78;
+  }
+
+  /* kotak tengah 8 × 8 yang terhitung dua kali */
+  .sg-ov {
+    fill: var(--paper-0);
+    fill-opacity: 0.35;
+    stroke: var(--paper-0);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 4 3;
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-ov .sg-ov,
+  .show-ov .sg-ov-lbl {
+    opacity: 1;
   }
 
   .sg-arrow {
@@ -737,7 +773,12 @@
     stroke-linejoin: round;
   }
 
+  .sg-arrow-ink {
+    stroke: var(--ink-900);
+  }
+
   .sg-r {
+    fill: none;
     stroke: var(--paper-0);
     stroke-width: var(--bw-2);
     stroke-dasharray: 5 4;
@@ -750,7 +791,8 @@
     fill: var(--color-on-stage);
   }
 
-  .sg-on-red {
+  .sg-on-red,
+  .sg-on-dark {
     fill: var(--paper-0);
   }
 
@@ -758,20 +800,37 @@
     fill: var(--ink-900);
   }
 
-  .sg-w {
+  /* ukuran dari gambar, daftar lapisan, label bangun yang diangkat */
+  .sg-m,
+  .sg-legend,
+  .sg-lift-lbl,
+  .sg-ov-lbl {
     opacity: 0;
     transition: opacity var(--dur-slow) var(--ease);
   }
 
-  .show-w .sg-w {
+  .show-m-40 .sg-m-40,
+  .show-m-R .sg-m-R,
+  .show-m-r .sg-m-r,
+  .show-m-w .sg-m-w,
+  .show-legend .sg-legend,
+  .vis-sign[data-lift='big'] [data-lift-lbl='big'],
+  .vis-sign[data-lift='small'] [data-lift-lbl='small'],
+  .vis-sign[data-lift='cross'] [data-lift-lbl='cross'],
+  .vis-sign[data-lift='vbar'] [data-lift-lbl='vbar'] {
     opacity: 1;
+  }
+
+  .sg-leg-sw {
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-hair);
   }
 
   .sg-val {
     font-family: var(--font-display);
     font-weight: var(--fw-black);
     font-size: var(--svg-fs-md);
-    /* putih bergaris hitam: terbaca di atas warna apa pun, termasuk lapisan yang diredupkan */
+    /* putih bergaris hitam: terbaca di atas warna apa pun */
     fill: var(--paper-0);
     stroke: var(--sign-black);
     stroke-width: var(--bw-4);
@@ -784,12 +843,146 @@
   .sg-val.on {
     opacity: 1;
   }
-}
 
-@layer pages {
   /* daerah putih per kuadran sempit: label luasnya lebih kecil */
   .sg-val-white {
     font-size: var(--svg-fs-sm);
+  }
+
+  /* ---------- soal 17: batang pembanding cat ----------
+     Panjang batang sebanding dengan luas (banyak cat); garis putus-putus = batas cat hitam. */
+  .vis-bars {
+    height: 100%;
+    display: grid;
+    place-items: center;
+  }
+
+  .vis-bars svg {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .br-seg {
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-hair);
+  }
+
+  .br-black {
+    fill: var(--sign-black);
+  }
+
+  .br-half {
+    fill: var(--sign-black);
+    stroke: var(--paper-0);
+    stroke-dasharray: 4 3;
+  }
+
+  .br-blue {
+    fill: var(--sign-blue);
+  }
+
+  .br-red {
+    fill: var(--red-600);
+  }
+
+  .br-white {
+    fill: var(--paper-0);
+  }
+
+  .br-name {
+    font-family: var(--font-body);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-md);
+    fill: var(--color-on-stage);
+  }
+
+  .br-num {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-md);
+    fill: var(--paper-0);
+    stroke: var(--sign-black);
+    stroke-width: var(--bw-3);
+    paint-order: stroke;
+    stroke-linejoin: round;
+  }
+
+  .br-num-ink {
+    fill: var(--ink-900);
+    stroke: none;
+  }
+
+  .br-total {
+    font-family: var(--font-display);
+    font-weight: var(--fw-black);
+    font-size: var(--svg-fs-lg);
+    fill: var(--color-on-stage);
+  }
+
+  .br-limit {
+    stroke: var(--color-on-stage);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 6 5;
+  }
+
+  .br-limit-lbl {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-sm);
+    fill: var(--color-on-stage-muted);
+  }
+
+  .br-tick {
+    stroke: var(--paper-0);
+    stroke-width: var(--bw-2);
+  }
+
+  /* pembanding cara cepat: setengah hitam kedua vs warna kedua */
+  .br-cmp {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-3);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-cmp .br-cmp {
+    opacity: 1;
+  }
+
+  .br-diff {
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 5 4;
+  }
+
+  .br-diff.more {
+    fill: var(--color-stage-glow);
+    stroke: var(--color-stage-accent);
+  }
+
+  .br-diff.less {
+    fill: none;
+    stroke: var(--red-600);
+  }
+
+  .br-verdict {
+    font-family: var(--font-body);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-md);
+    fill: var(--color-on-stage);
+  }
+
+  .br-half-lbl,
+  .br-tick {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-half .br-half-lbl,
+  .show-half .br-tick {
+    opacity: 1;
   }
 }
 

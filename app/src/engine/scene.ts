@@ -221,6 +221,19 @@ export class Scene {
     art.style.marginBottom = `${Math.round(art.offsetHeight * (k - 1))}px`;
   }
 
+  /**
+   * Kertas soal yang perlu digulir (naskah panjang di layar pendek): stabilo fokus (mis. pilihan yang sedang
+   * disalin) digulir ke tengah kertas agar terlihat dan bisa menjadi sumber terbang.
+   */
+  private scrollFocus(): void {
+    const f = this.paper.querySelector<HTMLElement>('.hl.focus');
+    if (!f || !this.paper.classList.contains('is-scroll')) return;
+    const pr = this.paper.getBoundingClientRect();
+    const fr = f.getBoundingClientRect();
+    if (fr.top >= pr.top && fr.bottom <= pr.bottom) return;
+    this.paper.scrollTop += (fr.top + fr.bottom) / 2 - (pr.top + pr.bottom) / 2;
+  }
+
   /** Hitung area bebas (template layout()): dipanggil saat ukuran berubah dan tiap ganti langkah. */
   layout(): void {
     const W = this.root.clientWidth;
@@ -228,7 +241,10 @@ export class Scene {
     if (!W || !H) return;
     if (this.full) {
       // dua kolom pada satu panggung (CSS grid): pop-up + visual di kiri, papan di kanan; tanpa area bebas
-      if (this.mode === 'soal' || this.mode === 'done') this.fitPaper();
+      if (this.mode === 'soal' || this.mode === 'done') {
+        this.fitPaper();
+        this.scrollFocus();
+      }
       this.board.refit();
     } else {
       const capBottom = this.cap.offsetTop + this.cap.offsetHeight;
