@@ -2045,10 +2045,12 @@ Pin: hitam $=640{,}56$ · biru $=344$ · merah $=384$ · putih $=231{,}44$.
 
 *Revisi alur dengan gaya mengajar pemilik materi (21 Okt 2026; kunci tidak berubah: pilihan 1, 2, 5), dipakai di `app/src/content/soal/q17.ts`. Menggantikan blok "Ditambahkan M2" di atas. Angka luas sama dengan Bagian 2–3; tafsir pilihan tetap.*
 
+*Revisi kedua (21 Okt 2026, permintaan pemilik; kunci tetap): segel jawaban banyak berupa deret medali; simbol ∝ diganti kata-kata; **catatan luas** (deret pin di papan) menyimpan tiap luas begitu didapat dan menjadi sumber semua hitungan berikutnya; angka jari-jari dan ukuran terbang dari gambar; salib merah hanya dipisah untuk menunjukkan dua persegi panjang, lalu disatukan lagi dan tiap lengan serta kotak tengah disorot pada salib utuh. Daftar di bawah sudah memuat revisi kedua.*
+
 Gagasan utama: rambu dipandang sebagai **tumpukan empat bangun utuh** (persegi biru, lingkaran besar hitam, lingkaran kecil putih, salib merah), sehingga **warna yang terlihat = bangunnya dikurangi bangun di atasnya**. Tata letak: panggung penuh dua kolom (PRD v1.5).
 
 - **Bagian 1 — Pahami soal**
-  - 1.1 Stabilo "cat yang dibeli dalam ukuran yang sama". Baris: banyak cat $\propto$ luas warna.
+  - 1.1 Stabilo "cat yang dibeli dalam ukuran yang sama". Baris: warna lebih luas ⇒ cat lebih banyak.
   - 1.2 Rambu ditumpuk satu per satu (persegi → lingkaran besar → lingkaran kecil → salib) dengan daftar lapisan. Baris: warna terlihat = bangunnya − bangun di atasnya.
   - 1.3 Stabilo pertanyaan. Baris: Ditanya; tiap pilihan: cat 1 + cat 2 > hitam? ("setengah hitam" $=\frac12\times$ luas hitam).
 - **Bagian 2 — Ukuran dari gambar**
@@ -2058,19 +2060,20 @@ Gagasan utama: rambu dipandang sebagai **tumpukan empat bangun utuh** (persegi b
     - $8$ cm: benar.
     - $18$ cm: "$28-10$ baru mengurangi satu sisi".
     - $14$ cm: "itu jari-jari lingkaran putih".
-- **Bagian 3 — Luas tiap warna** (bangun di atasnya diangkat ke kanan, meninggalkan lubang putus-putus)
-  - Hitam (lingkaran putih diangkat): hitam = lingkaran besar − lingkaran kecil $=3{,}14\times(20^2-14^2)=3{,}14\times204=640{,}56$ cm².
-  - Biru (lingkaran besar diangkat): biru = persegi − lingkaran besar $=40^2-3{,}14\times20^2=1600-1256=344$ cm².
-  - Merah (lengan tegak dipisah; kotak tengah $8\times8$ disorot di kedua lengan): merah $=28\times8+28\times8=224+224-8\times8=448-64=384$ cm². Pertanyaan cepat baru: "Kedua lengan sama-sama $28\times8=224$. Luas salib merah adalah…"
-    - $448-64=384$: benar.
-    - $448$: "kotak tengah terhitung dua kali".
-    - $224$: "baru satu lengan".
-  - Putih (salib diangkat): putih = lingkaran kecil − merah $=3{,}14\times14^2-384=615{,}44-384=231{,}44$ cm². Pertanyaan cepat lama (luas putih).
-  - Rekap: hitam $640{,}56$ · biru $344$ · merah $384$ · putih $231{,}44$ (label luas di rambu).
-- **Bagian 4 — Bandingkan dengan hitam** (batang pembanding: panjang batang ∝ luas, garis putus-putus = batas cat hitam)
-  - 4.1 $\frac12$ hitam $=\frac12\times640{,}56=320{,}28$ (batang hitam dibelah dua).
-  - 4.2 Cara cepat (baru): $\frac12$ hitam $+X>$ hitam $\iff X>320{,}28$, karena setengah hitam ada di kedua sisi. Batas berlaku: hanya pilihan yang memuat setengah hitam (1–3).
-  - Tiap pilihan: kertas soal tampil, pilihan itu disorot dan disalin ke papan, lalu batang kedua kuantitas ditumpuk.
+- **Bagian 3 — Luas tiap warna** (bangun di atasnya diangkat ke kanan, meninggalkan lubang putus-putus; ukuran pada gambar terbang ke hitungan; tiap luas **disimpan ke catatan luas** di akhir langkahnya)
+  - Hitam (lingkaran putih diangkat; jari-jari $20$ dan $14$ tampil di lubang): hitam = lingkaran besar − lingkaran kecil $=3{,}14\times(20^2-14^2)=3{,}14\times(400-196)=3{,}14\times204=640{,}56$ cm². Simpan.
+  - Biru (lingkaran besar diangkat; sisi $40$ dan jari-jari lubang $20$): biru = persegi − lingkaran besar $=40^2-3{,}14\times20^2=1600-1256=344$ cm². Simpan.
+  - Merah (lima langkah):
+    - lengan tegak dipisah: salib = lengan mendatar + lengan tegak;
+    - disatukan lagi, lengan mendatar disorot dengan ukurannya: $28\times8=224$;
+    - lengan tegak disorot: $28\times8=224$;
+    - kotak tengah disorot pada salib utuh: $8\times8=64$, ikut terhitung di kedua lengan;
+    - merah $=224+224-64=384$ cm². Simpan. Pertanyaan cepat: $224+224-64=384$ (benar) · $224+224=448$ ("kotak tengah terhitung dua kali") · $224$ ("baru satu lengan").
+  - Putih (salib diangkat; jari-jari $14$ dari gambar, merah dari catatan): putih = lingkaran kecil − merah $=3{,}14\times14^2-384=615{,}44-384=231{,}44$ cm². Simpan. Pertanyaan cepat lama (luas putih).
+- **Bagian 4 — Bandingkan dengan hitam** (batang pembanding: panjang batang ∝ luas, garis putus-putus = batas cat hitam; semua angka diambil dari catatan luas yang tampil di papan)
+  - 4.1 Hitam diambil dari catatan: $\frac12$ hitam $=\frac12\times640{,}56=320{,}28$, disimpan juga ke catatan.
+  - 4.2 Cara cepat: $\frac12$ hitam $+X>$ hitam $\iff X>320{,}28$, karena setengah hitam ada di kedua sisi. Batas berlaku: hanya pilihan yang memuat setengah hitam (1–3).
+  - Tiap pilihan: kertas soal tampil, pilihan itu disorot dan disalin ke papan, lalu batang kedua kuantitas ditumpuk; angka baris hitungan terbang dari catatan luas.
     - (1) $320{,}28+344=664{,}28>640{,}56$; biru $344>320{,}28$. **Benar.**
     - (2) $320{,}28+384=704{,}28>640{,}56$; merah $384>320{,}28$. **Benar.**
     - (3) $320{,}28+231{,}44=551{,}72<640{,}56$; putih $231{,}44<320{,}28$. **Salah.**

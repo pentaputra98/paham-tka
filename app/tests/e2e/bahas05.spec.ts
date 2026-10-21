@@ -59,7 +59,7 @@ test.describe('Pembahasan soal 5 (G-Gerak, grafik kubik)', () => {
       if (i < steps.length) await page.locator('[data-next]').click();
     }
     await expect(page.getByRole('dialog')).toContainText('SELESAI', { timeout: 10_000 });
-    await expect(page.getByRole('dialog')).toContainText('(−2, 0) · (3, 0)');
+    await expect(page.locator('.done-body .seal-sm')).toHaveText(['(−2, 0)', '(3, 0)']);
     expect(errors).toEqual([]);
   });
 

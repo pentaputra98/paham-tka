@@ -1,9 +1,9 @@
 /**
  * SOAL 17 — Cat pada Rambu Rumah Makan (geometri bidang, multi-jawaban). Kunci: pilihan 1, 2, 5.
  * Sumber: docs/pembahasan25.md "SOAL 17", docs/soal25.md no. 17, docs/rambu_rumah_makan.png.
- * Alur gaya mengajar Pak Penta (revisi 21 Okt 2026, dicatat di dokumen): banyak cat ∝ luas → rambu dipandang
+ * Alur gaya mengajar Pak Penta (revisi 21 Okt 2026, dicatat di dokumen): warna lebih luas = cat lebih banyak → rambu dipandang
  * sebagai tumpukan empat bangun (warna terlihat = bangunnya − bangun di atasnya) → ukuran dari gambar
- * (R = 20, r = 14, w = 8) → luas tiap warna dengan "mengangkat" bangun di atasnya → batang pembanding:
+ * (R = 20, r = 14, w = 8) → luas tiap warna dengan "mengangkat" bangun di atasnya → catatan luas (tiap luas disimpan begitu didapat, lalu diambil dari catatan) → batang pembanding:
  * cara cepat "warna kedua > setengah hitam" untuk pilihan 1–3, jumlah langsung untuk pilihan 4–5.
  * Tafsir pilihan: benar bila jumlah kedua kuantitas > cat hitam (dicatat di dokumen).
  * Tata letak: panggung penuh dua kolom (PRD v1.5).
@@ -18,7 +18,9 @@ import { getSoal } from '../index';
 const fig = new URL('../../assets/soal/rambu_rumah_makan.png', import.meta.url).href;
 const sign = (state: SignState): Visual => ({ kind: 'svg', scene: 'sign', state });
 const bars = (state: BarsState): Visual => ({ kind: 'svg', scene: 'bars', state });
-const ALL: SignState = { vals: ['black', 'blue', 'red', 'white'] };
+/** catatan luas (deret pin) yang terisi bertahap: luas disimpan begitu didapat, lalu diambil dari sini */
+const NOTE4 = ['pH', 'pB', 'pM', 'pP'];
+const NOTE5 = [...NOTE4, 'pS'];
 
 /** Kelima pilihan (docs/soal25.md no. 17): kertas soal dan kutipan di papan memakai teks yang sama. */
 const OPTS = [
@@ -28,14 +30,6 @@ const OPTS = [
   'Biru dan putih.',
   'Biru dan merah.',
 ];
-/** pin per pilihan: hanya angka yang dipakai pilihan itu */
-const OPIN: Record<number, string[]> = {
-  1: ['pH', 'pS', 'pB'],
-  2: ['pH', 'pS', 'pM'],
-  3: ['pH', 'pS', 'pP'],
-  4: ['pH', 'pB', 'pP'],
-  5: ['pH', 'pB', 'pM'],
-};
 /** Baris kutipan pilihan ke-n: disalin dari kertas soal ke papan sebelum dicek. */
 const quote = (n: number): Row => ({
   id: `c${n}`,
@@ -46,14 +40,14 @@ const open4 = (n: number, cap: string): Step => ({
   ch: 4,
   cap,
   visual: { kind: 'soal', hl: 0, focus: `s-o${n}` },
-  board: { title: `Pilihan (${n})`, pins: OPIN[n], list: `L4${n}`, upTo: 1, from: 0 },
+  board: { title: `Pilihan (${n})`, pins: NOTE5, list: `L4${n}`, upTo: 1, from: 0 },
 });
 /** Langkah analisis pilihan ke-n: batang ditumpuk, lalu baris hitungannya. */
 const check4 = (n: number, cap: string): Step => ({
   ch: 4,
   cap,
   visual: bars({ half: n <= 3, opt: n, cmp: n <= 3 }),
-  board: { title: `Pilihan (${n})`, pins: OPIN[n], list: `L4${n}`, upTo: 2, from: 1 },
+  board: { title: `Pilihan (${n})`, pins: NOTE5, list: `L4${n}`, upTo: 2, from: 1 },
 });
 const sum = (
   id: string,
@@ -89,7 +83,20 @@ ${OPTS.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
 </ul>`,
     srcNames: ['s-cat', 's-tanya', 's-o1', 's-o2', 's-o3', 's-o4', 's-o5'],
   },
-  visualSrc: ['g-40', 'g-20', 'g-14', 'g-10a', 'g-10b', 'g-w', 'g-28'],
+  visualSrc: [
+    'g-40',
+    'g-R',
+    'g-r',
+    'g-10a',
+    'g-10b',
+    'g-w',
+    'g-28',
+    'g-h28',
+    'g-h8',
+    'g-v28',
+    'g-v8',
+    'g-ov',
+  ],
   lobby: {
     eyebrow: 'Kelas 12 · Matematika Lanjut · Geometri bidang',
     titleLines: ['Pembahasan Soal', 'Cat <span class="accent">Rambu</span>', 'Rumah Makan'],
@@ -110,21 +117,31 @@ ${OPTS.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
     { t: 'Cocokkan pilihan', d: '5 kartu' },
     { t: 'Selesai', d: 'Pilihan 1, 2, dan 5' },
   ],
+  pinsLabel: 'Catatan luas',
   pins: {
-    pH: { id: 'pH', toks: [H('PH1', 'hitam', 'tx'), O('PH2', '='), T('PH3', '640{,}56')] },
+    pH: { id: 'pH', toks: [H('PH1', 'hitam', 'tx', 'h1a'), O('PH2', '='), T('PH3', '640{,}56', '', 'h4e')] },
+    pB: { id: 'pB', toks: [H('PB1', 'biru', 'tx', 'b1a'), O('PB2', '='), T('PB3', '344', '', 'b3e')] },
+    pM: { id: 'pM', toks: [H('PM1', 'merah', 'tx', 'm5a'), O('PM2', '='), T('PM3', '384', '', 'm5h')] },
+    pP: { id: 'pP', toks: [H('PP1', 'putih', 'tx', 'p1a'), O('PP2', '='), T('PP3', '231{,}44', '', 'p3e')] },
     pS: {
       id: 'pS',
-      toks: [T('PS1', '\\tfrac12'), H('PS2', 'hitam', 'tx'), O('PS0', '='), T('PS3', '320{,}28')],
+      toks: [
+        T('PS1', '\\tfrac12'),
+        H('PS2', 'hitam', 'tx', 's1b'),
+        O('PS0', '='),
+        T('PS3', '320{,}28', '', 's1f'),
+      ],
     },
-    pB: { id: 'pB', toks: [H('PB1', 'biru', 'tx'), O('PB2', '='), T('PB3', '344')] },
-    pM: { id: 'pM', toks: [H('PM1', 'merah', 'tx'), O('PM2', '='), T('PM3', '384')] },
-    pP: { id: 'pP', toks: [H('PP1', 'putih', 'tx'), O('PP2', '='), T('PP3', '231{,}44')] },
   },
   lists: {
     L1: [
       {
         id: 'k1',
-        toks: [H('k1a', 'banyak cat', 'blue', '@s-cat'), O('k1b', '\\propto'), H('k1c', 'luas warna', 'tx')],
+        toks: [
+          H('k1a', 'warna lebih luas', 'blue', '@s-cat'),
+          O('k1b', '\\Rightarrow'),
+          H('k1c', 'cat lebih banyak', 'tx'),
+        ],
         note: 'cat dibeli dalam ukuran yang sama',
       },
       {
@@ -166,7 +183,7 @@ ${OPTS.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
       },
       {
         id: 'u2',
-        toks: [T('u2a', 'r'), O('u2b', '='), T('u2c', '14\\ \\text{cm}', 'blue', '@g-14')],
+        toks: [T('u2a', 'r'), O('u2b', '='), T('u2c', '14\\ \\text{cm}', 'blue', '@g-r')],
         note: 'jari-jari lingkaran putih, tertulis di gambar',
       },
       {
@@ -194,18 +211,31 @@ ${OPTS.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
       },
       {
         id: 'h2',
-        toks: [O('h2a', '='), T('h2b', '3{,}14'), O('h2c', '\\times'), T('h2d', '(20^2-14^2)')],
-        note: '$\\pi R^2-\\pi r^2=\\pi(R^2-r^2)$',
+        toks: [
+          O('h2a', '='),
+          T('h2b', '3{,}14'),
+          O('h2c', '\\times'),
+          T('h2d', '('),
+          T('h2f', '20^2', 'blue', '@g-R'),
+          O('h2g', '-'),
+          T('h2h', '14^2', 'blue', '@g-r'),
+          T('h2i', ')'),
+        ],
+        note: 'jari-jari besar $20$, jari-jari kecil $14$',
       },
       {
         id: 'h3',
+        toks: [O('h3a', '='), T('h3b', '3{,}14'), O('h3c', '\\times'), T('h3d', '(400-196)')],
+      },
+      {
+        id: 'h4',
         toks: [
-          O('h3a', '='),
-          T('h3b', '3{,}14\\times204'),
-          O('h3c', '='),
-          T('h3d', '640{,}56\\ \\text{cm}^2', 'blue'),
+          O('h4a', '='),
+          T('h4b', '3{,}14\\times204'),
+          O('h4c', '='),
+          T('h4e', '640{,}56\\ \\text{cm}^2', 'blue'),
         ],
-        note: '$400-196=204$',
+        note: 'simpan ke catatan',
         box: 'navy',
       },
     ],
@@ -217,34 +247,77 @@ ${OPTS.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
       },
       {
         id: 'b2',
-        toks: [O('b2a', '='), T('b2b', '40^2'), O('b2c', '-'), T('b2d', '3{,}14\\times20^2')],
+        toks: [
+          O('b2a', '='),
+          T('b2b', '40^2', 'blue', '@g-40'),
+          O('b2c', '-'),
+          T('b2d', '3{,}14\\times'),
+          T('b2f', '20^2', 'blue', '@g-R'),
+        ],
+        note: 'sisi $40$, jari-jari lubang $20$',
       },
       {
         id: 'b3',
-        toks: [O('b3a', '='), T('b3b', '1600-1256'), O('b3c', '='), T('b3d', '344\\ \\text{cm}^2', 'blue')],
+        toks: [O('b3a', '='), T('b3b', '1600-1256'), O('b3c', '='), T('b3e', '344\\ \\text{cm}^2', 'blue')],
+        note: 'simpan ke catatan',
         box: 'navy',
       },
     ],
     LM: [
       {
         id: 'm1',
-        toks: [
-          H('m1a', 'merah', 'tx'),
-          O('m1b', '='),
-          T('m1c', '28\\times8'),
-          O('m1d', '+'),
-          T('m1e', '28\\times8'),
-        ],
-        note: 'lengan mendatar + lengan tegak',
+        toks: [H('m1a', 'salib', 'tx'), O('m1b', '='), H('m1c', 'lengan mendatar + lengan tegak', 'tx')],
+        note: 'dua persegi panjang',
       },
       {
         id: 'm2',
-        toks: [O('m2a', '='), T('m2b', '224+224'), O('m2c', '-'), T('m2d', '8\\times8', 'red')],
-        note: 'kotak tengah terhitung dua kali, kurangi sekali',
+        toks: [
+          H('m2a', 'mendatar', 'tx'),
+          O('m2b', '='),
+          T('m2c', '28', 'blue', '@g-h28'),
+          O('m2d', '\\times'),
+          T('m2e', '8', 'blue', '@g-h8'),
+          O('m2f', '='),
+          T('m2g', '224'),
+        ],
       },
       {
         id: 'm3',
-        toks: [O('m3a', '='), T('m3b', '448-64'), O('m3c', '='), T('m3d', '384\\ \\text{cm}^2', 'blue')],
+        toks: [
+          H('m3a', 'tegak', 'tx'),
+          O('m3b', '='),
+          T('m3c', '28', 'blue', '@g-v28'),
+          O('m3d', '\\times'),
+          T('m3e', '8', 'blue', '@g-v8'),
+          O('m3f', '='),
+          T('m3g', '224'),
+        ],
+      },
+      {
+        id: 'm4',
+        toks: [
+          H('m4a', 'kotak tengah', 'tx'),
+          O('m4b', '='),
+          T('m4c', '8\\times8', 'red', '@g-ov'),
+          O('m4d', '='),
+          T('m4e', '64', 'red'),
+        ],
+        note: 'ikut terhitung di kedua lengan',
+      },
+      {
+        id: 'm5',
+        toks: [
+          H('m5a', 'merah', 'tx'),
+          O('m5b', '='),
+          T('m5c', '224', '', 'm2g'),
+          O('m5d', '+'),
+          T('m5e', '224', '', 'm3g'),
+          O('m5f', '-'),
+          T('m5g', '64', 'red', 'm4e'),
+          O('m5i', '='),
+          T('m5h', '384\\ \\text{cm}^2', 'blue'),
+        ],
+        note: 'kotak tengah dikurangi sekali; simpan ke catatan',
         box: 'navy',
       },
     ],
@@ -256,7 +329,14 @@ ${OPTS.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
       },
       {
         id: 'p2',
-        toks: [O('p2a', '='), T('p2b', '3{,}14\\times14^2'), O('p2c', '-'), T('p2d', '384')],
+        toks: [
+          O('p2a', '='),
+          T('p2b', '3{,}14\\times'),
+          T('p2c', '14^2', 'blue', '@g-r'),
+          O('p2d', '-'),
+          T('p2e', '384', '', 'PM3'),
+        ],
+        note: 'jari-jari $14$ dari gambar, merah dari catatan',
       },
       {
         id: 'p3',
@@ -264,16 +344,11 @@ ${OPTS.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
           O('p3a', '='),
           T('p3b', '615{,}44-384'),
           O('p3c', '='),
-          T('p3d', '231{,}44\\ \\text{cm}^2', 'blue'),
+          T('p3e', '231{,}44\\ \\text{cm}^2', 'blue'),
         ],
+        note: 'simpan ke catatan',
         box: 'navy',
       },
-    ],
-    LW: [
-      { id: 'w1', toks: [H('w1a', 'hitam', 'tx'), O('w1b', '='), T('w1c', '640{,}56\\ \\text{cm}^2')] },
-      { id: 'w2', toks: [H('w2a', 'biru', 'tx'), O('w2b', '='), T('w2c', '344\\ \\text{cm}^2')] },
-      { id: 'w3', toks: [H('w3a', 'merah', 'tx'), O('w3b', '='), T('w3c', '384\\ \\text{cm}^2')] },
-      { id: 'w4', toks: [H('w4a', 'putih', 'tx'), O('w4b', '='), T('w4c', '231{,}44\\ \\text{cm}^2')] },
     ],
     LS: [
       {
@@ -405,7 +480,7 @@ ${OPTS.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
         ],
       },
     },
-    // ---- 3 · Luas tiap warna ----
+    // ---- 3 · Luas tiap warna (luas disimpan ke catatan begitu didapat) ----
     {
       ch: 3,
       cap: 'Hitam dulu. Angkat lingkaran putih dari atasnya: yang tersisa cincin hitam, yaitu lingkaran besar dikurangi lingkaran kecil.',
@@ -414,40 +489,58 @@ ${OPTS.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
     },
     {
       ch: 3,
-      cap: 'Masukkan angkanya: $3{,}14\\times(20^2-14^2)=3{,}14\\times204$. Luas hitam $640{,}56$ cm².',
-      visual: sign({ lift: 'small' }),
-      board: { title: 'Luas hitam', list: 'LH', upTo: 3, from: 1 },
+      cap: 'Perhatikan jari-jarinya: lingkaran besar $20$, lingkaran kecil $14$. Masukkan, hitung, lalu <b>simpan</b> luas hitam ke catatan.',
+      visual: sign({ lift: 'small', meas: ['R', 'r'] }),
+      board: { title: 'Luas hitam', list: 'LH', upTo: 4, from: 1, save: ['pH'] },
     },
     {
       ch: 3,
       cap: 'Sekarang biru. Angkat lingkaran besar: tersisa persegi berlubang, jadi biru = persegi dikurangi lingkaran besar.',
       visual: sign({ lift: 'big' }),
-      board: { title: 'Luas biru', list: 'LB', upTo: 1, from: 0 },
+      board: { title: 'Luas biru', pins: ['pH'], list: 'LB', upTo: 1, from: 0 },
     },
     {
       ch: 3,
-      cap: 'Hitung: $40^2-3{,}14\\times20^2=1600-1256$. Luas biru $344$ cm².',
-      visual: sign({ lift: 'big' }),
-      board: { title: 'Luas biru', list: 'LB', upTo: 3, from: 1 },
+      cap: 'Sisi persegi $40$, jari-jari lubangnya $20$. Luas biru $344$ cm², simpan juga ke catatan.',
+      visual: sign({ lift: 'big', meas: ['40', 'R'] }),
+      board: { title: 'Luas biru', pins: ['pH'], list: 'LB', upTo: 3, from: 1, save: ['pB'] },
     },
     {
       ch: 3,
-      cap: 'Merah berbentuk salib. Pisahkan lengan tegaknya: ternyata salib terdiri dari dua persegi panjang $28\\times8$.',
+      cap: 'Merah berbentuk salib. Kalau lengan tegaknya dipisah, ternyata salib terdiri dari dua persegi panjang.',
       visual: sign({ lift: 'vbar', dim: true }),
-      board: { title: 'Luas merah', list: 'LM', upTo: 1, from: 0 },
+      board: { title: 'Luas merah', pins: ['pH', 'pB'], list: 'LM', upTo: 1, from: 0 },
     },
     {
       ch: 3,
-      cap: 'Hati-hati, kotak tengah $8\\times8$ ikut terhitung di kedua lengan, jadi kurangi sekali. Luas merah $448-64=384$ cm².',
-      visual: sign({ lift: 'vbar', dim: true, ov: true }),
-      board: { title: 'Luas merah', list: 'LM', upTo: 3, from: 1 },
+      cap: 'Kita satukan lagi. Lengan mendatar panjangnya $28$, lebarnya $8$: luasnya $224$.',
+      visual: sign({ dim: true, arm: 'h' }),
+      board: { title: 'Luas merah', pins: ['pH', 'pB'], list: 'LM', upTo: 2, from: 1 },
+    },
+    {
+      ch: 3,
+      cap: 'Lengan tegak juga $28\\times8=224$.',
+      visual: sign({ dim: true, arm: 'v' }),
+      board: { title: 'Luas merah', pins: ['pH', 'pB'], list: 'LM', upTo: 3, from: 2 },
+    },
+    {
+      ch: 3,
+      cap: 'Hati-hati, kotak tengah $8\\times8$ ini milik kedua lengan, jadi ikut terhitung dua kali.',
+      visual: sign({ dim: true, ov: true }),
+      board: { title: 'Luas merah', pins: ['pH', 'pB'], list: 'LM', upTo: 4, from: 3 },
+    },
+    {
+      ch: 3,
+      cap: 'Jumlahkan kedua lengan, lalu kurangi kotak tengah sekali. Luas merah $384$ cm², simpan ke catatan.',
+      visual: sign({ dim: true }),
+      board: { title: 'Luas merah', pins: ['pH', 'pB'], list: 'LM', upTo: 5, from: 4, save: ['pM'] },
       ask: {
-        before: 'm2',
-        q: 'Kedua lengan sama-sama $28\\times8=224$. Luas salib merah adalah…',
+        before: 'm5',
+        q: 'Kedua lengan sama-sama $224$, kotak tengahnya $64$. Luas salib merah adalah…',
         opts: [
-          { tex: '448-64=384', ok: true },
+          { tex: '224+224-64=384', ok: true },
           {
-            tex: '448',
+            tex: '224+224=448',
             hint: 'Kotak tengah $8\\times8$ terhitung dua kali, sekali di tiap lengan. Kurangi sekali.',
           },
           { tex: '224', hint: 'Itu baru satu lengan. Salib punya dua lengan.' },
@@ -458,7 +551,7 @@ ${OPTS.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
       ch: 3,
       cap: 'Terakhir putih. Angkat salib merahnya: putih = lingkaran kecil dikurangi merah.',
       visual: sign({ lift: 'cross' }),
-      board: { title: 'Luas putih', list: 'LP', upTo: 1, from: 0 },
+      board: { title: 'Luas putih', pins: ['pH', 'pB', 'pM'], list: 'LP', upTo: 1, from: 0 },
       ask: {
         before: 'p1',
         q: 'Luas putih sama dengan…',
@@ -478,28 +571,22 @@ ${OPTS.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
     },
     {
       ch: 3,
-      cap: 'Hitung: $3{,}14\\times14^2=615{,}44$, dikurangi merah $384$. Luas putih $231{,}44$ cm².',
-      visual: sign({ lift: 'cross' }),
-      board: { title: 'Luas putih', list: 'LP', upTo: 3, from: 1 },
+      cap: 'Jari-jari $14$ dari gambar, luas merah $384$ ambil dari catatan. Luas putih $231{,}44$ cm², simpan juga.',
+      visual: sign({ lift: 'cross', meas: ['r'] }),
+      board: { title: 'Luas putih', pins: ['pH', 'pB', 'pM'], list: 'LP', upTo: 3, from: 1, save: ['pP'] },
     },
-    {
-      ch: 3,
-      cap: 'Ini luas keempat warna. Sekarang kita siap membandingkan setiap pilihan dengan cat hitam.',
-      visual: sign(ALL),
-      board: { title: 'Luas tiap warna', list: 'LW', upTo: 4, from: 0 },
-    },
-    // ---- 4 · Bandingkan dengan hitam ----
+    // ---- 4 · Bandingkan dengan hitam (semua angka diambil dari catatan luas) ----
     {
       ch: 4,
-      cap: 'Gambar banyak cat sebagai batang. Tiga pilihan pertama memuat <b>setengah hitam</b>: setengah dari $640{,}56$ adalah $320{,}28$.',
+      cap: 'Catatan luas sudah lengkap. Tiga pilihan pertama memuat <b>setengah hitam</b>: ambil hitam dari catatan, setengahnya $320{,}28$.',
       visual: bars({ half: true }),
-      board: { title: 'Setengah hitam', pins: ['pH'], list: 'LS', upTo: 1, from: 0 },
+      board: { title: 'Setengah hitam', pins: NOTE4, list: 'LS', upTo: 1, from: 0, save: ['pS'] },
     },
     {
       ch: 4,
       cap: 'Cara cepat: setengah hitam ada di kedua sisi, jadi cukup cek apakah warna keduanya lebih dari $320{,}28$. Ingat, ini hanya berlaku untuk pilihan yang memuat setengah hitam.',
       visual: bars({ half: true, cmp: true }),
-      board: { title: 'Setengah hitam', pins: ['pH'], list: 'LS', upTo: 2, from: 1 },
+      board: { title: 'Setengah hitam', pins: NOTE5, list: 'LS', upTo: 2, from: 1 },
     },
     open4(1, 'Kita cek pilihan (1) dulu. Salin ke papan: setengah hitam dan biru.'),
     check4(
@@ -537,7 +624,7 @@ ${OPTS.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
       ch: 6,
       cap: 'Cocokkan dengan kelima pilihan: (1), (2), dan (5) benar. Pilih jawabannya di bawah.',
       visual: { kind: 'cards', flip: 5 },
-      board: { title: 'Cocokkan pilihan', pins: ['pH', 'pB', 'pM', 'pP'], list: 'L6', upTo: 1, from: 0 },
+      board: { title: 'Cocokkan pilihan', pins: NOTE5, list: 'L6', upTo: 1, from: 0 },
       ask: {
         before: 's6',
         q: 'Pilihan yang benar adalah…',
@@ -629,7 +716,8 @@ ${OPTS.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
   authorNotes: [
     'Alur ditulis ulang dengan gaya mengajar Pak Penta (21 Okt 2026, dicatat di dokumen): rambu sebagai tumpukan empat bangun, ukuran dari gambar, luas tiap warna dengan mengangkat bangun di atasnya, lalu batang pembanding per pilihan.',
     'Cara cepat pilihan 1–3 (setengah hitam + X > hitam ⇔ X > 320,28) diturunkan dari angka dokumen; batasnya disebut: hanya untuk pilihan yang memuat setengah hitam.',
-    'Pertanyaan cepat baru: lebar lengan w (dari 10 + w + 10 = 28) dan luas salib (448 − 64), dari "Kesalahan umum" dokumen.',
+    'Pertanyaan cepat baru: lebar lengan w (dari 10 + w + 10 = 28) dan luas salib (224 + 224 − 64), dari "Kesalahan umum" dokumen.',
+    'Revisi kedua (permintaan pemilik): catatan luas di papan menyimpan tiap luas begitu didapat (pin terbang dari baris hasil) dan menjadi sumber semua hitungan berikutnya; salib merah disorot per lengan pada salib utuh.',
   ],
 };
 

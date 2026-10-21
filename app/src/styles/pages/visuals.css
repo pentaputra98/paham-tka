@@ -720,6 +720,7 @@
 
   .sg-red {
     fill: var(--red-600);
+    transition: opacity var(--dur-slow) var(--ease);
   }
 
   /* lubang yang ditinggalkan bangun yang diangkat */
@@ -747,6 +748,34 @@
 
   .show-dim .sg-dimmer {
     opacity: 0.78;
+  }
+
+  /* merah: satu lengan salib utuh disorot (garis tepi putus-putus), lengan lainnya diredupkan */
+  .sg-arm-line {
+    fill: none;
+    stroke: var(--paper-0);
+    stroke-width: var(--bw-3);
+    stroke-dasharray: 6 4;
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .arm-h [data-arm-line='h'],
+  .arm-v [data-arm-line='v'],
+  .arm-h .sg-arm-h,
+  .arm-v .sg-arm-v,
+  .ov-whole .sg-ov-in {
+    opacity: 1;
+  }
+
+  .arm-h [data-arm='v'],
+  .arm-v [data-arm='h'] {
+    opacity: 0.3;
+  }
+
+  .sg-ov-in {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
   }
 
   /* kotak tengah 8 × 8 yang terhitung dua kali */

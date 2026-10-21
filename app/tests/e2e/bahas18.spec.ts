@@ -54,7 +54,7 @@ async function walk(page: Page): Promise<void> {
     if (i < steps.length) await page.locator('[data-next]').click();
   }
   await expect(page.getByRole('dialog')).toContainText('SELESAI', { timeout: 10_000 });
-  await expect(page.getByRole('dialog')).toContainText('Tidak · Tidak · Pas');
+  await expect(page.locator('.done-body .seal-sm')).toHaveText(['Tidak', 'Tidak', 'Pas']);
 }
 
 test.describe('Pembahasan soal 18 (G-Gerak, 3D pelengkap)', () => {

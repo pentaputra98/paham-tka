@@ -27,8 +27,10 @@ export interface SignState {
   meas?: Meas[];
   /** bangun yang diangkat ke kanan */
   lift?: Lift;
-  /** kotak tengah 8 × 8 pada kedua lengan disorot (setelah lengan tegak dipisah) */
+  /** kotak tengah 8 × 8 disorot (lengan tegak dipisah: di kedua lengan; salib utuh: di tengah salib) */
   ov?: boolean;
+  /** sorot satu lengan salib utuh beserta ukurannya: h = lengan mendatar, v = lengan tegak */
+  arm?: 'h' | 'v';
   /** rambu di bawah salib diredupkan (membahas merah) */
   dim?: boolean;
   /** label luas yang sudah dihitung */
@@ -105,8 +107,10 @@ function markup(id: string, live: boolean): string {
       <g class="sg-hole" data-hole="cross"><path d="${hbar}" ${clip}/><path d="${vbar}" ${clip}/></g>
       <rect class="sg-dimmer" x="${X0 - 2}" y="${Y0 - 2}" width="${S + 4}" height="${S + 4}"/>
       <g class="sg-g" data-g="cross" data-layer="red">
-        <path class="sg-red" d="${hbar}" ${clip}/>${ovRect}
-        <g class="sg-g" data-g="vbar"><path class="sg-red" d="${vbar}" ${clip}/>${ovRect}</g>
+        <path class="sg-red" data-arm="h" d="${hbar}" ${clip}/>${ovRect}
+        <g class="sg-g" data-g="vbar"><path class="sg-red" data-arm="v" d="${vbar}" ${clip}/>${ovRect}</g>
+        <path class="sg-arm-line" data-arm-line="h" d="${hbar}" ${clip}/>
+        <path class="sg-arm-line" data-arm-line="v" d="${vbar}" ${clip}/>
       </g>
     </g>
   </g>
@@ -116,11 +120,11 @@ function markup(id: string, live: boolean): string {
   </g>
   <g class="sg-m sg-m-R">
     <path class="sg-r" d="M${CX} ${CY}V${CY - R}"/>
-    <text class="sg-lbl sg-on-dark" x="${CX - 10}" y="${CY - R + 40}" text-anchor="end"${src('g-20')}>20 cm</text>
+    <text class="sg-lbl sg-on-dark" x="${CX - 10}" y="${CY - R + 40}" text-anchor="end"${src('g-R')}>20 cm</text>
   </g>
   <g class="sg-m sg-m-r">
     <path class="sg-r" d="M${CX} ${CY}H${CX + RI}"/>
-    <text class="sg-lbl sg-on-red" x="${CX + 58}" y="${CY - 11}" text-anchor="middle"${src('g-14')}>14 cm</text>
+    <text class="sg-lbl sg-on-red" x="${CX + 58}" y="${CY - 11}" text-anchor="middle"${src('g-r')}>14 cm</text>
   </g>
   <g class="sg-m sg-m-w">
     <text class="sg-lbl sg-on-white" x="${CX - (RI + HW) / 2}" y="${CY - HW - 10}" text-anchor="middle"${src('g-10a')}>10 cm</text>
@@ -130,6 +134,17 @@ function markup(id: string, live: boolean): string {
     <path class="sg-arrow sg-arrow-ink" d="M${CX - RI} ${CY + HW + 14}H${CX + RI}"/>
     <text class="sg-lbl sg-on-white" x="${CX - 40}" y="${CY + HW + 32}" text-anchor="middle"${src('g-28')}>28 cm</text>
   </g>
+  <g class="sg-m sg-arm-h">
+    <path class="sg-arrow sg-arrow-ink" d="M${CX - RI + 4} ${CY + HW + 9}H${CX + RI - 4}"/>
+    <text class="sg-lbl sg-on-white" x="${CX - 62}" y="${CY + HW + 27}" text-anchor="middle"${src('g-h28')}>28 cm</text>
+    <text class="sg-lbl sg-on-dark" x="${CX + RI + 6}" y="${CY}" dominant-baseline="middle"${src('g-h8')}>8 cm</text>
+  </g>
+  <g class="sg-m sg-arm-v">
+    <path class="sg-arrow sg-arrow-ink" d="M${CX + HW + 9} ${CY - RI + 4}V${CY + RI - 4}"/>
+    <text class="sg-lbl sg-on-white" x="${CX + HW + 16}" y="${CY - RI + 46}"${src('g-v28')}>28 cm</text>
+    <text class="sg-lbl sg-on-dark" x="${CX}" y="${CY - RI - 10}" text-anchor="middle"${src('g-v8')}>8 cm</text>
+  </g>
+  <text class="sg-lbl sg-on-white sg-ov-in" x="${CX}" y="${CY}" text-anchor="middle" dominant-baseline="middle"${src('g-ov')}>8×8</text>
   ${live ? `<g class="sg-legend">${legend}</g>${liftLbl}<text class="sg-lbl sg-ov-lbl" x="${LX}" y="${Y0 + 12}" text-anchor="middle">8 × 8 terhitung dua kali</text>${vals}` : ''}
 </svg>`;
 }
@@ -215,6 +230,9 @@ export function createSign(): VisualScene {
         el.classList.toggle(`show-m-${m}`, !!s.meas?.includes(m));
       el.classList.toggle('show-legend', !!s.build);
       el.classList.toggle('show-ov', !!s.ov);
+      el.classList.toggle('arm-h', s.arm === 'h');
+      el.classList.toggle('arm-v', s.arm === 'v');
+      el.classList.toggle('ov-whole', !!s.ov && s.lift !== 'vbar');
       el.classList.toggle('show-dim', !!s.dim);
       for (const v of vals) v.classList.toggle('on', !!s.vals?.includes(v.dataset.val as Layer));
       if (s.build && c.dir > 0 && (!built || c.replay) && !reducedMotion()) {

@@ -60,7 +60,8 @@ test.describe('Pembahasan soal 17 (G-Gerak, rambu SVG)', () => {
       if (i < steps.length) await page.locator('[data-next]').click();
     }
     await expect(page.getByRole('dialog')).toContainText('SELESAI', { timeout: 10_000 });
-    await expect(page.getByRole('dialog')).toContainText('1 · 2 · 5');
+    // jawaban banyak: satu medali per pilihan (revisi v1.10)
+    await expect(page.locator('.done-body .seal-sm')).toHaveText(['1', '2', '5']);
     expect(errors).toEqual([]);
   });
 
@@ -80,6 +81,32 @@ test.describe('Pembahasan soal 17 (G-Gerak, rambu SVG)', () => {
     await settled(page, 10);
     await expect(page.locator('.vis-sign')).toHaveAttribute('data-lift', 'big');
     await expect(page.locator('.vis-sign.show-dim')).toHaveCount(0);
+    // merah: lengan disatukan lagi lalu disorot satu per satu, kotak tengah disorot pada salib utuh
+    await page.goto('./#/soal/17/bahas?m=amati&b=3&l=5');
+    await settled(page, 12);
+    await expect(page.locator('.vis-sign[data-lift="vbar"]')).toHaveCount(0);
+    await expect(page.locator('.vis-sign.arm-h')).toHaveCount(1);
+    await page.goto('./#/soal/17/bahas?m=amati&b=3&l=7');
+    await settled(page, 14);
+    await expect(page.locator('.vis-sign.ov-whole')).toHaveCount(1);
+  });
+
+  test('catatan luas: luas disimpan begitu didapat dan dipakai di semua pilihan', async ({ page }) => {
+    await setup(page);
+    await page.goto('./#/soal/17/bahas?m=amati&b=3&l=0');
+    await settled(page, 7);
+    await expect(page.locator('.bd-pins [data-pin]')).toHaveCount(0);
+    await page.locator('[data-next]').click();
+    await settled(page, 8);
+    await expect(page.locator('.bd-pins')).toHaveAttribute('data-label', 'Catatan luas');
+    await expect(page.locator('.bd-pins [data-pin="pH"]')).toContainText('640,56', { timeout: 10_000 });
+    await expect(page.locator('.bd-pins .tk.hid')).toHaveCount(0);
+    await page.locator('[data-prev]').click();
+    await settled(page, 7);
+    await expect(page.locator('.bd-pins [data-pin]')).toHaveCount(0);
+    await page.goto('./#/soal/17/bahas?m=amati&b=4&l=2');
+    await settled(page, 20);
+    await expect(page.locator('.bd-pins [data-pin]')).toHaveCount(5);
   });
 
   test('tiap pilihan: soal tampil lagi, pilihan disorot dan disalin, lalu batang ditumpuk', async ({
@@ -90,24 +117,24 @@ test.describe('Pembahasan soal 17 (G-Gerak, rambu SVG)', () => {
     for (const n of [1, 2, 3, 4, 5]) {
       const l = 2 * n;
       await page.goto(`./#/soal/17/bahas?m=amati&b=4&l=${l}`);
-      await settled(page, 16 + l);
+      await settled(page, 18 + l);
       await expect(page.locator('.hl-q.focus [data-src]')).toHaveAttribute('data-src', `s-o${n}`);
       await expect(page.locator(`.board .bl[data-row="c${n}"] .tk.q`)).toHaveCount(1);
       await page.locator('[data-next]').click();
-      await settled(page, 17 + l);
+      await settled(page, 19 + l);
       await expect(page.locator('.vis-bars .br-opt [data-seg]')).toHaveCount(3);
     }
   });
 
   test('Ikut berpikir: pertanyaan luas putih', async ({ page }) => {
     await setup(page);
-    await page.goto('./#/soal/17/bahas?m=ikut&b=3&l=6');
+    await page.goto('./#/soal/17/bahas?m=ikut&b=3&l=9');
     const foot = page.locator('.ask-ov');
     await expect(foot).toContainText('Luas putih', { timeout: 20_000 });
     await foot.getByRole('button', { name: /persegi dikurangi/ }).click();
     await expect(foot.locator('.ask-h')).toContainText('Belum tepat');
     await foot.getByRole('button', { name: /lingkaran kecil dikurangi/ }).click();
-    await settled(page, 13);
+    await settled(page, 16);
     await expect(foot).toBeEmpty();
     await expect(page.locator('[data-row="p1"]')).toContainText('lingkaran kecil');
   });

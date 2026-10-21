@@ -59,7 +59,7 @@ test.describe('Pembahasan soal 16 (G-Gerak, garis dan lingkaran)', () => {
       if (i < steps.length) await page.locator('[data-next]').click();
     }
     await expect(page.getByRole('dialog')).toContainText('SELESAI', { timeout: 10_000 });
-    await expect(page.getByRole('dialog')).toContainText('(3, −1) · (1, −5)');
+    await expect(page.locator('.done-body .seal-sm')).toHaveText(['(3, −1)', '(1, −5)']);
     expect(errors).toEqual([]);
   });
 

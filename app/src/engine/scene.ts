@@ -11,6 +11,7 @@ import { play } from '../core/motion';
 import { DUR, EASE_OUT } from '../core/tokens';
 import type { Board, Ctx } from './board';
 import { Cards } from './cards';
+import { expandSeals } from './seal';
 import { mathHtml } from '../core/math';
 import { verdictLabels, type SoalContent, type Step, type Visual } from './types';
 
@@ -172,6 +173,7 @@ export class Scene {
     this.capStep = step;
     this.capK.textContent = `Bagian ${step.ch} · ${chapterTitle}`;
     this.capT.innerHTML = mathHtml(step.cap);
+    expandSeals(this.capT);
     this.capA.replaceChildren();
     for (const a of actions) {
       const b = document.createElement('button');

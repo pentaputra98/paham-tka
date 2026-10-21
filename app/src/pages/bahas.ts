@@ -19,6 +19,7 @@ import { Ink } from '../engine/ink';
 import { buildNotes } from '../engine/notes';
 import { Player, type PlayerHooks } from '../engine/player';
 import { Scene } from '../engine/scene';
+import { sealHtml } from '../engine/seal';
 import type { SoalContent, Step } from '../engine/types';
 import type { Route } from '../router/router';
 import { navigate, type PageView } from '../shell/app';
@@ -432,7 +433,7 @@ export function bahasPage(route: Route): PageView {
       `<button type="button" class="done-tile" data-a="${a}">${icon(ic)}<span>${t}</span></button>`;
     const { root } = openSheet({
       title: 'SELESAI',
-      body: `<div class="done-body"><span class="seal" aria-hidden="true">${esc(content.done.seal)}</span>
+      body: `<div class="done-body">${sealHtml(content.done.seal, ' aria-hidden="true"')}
         <p class="done-lead">Kamu sudah menuntaskan pembahasan ini dari awal sampai akhir.</p>
         <p class="done-msg">${mathHtml(content.done.message)}</p></div>
         <div class="done-acts">

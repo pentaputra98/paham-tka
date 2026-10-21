@@ -181,6 +181,8 @@
     /* angka matriks pada adegan soal 1: besar, dibaca dari jauh */
     --fs-mat: calc(clamp(24px, 2.9vw, 52px) * var(--ui));
     --size-seal: calc(58px * var(--ui));
+    --size-seal-sm: calc(38px * var(--ui));
+    --size-seal-xs: calc(28px * var(--ui));
     --size-row: calc(42px * var(--ui));
     --size-row-sm: calc(32px * var(--ui));
     --size-dot-w: calc(24px * var(--ui));

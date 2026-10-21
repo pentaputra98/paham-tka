@@ -62,6 +62,7 @@ export class Player {
     this.path = path;
     board.onPending = () => hooks.chrome();
     board.onReplay = () => this.go(this.i, 1, { replay: true });
+    board.setPinsLabel(content.pinsLabel);
   }
 
   readonly live = (run: number): boolean => run === this.run;
@@ -201,6 +202,8 @@ export class Player {
         if (!ok || !c.live()) return false;
         if (!(await this.board.to(list, b.upTo, askIdx, { ...c, seq: true }))) return false;
       } else if (!(await this.board.to(list, b.upTo, b.from, c))) return false;
+      if (b.save && !(await this.board.save(b.save.map((id) => this.content.pins[id]!).filter(Boolean), c)))
+        return false;
     }
 
     // animasi langkah selesai: Lanjut berikutnya pindah langkah (jeda di bawah ini hanya irama)

@@ -89,6 +89,8 @@ export interface BoardSpec {
    * (sebelum baris baru ditulis); baris yang ditulis di langkah ini dicoret setelah rumusnya tampil utuh.
    */
   cut?: string[];
+  /** pin yang disimpan ke catatan di akhir langkah (terbang dari baris hasil; lihat Board.save) */
+  save?: string[];
 }
 export interface Step {
   ch: number;
@@ -135,6 +137,8 @@ export interface SoalContent {
   lobby: { eyebrow: string; titleLines: [string, string, string]; lede: string; facts: [Fact, Fact, Fact] };
   chapters: Array<{ t: string; d: string }>;
   pins: Record<string, Pin>;
+  /** label deret pin (mis. "Catatan luas"); bawaan "Hasil sebelumnya" */
+  pinsLabel?: string;
   lists: Record<string, Row[]>;
   steps: Step[];
   cards: Card[];

@@ -335,6 +335,31 @@
     color: var(--color-brand);
   }
 
+  /* jawaban banyak: deret medali kecil (bagian panjang berbentuk pil) */
+  .seal-row {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: var(--space-1-5);
+  }
+
+  .seal-sm {
+    width: var(--size-seal-sm);
+    height: var(--size-seal-sm);
+    box-shadow:
+      0 0 0 var(--bw-2) var(--color-surface),
+      0 0 0 calc(var(--bw-2) + var(--bw-2)) var(--color-result);
+    font-size: var(--fs-body);
+  }
+
+  .seal-row.is-pill .seal-sm {
+    width: auto;
+    padding: 0 var(--space-2-5);
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-small);
+    white-space: nowrap;
+  }
+
   /* kertas soal di area bebas */
   .p-soal {
     overflow: auto;
@@ -544,6 +569,10 @@
     color: var(--color-text-muted);
   }
 
+  .bd-pins[data-label]::before {
+    content: attr(data-label);
+  }
+
   .pin {
     display: inline-flex;
     flex-wrap: wrap;
@@ -559,6 +588,17 @@
   .pin > * {
     flex: none;
     white-space: nowrap;
+  }
+
+  @media (max-height: 520px) {
+    .lay-full .bd-pins {
+      gap: var(--space-1);
+      font-size: var(--fs-caption);
+    }
+
+    .lay-full .pin {
+      padding: 0 var(--space-1-5);
+    }
   }
 
   .pin.gold {
@@ -1635,7 +1675,8 @@
     gap: var(--space-2);
   }
 
-  .done-body .seal {
+  .done-body > .seal,
+  .done-body > .seal-row {
     margin-bottom: var(--space-2);
   }
 
@@ -1742,12 +1783,31 @@
       text-align: left;
     }
 
-    .done-body .seal {
+    .done-body > .seal,
+    .done-body > .seal-row {
       grid-row: span 2;
       margin: 0;
     }
 
+    /* jawaban banyak di layar pendek: medali bertumpuk tegak agar kolom teks tetap lebar */
+    .done-body > .seal-row {
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .done-body > .seal-row .seal-sm {
+      width: var(--size-seal-xs);
+      height: var(--size-seal-xs);
+      font-size: var(--fs-small);
+    }
+
+    .done-body > .seal-row.is-pill .seal-sm {
+      width: auto;
+    }
+
+    /* teks pembuka tidak tertutup tombol tutup lembar */
     .done-lead {
+      padding-right: var(--size-touch);
       font-size: var(--fs-caption);
     }
 

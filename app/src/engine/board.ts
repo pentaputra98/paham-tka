@@ -240,10 +240,7 @@ export class Board {
       this.pinKey = key;
       this.pinsEl.replaceChildren();
       pins.forEach((p, i) => {
-        const e = document.createElement('span');
-        e.className = `pin${p.gold ? ' gold' : ''}`;
-        e.dataset.pin = p.id;
-        p.toks.forEach((t) => e.append(this.tok(t)));
+        const e = this.mkPin(p);
         this.pinsEl.append(e);
         if (c.dir > 0)
           play(
@@ -260,6 +257,52 @@ export class Board {
           );
       });
     }
+  }
+
+  private mkPin(p: Pin): HTMLElement {
+    const e = document.createElement('span');
+    e.className = `pin${p.gold ? ' gold' : ''}`;
+    e.dataset.pin = p.id;
+    p.toks.forEach((t) => e.append(this.tok(t)));
+    return e;
+  }
+
+  /** Label deret pin (mis. "Catatan luas"); bawaan "Hasil sebelumnya". */
+  setPinsLabel(label: string | undefined): void {
+    if (label) {
+      this.pinsEl.dataset.label = label;
+      this.pinsEl.setAttribute('aria-label', label);
+    }
+  }
+
+  /**
+   * Simpan hasil ke catatan (deret pin) di akhir langkah: pin baru ditambahkan dan tokennya terbang dari baris
+   * papan yang menghasilkannya (`src` token pin), sehingga catatan terbentuk dari hitungan, bukan muncul tiba-tiba.
+   * Idempoten: pin yang sudah ada dibiarkan; mundur/dilewati tanpa animasi.
+   */
+  async save(pins: Pin[], c: Ctx): Promise<boolean> {
+    for (const p of pins) {
+      if (!c.live()) return false;
+      if (this.pinsEl.querySelector(`[data-pin="${CSS.escape(p.id)}"]`)) continue;
+      const e = this.mkPin(p);
+      this.pinsEl.append(e);
+      this.pinKey = [...this.pinsEl.querySelectorAll<HTMLElement>('[data-pin]')]
+        .map((x) => x.dataset.pin)
+        .join('|');
+      if (c.dir < 0) continue;
+      const toks = [...e.querySelectorAll<HTMLElement>('.tk')];
+      toks.forEach((t) => t.classList.add('hid'));
+      play(e, [{ opacity: 0 }, { opacity: 1 }], { duration: DUR.base, easing: EASE_OUT });
+      await sleep(DUR.base);
+      for (const tk of toks) {
+        if (!c.live()) break;
+        const s = srcEl(tk.dataset.src, this.el);
+        if (s && s !== tk && visibleEnough(s)) await this.fly(s, tk, c);
+        else tk.classList.remove('hid');
+      }
+      toks.forEach((t) => t.classList.remove('hid'));
+    }
+    return c.live();
   }
 
   /** Tampilkan baris 0..n-1; animasikan baris ≥ from (atau semua yang belum tampil bila c.seq). */
