@@ -143,8 +143,9 @@
     --size-lat-opt-sm: calc(112px * var(--ui));
     --size-lat-opt-h: calc(64px * var(--ui));
     /* gambar kerucut es krim pada naskah latihan soal 24 */
-    --size-lat-fig: calc(clamp(110px, 12vw, 190px) * var(--ui));
+    --size-lat-fig: calc(clamp(120px, 15vw, 230px) * var(--ui));
     --fs-lat-fig: 15px;
+    --fs-lat-fig-sm: 11px;
     --size-lat-sol: calc(920px * var(--ui));
     --size-lat-sol-h: calc(660px * var(--ui));
     --fs-lat-mat: calc(clamp(18px, 1.6vw, 28px) * var(--ui));

@@ -552,6 +552,43 @@
     fill: var(--color-constraint);
   }
 
+  /* naskah soal 17: rambu (warna benda nyata pada gambar soal) */
+  .lat-fig .lr-blue {
+    fill: var(--sign-blue);
+  }
+
+  .lat-fig .lr-black {
+    fill: var(--sign-black);
+  }
+
+  .lat-fig .lr-white {
+    fill: var(--paper-0);
+  }
+
+  .lat-fig .lr-red {
+    fill: var(--red-600);
+  }
+
+  .lat-fig .lr-dim {
+    fill: none;
+    stroke: var(--paper-0);
+    stroke-width: var(--bw-1);
+    stroke-dasharray: 3 2;
+  }
+
+  .lat-fig .lr-dim-ink {
+    stroke: var(--color-text);
+    stroke-dasharray: none;
+  }
+
+  .lat-fig .lr-lbl {
+    font-size: var(--fs-lat-fig-sm);
+  }
+
+  .lat-fig .lr-ink {
+    fill: var(--ink-900);
+  }
+
   .lat-stage.is-paused::before {
     content: 'Waktu dijeda';
     position: absolute;

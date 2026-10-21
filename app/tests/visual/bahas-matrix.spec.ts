@@ -30,6 +30,8 @@ const ALL: Array<[string, string, number]> = [
   ['24-kartu', '#/soal/24/bahas?m=amati&b=7', 5000],
   ['24-latihan-siap', '#/soal/24/latihan', 1500],
   ['24-latihan-soal', '#/soal/24/latihan?s=00000D-T', 1500],
+  ['17-latihan-siap', '#/soal/17/latihan', 1500],
+  ['17-latihan-soal', '#/soal/17/latihan?s=00000B-M', 1500],
   ['1-lobi', '#/soal/1/bahas?m=amati', 900],
   ['1-catatan', '#/soal/1/bahas?m=amati&b=4', 1200],
   ['1-selesai', '#/soal/1/bahas?m=amati&b=6', 3500],
