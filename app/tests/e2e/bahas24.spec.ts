@@ -2,10 +2,10 @@ import { expect, test, type Page } from '@playwright/test';
 import q24 from '../../src/content/soal/q24';
 import { isReady } from '../../src/content';
 
-// dikunci sementara oleh pemilik sampai soal 1 selesai seluruh fiturnya (PRD v1.6, daftar OPEN)
-test.skip(!isReady(24), 'Soal 24 dikunci sementara (PRD v1.6)');
+// soal 24 dibuka (PRD v1.7); tetap dilewati bila suatu saat dikunci lagi lewat daftar OPEN
+test.skip(!isReady(24), 'Soal 24 dikunci sementara');
 
-/** G-Gerak dan interaksi SVG untuk pilot soal 24 (mesin visual). */
+/** G-Gerak dan interaksi SVG soal 24 (alur guru, panggung penuh dua kolom). */
 const steps = q24.steps;
 const expectedRows = (i: number): string[] | null => {
   const b = steps[i - 1]!.board;
@@ -62,26 +62,41 @@ test.describe('Pembahasan soal 24 (G-Gerak, SVG interaktif)', () => {
     expect(errors).toEqual([]);
   });
 
-  test('Lanjut cepat dan mundur: keadaan papan dan visual tepat', async ({ page }) => {
+  test('Lanjut beruntun tanpa sisa animasi; mundur dari pernyataan (4) ke (3)', async ({ page }) => {
     await setup(page);
     await page.goto('./#/soal/24/bahas?m=amati');
     await page.getByRole('button', { name: 'Mulai' }).click();
     for (let k = 0; k < 18; k++) await page.locator('[data-next]').click({ delay: 15 });
-    await settled(page, 10);
-    // langkah 10 = pernyataan (4): θ = 30°
+    await expect(page.locator('.bnav[data-running]')).toHaveCount(0, { timeout: 30_000 });
+    const ids = await page.$$eval('.board .bl[data-row]', (els) =>
+      els.map((e) => (e as HTMLElement).dataset.row!),
+    );
+    expect(new Set(ids).size).toBe(ids.length);
+    await expect(page.locator('.board .tk.hid')).toHaveCount(0);
+    // langkah 16 = pernyataan (4): θ = 30°; mundur ke (3) bagian kedua: θ = 60°
+    await page.goto('./#/soal/24/bahas?m=amati&b=5&l=4');
+    await settled(page, 16);
     await expect(page.locator('[data-o="th"]')).toHaveText('30°', { timeout: 5000 });
+    await expect(page.locator('.bd-t')).toHaveText('Pernyataan (4)');
     await page.locator('[data-prev]').click();
-    await settled(page, 9);
-    await expect(page.locator('[data-o="th"]')).toHaveText('90°');
+    await settled(page, 15);
+    await expect(page.locator('[data-o="th"]')).toHaveText('60°');
   });
 
-  test('slider: jari-jari tidak mengubah X/Y, sudut mengubahnya', async ({ page }) => {
+  test('angka 2 dan r² dicoret; jari-jari diubah X/Y tetap, sudut diubah X/Y berubah', async ({ page }) => {
     await setup(page);
-    await page.goto('./#/soal/24/bahas?m=amati&b=2&l=3');
+    await page.goto('./#/soal/24/bahas?m=amati&b=3&l=4');
+    await settled(page, 9);
+    await expect(page.locator('.board .bl[data-row="x5"] .tk.x')).toHaveCount(2);
+    await page.goto('./#/soal/24/bahas?m=amati&b=4&l=1');
+    await settled(page, 11);
+    await expect(page.locator('.board .bl[data-row="q2"] .tk.x')).toHaveCount(2);
+    await page.goto('./#/soal/24/bahas?m=amati&b=5&l=0');
+    await settled(page, 12);
     const q = page.locator('[data-o="q"]');
     await expect(page.locator('.labctl')).toBeVisible({ timeout: 10_000 });
     const before = await q.innerText();
-    await page.locator('#cone-r').fill('5');
+    await page.locator('#cone-r').fill('4');
     await expect(q).toHaveText(before);
     await page.locator('#cone-th').fill('120');
     await expect(q).not.toHaveText(before);
@@ -89,16 +104,10 @@ test.describe('Pembahasan soal 24 (G-Gerak, SVG interaktif)', () => {
     await expect(q).toHaveText('0,000');
   });
 
-  test('label θ pada gambar menjadi sumber terbang (tidak ditulis kapur)', async ({ page }) => {
+  test('label θ dan θ/2 pada gambar menjadi sumber terbang (tidak ditulis kapur)', async ({ page }) => {
     await setup(page);
-    await page.goto('./#/soal/24/bahas?m=amati');
-    await page.getByRole('button', { name: 'Mulai' }).click();
-    await settled(page, 1);
-    await page.locator('[data-next]').click();
-    await settled(page, 2);
-    await page.locator('[data-next]').click();
-    // baris a3: token θ/2 terbang dari label SVG [data-src=g-theta]
+    await page.goto('./#/soal/24/bahas?m=amati&b=3&l=1');
     await expect.poll(() => page.locator('.fly-tok').count(), { timeout: 15_000 }).toBeGreaterThan(0);
-    await settled(page, 3);
+    await settled(page, 6);
   });
 });

@@ -2781,6 +2781,41 @@ Pin: $\frac XY=\frac2\pi\cot\frac\theta2$.
 - **Bagian 3:** satu langkah per baris d1–d5; visual mengatur $\theta$ = 60°, 120°, 90°, 30°, 180° (dan $r$ 4,5 cm pada d1). Pin: $\frac XY=\frac2\pi\cot\frac\theta2$. Tabel nilai *Visual* Bagian 3 ditawarkan sebagai konten opsional pada d3.
 - **Bagian 5:** pop-up per kartu dari kolom *Alasan/jebakan*; papan ringkasan s1–s5 + s6 "Jawaban: hanya pernyataan (5)"; pertanyaan kesimpulan: (1) dan (5) · (2) dan (5) · (3) dan (5) · (4) dan (5) · **(5) saja**, petunjuk tiap pilihan salah dari kolom alasan.
 
+*Revisi alur oleh pemilik materi (21 Okt 2026; kunci tidak berubah: hanya (5) benar), dipakai di `app/src/content/soal/q24.ts`. Menggantikan blok "Ditambahkan M1" di atas.*
+
+Alur mengikuti cara Pak Penta membahas soal ini di kelas. Bentuk tangen dipakai: $\frac XY=\frac{2}{\pi\tan\frac\theta2}$, setara dengan $\frac2\pi\cot\frac\theta2$ di atas. Tata letak: panggung penuh dua kolom (PRD v1.5).
+
+- **Bagian 1 — Pahami soal**
+  - 1.1 Es krim berputar pelan lalu berhenti tegak. Baris: $X$ luas segitiga (`@s-X`), $Y$ luas setengah lingkaran (`@s-Y`), $\theta$ sudut puncak di $C$ (`@g-theta`).
+  - 1.2 Kertas soal, stabilo pada $\lim_{\theta\to a}\frac XY$. Baris: Ditanya (`@s-tanya`).
+- **Bagian 2 — Luas setengah lingkaran**
+  - 2.1 Jari-jari dari pusat ke $B$ berkedip ($r$); $AB$ memerah ($2r$). Baris: $r$ (`@g-r`), $AB=2r$ (`@g-2r`).
+  - 2.2 $Y=\frac12\pi r^2$ (navy).
+    - Pertanyaan cepat baru: "Luas setengah lingkaran dengan jari-jari $r$ adalah…"
+      - $\frac12\pi r^2$: benar.
+      - $\pi r^2$: "luas lingkaran penuh".
+      - $\pi r$: "setengah keliling".
+      - $\frac14\pi r^2$: "seperempat lingkaran".
+- **Bagian 3 — Luas segitiga**
+  - 3.1 $X=\frac12\times$ alas $\times$ tinggi; alas $AB=2r$.
+  - 3.2 Garis tinggi $t$ ditarik; sudut $\theta$ terbelah menjadi $\frac\theta2+\frac\theta2$. Pertanyaan cepat lama (sudut $\frac\theta2$).
+  - 3.3 Segitiga siku-siku kanan: depan $r$, samping $t$ (Demi Sami Desa). Baris: $\tan\frac\theta2=\frac{\text{depan}}{\text{samping}}=\frac rt$.
+  - 3.4 $t=\frac{r}{\tan\frac\theta2}$ (navy).
+  - 3.5 Pin $t$. Baris: $X=\frac12\times2r\times\frac{r}{\tan\frac\theta2}$, angka $2$ dicoret (animasi garis merah). Lalu $X=\frac{r^2}{\tan\frac\theta2}$ (navy).
+- **Bagian 4 — Gabungkan $\frac XY$**
+  - 4.1 Pin $X$, $Y$. Baris: $\frac XY=\dfrac{\frac{r^2}{\tan\frac\theta2}}{\frac12\pi r^2}$.
+  - 4.2 Ekspresi yang sama dengan $r^2$ dicoret di atas dan di bawah. Lalu $\frac XY=\frac{2}{\pi\tan\frac\theta2}$ (navy; emas disimpan untuk jawaban).
+- **Bagian 5 — Uji kelima pernyataan** (papan per pernyataan)
+  - (1) $r$ tidak ada di rumus. Visual: jari-jari diubah, $\frac XY$ tetap. **Salah.**
+  - (2) $\lim_{\theta\to a}\frac XY=\frac{2}{\pi\tan\frac a2}$ bergantung pada $a$. **Salah.**
+  - (3) Di $\theta=90^\circ$: $\tan45^\circ=1$, $\frac XY=\frac2\pi\approx0{,}64$. Di $\theta=60^\circ$: $\tan30^\circ=\frac{\sqrt3}3$, $\frac XY\approx1{,}10$. Berbeda, jadi **salah**.
+  - (4) $\theta\to\frac\pi6$: $\tan15^\circ=2-\sqrt3$, $\lim\frac XY=\frac{2}{\pi(2-\sqrt3)}\approx2{,}38\ne\frac2\pi$. **Salah.**
+  - (5) $\theta=\pi$: titik $C$ jatuh di $AB$, $t=0$, $X=\frac12\cdot2r\cdot0=0$, jadi $\frac XY=0$. **Benar** (emas).
+- **Bagian 6 — Catatan lengkap.**
+- **Bagian 7 — Cocokkan pernyataan:** satu langkah, kelima kartu terbuka. Pertanyaan kesimpulan seperti di atas, petunjuk dalam bentuk tangen.
+- **Bagian 8 — Selesai:** segel (5).
+- **Ringkasan papan:** $\frac XY=\frac{2}{\pi\tan\frac\theta2}$ (navy) · **Jawaban: hanya pernyataan (5)** (emas).
+
 ### Bagian 6 — Selesai
 - **Segel:** **(5)**
 - **Pop-up:** "$\frac XY=\frac2\pi\cot\frac\theta2$: bebas dari jari-jari, tetapi bergantung pada sudut. Hanya pernyataan (5) yang benar."

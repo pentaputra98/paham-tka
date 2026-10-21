@@ -12,7 +12,7 @@ describe('daftar soal (PRD §5)', () => {
     expect(RELEASE_1).toHaveLength(10);
     expect(isReady(1)).toBe(true);
     expect(isReady(3)).toBe(false);
-    expect(isReady(24)).toBe(false);
+    expect(isReady(24)).toBe(OPEN.includes(24));
   });
   it('soal 18 memakai label Pas / Tidak Pas', () => {
     expect(SOAL[17]!.labels).toEqual(['Pas', 'Tidak Pas']);

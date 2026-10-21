@@ -26,7 +26,8 @@ function piecesTex(ps: Piece[]): string {
     .map((p) => {
       if (isFrac(p)) return `\\dfrac{${piecesTex(p.frac[0])}}{${piecesTex(p.frac[1])}}`;
       if (p.h != null) return `${textTex(p.h)}\\;`;
-      return p.t ?? '';
+      // token dicoret di dalam pecahan: \cancel (pecahan dirender sebagai satu rumus KaTeX)
+      return p.c === 'x' ? `\\cancel{${p.t ?? ''}}` : (p.t ?? '');
     })
     .join(' ');
 }

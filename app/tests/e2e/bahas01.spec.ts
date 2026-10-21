@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import q01 from '../../src/content/soal/q01';
+import { OPEN } from '../../src/content';
 
 /** G-Gerak soal 1 (grid matriks, pilihan tunggal). */
 const steps = q01.steps;
@@ -57,16 +58,14 @@ test.describe('Pembahasan soal 1 (G-Gerak, grid matriks)', () => {
     const dlg = page.getByRole('dialog');
     await expect(dlg).toContainText('SELESAI', { timeout: 10_000 });
     await expect(dlg).toContainText('E');
-    // aksi SELESAI: hanya soal 1 yang dibuka (PRD v1.6) → aksi utama Kembali ke beranda; latihan, catatan, ulang
-    for (const t of [
-      'Kembali ke beranda',
-      'Coba latihan serupa',
-      'Lihat catatan lengkap',
-      'Ulang pembahasan',
-    ])
+    // aksi SELESAI mengikuti daftar OPEN: soal berikutnya yang dibuka (soal 24) atau kembali ke beranda
+    const nx = OPEN[OPEN.indexOf(1) + 1];
+    const main = nx ? `Soal berikutnya` : 'Kembali ke beranda';
+    for (const t of [main, 'Coba latihan serupa', 'Lihat catatan lengkap', 'Ulang pembahasan'])
       await expect(dlg.getByRole('button', { name: new RegExp(t) })).toBeVisible();
-    await dlg.getByRole('button', { name: /Kembali ke beranda/ }).click();
-    await expect(page).toHaveURL(/#\/$/);
+    if (nx) await expect(dlg.getByRole('button', { name: /Soal berikutnya/ })).toContainText(`Soal ${nx}`);
+    await dlg.getByRole('button', { name: new RegExp(main) }).click();
+    await expect(page).toHaveURL(nx ? new RegExp(`#/soal/${nx}$`) : /#\/$/);
     expect(errors).toEqual([]);
   });
 

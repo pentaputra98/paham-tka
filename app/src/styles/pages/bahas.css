@@ -699,6 +699,44 @@
     margin-right: 0.35em;
   }
 
+  /* dicoret: garis merah miring tergambar (scaleX) begitu token tampil, lalu token meredup */
+  .tk.x {
+    position: relative;
+  }
+
+  .tk.x::after {
+    content: '';
+    position: absolute;
+    left: -8%;
+    right: -8%;
+    top: 48%;
+    height: var(--bw-3);
+    border-radius: var(--radius-pill);
+    background: var(--color-constraint);
+    transform: rotate(-24deg);
+    transform-origin: left center;
+  }
+
+  .tk.x:not(.hid)::after {
+    animation: strike var(--dur-slow) var(--ease-out) var(--delay-step-2) backwards;
+  }
+
+  .tk.x:not(.hid) {
+    animation: struck var(--dur-slow) var(--ease) var(--delay-step-3) both;
+  }
+
+  @keyframes strike {
+    from {
+      transform: rotate(-24deg) scaleX(0);
+    }
+  }
+
+  @keyframes struck {
+    to {
+      opacity: 0.55;
+    }
+  }
+
   .m-frac {
     display: inline-flex;
     flex-direction: column;
@@ -1362,6 +1400,22 @@
     color: var(--color-result-ink);
   }
 
+  /* dicoret (garis merah miring; text-decoration tidak menembus kotak KaTeX) */
+  .n-tk.x {
+    position: relative;
+    color: var(--color-text-muted);
+  }
+
+  .n-tk.x::after {
+    content: '';
+    position: absolute;
+    left: -8%;
+    right: -8%;
+    top: 48%;
+    border-top: var(--bw-2) solid var(--color-constraint);
+    transform: rotate(-24deg);
+  }
+
   .n-tk.u,
   .n-tk.muted {
     font-size: 0.82em;
@@ -1973,8 +2027,21 @@
   }
 
   .print-root .nsheet h2 {
+    margin-bottom: var(--space-1-5);
     font-size: var(--fs-small);
     break-after: avoid;
+  }
+
+  /* fragmentasi kolom pada grid tidak andal di Chrome: bagian dan barisnya dicetak sebagai blok */
+  .print-root .n-sec,
+  .print-root .n-rows {
+    display: block;
+  }
+
+  .print-root .n-row + .n-row,
+  .print-root .n-rows + *,
+  .print-root .n-fig + * {
+    margin-top: var(--space-1-5);
   }
 
   .print-root .n-rows {
@@ -2320,6 +2387,15 @@
     }
 
     .lay-full .mx-to-t {
+      display: none;
+    }
+
+    /* kertas soal muat tanpa gulir: gambar asli sudah diperagakan oleh visual di langkah lain */
+    .lay-full .soal-split {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lay-full .soal-fig {
       display: none;
     }
   }

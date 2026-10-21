@@ -1,5 +1,5 @@
 /* Adegan visual SVG (soal 24: kerucut es krim). Warna bermakna: biru = variabel/hasil antara,
-   merah = jari-jari AM yang menjadi kendala tinggi, emas tidak dipakai sebagai hiasan. */
+   merah = jari-jari r dan diameter 2r, emas tidak dipakai sebagai hiasan. */
 @layer pages {
   .vis-cone {
     height: 100%;
@@ -15,10 +15,16 @@
     overflow: visible;
   }
 
+  .c-all {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
   .c-semi {
     fill: var(--a-sky-15);
     stroke: var(--color-stage-accent);
     stroke-width: var(--bw-2);
+    transition: fill var(--dur-slow) var(--ease);
   }
 
   .c-tri {
@@ -26,21 +32,44 @@
     stroke: var(--color-on-stage);
     stroke-width: var(--bw-2);
     stroke-linejoin: round;
+    transition: fill var(--dur-slow) var(--ease);
   }
 
-  .c-half {
+  /* luas yang sedang dibahas disorot; yang lain diredupkan */
+  .show-semi .c-semi {
+    fill: var(--a-sky-45);
+  }
+
+  .show-tri .c-tri {
+    fill: var(--a-blue-45);
+  }
+
+  .show-semi:not(.show-tri) .c-tri,
+  .show-tri:not(.show-semi) .c-semi {
+    opacity: 0.45;
+  }
+
+  .c-right {
     fill: transparent;
     stroke: none;
     transition: fill var(--dur-slow) var(--ease);
   }
 
-  .show-half .c-half {
-    fill: var(--a-blue-45);
+  .show-right .c-right,
+  .c-right.c-on {
+    fill: var(--a-sky-30);
   }
 
   .c-ab {
     stroke: var(--color-on-stage);
     stroke-width: var(--bw-2);
+    transition: stroke var(--dur-slow) var(--ease);
+  }
+
+  /* diameter AB = 2r: merah */
+  .show-diam .c-ab {
+    stroke: var(--color-constraint-on-stage);
+    stroke-width: var(--bw-4);
   }
 
   .c-cm {
@@ -51,11 +80,13 @@
     transition: opacity var(--dur-slow) var(--ease);
   }
 
-  .show-height .c-cm {
+  .show-height .c-cm,
+  .c-cm.c-on {
     opacity: 1;
   }
 
-  .c-am {
+  /* jari-jari dari pusat ke B */
+  .c-mb {
     stroke: var(--color-constraint-on-stage);
     stroke-width: var(--bw-4);
     stroke-linecap: round;
@@ -63,7 +94,32 @@
     transition: opacity var(--dur-slow) var(--ease);
   }
 
-  .show-half .c-am {
+  .show-rad .c-mb,
+  .show-right .c-mb,
+  .c-mb.c-on {
+    opacity: 1;
+  }
+
+  .c-dot {
+    fill: var(--color-on-stage);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-rad .c-dot,
+  .show-height .c-dot {
+    opacity: 1;
+  }
+
+  .c-sq {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-1);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-right .c-sq {
     opacity: 1;
   }
 
@@ -71,23 +127,38 @@
     fill: none;
     stroke: var(--color-on-stage);
     stroke-width: var(--bw-2);
+    transition: opacity var(--dur-slow) var(--ease);
   }
 
   .c-arc-half {
     fill: none;
     stroke: var(--color-stage-accent);
-    stroke-width: var(--bw-2);
+    stroke-width: var(--bw-3);
     opacity: 0;
     transition: opacity var(--dur-slow) var(--ease);
   }
 
-  .show-half .c-arc-half {
+  .show-split .c-arc-half {
     opacity: 1;
+  }
+
+  /* segitiga siku-siku kanan: busur θ/2 kanan ditebalkan */
+  .show-right .c-arc-r {
+    stroke: var(--color-on-stage);
   }
 
   .c-ticks path {
     stroke: var(--color-stage-accent);
     stroke-width: var(--bw-3);
+  }
+
+  /* tanda sama panjang memberi ruang bagi label θ/2 saat sudut terbelah */
+  .c-ticks {
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-split .c-ticks {
+    opacity: 0;
   }
 
   .c-pt {
@@ -104,32 +175,70 @@
     fill: var(--color-on-stage);
   }
 
-  .c-lbl {
+  .c-side {
     font-family: var(--font-mono);
     font-size: var(--svg-fs-xs);
-    fill: var(--color-on-stage-muted);
+    letter-spacing: var(--tracking-label);
+    fill: var(--color-stage-accent);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
   }
 
-  .c-m,
+  .show-right .c-side {
+    opacity: 1;
+  }
+
   .c-r,
+  .c-2r,
+  .c-t,
   .c-halfth {
     opacity: 0;
     transition: opacity var(--dur-slow) var(--ease);
   }
 
-  .show-height .c-m,
-  .show-half .c-r,
-  .show-half .c-halfth {
+  .show-rad .c-r,
+  .show-right .c-r,
+  .c-r.c-on,
+  .show-diam .c-2r,
+  .show-height .c-t,
+  .c-t.c-on,
+  .show-split .c-halfth {
     opacity: 1;
   }
 
-  .c-r {
+  /* label r berkedip saat jari-jari diperkenalkan */
+  .show-rad .c-r {
+    animation: c-blink var(--dur-reveal) var(--ease) 2;
+  }
+
+  @keyframes c-blink {
+    50% {
+      opacity: 0.15;
+    }
+  }
+
+  .c-r,
+  .c-2r {
     fill: var(--color-constraint-on-stage);
+    font-weight: var(--fw-bold);
+  }
+
+  .c-t {
+    fill: var(--color-stage-accent);
+    font-weight: var(--fw-bold);
   }
 
   .c-halfth {
     fill: var(--color-stage-accent);
     font-size: var(--svg-fs-sm);
+  }
+
+  .show-split .c-theta {
+    opacity: 0;
+  }
+
+  .c-theta {
+    transition: opacity var(--dur-slow) var(--ease);
   }
 
   .c-x,
@@ -141,12 +250,17 @@
   }
 
   .show-areas .c-x,
-  .show-areas .c-y {
+  .show-areas .c-y,
+  .show-tri .c-x,
+  .show-semi .c-y {
     opacity: 1;
   }
 
   .flat .c-theta,
-  .flat .c-x {
+  .flat .c-x,
+  .flat .c-halfth,
+  .flat .c-t,
+  .flat .c-side {
     opacity: 0;
   }
 

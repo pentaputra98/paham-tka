@@ -68,10 +68,10 @@ export const RESPONSE_LABEL: Record<Response, string> = {
 export const RELEASE_1: readonly number[] = [1, 2, 5, 6, 13, 16, 17, 18, 24, 25];
 
 /**
- * Soal yang DIBUKA untuk siswa (revisi pemilik PRD v1.6): sementara hanya soal 1, sampai seluruh fiturnya
- * (pembahasan, latihan serupa, catatan) selesai dan disetujui; soal lain tampil "Segera hadir".
+ * Soal yang DIBUKA untuk siswa (revisi pemilik PRD v1.6–1.7): dibuka satu per satu setelah pembahasannya
+ * ditulis ulang mengikuti alur guru dan disetujui; soal lain tampil "Segera hadir". Soal 1 lalu soal 24.
  */
-export const OPEN: readonly number[] = [1];
+export const OPEN: readonly number[] = [1, 24];
 
 type Row = [no: number, title: string, domain: Domain, response: Response, labels?: [string, string]];
 

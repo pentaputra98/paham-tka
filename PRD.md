@@ -4,7 +4,7 @@
 |---|---|
 | **Nama produk** | **Paham TKA** — Pembahasan Interaktif TKA Matematika Tingkat Lanjut 2025 |
 | **Tagline** | Yuk pahami soal TKA 2025, step by step. |
-| **Versi dokumen** | 1.6 (revisi 1.6, 21 Oktober 2026: hanya soal 1 dibuka sampai semua fiturnya selesai, tanpa UI bawaan peramban, latihan serupa soal 1 (M3 dimulai); lihat §20.2. Revisi 1.5, 21 Oktober 2026: daftar revisi pemilik untuk soal 1 — panggung penuh dua kolom tanpa gulir, pertanyaan cepat sebagai pop-up, kartu dan catatan dirapikan, aksi SELESAI, tombol Beranda, bilah gulir bertema, hero string art; lihat §20.2. Revisi 1.4, 21 Oktober 2026: masukan uji pemilik produk — panggung penuh tanpa panel papan untuk soal non-3D, navigasi "selesaikan langkah dulu", Coretan inti dimajukan, beranda tanpa kolom cari dan hero bukan soal, skala antarmuka layar lebar; lihat §20.2. Revisi 1.3, 19 Oktober 2026: CSP `connect-src 'self'` agar service worker dapat melakukan *precache*; cadangan `file://` (`dist-single`) dipindah dari kriteria M0 ke M5. Revisi 1.2: Vercel subdomain gratis, kebijakan tanpa izin, tiga perangkat uji, 3D rendah-poligon, offline-first, lapisan gerak Motion) |
+| **Versi dokumen** | 1.7 (revisi 1.7, 21 Oktober 2026: soal 24 ditulis ulang mengikuti alur guru dan dibuka; token dicoret di papan; lihat §20.2. Revisi 1.6, 21 Oktober 2026: hanya soal 1 dibuka sampai semua fiturnya selesai, tanpa UI bawaan peramban, latihan serupa soal 1 (M3 dimulai); lihat §20.2. Revisi 1.5, 21 Oktober 2026: daftar revisi pemilik untuk soal 1 — panggung penuh dua kolom tanpa gulir, pertanyaan cepat sebagai pop-up, kartu dan catatan dirapikan, aksi SELESAI, tombol Beranda, bilah gulir bertema, hero string art; lihat §20.2. Revisi 1.4, 21 Oktober 2026: masukan uji pemilik produk — panggung penuh tanpa panel papan untuk soal non-3D, navigasi "selesaikan langkah dulu", Coretan inti dimajukan, beranda tanpa kolom cari dan hero bukan soal, skala antarmuka layar lebar; lihat §20.2. Revisi 1.3, 19 Oktober 2026: CSP `connect-src 'self'` agar service worker dapat melakukan *precache*; cadangan `file://` (`dist-single`) dipindah dari kriteria M0 ke M5. Revisi 1.2: Vercel subdomain gratis, kebijakan tanpa izin, tiga perangkat uji, 3D rendah-poligon, offline-first, lapisan gerak Motion) |
 | **Distribusi** | Hosting statis Vercel (PWA); cadangan: satu berkas HTML dan ZIP |
 | **Dokumen pendamping** | `SUPER-PROMPT.md` (arahan sesi produksi pertama: M0 dan M1) |
 | **Tanggal** | 19 Oktober 2026 |
@@ -1220,6 +1220,19 @@ Pada revisi 1.2 **tidak ada hal terbuka yang menghalangi produksi**. Semua perta
   - (b) **Tanpa UI bawaan peramban:** konfirmasi "Hapus semua coretan" memakai lembar aplikasi (fokus awal pada Batal); tooltip `title` diganti tooltip aplikasi. Yang tetap bawaan karena dari sistem operasi: dialog cetak/simpan PDF dan prompt pasang PWA.
   - (c) **Kartu beranda** tidak lagi memotong judul saat status "Sudah dibahas" tampil (baris katalog setinggi isi kartu).
   - (d) **M3 dimulai untuk soal 1** (sebelumnya menunggu arahan): latihan serupa lengkap sesuai §8.4 dan §11 — penyiapan (tingkat, jumlah 1/3/5, waktu tanpa/per soal/sesi), generator tiga tingkat (§11.4 baris 1), oracle independen ($F\cdot X=I$ dengan pecahan eksak), uji properti 1.000 benih × 3 tingkat, petunjuk bertahap 3, Periksa jawaban dengan jebakan dan satu kali coba lagi, umpan balik hitung "uji pilihanmu" ($F\cdot X$ ditampilkan), Lihat langkah dengan papan pembahasan yang sama, timer dengan jeda dan peringatan 30 detik, ringkasan dengan **Ulangi soal ini** (kode soal) dan **Bahas bagian terkait**, Coretan di latihan, hasil tercatat untuk status §7.4. Bank parameter build tidak diperlukan untuk soal 1 (kendala dipenuhi langsung; cadangan < 0,5 %). Latihan campur (FR-LAT-10) dan halaman Kemajuan tetap di jadwal semula.
+
+- **Revisi 1.7 (21 Oktober 2026, pemilik produk menyetujui soal 1 dan meminta soal 24 berikutnya karena paling banyak tidak dipahami siswa):**
+  - (a) **Soal 24 ditulis ulang mengikuti cara Pak Penta mengajar** (lihat `docs/pembahasan25.md` soal 24, blok *Revisi alur*), di panggung penuh dua kolom. Animasi yang dipakai:
+    - es krim berputar lalu berhenti tegak;
+    - jari-jari $r$ berkedip dan $AB=2r$ memerah;
+    - garis tinggi $t$ ditarik dan sudut $\theta$ terbelah menjadi dua $\frac\theta2$;
+    - segitiga siku-siku dengan label depan/samping;
+    - angka $2$ dan $r^2$ dicoret garis merah;
+    - uji tiap pernyataan dengan sudut nyata ($90^\circ$, $60^\circ$, $30^\circ$, $180^\circ$).
+
+    Kunci tetap: hanya (5). Pemilik mengonfirmasi bahwa pilihan (4) memakai $\frac\pi6$ sesuai naskah (kunci diikuti).
+  - (b) **Soal 24 dibuka** (daftar `OPEN` = 1, 24).
+  - (c) **Mesin:** kelas token `x` (dicoret) untuk faktor yang saling menghilang. Garis merah tergambar saat token ditulis lalu token meredup; di catatan tampil sebagai coretan.
 
 ### 20.3 Glosarium
 | Istilah | Arti |

@@ -6,7 +6,8 @@
 import type { SoalMeta } from '../content';
 
 // ---- token papan tulis ----
-export type Cls = 'red' | 'blue' | 'gold' | 'u' | 'muted' | 'lbl' | 'sp' | 'op' | 'tx';
+/** x = dicoret (garis merah tergambar saat token ditulis; mis. faktor yang saling menghilang) */
+export type Cls = 'red' | 'blue' | 'gold' | 'u' | 'muted' | 'lbl' | 'sp' | 'op' | 'tx' | 'x';
 /** Token: t = LaTeX, h = HTML teks pendek; src = sumber terbang ('@nama' atau id token lain). */
 export interface Tok {
   k: string;
