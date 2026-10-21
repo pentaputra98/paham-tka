@@ -2,13 +2,13 @@
  * SOAL 24 — Kerucut Es Krim dan Limit (pilihan banyak). Kunci: hanya pernyataan (5) benar.
  * Sumber: docs/pembahasan25.md "SOAL 24", docs/soal25.md no. 24, docs/kerucut_es_krim.png.
  * Alur mengikuti cara Pak Penta membahas di kelas (revisi 21 Okt 2026, dicatat di dokumen):
- * es krim berputar → beri nama jari-jari r (AB = 2r) → Y = ½πr² → X = ½·alas·tinggi, tinggi t dari
+ * es krim (diam, tanpa putaran sejak revisi kedua) → beri nama jari-jari r (AB = 2r) → Y = ½πr² → X = ½·alas·tinggi, tinggi t dari
  * tan(θ/2) = depan/samping = r/t → X = r²/tan(θ/2) (angka 2 dicoret) → X/Y, r² dicoret →
  * X/Y = 2/(π tan(θ/2)) → uji kelima pernyataan satu per satu.
  * Tata letak: panggung penuh dua kolom (PRD v1.5).
  */
 import { F, H, O, T } from '../../engine/dsl';
-import type { SoalContent, Visual } from '../../engine/types';
+import type { Row, SoalContent, Step, Visual } from '../../engine/types';
 import type { ConeState } from '../../visuals/cone';
 import { getSoal } from '../index';
 
@@ -21,6 +21,31 @@ const cone = (state: Partial<ConeState>): Visual => ({
 });
 const HALF = '\\tan\\tfrac{\\theta}{2}';
 const PQ = ['pQ'];
+const Q1 = ['q1'];
+const PXY = ['pX', 'pY'];
+/** potongan segitiga siku-siku kanan dipindahkan ke tengah dan diputar (sudut θ/2 di kanan) */
+const PIECE = cone({ right: true, height: true, split: true, halves: true, piece: true });
+const AREAS = cone({ areas: true, semi: true, tri: true });
+/** Kelima pernyataan soal (docs/soal25.md no. 24): kertas soal dan kutipan di papan memakai teks yang sama. */
+const STMT = [
+  'Besar jari-jari mempengaruhi nilai limit.',
+  'Besar sudut tidak mempengaruhi nilai limit.',
+  'Nilai $\\frac{X}{Y}$ selalu sama untuk berapa pun $\\theta$.',
+  '$\\lim_{\\theta\\rightarrow\\frac{\\pi}{6}}\\frac{X}{Y}=\\frac{2}{\\pi}$',
+  'Jika $\\theta=\\pi$ maka $\\frac{X}{Y}=0$',
+];
+/** Baris kutipan pernyataan ke-n: disalin dari kertas soal ke papan sebelum dianalisis. */
+const quote = (n: number): Row => ({
+  id: `c${n}`,
+  toks: [T(`c${n}a`, `(${n})`, 'sp'), H(`c${n}b`, STMT[n - 1]!, 'q', `@s-p${n}`)],
+});
+/** Langkah pembuka tiap pernyataan: soal tampil lagi, pernyataan ke-n disorot, lalu teksnya disalin. */
+const open5 = (n: number, cap: string): Step => ({
+  ch: 5,
+  cap,
+  visual: { kind: 'soal', hl: 0, focus: `s-p${n}` },
+  board: { title: `Pernyataan (${n})`, pins: PQ, list: `L5${n}`, upTo: 1, from: 0 },
+});
 
 const q24: SoalContent = {
   meta: getSoal(24)!,
@@ -32,15 +57,11 @@ const q24: SoalContent = {
 <p>Jika luas segitiga ABC dinyatakan dengan <span class="hl" data-hl="1"><span data-src="s-X">$X$</span></span> dan luas setengah lingkaran dinyatakan dengan <span class="hl" data-hl="1"><span data-src="s-Y">$Y$</span></span>, manakah pernyataan berikut yang benar mengenai nilai <span class="hl hl-gold" data-hl="2"><span data-src="s-tanya">$\\lim_{\\theta\\rightarrow a}\\frac{X}{Y}$</span></span>?</p>
 </div><figure class="soal-fig"><img src="${fig}" width="414" height="410" alt="Setengah lingkaran berdiameter AB di atas segitiga sama kaki ABC; sudut θ di titik C, kaki AC dan BC bertanda sama panjang." /></figure></div>
 <ul class="checks">
-<li>Besar jari-jari mempengaruhi nilai limit.</li>
-<li>Besar sudut tidak mempengaruhi nilai limit.</li>
-<li>Nilai $\\frac{X}{Y}$ selalu sama untuk berapa pun $\\theta$.</li>
-<li>$\\lim_{\\theta\\rightarrow\\frac{\\pi}{6}}\\frac{X}{Y}=\\frac{2}{\\pi}$</li>
-<li>Jika $\\theta=\\pi$ maka $\\frac{X}{Y}=0$</li>
+${STMT.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-src="s-p${i + 1}">${t}</span></span></li>`).join('\n')}
 </ul>`,
-    srcNames: ['s-semi', 's-tri', 's-X', 's-Y', 's-tanya'],
+    srcNames: ['s-semi', 's-tri', 's-X', 's-Y', 's-tanya', 's-p1', 's-p2', 's-p3', 's-p4', 's-p5'],
   },
-  visualSrc: ['g-theta', 'g-r', 'g-2r', 'g-t', 'g-half'],
+  visualSrc: ['g-theta', 'g-r', 'g-2r', 'g-t', 'g-half', 'p-r', 'p-t', 'p-half', 'p-depan', 'p-samping'],
   lobby: {
     eyebrow: 'Kelas 12 · Matematika Lanjut · Limit dan trigonometri',
     titleLines: ['Pembahasan Soal', 'Kerucut <span class="accent">Es Krim</span>', 'Rasio luas'],
@@ -140,26 +161,39 @@ const q24: SoalContent = {
         ],
         note: 'garis tinggi $t$ membagi sudut puncak sama besar',
       },
+    ],
+    // langkah 3.3–3.5: fokus pada potongan segitiga siku-siku yang dipindahkan dan diputar
+    LT: [
       {
         id: 'x3',
         toks: [
           T('x3a', '\\tan'),
-          T('x3b', '\\tfrac{\\theta}{2}', 'blue', 'x2e'),
+          T('x3b', '\\tfrac{\\theta}{2}', 'blue', '@p-half'),
           O('x3c', '='),
-          F([H('x3d', 'depan', 'tx')], [H('x3e', 'samping', 'tx')]),
+          F([H('x3d', 'depan', 'tx', '@p-depan')], [H('x3e', 'samping', 'tx', '@p-samping')]),
           O('x3f', '='),
-          F([T('x3g', 'r', 'red', '@g-r')], [T('x3h', 't', 'blue', '@g-t')]),
+          F([T('x3g', 'r', 'red', '@p-r')], [T('x3h', 't', 'blue', '@p-t')]),
         ],
         note: 'Demi Sami Desa: depan per samping adalah tangen',
       },
       {
+        id: 'x7',
+        toks: [
+          T('x7a', 't', 'blue', 'x3h'),
+          T('x7b', '\\tan\\tfrac{\\theta}{2}', '', 'x3b'),
+          O('x7c', '='),
+          T('x7d', 'r', 'red', 'x3g'),
+        ],
+        note: 'kedua ruas dikali $t$',
+      },
+      {
         id: 'x4',
         toks: [
-          T('x4a', 't', 'blue', 'x3h'),
+          T('x4a', 't', 'blue', 'x7a'),
           O('x4b', '='),
-          F([T('x4c', 'r', 'red', 'x3g')], [T('x4d', '\\tan\\tfrac{\\theta}{2}', '', 'x3b')]),
+          F([T('x4c', 'r', 'red', 'x7d')], [T('x4d', '\\tan\\tfrac{\\theta}{2}', '', 'x7b')]),
         ],
-        note: 'rumus diputar untuk mencari tinggi',
+        note: 'kedua ruas dibagi $\\tan\\frac\\theta2$',
         box: 'navy',
       },
     ],
@@ -193,43 +227,52 @@ const q24: SoalContent = {
           T('q1a', '\\dfrac{X}{Y}'),
           O('q1b', '='),
           F(
-            [F([T('q1c', 'r^2', '', 'PX3')], [T('q1d', '\\tan\\tfrac{\\theta}{2}', '', 'PX3')])],
-            [T('q1e', '\\tfrac12\\pi', '', 'PY3'), T('q1f', 'r^2', '', 'PY3')],
+            [F([T('q1c', 'r^2', 'x', 'PX3')], [T('q1d', '\\tan\\tfrac{\\theta}{2}', '', 'PX3')])],
+            [T('q1e', '\\tfrac12\\pi', '', 'PY3'), T('q1f', 'r^2', 'x', 'PY3')],
           ),
         ],
-        note: '$X$ di atas, $Y$ di bawah',
+        note: '$X$ di atas, $Y$ di bawah; $r^2$ dicoret',
       },
-    ],
-    // langkah 4.2: ekspresi yang sama kini dengan r² dicoret (menggantikan q1 di papan)
-    LQ2: [
+      // langkah 4.3–4.5: dari bentuk yang sudah dicoret, diolah bertahap (tanpa menulis ulang q1)
       {
         id: 'q2',
         toks: [
-          T('q2a', '\\dfrac{X}{Y}'),
           O('q2b', '='),
-          F(
-            [F([T('q2c', 'r^2', 'x')], [T('q2d', '\\tan\\tfrac{\\theta}{2}')])],
-            [T('q2e', '\\tfrac12\\pi'), T('q2f', 'r^2', 'x')],
-          ),
+          F([T('q2c', '1')], [T('q2d', '\\tan\\tfrac{\\theta}{2}', '', 'q1d')]),
+          O('q2f', ':'),
+          T('q2e', '\\tfrac12\\pi', '', 'q1e'),
         ],
-        note: '$r^2$ di atas dan di bawah dicoret',
+        note: 'sisa setelah $r^2$ dicoret',
       },
       {
         id: 'q3',
         toks: [
-          T('q3a', '\\dfrac{X}{Y}'),
           O('q3b', '='),
-          F([T('q3c', '2', 'blue')], [T('q3d', '\\pi'), T('q3e', '\\tan\\tfrac{\\theta}{2}')]),
+          F([T('q3c', '1', '', 'q2c')], [T('q3d', '\\tan\\tfrac{\\theta}{2}', '', 'q2d')]),
+          O('q3e', '\\times'),
+          F([T('q3f', '2', 'blue')], [T('q3g', '\\pi')]),
         ],
-        note: 'jari-jari hilang; $1:\\frac12=2$ naik ke pembilang',
+        note: 'dibagi $\\frac12\\pi$ sama dengan dikali $\\frac2\\pi$',
+      },
+      {
+        id: 'q4',
+        toks: [
+          T('q4a', '\\dfrac{X}{Y}'),
+          O('q4b', '='),
+          F(
+            [T('q4c', '2', 'blue', 'q3f')],
+            [T('q4d', '\\pi', '', 'q3g'), T('q4e', '\\tan\\tfrac{\\theta}{2}', '', 'q3d')],
+          ),
+        ],
+        note: 'pembilang kali pembilang, penyebut kali penyebut',
         box: 'navy',
       },
     ],
     L51: [
+      quote(1),
       {
         id: 'p1',
         toks: [
-          T('p1a', '(1)', 'sp'),
           T('p1b', 'r', 'red'),
           H('p1c', 'tidak ada di', 'tx'),
           T('p1d', `\\dfrac{2}{\\pi${HALF}}`, '', 'PQ3'),
@@ -238,10 +281,10 @@ const q24: SoalContent = {
       },
     ],
     L52: [
+      quote(2),
       {
         id: 'p2',
         toks: [
-          T('p2a', '(2)', 'sp'),
           T('p2b', '\\lim_{\\theta\\to a}\\dfrac{X}{Y}'),
           O('p2c', '='),
           T('p2d', '\\dfrac{2}{\\pi\\tan\\frac{a}{2}}', '', 'PQ3'),
@@ -250,10 +293,10 @@ const q24: SoalContent = {
       },
     ],
     L53: [
+      quote(3),
       {
         id: 'p3',
         toks: [
-          T('p3a', '(3)', 'sp'),
           T('p3b', '\\theta=90^\\circ'),
           O('p3c', ':'),
           T('p3d', '\\tan45^\\circ'),
@@ -290,10 +333,10 @@ const q24: SoalContent = {
       },
     ],
     L54: [
+      quote(4),
       {
         id: 'p6',
         toks: [
-          T('p6a', '(4)', 'sp'),
           T('p6b', '\\theta\\to\\tfrac{\\pi}{6}'),
           O('p6c', ':'),
           T('p6d', '\\tan15^\\circ'),
@@ -317,16 +360,10 @@ const q24: SoalContent = {
       },
     ],
     L55: [
+      quote(5),
       {
         id: 'p8',
-        toks: [
-          T('p8a', '(5)', 'sp'),
-          T('p8b', '\\theta=\\pi'),
-          O('p8c', ':'),
-          T('p8d', 't'),
-          O('p8e', '='),
-          T('p8f', '0', 'blue'),
-        ],
+        toks: [T('p8b', '\\theta=\\pi'), O('p8c', ':'), T('p8d', 't'), O('p8e', '='), T('p8f', '0', 'blue')],
         note: 'kaki segaris, titik $C$ jatuh di $AB$',
       },
       {
@@ -363,7 +400,7 @@ const q24: SoalContent = {
     {
       ch: 1,
       cap: 'Perhatikan es krim ini: setengah lingkaran berdiameter $AB$ di atas, segitiga sama kaki $ABC$ di bawah, dengan sudut puncak $\\theta$ di $C$.',
-      visual: cone({ spin: true, areas: true }),
+      visual: cone({ areas: true }),
       board: { title: 'Pahami soal', list: 'L1', upTo: 4, from: 0 },
     },
     {
@@ -405,7 +442,7 @@ const q24: SoalContent = {
     {
       ch: 3,
       cap: 'Tarik garis tinggi $t$ dari $C$ tegak lurus ke tengah $AB$. Sudut $\\theta$ terbelah menjadi dua sama besar.',
-      visual: cone({ tri: true, height: true, split: true }),
+      visual: cone({ tri: true, height: true, split: true, halves: true }),
       board: { title: 'Luas segitiga', list: 'LX', upTo: 2, from: 1 },
       ask: {
         before: 'x2',
@@ -425,71 +462,118 @@ const q24: SoalContent = {
     },
     {
       ch: 3,
-      cap: 'Lihat segitiga siku-siku di kanan: sudutnya $\\frac\\theta2$, sisi depannya $r$, sisi sampingnya $t$. Depan per samping adalah tangen!',
-      visual: cone({ right: true, height: true, split: true }),
-      board: { title: 'Luas segitiga', list: 'LX', upTo: 3, from: 2 },
+      cap: 'Ambil segitiga siku-siku kanan, lalu putar sampai sudut $\\frac\\theta2$ ada di kanan. Sisi depannya $r$, sisi sampingnya $t$, dan depan per samping adalah tangen!',
+      visual: PIECE,
+      board: { title: 'Segitiga siku-siku', list: 'LT', upTo: 1, from: 0 },
     },
     {
       ch: 3,
-      cap: 'Putar rumusnya untuk mencari tinggi $t$: kalikan dengan $t$, lalu bagi dengan $\\tan\\frac\\theta2$.',
-      visual: cone({ right: true, height: true, split: true }),
-      board: { title: 'Luas segitiga', list: 'LX', upTo: 4, from: 3 },
+      cap: 'Sekarang kita cari $t$. Kalikan kedua ruas dengan $t$ dulu, sehingga $t\\tan\\frac\\theta2=r$.',
+      visual: PIECE,
+      board: { title: 'Segitiga siku-siku', list: 'LT', upTo: 2, from: 1 },
     },
     {
       ch: 3,
-      cap: 'Masukkan alas $2r$ dan tinggi $t$ ke rumus luas. Angka $2$ di penyebut dan di depan $r$ saling coret, jadi luasnya sederhana.',
+      cap: 'Lalu bagi kedua ruas dengan $\\tan\\frac\\theta2$. Ketemu tingginya: $t=\\frac{r}{\\tan\\frac\\theta2}$.',
+      visual: PIECE,
+      board: { title: 'Segitiga siku-siku', list: 'LT', upTo: 3, from: 2 },
+    },
+    {
+      ch: 3,
+      cap: 'Kembalikan segitiganya ke tempat semula. Masukkan alas $2r$ dan tinggi $t$ ke rumus luas segitiga.',
       visual: cone({ tri: true, height: true, diam: true }),
-      board: { title: 'Luas segitiga', pins: ['pT'], list: 'LX2', upTo: 2, from: 0 },
+      board: { title: 'Luas segitiga', pins: ['pT'], list: 'LX2', upTo: 1, from: 0 },
+    },
+    {
+      ch: 3,
+      cap: 'Angka $2$ di penyebut dan $2$ di depan $r$ saling coret. Luas segitiganya jadi sederhana: $X=\\frac{r^2}{\\tan\\frac\\theta2}$.',
+      visual: cone({ tri: true, height: true, diam: true }),
+      board: { title: 'Luas segitiga', pins: ['pT'], list: 'LX2', upTo: 2, from: 1, cut: ['x5'] },
     },
     // ---- 4 · Gabungkan X/Y ----
     {
       ch: 4,
       cap: 'Langkah terakhir, gabungkan keduanya menjadi perbandingan $\\frac XY$ seperti yang diminta soal.',
-      visual: cone({ areas: true, semi: true, tri: true }),
-      board: { title: 'Gabungkan X/Y', pins: ['pX', 'pY'], list: 'LQ', upTo: 1, from: 0 },
+      visual: AREAS,
+      board: { title: 'Gabungkan X/Y', pins: PXY, list: 'LQ', upTo: 1, from: 0 },
     },
     {
       ch: 4,
-      cap: 'Di atas ada $r^2$, di bawah juga $r^2$, jadi kita coret! Jari-jari hilang dari rumus dan tersisa bentuk sederhana.',
-      visual: cone({ areas: true, semi: true, tri: true }),
-      board: { title: 'Gabungkan X/Y', pins: ['pX', 'pY'], list: 'LQ2', upTo: 2, from: 0 },
+      cap: 'Di atas ada $r^2$, di bawah juga $r^2$, jadi kita coret! Jari-jari hilang dari rumus.',
+      visual: AREAS,
+      board: { title: 'Gabungkan X/Y', list: 'LQ', upTo: 1, from: 1, cut: Q1 },
     },
-    // ---- 5 · Uji kelima pernyataan ----
+    {
+      ch: 4,
+      cap: 'Yang tersisa: $\\frac{1}{\\tan\\frac\\theta2}$ dibagi $\\frac12\\pi$.',
+      visual: AREAS,
+      board: { title: 'Gabungkan X/Y', list: 'LQ', upTo: 2, from: 1, cut: Q1 },
+    },
+    {
+      ch: 4,
+      cap: 'Membagi dengan $\\frac12\\pi$ sama saja dengan mengalikan kebalikannya, yaitu $\\frac2\\pi$.',
+      visual: AREAS,
+      board: { title: 'Gabungkan X/Y', list: 'LQ', upTo: 3, from: 2, cut: Q1 },
+    },
+    {
+      ch: 4,
+      cap: 'Kalikan pembilang dengan pembilang, penyebut dengan penyebut. Inilah rumus kuncinya: $\\frac XY=\\frac{2}{\\pi\\tan\\frac\\theta2}$.',
+      visual: AREAS,
+      board: { title: 'Gabungkan X/Y', list: 'LQ', upTo: 4, from: 3, cut: Q1 },
+    },
+    // ---- 5 · Uji kelima pernyataan: soal tampil lagi, pernyataan disorot dan disalin, lalu dianalisis ----
+    open5(
+      1,
+      'Kita cek pernyataan (1) dulu. Salin ke papan: benarkah besar jari-jari mempengaruhi nilai limit?',
+    ),
     {
       ch: 5,
-      cap: 'Pernyataan (1): $r$ sudah hilang dari rumus. Lihat, jari-jari diubah tetapi $\\frac XY$ tetap, jadi (1) <b class="k-red">salah</b>.',
+      cap: '$r$ sudah hilang dari rumus. Lihat, jari-jari diubah tetapi $\\frac XY$ tetap, jadi (1) <b class="k-red">salah</b>.',
       visual: cone({ r: 2.5, areas: true, lab: true }),
-      board: { title: 'Pernyataan (1)', pins: PQ, list: 'L51', upTo: 1, from: 0 },
+      board: { title: 'Pernyataan (1)', pins: PQ, list: 'L51', upTo: 2, from: 1 },
     },
+    open5(2, 'Lanjut pernyataan (2). Salin ke papan: benarkah besar sudut tidak mempengaruhi nilai limit?'),
     {
       ch: 5,
-      cap: 'Pernyataan (2): rumusnya masih memuat sudut. Saat sudut berubah, nilainya ikut berubah, jadi (2) <b class="k-red">salah</b>.',
+      cap: 'Rumusnya masih memuat sudut. Saat sudut berubah, nilainya ikut berubah, jadi (2) <b class="k-red">salah</b>.',
       visual: cone({ theta: 120, areas: true, lab: true }),
-      board: { title: 'Pernyataan (2)', pins: PQ, list: 'L52', upTo: 1, from: 0 },
+      board: { title: 'Pernyataan (2)', pins: PQ, list: 'L52', upTo: 2, from: 1 },
     },
+    open5(
+      3,
+      'Pernyataan (3) bilang $\\frac XY$ selalu sama untuk berapa pun $\\theta$. Kita salin, lalu uji dengan dua sudut berbeda.',
+    ),
     {
       ch: 5,
-      cap: 'Pernyataan (3): uji dulu di $\\theta=90^\\circ$. Setengahnya $45^\\circ$, dan $\\tan45^\\circ=1$.',
+      cap: 'Uji dulu di $\\theta=90^\\circ$. Setengahnya $45^\\circ$, dan $\\tan45^\\circ=1$.',
       visual: cone({ theta: 90, height: true, split: true, lab: true }),
-      board: { title: 'Pernyataan (3)', pins: PQ, list: 'L53', upTo: 2, from: 0 },
+      board: { title: 'Pernyataan (3)', pins: PQ, list: 'L53', upTo: 3, from: 1 },
     },
     {
       ch: 5,
       cap: 'Sekarang $\\theta=60^\\circ$: nilainya sekitar $1{,}10$, berbeda dari $0{,}64$. Jadi nilainya tidak selalu sama, (3) <b class="k-red">salah</b>.',
       visual: cone({ theta: 60, height: true, split: true, lab: true }),
-      board: { title: 'Pernyataan (3)', pins: PQ, list: 'L53', upTo: 3, from: 2 },
+      board: { title: 'Pernyataan (3)', pins: PQ, list: 'L53', upTo: 4, from: 3 },
     },
+    open5(
+      4,
+      'Pernyataan (4) tentang limit saat $\\theta\\to\\frac\\pi6$. Kita salin dulu, lalu hitung nilainya.',
+    ),
     {
       ch: 5,
-      cap: 'Pernyataan (4): $\\theta\\to\\frac\\pi6$ berarti $30^\\circ$, setengahnya $15^\\circ$. Hasilnya sekitar $2{,}38$, bukan $\\frac2\\pi$, jadi (4) <b class="k-red">salah</b>.',
+      cap: '$\\theta\\to\\frac\\pi6$ berarti $30^\\circ$, setengahnya $15^\\circ$. Hasilnya sekitar $2{,}38$, bukan $\\frac2\\pi$, jadi (4) <b class="k-red">salah</b>.',
       visual: cone({ theta: 30, height: true, split: true, lab: true }),
-      board: { title: 'Pernyataan (4)', pins: PQ, list: 'L54', upTo: 2, from: 0 },
+      board: { title: 'Pernyataan (4)', pins: PQ, list: 'L54', upTo: 3, from: 1 },
     },
+    open5(
+      5,
+      'Terakhir, pernyataan (5): jika $\\theta=\\pi$ maka $\\frac XY=0$. Kita salin, lalu bayangkan sudutnya dibuka penuh.',
+    ),
     {
       ch: 5,
-      cap: 'Pernyataan (5): saat $\\theta=\\pi$, titik $C$ jatuh di $AB$ sehingga tingginya $0$. Luas $X=0$, jadi $\\frac XY=0$ dan (5) <b class="k-gold">benar</b>.',
+      cap: 'Saat $\\theta=\\pi$, titik $C$ jatuh di $AB$ sehingga tingginya $0$. Luas $X=0$, jadi $\\frac XY=0$ dan (5) <b class="k-gold">benar</b>.',
       visual: cone({ theta: 180, lab: true }),
-      board: { title: 'Pernyataan (5)', pins: PQ, list: 'L55', upTo: 2, from: 0 },
+      board: { title: 'Pernyataan (5)', pins: PQ, list: 'L55', upTo: 3, from: 1 },
     },
     // ---- 6 · Catatan lengkap ----
     {
@@ -579,11 +663,11 @@ const q24: SoalContent = {
       { title: 'Luas setengah lingkaran', lists: ['LY'] },
       {
         title: 'Luas segitiga',
-        lists: ['LX', 'LX2'],
+        lists: ['LX', 'LT', 'LX2'],
         sketch: 'cone',
         why: 'Garis tinggi dari $C$ membagi sudut $\\theta$ dan alas $AB$ menjadi dua bagian sama. Pada segitiga siku-siku kanan: $\\tan\\frac\\theta2=\\frac{\\text{depan}}{\\text{samping}}=\\frac rt$.',
       },
-      { title: 'Gabungkan X/Y', lists: ['LQ', 'LQ2'] },
+      { title: 'Gabungkan X/Y', lists: ['LQ'] },
       { title: 'Uji kelima pernyataan', lists: ['L51', 'L52', 'L53', 'L54', 'L55'] },
     ],
     answer:
@@ -600,7 +684,7 @@ const q24: SoalContent = {
     goldRows: ['p9', 's6', 'r2'],
   },
   authorNotes: [
-    'Alur mengikuti cara Pak Penta membahas di kelas (pesan 21 Okt 2026): es krim berputar, jari-jari r dan 2r, Y, tinggi dari tangen (Demi Sami Desa), angka 2 dan r² dicoret, lalu uji pernyataan.',
+    'Alur mengikuti cara Pak Penta membahas di kelas (pesan 21 Okt 2026): jari-jari r dan 2r, Y, tinggi dari tangen (Demi Sami Desa) pada segitiga siku-siku yang dipindahkan dan diputar, angka 2 dan r² dicoret setelah rumus utuh, X/Y diolah bertahap, lalu tiap pernyataan disalin dari soal dan diuji (revisi kedua 21 Okt 2026).',
     'Bentuk tan dipakai sesuai penjelasan guru: X/Y = 2/(π tan(θ/2)), setara dengan (2/π) cot(θ/2) di dokumen.',
     'Pernyataan (3) diuji di 90° (tan 45° = 1, nilai 2/π) dan 60° (tan 30° = √3/3, ≈ 1,10); pernyataan (4) memakai tan 15° = 2 − √3 (≈ 2,38).',
     'Pertanyaan cepat luas setengah lingkaran ditambahkan dari penjelasan guru; dicatat di dokumen.',

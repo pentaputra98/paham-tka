@@ -2,20 +2,21 @@
  * Adegan SVG "kerucut es krim" soal 24 (PRD §5.1, §9.4; alur guru, revisi pemilik v1.7).
  * Segitiga sama kaki ABC (sudut θ di C) + setengah lingkaran berdiameter AB.
  * Urutan cerita mengikuti cara Pak Penta di kelas:
- *  - spin: kerucut berputar pelan lalu berhenti tegak (pembuka);
  *  - rad/diam: jari-jari dari pusat ke B berkedip (r), diameter AB memerah (2r);
  *  - semi/tri: luas setengah lingkaran (Y) atau segitiga (X) disorot;
- *  - height/split/right: garis tinggi t, sudut θ terbelah dua (θ/2), segitiga siku-siku kanan
- *    dengan sisi depan r dan samping t (tan θ/2 = r/t);
+ *  - height/split/halves: garis tinggi t, sudut θ terbelah dua (θ/2), segitiga terbelah menjadi dua bagian;
+ *  - right/piece: segitiga siku-siku kanan disorot, lalu dipindahkan ke tengah, diperbesar, dan diputar
+ *    sehingga sudut θ/2 di kanan: sisi depan r tegak, sisi samping t mendatar (tan θ/2 = r/t);
+ *    tanpa piece, potongan itu kembali ke tempatnya;
  *  - lab: slider θ dan r dengan nilai X, Y, X/Y langsung (r berubah, X/Y tetap).
  * Morph, bukan ganti: θ dan r berubah halus; label menempel pada objek dan menjadi sumber terbang.
- * Gerak hanya transform/opacity (busur dan garis memakai opacity; putaran memakai scaleX).
+ * Gerak hanya transform/opacity (busur dan garis memakai opacity; potongan memakai translate/rotate/scale).
  */
-import { reducedMotion } from '../core/clock';
+import { sleep } from '../core/clock';
 import { fmt } from '../core/dom';
 import { tex } from '../core/math';
 import { play } from '../core/motion';
-import { EASE_OUT } from '../core/tokens';
+import { EASE } from '../core/tokens';
 import { tween } from '../core/tween';
 import type { Ctx } from '../engine/board';
 import type { VisualScene } from '../engine/scene';
@@ -26,14 +27,12 @@ const VH = 360;
 const R_MAX = 4.5;
 const TH_MIN = 30;
 const TH_MAX = 180;
-/** lama putaran pembuka (ms) */
-const SPIN_MS = 2600;
+/** lama perpindahan potongan segitiga siku-siku (ms) */
+const PIECE_MS = 1300;
 
 export interface ConeState {
   theta: number; // derajat
   r: number; // cm
-  /** putaran pembuka: berputar pelan lalu berhenti tegak */
-  spin?: boolean;
   /** jari-jari dari pusat AB ke B, label r berkedip */
   rad?: boolean;
   /** diameter AB merah, label 2r */
@@ -46,8 +45,12 @@ export interface ConeState {
   height?: boolean;
   /** sudut θ terbelah menjadi dua θ/2 */
   split?: boolean;
+  /** segitiga terbelah menjadi dua bagian (sedikit merenggang) */
+  halves?: boolean;
   /** segitiga siku-siku kanan: depan r, samping t */
   right?: boolean;
+  /** potongan segitiga siku-siku kanan dipindahkan ke tengah dan diputar (sudut θ/2 di kanan) */
+  piece?: boolean;
   /** label X dan Y */
   areas?: boolean;
   /** slider + nilai langsung */
@@ -108,6 +111,8 @@ export function createCone(): VisualScene {
   const gShape = sv('g', {}, gAll);
   const semi = sv('path', { class: 'c-semi' }, gShape);
   const tri = sv('path', { class: 'c-tri' }, gShape);
+  const halfL = sv('path', { class: 'c-hl' }, gShape);
+  const halfR = sv('path', { class: 'c-hr' }, gShape);
   const rightTri = sv('path', { class: 'c-right' }, gShape);
   const ab = sv('line', { class: 'c-ab' }, gShape);
   const cm = sv('line', { class: 'c-cm' }, gShape);
@@ -141,6 +146,32 @@ export function createCone(): VisualScene {
   const tX = mk('X', 'c-var c-x', 's-X');
   const tY = mk('Y', 'c-var c-y', 's-Y');
 
+  // ---------- potongan segitiga siku-siku kanan (dipindahkan dan diputar saat membahas tangen) ----------
+  // koordinat lokal: siku di M (0, 0), B di (r, 0), C di (0, h); label digambar di koordinat layar (tidak ikut berputar)
+  const gPiece = sv('g', { class: 'c-piece' }, svg);
+  const ns = { 'vector-effect': 'non-scaling-stroke' };
+  const pTri = sv('path', { class: 'cp-tri', ...ns }, gPiece);
+  const pDepan = sv('line', { class: 'cp-depan', ...ns }, gPiece);
+  const pSamping = sv('line', { class: 'cp-samping', ...ns }, gPiece);
+  const gPLab = sv('g', { class: 'cp-labels' }, svg);
+  const pArc = sv('path', { class: 'cp-arc' }, gPLab);
+  const pSq = sv('path', { class: 'cp-sq' }, gPLab);
+  const pmk = (txt: string, cls: string, src?: string): SVGTextElement => {
+    const t = sv('text', { class: cls, 'text-anchor': 'middle', 'dominant-baseline': 'middle' }, gPLab);
+    if (src) t.setAttribute('data-src', src);
+    t.textContent = txt;
+    return t;
+  };
+  const pR = pmk('r', 'c-var cp-r', 'p-r');
+  const pRk = pmk('depan', 'cp-k', 'p-depan');
+  const pT = pmk('t', 'c-var cp-t', 'p-t');
+  const pTk = pmk('samping', 'cp-k', 'p-samping');
+  const pH = pmk('θ/2', 'c-var cp-h', 'p-half');
+  let pieceFrom = '';
+  let pieceTo = '';
+  let pieceOut = false;
+  let pieceMoving = false;
+
   // ---------- lab: slider + HUD ----------
   const lab = document.createElement('div');
   lab.className = 'labctl';
@@ -168,6 +199,9 @@ export function createCone(): VisualScene {
     semi.setAttribute('d', `M${Ax} ${yAB} A${rPx} ${rPx} 0 0 1 ${Bx} ${yAB} Z`);
     tri.setAttribute('d', `M${Ax} ${yAB} L${Bx} ${yAB} L${cx} ${yC} Z`);
     rightTri.setAttribute('d', `M${cx} ${yAB} L${Bx} ${yAB} L${cx} ${yC} Z`);
+    halfL.setAttribute('d', `M${Ax} ${yAB} L${cx} ${yAB} L${cx} ${yC} Z`);
+    halfR.setAttribute('d', `M${cx} ${yAB} L${Bx} ${yAB} L${cx} ${yC} Z`);
+    drawPiece(g);
     for (const [ln, x1, y1, x2, y2] of [
       [ab, Ax, yAB, Bx, yAB],
       [cm, cx, yAB, cx, yC],
@@ -249,22 +283,77 @@ export function createCone(): VisualScene {
     draw();
   });
 
-  /** Putaran pembuka: lebar menyempit-melebar beberapa kali (bentuknya simetris), melambat, lalu berhenti tegak. */
-  function spin(): void {
-    if (reducedMotion()) return;
-    const k: Keyframe[] = [];
-    const turns = 3;
-    for (let i = 0; i <= turns * 2; i++) {
-      // makin lama makin lambat: offset mengikuti kurva ease-out
-      const t = i / (turns * 2);
-      k.push({ transform: `scaleX(${i % 2 ? 0.08 : 1})`, offset: 1 - (1 - t) * (1 - t) });
+  /**
+   * Potongan segitiga siku-siku kanan. Posisi awal = tepat di atas bagian kanan segitiga (siku di M).
+   * Posisi akhir = tengah gambar, diperbesar k kali dan diputar −90°: C ke kanan (sudut θ/2 di kanan),
+   * B ke atas (sisi depan r tegak), sisi samping t mendatar di bawah.
+   */
+  function drawPiece(g: Geo): void {
+    const { cx, yAB, rPx } = g;
+    const h = Math.max(g.h, 1);
+    pTri.setAttribute('d', `M0 0 L${rPx} 0 L0 ${h} Z`);
+    for (const [ln, x2, y2] of [
+      [pDepan, rPx, 0],
+      [pSamping, 0, h],
+    ] as const) {
+      ln.setAttribute('x1', '0');
+      ln.setAttribute('y1', '0');
+      ln.setAttribute('x2', String(x2));
+      ln.setAttribute('y2', String(y2));
     }
-    play(gAll, k, { duration: SPIN_MS, easing: 'linear', tag: 'cone' });
-    play(gAll, [{ opacity: 0.2 }, { opacity: 1, offset: 0.25 }, { opacity: 1 }], {
-      duration: SPIN_MS,
-      easing: EASE_OUT,
-      tag: 'cone',
-    });
+    const k = Math.min(250 / h, 170 / rPx, 2.4);
+    const x0 = VW / 2 - (k * h) / 2;
+    const y0 = VH / 2 + (k * rPx) / 2 + 6;
+    pieceFrom = `translate(${cx}px, ${yAB}px) rotate(0deg) scale(1)`;
+    pieceTo = `translate(${x0}px, ${y0}px) rotate(-90deg) scale(${k})`;
+    if (!pieceMoving) gPiece.style.transform = pieceOut ? pieceTo : pieceFrom;
+    // label di koordinat layar pada posisi akhir: M' = (x0, y0), B' = (x0, y0 − kr), C' = (x0 + kh, y0)
+    const Cx = x0 + k * h;
+    const ymid = y0 - (k * rPx) / 2;
+    const at = (t: SVGTextElement, x: number, y: number): void => {
+      t.setAttribute('x', String(x));
+      t.setAttribute('y', String(y));
+    };
+    at(pR, x0 - 16, ymid - 8);
+    at(pRk, x0 - 16, ymid + 12);
+    at(pT, x0 + (k * h) / 2, y0 + 16);
+    at(pTk, x0 + (k * h) / 2, y0 + 34);
+    // busur θ/2 di C': dari arah M' (kiri) ke arah B' (kiri atas)
+    const ra = 34;
+    const phi = Math.atan2(-k * rPx, -k * h);
+    pArc.setAttribute(
+      'd',
+      `M${Cx - ra} ${y0} A${ra} ${ra} 0 0 1 ${Cx + ra * Math.cos(phi)} ${y0 + ra * Math.sin(phi)}`,
+    );
+    const mid = (Math.PI + phi + 2 * Math.PI) / 2;
+    at(pH, Cx + (ra + 22) * Math.cos(mid), y0 + (ra + 22) * Math.sin(mid));
+    pSq.setAttribute('d', `M${x0 + 12} ${y0} L${x0 + 12} ${y0 - 12} L${x0} ${y0 - 12}`);
+  }
+
+  /** Pindahkan potongan keluar (true) atau kembalikan (false); beranimasi hanya saat maju. */
+  async function movePiece(out: boolean, c: Ctx): Promise<void> {
+    if (out === pieceOut) return;
+    pieceOut = out;
+    const from = out ? pieceFrom : pieceTo;
+    const to = out ? pieceTo : pieceFrom;
+    if (out) {
+      el.classList.add('show-right');
+      // sorot dulu segitiga yang akan diambil, lalu pindahkan
+      if (c.dir > 0 && !(await sleep(650))) return;
+      el.classList.add('show-piece');
+    } else el.classList.remove('piece-done');
+    gPiece.style.transform = to;
+    if (c.dir > 0) {
+      pieceMoving = true;
+      await play(gPiece, [{ transform: from }, { transform: to }], {
+        duration: PIECE_MS,
+        easing: EASE,
+        tag: 'cone',
+      }).finished;
+      pieceMoving = false;
+    }
+    if (out) el.classList.add('piece-done');
+    else el.classList.remove('show-piece');
   }
 
   draw();
@@ -273,11 +362,13 @@ export function createCone(): VisualScene {
     el,
     async apply(state, c: Ctx) {
       const s = state as ConeState;
-      for (const f of ['rad', 'diam', 'semi', 'tri', 'height', 'split', 'right', 'areas'] as const)
+      for (const f of ['rad', 'diam', 'semi', 'tri', 'height', 'split', 'halves', 'right', 'areas'] as const)
         el.classList.toggle(`show-${f}`, !!s[f]);
       labOn = !!s.lab;
       el.classList.toggle('lab-on', labOn);
-      if (s.spin && c.dir > 0 && c.entered) spin();
+      // mundur/diselesaikan: kelas dan posisi potongan diterapkan ulang langsung (tanpa animasi)
+      if (c.dir < 0) pieceOut = !s.piece;
+      await movePiece(!!s.piece, c);
       const th0 = st.theta;
       const r0 = st.r;
       const th1 = s.theta ?? th0;

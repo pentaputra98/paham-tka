@@ -55,6 +55,8 @@ export class Board {
   private pinKey = '';
   private flying = new Set<Flying>();
   private askRes: ((v: boolean) => void) | null = null;
+  /** baris yang dicoret pada langkah ini */
+  private cuts = new Set<string>();
   /** dipanggil saat pertanyaan dibuka/ditutup (tombol Lanjut → "Lewati soal") */
   onPending: (pending: boolean) => void = () => undefined;
   onReplay: () => void = () => undefined;
@@ -111,7 +113,8 @@ export class Board {
     s.className = `tk${t.h != null ? ' tx' : ''}${t.c ? ` ${t.c}` : ''}`;
     s.dataset.k = t.k;
     if (t.src) s.dataset.src = t.src;
-    s.innerHTML = t.h != null ? t.h : tex(t.t ?? '');
+    // teks boleh memuat $…$ (mis. pernyataan soal yang disalin)
+    s.innerHTML = t.h != null ? mathHtml(t.h) : tex(t.t ?? '');
     return s;
   }
 
@@ -153,15 +156,15 @@ export class Board {
   }
 
   /**
-   * Skala bersama --fitv (62–100 %) untuk semua baris, agar isi papan muat setinggi kolomnya.
+   * Skala bersama --fitv (54–100 %) untuk semua baris, agar isi papan muat setinggi kolomnya.
    * Ukuran huruf tidak persis linear terhadap tinggi (jarak, tinggi minimum), jadi diukur ulang maksimal tiga kali.
    */
   private fitV(): void {
     const b = this.body;
     b.style.removeProperty('--fitv');
     let k = 1;
-    for (let n = 0; n < 3 && b.clientHeight > 0 && b.scrollHeight > b.clientHeight + 1 && k > 0.62; n++) {
-      k = Math.max(0.62, k * (b.clientHeight / b.scrollHeight));
+    for (let n = 0; n < 3 && b.clientHeight > 0 && b.scrollHeight > b.clientHeight + 1 && k > 0.54; n++) {
+      k = Math.max(0.54, k * (b.clientHeight / b.scrollHeight));
       b.style.setProperty('--fitv', k.toFixed(3));
     }
   }
@@ -184,6 +187,8 @@ export class Board {
 
   private finish(row: RowView, anim: boolean): void {
     row.el.querySelectorAll('.tk.hid').forEach((t) => t.classList.remove('hid'));
+    // coret setelah rumus tampil utuh (transisi CSS bila beranimasi)
+    if (this.cuts.has(row.id)) row.el.classList.add('cut');
     if (row.spec.note) row.el.classList.add('noted');
     // ukur ulang setelah token tampil: lebar baris bisa berubah sejak ditulis (font, catatan, kotak)
     this.fit(row);
@@ -315,7 +320,31 @@ export class Board {
     this.finish(row, true);
     this.announce(row);
     // jeda antarbaris; baris terakhir tidak ditunggu (langkah dianggap selesai saat baris terakhir tampil)
-    if (!last) await sleep(spec.box ? 650 : 330);
+    if (!last) await sleep(this.cuts.has(spec.id) ? 1100 : spec.box ? 650 : 330);
+  }
+
+  /**
+   * Tandai baris yang dicoret pada langkah ini (idempoten). Baris yang sudah tampil dan baru ditandai dicoret
+   * sekarang; saat maju, jeda sebentar agar coretan terlihat sebelum baris berikutnya ditulis.
+   */
+  async setCut(ids: string[], c: Ctx): Promise<boolean> {
+    this.cuts = new Set(ids);
+    // ulangi langkah: coretan digambar ulang (lepas dulu, paksa tata letak, lalu pasang lagi)
+    if (c.replay && c.dir > 0) {
+      this.rows.forEach((r) => r.el.classList.remove('cut'));
+      void this.body.offsetWidth;
+    }
+    let fresh = false;
+    for (const r of this.rows) {
+      const want = this.cuts.has(r.id);
+      if (want && !r.el.classList.contains('cut')) fresh = true;
+      r.el.classList.toggle('cut', want);
+    }
+    if (fresh && c.dir > 0) {
+      SND.chalk();
+      return sleep(1100);
+    }
+    return c.live();
   }
 
   private fly(s: HTMLElement, tk: HTMLElement, c: Ctx): Promise<void> {

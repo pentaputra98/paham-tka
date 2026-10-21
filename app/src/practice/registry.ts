@@ -6,6 +6,7 @@ import type { Generator } from './types';
 
 const LOADERS: Partial<Record<number, () => Promise<Generator>>> = {
   1: () => import('./gen01').then((m) => m.gen01),
+  24: () => import('./gen24').then((m) => m.gen24),
 };
 
 export const hasPractice = (no: number): boolean => no in LOADERS;

@@ -16,16 +16,20 @@ const SIZES: Array<[number, number]> = [
   [1920, 1080],
 ];
 const ALL: Array<[string, string, number]> = [
-  ['24-putar', '#/soal/24/bahas?m=amati&b=1&l=0', 4500],
+  ['24-awal', '#/soal/24/bahas?m=amati&b=1&l=0', 4500],
   ['24-soal', '#/soal/24/bahas?m=amati&b=1&l=1', 4000],
   ['24-jari', '#/soal/24/bahas?m=amati&b=2&l=0', 5000],
-  ['24-siku', '#/soal/24/bahas?m=amati&b=3&l=2', 6000],
-  ['24-coret', '#/soal/24/bahas?m=amati&b=3&l=4', 7000],
-  ['24-gabung', '#/soal/24/bahas?m=amati&b=4&l=1', 7000],
-  ['24-uji3', '#/soal/24/bahas?m=amati&b=5&l=3', 7000],
-  ['24-uji5', '#/soal/24/bahas?m=amati&b=5&l=5', 7000],
+  ['24-belah', '#/soal/24/bahas?m=amati&b=3&l=1', 6000],
+  ['24-potong', '#/soal/24/bahas?m=amati&b=3&l=2', 7000],
+  ['24-coret', '#/soal/24/bahas?m=amati&b=3&l=6', 7000],
+  ['24-gabung', '#/soal/24/bahas?m=amati&b=4&l=4', 8000],
+  ['24-salin', '#/soal/24/bahas?m=amati&b=5&l=4', 5000],
+  ['24-uji3', '#/soal/24/bahas?m=amati&b=5&l=6', 7000],
+  ['24-uji5', '#/soal/24/bahas?m=amati&b=5&l=10', 7000],
   ['24-catatan', '#/soal/24/bahas?m=amati&b=6', 1500],
   ['24-kartu', '#/soal/24/bahas?m=amati&b=7', 5000],
+  ['24-latihan-siap', '#/soal/24/latihan', 1500],
+  ['24-latihan-soal', '#/soal/24/latihan?s=00000D-T', 1500],
   ['1-lobi', '#/soal/1/bahas?m=amati', 900],
   ['1-catatan', '#/soal/1/bahas?m=amati&b=4', 1200],
   ['1-selesai', '#/soal/1/bahas?m=amati&b=6', 3500],
@@ -96,6 +100,7 @@ for (const sc of SCREENS) {
 for (const [w, h] of SIZES) {
   for (const [no, screens] of BY_SOAL)
     test(`pembahasan ${w}×${h} soal ${no}`, async ({ page }) => {
+      test.setTimeout(30_000 + screens.reduce((s, [, , ms]) => s + ms + 2500, 0));
       await page.setViewportSize({ width: w, height: h });
       for (const [name, hash, wait] of screens) {
         await page.goto(`./${hash}`);

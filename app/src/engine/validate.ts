@@ -82,6 +82,8 @@ export function validateSoal(raw: unknown): { errors: string[]; warns: string[] 
     // token yang tersedia sebagai sumber: pin langkah + baris sebelumnya pada daftar ini
     const pinToks = new Set((b.pins ?? []).flatMap((pid) => c.pins[pid]?.toks.map((t) => t.k) ?? []));
     list.slice(0, b.upTo).forEach((row: Row, ri) => {
+      // baris sebelum `from` sudah ditulis langkah sebelumnya (atau muncul tanpa terbang): sumbernya diperiksa di sana
+      if (ri < b.from) return;
       const before = new Set(list.slice(0, ri).flatMap((r) => flatToks(r.toks).map((t) => t.k)));
       for (const t of flatToks(row.toks)) {
         if (!t.src) continue;

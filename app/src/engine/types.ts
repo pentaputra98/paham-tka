@@ -6,8 +6,11 @@
 import type { SoalMeta } from '../content';
 
 // ---- token papan tulis ----
-/** x = dicoret (garis merah tergambar saat token ditulis; mis. faktor yang saling menghilang) */
-export type Cls = 'red' | 'blue' | 'gold' | 'u' | 'muted' | 'lbl' | 'sp' | 'op' | 'tx' | 'x';
+/**
+ * x = dapat dicoret (garis merah tergambar saat barisnya ditandai cut; mis. faktor yang saling menghilang);
+ * q = kutipan teks yang boleh terlipat (mis. pernyataan soal yang disalin ke papan).
+ */
+export type Cls = 'red' | 'blue' | 'gold' | 'u' | 'muted' | 'lbl' | 'sp' | 'op' | 'tx' | 'x' | 'q';
 /** Token: t = LaTeX, h = HTML teks pendek; src = sumber terbang ('@nama' atau id token lain). */
 export interface Tok {
   k: string;
@@ -81,6 +84,11 @@ export interface BoardSpec {
   upTo: number;
   /** animasikan mulai indeks ini (bila datang berurutan, semua yang belum tampil dianimasikan) */
   from: number;
+  /**
+   * Baris yang token kelas x-nya dicoret pada langkah ini. Baris yang sudah tampil dicoret di awal langkah
+   * (sebelum baris baru ditulis); baris yang ditulis di langkah ini dicoret setelah rumusnya tampil utuh.
+   */
+  cut?: string[];
 }
 export interface Step {
   ch: number;

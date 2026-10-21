@@ -21,7 +21,7 @@ import { getSoal } from '../content';
 import { Board, type Ctx } from '../engine/board';
 import { Ink } from '../engine/ink';
 import { loadGenerator } from '../practice/registry';
-import { LEVELS, parseCode, type Generator, type Instance, type Level } from '../practice/types';
+import { keysOf, LEVELS, parseCode, type Generator, type Instance, type Level } from '../practice/types';
 import type { Route } from '../router/router';
 import { navigate, type PageView } from '../shell/app';
 import { isSheetOpen } from '../shell/sheet';
@@ -36,10 +36,10 @@ interface Prefs {
 type Status = 'open' | 'wrong' | 'ok' | 'key' | 'timeout';
 interface Item {
   inst: Instance;
-  /** pilihan yang sedang dipilih (belum diperiksa) */
-  picked: number | null;
-  /** pilihan terakhir yang diperiksa */
-  chosen: number | null;
+  /** pilihan yang sedang dipilih (belum diperiksa); pilihan banyak boleh lebih dari satu */
+  picked: number[];
+  /** pilihan terakhir yang diperiksa (terurut) */
+  chosen: number[] | null;
   tries: number;
   hints: number;
   status: Status;
@@ -80,6 +80,12 @@ const mmss = (ms: number): string => {
 };
 
 const LETTERS = 'ABCDE';
+const sameSet = (a: number[], b: number[]): boolean => a.length === b.length && a.every((x) => b.includes(x));
+/** Benar: diperiksa benar, atau jawaban yang terkunci saat waktu habis sama dengan kunci. */
+const isRight = (x: Item): boolean =>
+  x.status === 'ok' || (x.status === 'timeout' && x.chosen !== null && sameSet(x.chosen, keysOf(x.inst)));
+/** Label pilihan: A–E (pilihan ganda) atau (1)–(5) (pernyataan pada soal pilihan banyak). */
+const optLabel = (inst: Instance, i: number): string => (inst.multi ? `(${i + 1})` : LETTERS[i]!);
 
 export function latihanPage(route: Route): PageView {
   const no = route.no!;
@@ -289,7 +295,7 @@ export function latihanPage(route: Route): PageView {
     const s = seeds ?? Array.from({ length: p.count }, freshSeed);
     items = s.map((seed) => ({
       inst: g.make(seed, p.level),
-      picked: null,
+      picked: [],
       chosen: null,
       tries: 0,
       hints: 0,
@@ -315,7 +321,7 @@ export function latihanPage(route: Route): PageView {
           <div class="lat-hints"></div>
         </div>
         <div class="lat-right">
-          <div class="lat-ans-h"><p class="lat-k">Pilih jawaban</p>
+          <div class="lat-ans-h"><p class="lat-k" data-ans-k>Pilih jawaban</p>
             <button type="button" class="btn lat-hint-btn" data-hint>${icon('circle-help')}<span data-hint-t>Petunjuk 1 dari 3</span></button></div>
           <div class="lat-opts" role="radiogroup" aria-label="Pilihan jawaban"></div>
           <div class="lat-fb" role="status" aria-live="polite"></div>
@@ -384,16 +390,21 @@ export function latihanPage(route: Route): PageView {
     stage.querySelector('.lat-hints')!.replaceChildren();
     for (let h = 0; h < it.hints; h++) appendHint(h, false);
     const box = stage.querySelector<HTMLElement>('.lat-opts')!;
+    const multi = !!inst.multi;
+    box.classList.toggle('is-multi', multi);
+    box.setAttribute('role', multi ? 'group' : 'radiogroup');
+    box.setAttribute('aria-label', multi ? 'Pernyataan; pilih semua yang benar' : 'Pilihan jawaban');
+    stage.querySelector('[data-ans-k]')!.textContent = multi ? 'Pilih semua yang benar' : 'Pilih jawaban';
     box.innerHTML = inst.options
       .map(
         (o, i) =>
-          `<button type="button" role="radio" class="lat-opt" data-opt="${i}" aria-checked="false"><span class="ol">${LETTERS[i]}</span><span class="lat-opt-m">${mathHtml(`$${o.tex}$`)}</span></button>`,
+          `<button type="button" role="${multi ? 'checkbox' : 'radio'}" class="lat-opt" data-opt="${i}" aria-checked="false"><span class="ol">${optLabel(inst, i)}</span><span class="lat-opt-m">${o.html ? mathHtml(o.html) : mathHtml(`$${o.tex}$`)}</span></button>`,
       )
       .join('');
     box
       .querySelectorAll<HTMLElement>('.lat-opt')
       .forEach((b, i) =>
-        b.setAttribute('aria-label', `${LETTERS[i]}. ${mathLabel(b.querySelector('.lat-opt-m')!)}`),
+        b.setAttribute('aria-label', `${optLabel(inst, i)}. ${mathLabel(b.querySelector('.lat-opt-m')!)}`),
       );
     ink?.setPage(`lat-${inst.code}`);
     renderState();
@@ -411,6 +422,8 @@ export function latihanPage(route: Route): PageView {
 
   /** Matriks pilihan tidak boleh terpotong: satu skala huruf --k untuk kelima pilihan (min 55 %). */
   function fitOpts(): void {
+    // pernyataan (pilihan banyak) boleh terlipat; yang diskalakan hanya pilihan rumus/matriks
+    if (items[cur]?.inst.multi) return;
     const ms = [...stage.querySelectorAll<HTMLElement>('.lat-opt-m')];
     ms.forEach((m) => m.style.removeProperty('--k'));
     const need = Math.min(
@@ -442,12 +455,23 @@ export function latihanPage(route: Route): PageView {
     const it = item();
     const inst = it.inst;
     const done = final(it.status);
+    const multi = !!inst.multi;
+    const keys = keysOf(inst);
+    const chosen = it.chosen ?? [];
+    const ch0 = it.chosen?.[0] ?? null;
     stage.querySelectorAll<HTMLElement>('.lat-opt').forEach((b, i) => {
-      const wrongTried = it.status !== 'open' && i === it.chosen && i !== inst.key;
-      b.setAttribute('aria-checked', String(i === it.picked));
-      b.classList.toggle('is-wrong', wrongTried || (it.status === 'wrong' && i === it.chosen));
+      b.setAttribute('aria-checked', String(it.picked.includes(i)));
+      if (multi) {
+        // pilihan banyak: benar/salah per pernyataan baru ditandai setelah kunci dibuka (tidak membocorkan kunci)
+        b.classList.toggle('is-wrong', done && chosen.includes(i) && !keys.includes(i));
+        b.classList.toggle('is-key', done && keys.includes(i));
+        (b as HTMLButtonElement).disabled = done;
+        return;
+      }
+      const wrongTried = it.status !== 'open' && i === ch0 && i !== inst.key;
+      b.classList.toggle('is-wrong', wrongTried || (it.status === 'wrong' && i === ch0));
       b.classList.toggle('is-key', done && i === inst.key);
-      (b as HTMLButtonElement).disabled = done || (it.status === 'wrong' && i === it.chosen);
+      (b as HTMLButtonElement).disabled = done || (it.status === 'wrong' && i === ch0);
     });
     const hb = stage.querySelector<HTMLButtonElement>('[data-hint]')!;
     hb.disabled = done || it.hints >= 3;
@@ -461,21 +485,44 @@ export function latihanPage(route: Route): PageView {
       const t = inst.test(i);
       return `<p class="lat-test"><span class="lat-test-k">Uji pilihan ${LETTERS[i]}</span>${mathHtml(`$${t.tex}$`)}</p>`;
     };
-    const keyLine = `Kuncinya <b>${LETTERS[inst.key]}</b>: ${mathHtml(`$${inst.options[inst.key]!.tex}$`)}`;
+    const keyLine = multi
+      ? `Pernyataan yang benar: <b>${keys.map((i) => optLabel(inst, i)).join(' dan ')}</b>.`
+      : `Kuncinya <b>${LETTERS[inst.key]}</b>: ${mathHtml(`$${inst.options[inst.key]!.tex}$`)}`;
     const steps = `<button type="button" class="btn lat-steps" data-steps>${icon('list')}<span>Lihat langkah</span></button>`;
-    if (it.status === 'ok') {
+    // pilihan banyak: alasan tiap pernyataan setelah kunci dibuka
+    const verdicts = `<ul class="lat-verdicts">${inst.options
+      .map(
+        (o, i) =>
+          `<li class="${o.ok ? 'ok' : 'no'}"><span class="lat-v-k">${optLabel(inst, i)} ${o.ok ? 'Benar' : 'Salah'}</span><span>${mathHtml(o.why ?? '')}</span></li>`,
+      )
+      .join('')}</ul>`;
+    const wrongPick = chosen.map((i) => inst.options[i]!).find((o) => !o.ok);
+    if (multi && it.status === 'ok') {
+      fb.classList.add('is-ok');
+      fb.innerHTML = `<p class="lat-fb-t"><b class="k-gold">Benar.</b> ${keyLine}</p>${verdicts}<div class="lat-fb-a">${steps}</div>`;
+    } else if (multi && it.status === 'wrong') {
+      const hint = wrongPick?.trap?.hint ?? 'Perhatikan, masih ada pernyataan benar yang belum kamu pilih.';
+      fb.classList.add('is-no');
+      fb.innerHTML = `<p class="lat-fb-t"><b class="k-red">Belum tepat.</b> ${mathHtml(hint)}</p>
+        <p class="lat-fb-s">Coba sekali lagi, atau buka kuncinya.</p>
+        <div class="lat-fb-a"><button type="button" class="btn" data-reveal>${icon('eye')}<span>Buka kunci</span></button></div>`;
+    } else if (multi && (it.status === 'key' || it.status === 'timeout')) {
+      fb.classList.add(it.status === 'timeout' ? 'is-time' : 'is-key');
+      fb.innerHTML = `<p class="lat-fb-t">${it.status === 'timeout' ? `<b class="k-red">Waktu habis.</b> ${isRight(it) ? 'Jawabanmu yang terkunci sudah benar. ' : ''}` : ''}${keyLine}</p>
+        ${wrongPick?.trap ? `<p class="lat-fb-s">${mathHtml(wrongPick.trap.hint)}</p>` : ''}${verdicts}<div class="lat-fb-a">${steps}</div>`;
+    } else if (it.status === 'ok') {
       fb.classList.add('is-ok');
       fb.innerHTML = `<p class="lat-fb-t"><b class="k-gold">Benar.</b> ${keyLine}</p>${testLine(inst.key)}<div class="lat-fb-a">${steps}</div>`;
     } else if (it.status === 'wrong') {
-      const tr = inst.options[it.chosen!]!.trap;
+      const tr = inst.options[ch0!]!.trap;
       fb.classList.add('is-no');
-      fb.innerHTML = `<p class="lat-fb-t"><b class="k-red">Belum tepat.</b> ${mathHtml(tr?.hint ?? '')}</p>${testLine(it.chosen!)}
+      fb.innerHTML = `<p class="lat-fb-t"><b class="k-red">Belum tepat.</b> ${mathHtml(tr?.hint ?? '')}</p>${testLine(ch0!)}
         <p class="lat-fb-s">Coba sekali lagi, atau buka kuncinya.</p>
         <div class="lat-fb-a"><button type="button" class="btn" data-reveal>${icon('eye')}<span>Buka kunci</span></button></div>`;
     } else if (it.status === 'key' || it.status === 'timeout') {
-      const tr = it.chosen !== null && it.chosen !== inst.key ? inst.options[it.chosen]!.trap : undefined;
+      const tr = ch0 !== null && ch0 !== inst.key ? inst.options[ch0]!.trap : undefined;
       fb.classList.add(it.status === 'timeout' ? 'is-time' : 'is-key');
-      fb.innerHTML = `<p class="lat-fb-t">${it.status === 'timeout' ? `<b class="k-red">Waktu habis.</b> ${it.chosen === inst.key ? 'Jawabanmu yang terkunci sudah benar. ' : ''}` : ''}${keyLine}</p>
+      fb.innerHTML = `<p class="lat-fb-t">${it.status === 'timeout' ? `<b class="k-red">Waktu habis.</b> ${isRight(it) ? 'Jawabanmu yang terkunci sudah benar. ' : ''}` : ''}${keyLine}</p>
         ${tr ? `<p class="lat-fb-s">${mathHtml(tr.hint)}</p>` : ''}${testLine(inst.key)}<div class="lat-fb-a">${steps}</div>`;
     }
     // navigasi bawah
@@ -487,7 +534,7 @@ export function latihanPage(route: Route): PageView {
         : 'Soal berikutnya'
       : 'Periksa jawaban';
     check.querySelector('.lucide')!.outerHTML = icon(done ? 'arrow-right' : 'check');
-    check.setAttribute('aria-disabled', String(!done && it.picked === null));
+    check.setAttribute('aria-disabled', String(!done && it.picked.length === 0));
     const nb = nav.querySelector<HTMLButtonElement>('[data-new]')!;
     nb.hidden = done || it.status === 'wrong' || replayCode !== null;
     nav.querySelector('.lat-dots')!.innerHTML = items
@@ -501,8 +548,16 @@ export function latihanPage(route: Route): PageView {
 
   function pick(i: number): void {
     const it = item();
-    if (final(it.status) || (it.status === 'wrong' && i === it.chosen)) return;
-    it.picked = i;
+    if (i < 0 || i >= it.inst.options.length) return;
+    if (it.inst.multi) {
+      if (final(it.status)) return;
+      it.picked = it.picked.includes(i) ? it.picked.filter((x) => x !== i) : [...it.picked, i];
+      SND.click();
+      renderState();
+      return;
+    }
+    if (final(it.status) || (it.status === 'wrong' && i === it.chosen?.[0])) return;
+    it.picked = [i];
     SND.click();
     renderState();
   }
@@ -510,11 +565,12 @@ export function latihanPage(route: Route): PageView {
   function check(): void {
     const it = item();
     if (final(it.status)) return advance();
-    if (it.picked === null) return;
-    const i = it.picked;
-    it.chosen = i;
-    it.picked = null;
-    if (it.inst.options[i]!.ok) {
+    if (!it.picked.length) return;
+    const sel = [...it.picked].sort((a, b) => a - b);
+    it.chosen = sel;
+    // pilihan banyak: pilihan tetap terpasang agar bisa diperbaiki pada percobaan kedua
+    it.picked = it.inst.multi ? sel : [];
+    if (sameSet(sel, keysOf(it.inst))) {
       it.status = 'ok';
       SND.correct();
       finish(it);
@@ -549,7 +605,7 @@ export function latihanPage(route: Route): PageView {
       ts: Date.now(),
       level: it.inst.level,
       seed: it.inst.code,
-      correct: it.status === 'ok' || (it.status === 'timeout' && it.chosen === it.inst.key),
+      correct: isRight(it),
       hints: it.hints,
       timeMs: Math.round(it.ms),
       ...(it.status === 'timeout' ? { timeout: true } : {}),
@@ -599,7 +655,7 @@ export function latihanPage(route: Route): PageView {
       const it = item();
       if (final(it.status) || it.status === 'wrong') return;
       SND.click();
-      items[cur] = { ...it, inst: gen!.make(freshSeed(), it.inst.level), picked: null, hints: 0 };
+      items[cur] = { ...it, inst: gen!.make(freshSeed(), it.inst.level), picked: [], hints: 0 };
       showItem(false);
     }
   }
@@ -704,8 +760,8 @@ export function latihanPage(route: Route): PageView {
     const lock = (x: Item): void => {
       if (final(x.status)) return;
       // jawaban yang sedang dipilih ikut dikunci (FR-LAT-7)
-      if (x.picked !== null) x.chosen = x.picked;
-      x.picked = null;
+      if (x.picked.length) x.chosen = [...x.picked].sort((a, b) => a - b);
+      x.picked = [];
       x.status = 'timeout';
       finish(x);
     };
@@ -741,9 +797,7 @@ export function latihanPage(route: Route): PageView {
     t?.querySelector<HTMLElement>('[data-act="pause"]')?.setAttribute('hidden', '');
     t?.querySelector<HTMLElement>('[data-act="ink"]')?.setAttribute('hidden', '');
     setBlock('HASIL', LEVEL_LABEL[items[0]!.inst.level]);
-    const ok = items.filter(
-      (x) => x.status === 'ok' || (x.status === 'timeout' && x.chosen === x.inst.key),
-    ).length;
+    const ok = items.filter(isRight).length;
     const clean = items.filter((x) => x.status === 'ok' && x.hints === 0).length;
     const totalMs = items.reduce((s, x) => s + x.ms, 0);
     const hints = items.reduce((s, x) => s + x.hints, 0);
@@ -754,10 +808,10 @@ export function latihanPage(route: Route): PageView {
           ? `<span class="pill pill--review">${icon('timer')}Waktu habis</span>`
           : `<span class="pill pill--review">${icon('x')}Belum tepat</span>`;
     const chapterOf = (x: Item): number => {
-      const tr = x.chosen !== null ? x.inst.options[x.chosen]?.trap : undefined;
-      return tr?.chapter ?? (x.inst.level === 'mudah' ? 2 : 3);
+      const tr = (x.chosen ?? []).map((i) => x.inst.options[i]).find((o) => o && !o.ok)?.trap;
+      return tr?.chapter ?? x.inst.chapter ?? (x.inst.level === 'mudah' ? 2 : 3);
     };
-    const firstF = (x: Item): string => /\$\$([\s\S]+?)\$\$/.exec(x.inst.paper)?.[1] ?? '';
+    const firstF = (x: Item): string => x.inst.summary ?? /\$\$([\s\S]+?)\$\$/.exec(x.inst.paper)?.[1] ?? '';
     const node = html(`<div class="lat-sum">
       <section class="lat-sum-hero bp crop" aria-labelledby="sum-t">
         <p class="eyebrow">Hasil latihan · ${LEVEL_LABEL[items[0]!.inst.level]}</p>
@@ -828,8 +882,12 @@ export function latihanPage(route: Route): PageView {
       if (e.key === 'ArrowRight') solNext();
       else if (e.key === 'ArrowLeft') stepTo(solK - 1);
     } else if (k === 'c' && ink) ink.setActive(!ink.isActive);
-    else if (LETTERS.toLowerCase().includes(k) && k.length === 1 && !(tg && tg.closest('button, a')))
-      pick(LETTERS.toLowerCase().indexOf(k));
+    else if (k.length === 1 && !(tg && tg.closest('button, a'))) {
+      // pilihan ganda: huruf A–E; pernyataan: angka 1–5
+      const multi = !!items[cur]?.inst.multi;
+      const i = multi ? '12345'.indexOf(k) : LETTERS.toLowerCase().indexOf(k);
+      if (i >= 0) pick(i);
+    }
   };
   const host = top();
   host?.addEventListener('click', onTop);
@@ -842,6 +900,13 @@ export function latihanPage(route: Route): PageView {
     title: `Latihan soal ${no}`,
     header,
     footer: false,
+    // Muat ulang: soal latihan yang sedang dikerjakan (lewat kodenya), atau penyiapan
+    refreshHash() {
+      const it = items[cur];
+      return stage?.isConnected && it
+        ? `#/soal/${no}/latihan?s=${encodeURIComponent(it.inst.code)}`
+        : `#/soal/${no}/latihan`;
+    },
     destroy() {
       store.addTime(performance.now() - t0);
       stopTimer();

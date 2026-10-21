@@ -31,6 +31,8 @@ export interface PageView {
   header: HeaderSpec;
   footer?: boolean;
   destroy?: () => void;
+  /** alamat untuk tombol Muat ulang (mis. bagian dan langkah pembahasan yang sedang tampil) */
+  refreshHash?: () => string;
 }
 
 export type PageFactory = (route: Route) => PageView;
@@ -44,7 +46,10 @@ let router: ReturnType<typeof createRouter>;
 export const navigate = (hash: string, opts?: { replace?: boolean }): void => router.go(hash, opts);
 export const currentRoute = (): Route => router.current();
 
-/** home = tampilkan tombol Beranda (ikon rumah) di tengah header; semua halaman selain beranda. */
+/**
+ * home = tampilkan tombol Beranda (ikon rumah) di tengah header; semua halaman selain beranda.
+ * Di sampingnya tombol Muat ulang: memasang ulang halaman aktif tanpa memuat ulang peramban (layar penuh tetap).
+ */
 function headerHtml(h: HeaderSpec, home: boolean): string {
   const left = h.back
     ? `<a class="btn top-back" href="${esc(h.back.href)}">${icon('arrow-left')}<span class="btn-label">${esc(h.back.label)}</span></a>`
@@ -55,9 +60,11 @@ function headerHtml(h: HeaderSpec, home: boolean): string {
   const fs = canFullscreen()
     ? `<button class="icon-btn" type="button" data-act="fs" aria-label="${isFullscreen() ? 'Keluar dari layar penuh' : 'Layar penuh'}" title="Layar penuh (F)">${icon(isFullscreen() ? 'minimize' : 'maximize')}</button>`
     : '';
-  const homeBtn = home
-    ? `<a class="icon-btn top-home" href="#/" aria-label="Beranda" title="Beranda">${icon('house')}</a>`
-    : '';
+  const homeBtn = `<div class="top-mid">${
+    home
+      ? `<a class="icon-btn top-home" href="#/" aria-label="Beranda" title="Beranda">${icon('house')}</a>`
+      : ''
+  }<button type="button" class="icon-btn top-refresh" data-act="refresh" aria-label="Muat ulang halaman ini" title="Muat ulang halaman ini">${icon('refresh-cw')}</button></div>`;
   // kelompok kiri dan kanan sama lebar (flex 1 1 0) → tombol Beranda tepat di tengah layar; bila kontrol kanan
   // lebih lebar dari separuh, tombol bergeser sedikit (tidak pernah menimpa), judul blok kiri yang dipangkas
   return `<div class="top-side">${left}${block}</div>${homeBtn}
@@ -135,6 +142,15 @@ function render(route: Route, prev: Route | null): void {
   }
 }
 
+/**
+ * Muat ulang halaman aktif: halaman dibuat ulang dari rutenya (atau dari alamat yang diberikan halaman, mis.
+ * bagian dan langkah pembahasan saat ini). Tanpa location.reload(), sehingga layar penuh tidak keluar.
+ */
+function refreshPage(): void {
+  const hash = current?.refreshHash?.() ?? (location.hash || '#/');
+  navigate(hash, { replace: true });
+}
+
 export function startShell(registry: Partial<Record<Route['name'], PageFactory>>): void {
   pages = registry;
   const app = document.getElementById('app')!;
@@ -144,8 +160,9 @@ export function startShell(registry: Partial<Record<Route['name'], PageFactory>>
     html('<footer class="foot"></footer>'),
   );
   app.addEventListener('click', (e) => {
-    const t = (e.target as Element).closest<HTMLElement>('[data-act="fs"]');
-    if (t) void toggleFullscreen();
+    const t = (e.target as Element).closest<HTMLElement>('[data-act="fs"], [data-act="refresh"]');
+    if (t?.dataset.act === 'fs') void toggleFullscreen();
+    else if (t) refreshPage();
   });
   onFullscreenChange((on) => {
     const b = document.querySelector<HTMLElement>('[data-act="fs"]');

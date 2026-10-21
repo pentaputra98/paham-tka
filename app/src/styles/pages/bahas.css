@@ -442,7 +442,8 @@
     --hc: var(--color-highlight-gold);
   }
 
-  .hl.focus.on {
+  .hl.focus.on,
+  .hl-q.focus {
     background: var(--hc);
   }
 
@@ -699,7 +700,25 @@
     margin-right: 0.35em;
   }
 
-  /* dicoret: garis merah miring tergambar (scaleX) begitu token tampil, lalu token meredup */
+  /* kutipan pernyataan soal yang disalin ke papan: teks boleh terlipat agar muat */
+  .tk.q {
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: normal;
+    padding-left: var(--space-2);
+    border-left: var(--bw-2) solid var(--color-intermediate);
+    font-family: var(--font-body);
+    font-size: max(0.62em, var(--fs-micro));
+    font-weight: var(--fw-medium);
+    line-height: var(--lh-body);
+    color: var(--color-text);
+  }
+
+  .tk.q .katex {
+    font-size: 1.3em;
+  }
+
+  /* dapat dicoret: garis merah miring tergambar (scaleX) saat barisnya ditandai cut (garis tetap terang, token tidak diredupkan) */
   .tk.x {
     position: relative;
   }
@@ -713,28 +732,13 @@
     height: var(--bw-3);
     border-radius: var(--radius-pill);
     background: var(--color-constraint);
-    transform: rotate(-24deg);
+    transform: rotate(-24deg) scaleX(0);
     transform-origin: left center;
+    transition: transform var(--dur-slow) var(--ease-out) var(--delay-step-2);
   }
 
-  .tk.x:not(.hid)::after {
-    animation: strike var(--dur-slow) var(--ease-out) var(--delay-step-2) backwards;
-  }
-
-  .tk.x:not(.hid) {
-    animation: struck var(--dur-slow) var(--ease) var(--delay-step-3) both;
-  }
-
-  @keyframes strike {
-    from {
-      transform: rotate(-24deg) scaleX(0);
-    }
-  }
-
-  @keyframes struck {
-    to {
-      opacity: 0.55;
-    }
+  .bl.cut .tk.x::after {
+    transform: rotate(-24deg);
   }
 
   .m-frac {

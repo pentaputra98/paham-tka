@@ -16,10 +16,14 @@ export interface Trap {
 }
 
 export interface Option {
-  /** LaTeX pilihan */
+  /** LaTeX pilihan (pilihan berupa rumus/matriks) */
   tex: string;
+  /** HTML pernyataan dengan $…$ (soal pilihan banyak); bila ada, dipakai menggantikan tex */
+  html?: string;
   ok: boolean;
   trap?: Trap;
+  /** alasan benar/salah yang ditampilkan setelah kunci dibuka (soal pilihan banyak) */
+  why?: string;
 }
 
 export interface Instance {
@@ -32,8 +36,14 @@ export interface Instance {
   paper: string;
   /** lima pilihan sudah teracak; label A–E sesuai urutan */
   options: Option[];
-  /** indeks pilihan benar */
+  /** indeks pilihan benar (soal pilihan banyak: pilihan benar pertama; kunci lengkap dari `ok`) */
   key: number;
+  /** pilihan banyak: siswa memilih semua pernyataan yang benar (label (1)–(5)) */
+  multi?: boolean;
+  /** rumus singkat untuk baris ringkasan (LaTeX); tanpa nilai = rumus tampilan pertama pada naskah */
+  summary?: string;
+  /** bagian pembahasan bawaan untuk "Bahas bagian terkait" bila tidak ada jebakan yang dipilih */
+  chapter?: number;
   /** petunjuk bertahap: konsep → langkah pertama → arah (FR-LAT-4) */
   hints: [string, string, string];
   /** penyelesaian untuk "Lihat langkah" (FR-LAT-6) */
@@ -68,3 +78,7 @@ export function parseCode(code: string): { seed: number; level: Level } | null {
   const level = LEVELS.find((l) => LEVEL_CH[l] === m[2]!.toUpperCase())!;
   return { seed: parseInt(m[1]!, 36) >>> 0, level };
 }
+
+/** Indeks pilihan benar (satu untuk pilihan ganda, satu atau lebih untuk pilihan banyak). */
+export const keysOf = (inst: Instance): number[] =>
+  inst.options.map((o, i) => (o.ok ? i : -1)).filter((i) => i >= 0);

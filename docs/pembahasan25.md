@@ -2785,8 +2785,10 @@ Pin: $\frac XY=\frac2\pi\cot\frac\theta2$.
 
 Alur mengikuti cara Pak Penta membahas soal ini di kelas. Bentuk tangen dipakai: $\frac XY=\frac{2}{\pi\tan\frac\theta2}$, setara dengan $\frac2\pi\cot\frac\theta2$ di atas. Tata letak: panggung penuh dua kolom (PRD v1.5).
 
+*Revisi kedua oleh pemilik materi (21 Okt 2026; kunci tidak berubah): es krim tidak lagi diputar; segitiga siku-siku dipisah, dipindahkan, dan diputar sebelum mencari $t$; coretan muncul setelah rumus tampil utuh; $\frac XY$ diolah bertahap tanpa menulis ulang; setiap pernyataan disalin dulu dari soal sebelum dianalisis. Daftar di bawah sudah memuat revisi kedua.*
+
 - **Bagian 1 — Pahami soal**
-  - 1.1 Es krim berputar pelan lalu berhenti tegak. Baris: $X$ luas segitiga (`@s-X`), $Y$ luas setengah lingkaran (`@s-Y`), $\theta$ sudut puncak di $C$ (`@g-theta`).
+  - 1.1 Es krim tampil diam (tanpa putaran). Baris: $X$ luas segitiga (`@s-X`), $Y$ luas setengah lingkaran (`@s-Y`), $\theta$ sudut puncak di $C$ (`@g-theta`).
   - 1.2 Kertas soal, stabilo pada $\lim_{\theta\to a}\frac XY$. Baris: Ditanya (`@s-tanya`).
 - **Bagian 2 — Luas setengah lingkaran**
   - 2.1 Jari-jari dari pusat ke $B$ berkedip ($r$); $AB$ memerah ($2r$). Baris: $r$ (`@g-r`), $AB=2r$ (`@g-2r`).
@@ -2798,14 +2800,19 @@ Alur mengikuti cara Pak Penta membahas soal ini di kelas. Bentuk tangen dipakai:
       - $\frac14\pi r^2$: "seperempat lingkaran".
 - **Bagian 3 — Luas segitiga**
   - 3.1 $X=\frac12\times$ alas $\times$ tinggi; alas $AB=2r$.
-  - 3.2 Garis tinggi $t$ ditarik; sudut $\theta$ terbelah menjadi $\frac\theta2+\frac\theta2$. Pertanyaan cepat lama (sudut $\frac\theta2$).
-  - 3.3 Segitiga siku-siku kanan: depan $r$, samping $t$ (Demi Sami Desa). Baris: $\tan\frac\theta2=\frac{\text{depan}}{\text{samping}}=\frac rt$.
-  - 3.4 $t=\frac{r}{\tan\frac\theta2}$ (navy).
-  - 3.5 Pin $t$. Baris: $X=\frac12\times2r\times\frac{r}{\tan\frac\theta2}$, angka $2$ dicoret (animasi garis merah). Lalu $X=\frac{r^2}{\tan\frac\theta2}$ (navy).
+  - 3.2 Garis tinggi $t$ ditarik; sudut $\theta$ terbelah menjadi $\frac\theta2+\frac\theta2$ dan segitiga terbelah menjadi dua bagian. Pertanyaan cepat lama (sudut $\frac\theta2$).
+  - 3.3 Segitiga siku-siku kanan disorot, dipindahkan ke tengah, dan diputar sehingga sudut $\frac\theta2$ di kanan: sisi depan $r$ tegak, sisi samping $t$ mendatar. Papan "Segitiga siku-siku". Baris: $\tan\frac\theta2=\frac{\text{depan}}{\text{samping}}=\frac rt$ (terbang dari label potongan).
+  - 3.4 Baris baru: $t\tan\frac\theta2=r$ (kedua ruas dikali $t$).
+  - 3.5 $t=\frac{r}{\tan\frac\theta2}$ (navy; kedua ruas dibagi $\tan\frac\theta2$).
+  - 3.6 Segitiga dikembalikan. Pin $t$. Baris: $X=\frac12\times2r\times\frac{r}{\tan\frac\theta2}$ tampil utuh.
+  - 3.7 Angka $2$ dicoret (garis merah) setelah rumus utuh, lalu $X=\frac{r^2}{\tan\frac\theta2}$ (navy).
 - **Bagian 4 — Gabungkan $\frac XY$**
-  - 4.1 Pin $X$, $Y$. Baris: $\frac XY=\dfrac{\frac{r^2}{\tan\frac\theta2}}{\frac12\pi r^2}$.
-  - 4.2 Ekspresi yang sama dengan $r^2$ dicoret di atas dan di bawah. Lalu $\frac XY=\frac{2}{\pi\tan\frac\theta2}$ (navy; emas disimpan untuk jawaban).
-- **Bagian 5 — Uji kelima pernyataan** (papan per pernyataan)
+  - 4.1 Pin $X$, $Y$. Baris: $\frac XY=\dfrac{\frac{r^2}{\tan\frac\theta2}}{\frac12\pi r^2}$ (terbang dari pin).
+  - 4.2 Baris yang sama: $r^2$ di atas dan di bawah dicoret (tidak ditulis ulang).
+  - 4.3 Baris baru: $=\frac{1}{\tan\frac\theta2}:\frac12\pi$ (sisa setelah dicoret).
+  - 4.4 Baris baru: $=\frac{1}{\tan\frac\theta2}\times\frac2\pi$ (dibagi $\frac12\pi$ sama dengan dikali $\frac2\pi$).
+  - 4.5 $\frac XY=\frac{2}{\pi\tan\frac\theta2}$ (navy; emas disimpan untuk jawaban).
+- **Bagian 5 — Uji kelima pernyataan** (papan per pernyataan; tiap pernyataan dibuka dengan kertas soal, pernyataan itu disorot, lalu teksnya disalin ke papan sebelum dianalisis)
   - (1) $r$ tidak ada di rumus. Visual: jari-jari diubah, $\frac XY$ tetap. **Salah.**
   - (2) $\lim_{\theta\to a}\frac XY=\frac{2}{\pi\tan\frac a2}$ bergantung pada $a$. **Salah.**
   - (3) Di $\theta=90^\circ$: $\tan45^\circ=1$, $\frac XY=\frac2\pi\approx0{,}64$. Di $\theta=60^\circ$: $\tan30^\circ=\frac{\sqrt3}3$, $\frac XY\approx1{,}10$. Berbeda, jadi **salah**.

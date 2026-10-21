@@ -431,6 +431,127 @@
     gap: var(--space-2);
   }
 
+  /* soal pilihan banyak (soal 24): pernyataan selebar kolom, teks boleh terlipat; penanda kotak = pilih lebih dari satu */
+  .lat-opts.is-multi {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .lat-opts.is-multi .lat-opt {
+    min-height: var(--size-touch);
+  }
+
+  .lat-opts.is-multi .ol {
+    width: auto;
+    min-width: var(--size-ring);
+    padding: 0 var(--space-1-5);
+    border-radius: var(--radius-sm);
+  }
+
+  .lat-opts.is-multi .lat-opt-m {
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    white-space: normal;
+    text-align: left;
+  }
+
+  .lat-verdicts {
+    display: grid;
+    gap: var(--space-1-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .lat-verdicts li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-2);
+    align-items: baseline;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-sunken);
+  }
+
+  .lat-v-k {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--color-constraint);
+  }
+
+  .lat-verdicts .ok .lat-v-k {
+    color: var(--color-result-ink);
+  }
+
+  /* naskah soal 24: teks dan gambar kerucut es krim berdampingan */
+  .lat24 {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-3);
+    align-items: center;
+  }
+
+  .lat-multi-note {
+    font-size: var(--fs-small);
+    font-weight: var(--fw-semibold);
+    color: var(--color-intermediate);
+  }
+
+  .lat-fig {
+    margin: 0;
+  }
+
+  .lat-fig svg {
+    display: block;
+    width: var(--size-lat-fig);
+    height: auto;
+  }
+
+  .lat-fig .lf-semi {
+    fill: var(--color-highlight-blue);
+    stroke: var(--color-intermediate);
+    stroke-width: var(--bw-2);
+  }
+
+  .lat-fig .lf-full {
+    fill: none;
+    stroke: var(--color-intermediate);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 5 4;
+  }
+
+  .lat-fig .lf-tri {
+    fill: var(--color-intermediate-bg);
+    stroke: var(--color-text);
+    stroke-width: var(--bw-2);
+    stroke-linejoin: round;
+  }
+
+  .lat-fig .lf-ang,
+  .lat-fig .lf-tick {
+    fill: none;
+    stroke: var(--color-constraint);
+    stroke-width: var(--bw-2);
+  }
+
+  .lat-fig text {
+    font-family: var(--font-body);
+    font-size: var(--fs-lat-fig);
+    font-weight: var(--fw-bold);
+    text-anchor: middle;
+    dominant-baseline: middle;
+    fill: var(--color-text);
+  }
+
+  .lat-fig .lf-th {
+    font-style: italic;
+    fill: var(--color-constraint);
+  }
+
   .lat-stage.is-paused::before {
     content: 'Waktu dijeda';
     position: absolute;
@@ -802,6 +923,10 @@
     .lat-opt {
       min-height: var(--size-touch);
       padding: var(--space-1) var(--space-2);
+    }
+
+    .lat-opts.is-multi .lat-opt-m {
+      font-size: var(--fs-small);
     }
 
     .lat-fb {

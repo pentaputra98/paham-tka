@@ -15,9 +15,114 @@
     overflow: visible;
   }
 
+  /* seluruh es krim meredup saat potongan segitiga siku-siku dibahas di tengah */
   .c-all {
-    transform-box: fill-box;
-    transform-origin: center;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-piece .c-all {
+    opacity: 0.1;
+  }
+
+  /* segitiga terbelah dua: kedua bagian sedikit merenggang dari garis tinggi */
+  .c-hl,
+  .c-hr {
+    fill: transparent;
+    stroke: none;
+    transition:
+      transform var(--dur-slow) var(--ease-out),
+      fill var(--dur-slow) var(--ease);
+  }
+
+  .show-halves .c-tri {
+    fill: transparent;
+    stroke: transparent;
+  }
+
+  .show-halves .c-hl,
+  .show-halves .c-hr {
+    fill: var(--a-blue-45);
+    stroke: var(--color-on-stage);
+    stroke-width: var(--bw-2);
+    stroke-linejoin: round;
+  }
+
+  .show-halves .c-hl {
+    transform: translateX(calc(-1 * var(--cone-gap)));
+  }
+
+  .show-halves .c-hr {
+    transform: translateX(var(--cone-gap));
+  }
+
+  /* potongan segitiga siku-siku: dipindahkan, diperbesar, diputar (transform di koordinat gambar) */
+  .c-piece {
+    opacity: 0;
+    transform-box: view-box;
+    transform-origin: 0 0;
+    pointer-events: none;
+  }
+
+  .show-piece .c-piece {
+    opacity: 1;
+  }
+
+  .cp-tri {
+    fill: var(--a-sky-30);
+    stroke: var(--color-on-stage);
+    stroke-width: var(--bw-2);
+    stroke-linejoin: round;
+  }
+
+  .cp-depan {
+    stroke: var(--color-constraint-on-stage);
+    stroke-width: var(--bw-4);
+    stroke-linecap: round;
+  }
+
+  .cp-samping {
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-4);
+    stroke-linecap: round;
+  }
+
+  .cp-labels {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .piece-done .cp-labels {
+    opacity: 1;
+  }
+
+  .cp-arc {
+    fill: none;
+    stroke: var(--color-on-stage);
+    stroke-width: var(--bw-3);
+  }
+
+  .cp-sq {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-1);
+  }
+
+  .cp-r {
+    fill: var(--color-constraint-on-stage);
+    font-weight: var(--fw-bold);
+  }
+
+  .cp-t,
+  .cp-h {
+    fill: var(--color-stage-accent);
+    font-weight: var(--fw-bold);
+  }
+
+  .cp-k {
+    font-family: var(--font-mono);
+    font-size: var(--svg-fs-xs);
+    letter-spacing: var(--tracking-label);
+    fill: var(--color-on-stage-muted);
   }
 
   .c-semi {

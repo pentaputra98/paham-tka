@@ -36,7 +36,7 @@ function piecesTex(ps: Piece[]): string {
 function pieceHtml(p: Piece): string {
   if (isFrac(p)) return tex(`\\dfrac{${piecesTex(p.frac[0])}}{${piecesTex(p.frac[1])}}`);
   const c = p.c ? ` ${p.c}` : '';
-  if (p.h != null) return `<span class="n-tx${c}">${p.h}</span>`;
+  if (p.h != null) return `<span class="n-tx${c}">${mathHtml(p.h)}</span>`;
   return `<span class="n-tk${c}">${tex(p.t ?? '')}</span>`;
 }
 

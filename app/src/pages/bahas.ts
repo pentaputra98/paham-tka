@@ -477,6 +477,13 @@ export function bahasPage(route: Route): PageView {
     title: `Bahas soal ${no}`,
     header,
     footer: false,
+    // Muat ulang: kembali ke bagian dan langkah yang sedang tampil, dengan jalur yang sama
+    refreshHash() {
+      const p = player;
+      if (!p || p.current.ch === 0) return `#/soal/${no}/bahas`;
+      const l = p.stepsOfCh(p.current.ch).indexOf(p.i);
+      return `#/soal/${no}/bahas?b=${p.current.ch}&l=${l}&m=${p.path}`;
+    },
     destroy() {
       store.addTime(performance.now() - t0);
       player?.stop();

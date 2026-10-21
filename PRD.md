@@ -4,7 +4,7 @@
 |---|---|
 | **Nama produk** | **Paham TKA** — Pembahasan Interaktif TKA Matematika Tingkat Lanjut 2025 |
 | **Tagline** | Yuk pahami soal TKA 2025, step by step. |
-| **Versi dokumen** | 1.7 (revisi 1.7, 21 Oktober 2026: soal 24 ditulis ulang mengikuti alur guru dan dibuka; token dicoret di papan; lihat §20.2. Revisi 1.6, 21 Oktober 2026: hanya soal 1 dibuka sampai semua fiturnya selesai, tanpa UI bawaan peramban, latihan serupa soal 1 (M3 dimulai); lihat §20.2. Revisi 1.5, 21 Oktober 2026: daftar revisi pemilik untuk soal 1 — panggung penuh dua kolom tanpa gulir, pertanyaan cepat sebagai pop-up, kartu dan catatan dirapikan, aksi SELESAI, tombol Beranda, bilah gulir bertema, hero string art; lihat §20.2. Revisi 1.4, 21 Oktober 2026: masukan uji pemilik produk — panggung penuh tanpa panel papan untuk soal non-3D, navigasi "selesaikan langkah dulu", Coretan inti dimajukan, beranda tanpa kolom cari dan hero bukan soal, skala antarmuka layar lebar; lihat §20.2. Revisi 1.3, 19 Oktober 2026: CSP `connect-src 'self'` agar service worker dapat melakukan *precache*; cadangan `file://` (`dist-single`) dipindah dari kriteria M0 ke M5. Revisi 1.2: Vercel subdomain gratis, kebijakan tanpa izin, tiga perangkat uji, 3D rendah-poligon, offline-first, lapisan gerak Motion) |
+| **Versi dokumen** | 1.8 (revisi 1.8, 21 Oktober 2026: revisi alur soal 24 (tanpa putaran, potongan segitiga diputar, coretan setelah rumus utuh, olah X/Y bertahap, pernyataan disalin dari soal), tombol muat ulang di header, latihan serupa soal 24 (pilihan banyak); lihat §20.2. Revisi 1.7, 21 Oktober 2026: soal 24 ditulis ulang mengikuti alur guru dan dibuka; token dicoret di papan; lihat §20.2. Revisi 1.6, 21 Oktober 2026: hanya soal 1 dibuka sampai semua fiturnya selesai, tanpa UI bawaan peramban, latihan serupa soal 1 (M3 dimulai); lihat §20.2. Revisi 1.5, 21 Oktober 2026: daftar revisi pemilik untuk soal 1 — panggung penuh dua kolom tanpa gulir, pertanyaan cepat sebagai pop-up, kartu dan catatan dirapikan, aksi SELESAI, tombol Beranda, bilah gulir bertema, hero string art; lihat §20.2. Revisi 1.4, 21 Oktober 2026: masukan uji pemilik produk — panggung penuh tanpa panel papan untuk soal non-3D, navigasi "selesaikan langkah dulu", Coretan inti dimajukan, beranda tanpa kolom cari dan hero bukan soal, skala antarmuka layar lebar; lihat §20.2. Revisi 1.3, 19 Oktober 2026: CSP `connect-src 'self'` agar service worker dapat melakukan *precache*; cadangan `file://` (`dist-single`) dipindah dari kriteria M0 ke M5. Revisi 1.2: Vercel subdomain gratis, kebijakan tanpa izin, tiga perangkat uji, 3D rendah-poligon, offline-first, lapisan gerak Motion) |
 | **Distribusi** | Hosting statis Vercel (PWA); cadangan: satu berkas HTML dan ZIP |
 | **Dokumen pendamping** | `SUPER-PROMPT.md` (arahan sesi produksi pertama: M0 dan M1) |
 | **Tanggal** | 19 Oktober 2026 |
@@ -1233,6 +1233,24 @@ Pada revisi 1.2 **tidak ada hal terbuka yang menghalangi produksi**. Semua perta
     Kunci tetap: hanya (5). Pemilik mengonfirmasi bahwa pilihan (4) memakai $\frac\pi6$ sesuai naskah (kunci diikuti).
   - (b) **Soal 24 dibuka** (daftar `OPEN` = 1, 24).
   - (c) **Mesin:** kelas token `x` (dicoret) untuk faktor yang saling menghilang. Garis merah tergambar saat token ditulis lalu token meredup; di catatan tampil sebagai coretan.
+
+- **Revisi 1.8 (21 Oktober 2026, permintaan langsung pemilik produk setelah mencoba soal 24):**
+  - (a) **Tombol muat ulang** di tengah header, di samping Beranda. Halaman dimuat ulang di dalam aplikasi (tetap layar penuh) dan mendarat di halaman yang sedang aktif: pembahasan di bagian dan langkah yang sama, latihan di soal yang sama (lewat kode soal).
+  - (b) **Soal 24, awal pembahasan:** es krim tidak lagi diputar (putaran memipihkan gambar dan tidak membantu).
+  - (c) **Soal 24, segitiga siku-siku $\frac\theta2$:**
+    - segitiga dibelah menjadi dua bagian;
+    - bagian kanan disorot, dipindahkan ke tengah, diperbesar, dan diputar sehingga sudut $\frac\theta2$ di kanan (gambar lain diredupkan);
+    - di papan "Segitiga siku-siku" $t$ dicari bertahap: $\tan\frac\theta2=\frac rt$ → $t\tan\frac\theta2=r$ → $t=\frac{r}{\tan\frac\theta2}$;
+    - segitiga dikembalikan, lalu pembahasan berlanjut.
+  - (d) **Coretan:** rumus tampil utuh dulu, baru garis coret digambar (langkah berikutnya, atau setelah baris selesai ditulis). Mesin: `BoardSpec.cut` menandai baris yang dicoret pada langkah itu; token kelas `x` tidak lagi dicoret saat ditulis.
+  - (e) **Soal 24, $\frac XY$:** baris yang terbentuk dari pin langsung dicoret $r^2$-nya (tidak ditulis ulang), lalu diolah bertahap: $=\frac{1}{\tan\frac\theta2}:\frac12\pi$ → $=\frac{1}{\tan\frac\theta2}\times\frac2\pi$ → $\frac XY=\frac{2}{\pi\tan\frac\theta2}$.
+  - (f) **Soal 24, uji pernyataan:** tiap pernyataan dibuka dengan kertas soal, pernyataan itu disorot, dan teksnya disalin ke papan (terbang dari soal) sebelum animasi analisisnya. Mesin: kelas token `q` (kutipan yang boleh terlipat). Skala tinggi papan minimum diturunkan dari 62 % ke 54 % agar papan terpanjang tetap muat di ponsel tanpa gulir.
+  - (g) **Latihan serupa soal 24** sesuai §11.4 baris 24:
+    - tiga struktur: Mudah $\frac XY$, Sedang $\frac YX$, Menantang $\frac XY$ dengan $Y$ lingkaran penuh;
+    - lima templat pernyataan dengan 1–2 benar; nilai salah dari jebakan konsep ($\tan a$ bukan $\tan\frac a2$, tanpa $\pi$, terbalik, setengah vs lingkaran penuh, nol vs tak hingga);
+    - oracle: luas dari koordinat dan integral numerik; uji properti 1.000 benih × 3 tingkat.
+
+    Mesin latihan kini mendukung **pilihan banyak**: pernyataan dicentang (kotak centang, angka 1–5), "Belum tepat" tidak membocorkan pernyataan mana yang benar, dan setelah kunci dibuka tiap pernyataan diberi alasan benar/salah. Pernyataan, sudut, nama titik, dan urutan berbeda dari soal asli; tingkat Mudah tidak memakai $a=\frac\pi6$. Peninjauan 30 contoh acak oleh pemilik (§11.4, catatan prioritas) belum dilakukan.
 
 ### 20.3 Glosarium
 | Istilah | Arti |

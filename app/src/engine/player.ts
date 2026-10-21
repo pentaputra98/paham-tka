@@ -190,6 +190,7 @@ export class Player {
       const list = this.content.lists[b.list] ?? [];
       const pins = (b.pins ?? []).map((id) => this.content.pins[id]!).filter(Boolean);
       this.board.chapter(b.title, pins, c);
+      if (!(await this.board.setCut(b.cut ?? [], c)) || !c.live()) return false;
       if (needPause && !(await sleep(700))) return false;
       if (!c.live()) return false;
       const a = st.ask;

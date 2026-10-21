@@ -49,6 +49,7 @@ async function settled(page: Page, i: number): Promise<void> {
 
 test.describe('Pembahasan soal 24 (G-Gerak, SVG interaktif)', () => {
   test('jalan penuh jalur Amati sampai SELESAI tanpa galat', async ({ page }) => {
+    test.setTimeout(180_000);
     const errors: string[] = [];
     page.on('pageerror', (e) => errors.push(e.message));
     await setup(page);
@@ -73,26 +74,36 @@ test.describe('Pembahasan soal 24 (G-Gerak, SVG interaktif)', () => {
     );
     expect(new Set(ids).size).toBe(ids.length);
     await expect(page.locator('.board .tk.hid')).toHaveCount(0);
-    // langkah 16 = pernyataan (4): θ = 30°; mundur ke (3) bagian kedua: θ = 60°
-    await page.goto('./#/soal/24/bahas?m=amati&b=5&l=4');
-    await settled(page, 16);
+    // langkah 25 = analisis pernyataan (4): θ = 30°; mundur ke langkah salin pernyataan (4), lalu ke (3): θ = 60°
+    await page.goto('./#/soal/24/bahas?m=amati&b=5&l=8');
+    await settled(page, 25);
     await expect(page.locator('[data-o="th"]')).toHaveText('30°', { timeout: 5000 });
     await expect(page.locator('.bd-t')).toHaveText('Pernyataan (4)');
     await page.locator('[data-prev]').click();
-    await settled(page, 15);
+    await settled(page, 24);
+    await expect(page.locator('.hl-q.focus')).toHaveCount(1);
+    await page.locator('[data-prev]').click();
+    await settled(page, 23);
     await expect(page.locator('[data-o="th"]')).toHaveText('60°');
   });
 
-  test('angka 2 dan r² dicoret; jari-jari diubah X/Y tetap, sudut diubah X/Y berubah', async ({ page }) => {
+  test('coretan muncul setelah rumus utuh; r² dicoret lalu diolah bertahap; slider', async ({ page }) => {
     await setup(page);
-    await page.goto('./#/soal/24/bahas?m=amati&b=3&l=4');
-    await settled(page, 9);
-    await expect(page.locator('.board .bl[data-row="x5"] .tk.x')).toHaveCount(2);
-    await page.goto('./#/soal/24/bahas?m=amati&b=4&l=1');
+    // langkah 10: baris x5 tampil utuh tanpa coretan; langkah 11: angka 2 dicoret
+    await page.goto('./#/soal/24/bahas?m=amati&b=3&l=5');
+    await settled(page, 10);
+    await expect(page.locator('.board .bl.cut')).toHaveCount(0);
+    await page.locator('[data-next]').click();
     await settled(page, 11);
-    await expect(page.locator('.board .bl[data-row="q2"] .tk.x')).toHaveCount(2);
-    await page.goto('./#/soal/24/bahas?m=amati&b=5&l=0');
-    await settled(page, 12);
+    await expect(page.locator('.board .bl.cut[data-row="x5"] .tk.x')).toHaveCount(2);
+    await page.goto('./#/soal/24/bahas?m=amati&b=4&l=1');
+    await settled(page, 13);
+    await expect(page.locator('.board .bl.cut[data-row="q1"] .tk.x')).toHaveCount(2);
+    await page.goto('./#/soal/24/bahas?m=amati&b=4&l=4');
+    await settled(page, 16);
+    await expect(page.locator('.board .bl.cut[data-row="q1"]')).toHaveCount(1);
+    await page.goto('./#/soal/24/bahas?m=amati&b=5&l=1');
+    await settled(page, 18);
     const q = page.locator('[data-o="q"]');
     await expect(page.locator('.labctl')).toBeVisible({ timeout: 10_000 });
     const before = await q.innerText();
@@ -109,5 +120,38 @@ test.describe('Pembahasan soal 24 (G-Gerak, SVG interaktif)', () => {
     await page.goto('./#/soal/24/bahas?m=amati&b=3&l=1');
     await expect.poll(() => page.locator('.fly-tok').count(), { timeout: 15_000 }).toBeGreaterThan(0);
     await settled(page, 6);
+  });
+
+  test('segitiga siku-siku dipindahkan dan diputar, lalu dikembalikan', async ({ page }) => {
+    await setup(page);
+    await page.goto('./#/soal/24/bahas?m=amati&b=3&l=2');
+    await settled(page, 7);
+    await expect(page.locator('.vis-cone.piece-done')).toHaveCount(1);
+    await expect(page.locator('.board .bd-t')).toHaveText('Segitiga siku-siku');
+    await page.locator('[data-next]').click();
+    await settled(page, 8);
+    await expect(page.locator('.vis-cone.piece-done')).toHaveCount(1);
+    await page.goto('./#/soal/24/bahas?m=amati&b=3&l=5');
+    await settled(page, 10);
+    await expect(page.locator('.vis-cone.show-piece')).toHaveCount(0);
+    await page.locator('[data-prev]').click();
+    await settled(page, 9);
+    await expect(page.locator('.vis-cone.piece-done')).toHaveCount(1);
+  });
+
+  test('tiap pernyataan: soal tampil lagi, pernyataan disorot dan disalin ke papan', async ({ page }) => {
+    await setup(page);
+    for (const [l, n] of [
+      [0, 1],
+      [2, 2],
+      [4, 3],
+      [7, 4],
+      [9, 5],
+    ] as const) {
+      await page.goto(`./#/soal/24/bahas?m=amati&b=5&l=${l}`);
+      await settled(page, 17 + l);
+      await expect(page.locator('.hl-q.focus [data-src]')).toHaveAttribute('data-src', `s-p${n}`);
+      await expect(page.locator(`.board .bl[data-row="c${n}"] .tk.q`)).toHaveCount(1);
+    }
   });
 });

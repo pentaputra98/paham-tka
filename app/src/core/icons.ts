@@ -46,6 +46,7 @@ import info from 'lucide-static/icons/info.svg?raw';
 import circleCheck from 'lucide-static/icons/circle-check.svg?raw';
 import cloudDownload from 'lucide-static/icons/cloud-download.svg?raw';
 import house from 'lucide-static/icons/house.svg?raw';
+import refreshCw from 'lucide-static/icons/refresh-cw.svg?raw';
 import clipboardCopy from 'lucide-static/icons/clipboard-copy.svg?raw';
 import circleAlert from 'lucide-static/icons/circle-alert.svg?raw';
 
@@ -94,6 +95,7 @@ const RAW = {
   'circle-check': circleCheck,
   'cloud-download': cloudDownload,
   house: house,
+  'refresh-cw': refreshCw,
   'clipboard-copy': clipboardCopy,
   'circle-alert': circleAlert,
 } as const;
