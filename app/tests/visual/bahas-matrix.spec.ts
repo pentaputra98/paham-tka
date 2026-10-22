@@ -49,6 +49,7 @@ const ALL: Array<[string, string, number]> = [
   ['17-lengan', '#/soal/17/bahas?m=amati&b=3&l=5', 6000],
   ['17-kotak', '#/soal/17/bahas?m=amati&b=3&l=7', 6000],
   ['17-putih', '#/soal/17/bahas?m=amati&b=3&l=10', 9000],
+  ['17-awas', '#/soal/17/bahas?m=amati&b=3&l=12', 8000],
   ['17-cepat', '#/soal/17/bahas?m=amati&b=4&l=1', 5000],
   ['17-salin', '#/soal/17/bahas?m=amati&b=4&l=6', 4500],
   ['17-pilihan3', '#/soal/17/bahas?m=amati&b=4&l=7', 6500],

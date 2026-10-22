@@ -2070,6 +2070,12 @@ Gagasan utama: rambu dipandang sebagai **tumpukan empat bangun utuh** (persegi b
     - kotak tengah disorot pada salib utuh: $8\times8=64$, ikut terhitung di kedua lengan;
     - merah $=224+224-64=384$ cm². Simpan. Pertanyaan cepat: $224+224-64=384$ (benar) · $224+224=448$ ("kotak tengah terhitung dua kali") · $224$ ("baru satu lengan").
   - Putih (salib diangkat; jari-jari $14$ dari gambar, merah dari catatan): putih = lingkaran kecil − merah $=3{,}14\times14^2-384=615{,}44-384=231{,}44$ cm². Simpan. Pertanyaan cepat lama (luas putih).
+- **Hati-hati: pertanyaan siswa** (22 Okt 2026, permintaan pemilik; dua langkah di akhir Bagian 3)
+  - Dugaan siswa: tiap potongan putih adalah seperempat lingkaran berjari-jari $10$ (label "10 cm" di tepi lengan), sehingga empat potongan digabung menjadi lingkaran $r=10$: $3{,}14\times10^2=314$ cm², berbeda dari $231{,}44$.
+  - Animasi: keempat potongan putih tampil sendiri lalu digeser ke tengah sampai celah salib tertutup; lingkaran $r=10$ putus-putus ditumpuk dan bagian yang menonjol keluar diberi warna.
+  - Penjelasan: lengkung potongan putih milik lingkaran $r=14$ yang berpusat di tengah rambu, bukan lingkaran $r=10$ yang berpusat di pojok salib. Jarak pojok salib ke lengkung sekitar $9{,}4$ cm sepanjang tepi lengan, tetapi hanya sekitar $8{,}3$ cm lewat diagonal, sehingga potongan putih lebih pipih daripada seperempat lingkaran $r=10$ (sekitar $58$–$59{,}5$ cm² per potong, bukan $78{,}5$).
+  - Cek masuk akal di papan: $314+384=698>615{,}44$, padahal putih + merah tidak mungkin melebihi lingkaran kecil $3{,}14\times14^2$. Jadi dugaan salah; putih tetap lingkaran kecil − merah $=231{,}44$.
+  - Catatan: dengan geometri persis (ujung lengan terpotong tepi lingkaran) merah $\approx377{,}8$ dan putih $\approx237{,}9$ (lihat *Sensitivitas*); keduanya jauh dari $314$ dan stempel tidak berubah.
 - **Bagian 4 — Bandingkan dengan hitam** (batang pembanding: panjang batang ∝ luas, garis putus-putus = batas cat hitam; semua angka diambil dari catatan luas yang tampil di papan)
   - 4.1 Hitam diambil dari catatan: $\frac12$ hitam $=\frac12\times640{,}56=320{,}28$, disimpan juga ke catatan.
   - 4.2 Cara cepat: $\frac12$ hitam $+X>$ hitam $\iff X>320{,}28$, karena setengah hitam ada di kedua sisi. Batas berlaku: hanya pilihan yang memuat setengah hitam (1–3).

@@ -8,6 +8,9 @@
  *    kecil, biru = persegi − lingkaran besar, putih = lingkaran kecil − salib); untuk merah, lengan tegak
  *    dipisah dari lengan mendatar dan kotak tengah 8 × 8 (terhitung dua kali) disorot;
  *  - vals: label luas tiap warna.
+ *  - quart (Hati-hati, pertanyaan siswa v1.13): empat potongan putih tampil sendiri, digeser ke tengah sampai celah
+ *    salib tertutup ('merge'), lalu lingkaran r = 10 putus-putus ditumpuk ('ring10'): lingkaran itu menonjol keluar
+ *    karena potongan putih lebih pipih (lengkungnya milik lingkaran r = 14, bukan seperempat lingkaran r = 10).
  * Ukuran: sisi 40 cm, R = 20 cm, r = 14 cm, lengan 10 + 8 + 10 = 28 cm. Skala 7,5 px/cm.
  * Gerak hanya transform/opacity.
  */
@@ -31,6 +34,8 @@ export interface SignState {
   ov?: boolean;
   /** sorot satu lengan salib utuh beserta ukurannya: h = lengan mendatar, v = lengan tegak */
   arm?: 'h' | 'v';
+  /** empat potongan putih: tampil di tempat, digeser ke tengah, atau digeser + lingkaran r = 10 ditumpuk */
+  quart?: 'show' | 'merge' | 'ring10';
   /** rambu di bawah salib diredupkan (membahas merah) */
   dim?: boolean;
   /** label luas yang sudah dihitung */
@@ -76,6 +81,20 @@ const LEGEND: Array<[Layer, string]> = [
 const hbar = `M${CX - RI} ${CY - HW}H${CX + RI}V${CY + HW}H${CX - RI}Z`;
 const vbar = `M${CX - HW} ${CY - RI}H${CX + HW}V${CY + RI}H${CX - HW}Z`;
 const ovRect = `<rect class="sg-ov" x="${CX - HW}" y="${CY - HW}" width="${2 * HW}" height="${2 * HW}"/>`;
+
+/** kuadran potongan putih (tanda x, tanda y; y ke bawah) */
+const QUARTS: Array<[1 | -1, 1 | -1]> = [
+  [1, -1],
+  [1, 1],
+  [-1, 1],
+  [-1, -1],
+];
+/** potongan putih sebenarnya: di antara dua lengan salib dan lengkung lingkaran r = 14 */
+function quartPath(sx: number, sy: number): string {
+  const x1 = Math.sqrt(RI * RI - HW * HW);
+  const p = (dx: number, dy: number): string => `${(CX + sx * dx).toFixed(1)} ${(CY + sy * dy).toFixed(1)}`;
+  return `M${p(HW, HW)}L${p(x1, HW)}A${RI} ${RI} 0 0 ${sx * sy > 0 ? 1 : 0} ${p(HW, x1)}Z`;
+}
 
 let uid = 0;
 /** Markup rambu; `id` membedakan clipPath antara panggung dan sketsa catatan. */
@@ -144,6 +163,16 @@ function markup(id: string, live: boolean): string {
     <text class="sg-lbl sg-on-white" x="${CX + HW + 16}" y="${CY - RI + 46}"${src('g-v28')}>28 cm</text>
     <text class="sg-lbl sg-on-dark" x="${CX}" y="${CY - RI - 10}" text-anchor="middle"${src('g-v8')}>8 cm</text>
   </g>
+  ${
+    live
+      ? `<rect class="sg-qdim" x="${X0 - 2}" y="${Y0 - 2}" width="${S + 4}" height="${S + 4}"/>
+  <circle class="sg-q10" cx="${CX}" cy="${CY}" r="${10 * K}"/>
+  <g class="sg-quart">${QUARTS.map(([sx, sy]) => `<path class="sg-qp" data-q="${sx}${sy}" d="${quartPath(sx, sy)}"/>`).join('')}</g>
+  <circle class="sg-q10-line" cx="${CX}" cy="${CY}" r="${10 * K}"/>
+  <text class="sg-lbl sg-q10-lbl" x="${LX}" y="${CY - 40}" text-anchor="middle">lingkaran r = 10</text>
+  <text class="sg-lbl sg-q10-lbl2" x="${LX}" y="${CY - 16}" text-anchor="middle">menonjol keluar</text>`
+      : ''
+  }
   <text class="sg-lbl sg-on-white sg-ov-in" x="${CX}" y="${CY}" text-anchor="middle" dominant-baseline="middle"${src('g-ov')}>8×8</text>
   ${live ? `<g class="sg-legend">${legend}</g>${liftLbl}<text class="sg-lbl sg-ov-lbl" x="${LX}" y="${Y0 + 12}" text-anchor="middle">8 × 8 terhitung dua kali</text>${vals}` : ''}
 </svg>`;
@@ -175,6 +204,25 @@ export function createSign(): VisualScene {
   const legs = [...el.querySelectorAll<SVGElement>('[data-leg]')];
   let lifted: Lift | undefined;
   let built = false;
+  let merged = false;
+  const qps = [...el.querySelectorAll<SVGPathElement>('.sg-qp')];
+
+  /** geser keempat potongan putih ke tengah (celah salib tertutup) atau kembalikan */
+  async function setMerge(on: boolean, c: Ctx): Promise<void> {
+    if (on === merged) return;
+    merged = on;
+    const runs = qps.map((p, i) => {
+      const [sx, sy] = QUARTS[i]!;
+      const to = on ? `translate(${-sx * HW}px, ${-sy * HW}px)` : 'none';
+      const from = on ? 'none' : `translate(${-sx * HW}px, ${-sy * HW}px)`;
+      p.style.transform = to;
+      return c.dir > 0 && !reducedMotion()
+        ? play(p, [{ transform: from }, { transform: to }], { duration: 1200, easing: EASE, tag: 'sign' })
+            .finished
+        : Promise.resolve(true);
+    });
+    await Promise.all(runs);
+  }
 
   /** angkat / kembalikan bangun; beranimasi hanya saat maju */
   async function setLift(next: Lift | undefined, c: Ctx): Promise<void> {
@@ -234,6 +282,8 @@ export function createSign(): VisualScene {
       el.classList.toggle('arm-v', s.arm === 'v');
       el.classList.toggle('ov-whole', !!s.ov && s.lift !== 'vbar');
       el.classList.toggle('show-dim', !!s.dim);
+      el.classList.toggle('show-quart', !!s.quart);
+      el.classList.toggle('show-q10', s.quart === 'ring10');
       for (const v of vals) v.classList.toggle('on', !!s.vals?.includes(v.dataset.val as Layer));
       if (s.build && c.dir > 0 && (!built || c.replay) && !reducedMotion()) {
         built = true;
@@ -243,6 +293,7 @@ export function createSign(): VisualScene {
       }
       if (s.build) built = true;
       await setLift(s.lift, c);
+      await setMerge(s.quart === 'merge' || s.quart === 'ring10', c);
     },
     sketch: () => markup('sgn', false),
   };

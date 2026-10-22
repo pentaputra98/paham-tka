@@ -105,7 +105,7 @@ test.describe('Pembahasan soal 17 (G-Gerak, rambu SVG)', () => {
     await settled(page, 7);
     await expect(page.locator('.bd-pins [data-pin]')).toHaveCount(0);
     await page.goto('./#/soal/17/bahas?m=amati&b=4&l=2');
-    await settled(page, 20);
+    await settled(page, 22);
     await expect(page.locator('.bd-pins [data-pin]')).toHaveCount(5);
   });
 
@@ -117,13 +117,30 @@ test.describe('Pembahasan soal 17 (G-Gerak, rambu SVG)', () => {
     for (const n of [1, 2, 3, 4, 5]) {
       const l = 2 * n;
       await page.goto(`./#/soal/17/bahas?m=amati&b=4&l=${l}`);
-      await settled(page, 18 + l);
+      await settled(page, 20 + l);
       await expect(page.locator('.hl-q.focus [data-src]')).toHaveAttribute('data-src', `s-o${n}`);
       await expect(page.locator(`.board .bl[data-row="c${n}"] .tk.q`)).toHaveCount(1);
       await page.locator('[data-next]').click();
-      await settled(page, 19 + l);
+      await settled(page, 21 + l);
       await expect(page.locator('.vis-bars .br-opt [data-seg]')).toHaveCount(3);
     }
+  });
+
+  test('Hati-hati: empat potongan putih digeser ke tengah, lingkaran r = 10 menonjol keluar', async ({
+    page,
+  }) => {
+    await setup(page);
+    await page.goto('./#/soal/17/bahas?m=amati&b=3&l=11');
+    await settled(page, 18);
+    await expect(page.locator('.vis-sign.show-quart')).toHaveCount(1);
+    await expect(page.locator('.vis-sign.show-q10')).toHaveCount(0);
+    await page.locator('[data-next]').click();
+    await settled(page, 19);
+    await expect(page.locator('.vis-sign.show-q10')).toHaveCount(1);
+    await expect(page.locator('[data-row="w2"]')).toContainText('698');
+    await page.locator('[data-prev]').click();
+    await settled(page, 18);
+    await expect(page.locator('.vis-sign.show-q10')).toHaveCount(0);
   });
 
   test('Ikut berpikir: pertanyaan luas putih', async ({ page }) => {

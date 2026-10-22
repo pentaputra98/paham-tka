@@ -350,6 +350,44 @@ ${OPTS.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
         box: 'navy',
       },
     ],
+    // Hati-hati (pertanyaan siswa): potongan putih bukan seperempat lingkaran r = 10
+    LAW: [
+      {
+        id: 'w1',
+        toks: [
+          H('w1a', 'putih', 'tx'),
+          O('w1b', '\\overset{?}{=}'),
+          T('w1c', '3{,}14\\times10^2'),
+          O('w1d', '='),
+          T('w1e', '314', 'red'),
+        ],
+        note: 'dugaan: 4 potongan putih = 4 seperempat lingkaran $r=10$',
+      },
+      {
+        id: 'w2',
+        toks: [
+          T('w2a', '314', 'red', 'w1e'),
+          O('w2b', '+'),
+          T('w2c', '384', '', 'PM3'),
+          O('w2d', '='),
+          T('w2e', '698'),
+          O('w2f', '>'),
+          T('w2g', '615{,}44'),
+        ],
+        note: 'putih + merah tidak mungkin melebihi lingkaran kecil $3{,}14\\times14^2$',
+      },
+      {
+        id: 'w3',
+        toks: [
+          H('w3a', 'jadi', 'lbl'),
+          H('w3b', 'putih', 'tx'),
+          O('w3c', '='),
+          T('w3d', '231{,}44', 'blue', 'PP3'),
+        ],
+        note: 'dugaan salah; putih tetap lingkaran kecil − merah',
+        box: 'navy',
+      },
+    ],
     LS: [
       {
         id: 's1',
@@ -575,6 +613,19 @@ ${OPTS.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
       visual: sign({ lift: 'cross', meas: ['r'] }),
       board: { title: 'Luas putih', pins: ['pH', 'pB', 'pM'], list: 'LP', upTo: 3, from: 1, save: ['pP'] },
     },
+    // ---- Hati-hati: pertanyaan siswa "4 seperempat lingkaran r = 10" (revisi pemilik v1.13) ----
+    {
+      ch: 3,
+      cap: 'Hati-hati, potongan putih terlihat seperti seperempat lingkaran berjari-jari $10$, jadi digabung menjadi lingkaran $r=10$ luasnya $314$ cm². Kita geser keempatnya ke tengah.',
+      visual: sign({ quart: 'merge' }),
+      board: { title: 'Hati-hati', pins: NOTE4, list: 'LAW', upTo: 1, from: 0 },
+    },
+    {
+      ch: 3,
+      cap: 'Tumpuk lingkaran $r=10$: lingkaran itu menonjol keluar, karena lengkung potongan putih milik lingkaran $r=14$. Lagi pula putih + merah tidak mungkin melebihi lingkaran kecil.',
+      visual: sign({ quart: 'ring10' }),
+      board: { title: 'Hati-hati', pins: NOTE4, list: 'LAW', upTo: 3, from: 1 },
+    },
     // ---- 4 · Bandingkan dengan hitam (semua angka diambil dari catatan luas) ----
     {
       ch: 4,
@@ -691,7 +742,7 @@ ${OPTS.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
       { title: 'Ukuran dari gambar', lists: ['LU'], sketch: 'sign' },
       {
         title: 'Luas tiap warna',
-        lists: ['LH', 'LB', 'LM', 'LP'],
+        lists: ['LH', 'LB', 'LM', 'LP', 'LAW'],
         why: 'Rambu = tumpukan persegi, lingkaran besar, lingkaran kecil, dan salib. Warna yang terlihat = bangunnya dikurangi bangun di atasnya. Dipakai $\\pi=3{,}14$.',
       },
       {
@@ -717,6 +768,7 @@ ${OPTS.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
     'Alur ditulis ulang dengan gaya mengajar Pak Penta (21 Okt 2026, dicatat di dokumen): rambu sebagai tumpukan empat bangun, ukuran dari gambar, luas tiap warna dengan mengangkat bangun di atasnya, lalu batang pembanding per pilihan.',
     'Cara cepat pilihan 1–3 (setengah hitam + X > hitam ⇔ X > 320,28) diturunkan dari angka dokumen; batasnya disebut: hanya untuk pilihan yang memuat setengah hitam.',
     'Pertanyaan cepat baru: lebar lengan w (dari 10 + w + 10 = 28) dan luas salib (224 + 224 − 64), dari "Kesalahan umum" dokumen.',
+    'Langkah Hati-hati (pertanyaan siswa, permintaan pemilik 22 Okt 2026): potongan putih bukan seperempat lingkaran r = 10; digeser ke tengah lalu ditumpuk lingkaran r = 10 yang menonjol keluar; cek 314 + 384 = 698 > 615,44.',
     'Revisi kedua (permintaan pemilik): catatan luas di papan menyimpan tiap luas begitu didapat (pin terbang dari baris hasil) dan menjadi sumber semua hitungan berikutnya; salib merah disorot per lengan pada salib utuh.',
   ],
 };

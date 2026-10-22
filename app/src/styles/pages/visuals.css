@@ -778,6 +778,57 @@
     transition: opacity var(--dur-slow) var(--ease);
   }
 
+  /* Hati-hati (pertanyaan siswa): empat potongan putih digeser ke tengah, lingkaran r = 10 ditumpuk */
+  .sg-qdim {
+    fill: var(--color-stage);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .sg-qp {
+    fill: var(--paper-0);
+    stroke: var(--sign-black);
+    stroke-width: var(--bw-1);
+  }
+
+  .sg-quart,
+  .sg-q10,
+  .sg-q10-line,
+  .sg-q10-lbl,
+  .sg-q10-lbl2 {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-quart .sg-qdim {
+    opacity: 0.85;
+  }
+
+  .show-quart .sg-quart,
+  .show-q10 .sg-q10,
+  .show-q10 .sg-q10-line,
+  .show-q10 .sg-q10-lbl,
+  .show-q10 .sg-q10-lbl2 {
+    opacity: 1;
+  }
+
+  /* bagian lingkaran r = 10 yang tidak tertutup potongan putih (menonjol keluar) */
+  .sg-q10 {
+    fill: var(--red-600);
+    fill-opacity: 0.55;
+  }
+
+  .sg-q10-line {
+    fill: none;
+    stroke: var(--paper-0);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 6 4;
+  }
+
+  .sg-q10-lbl2 {
+    fill: var(--red-300);
+  }
+
   /* kotak tengah 8 × 8 yang terhitung dua kali */
   .sg-ov {
     fill: var(--paper-0);
