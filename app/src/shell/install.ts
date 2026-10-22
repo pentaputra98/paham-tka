@@ -1,5 +1,5 @@
 /**
- * Panduan "Pasang di HP" (FR-OFF-3): Android memakai pemicu pemasangan peramban (tombol Pasang);
+ * Panduan "Pasang di perangkat" (FR-OFF-3; tidak khusus HP sejak v1.12): Android memakai pemicu pemasangan peramban (tombol Pasang);
  * iPhone/iPad menampilkan langkah Bagikan → Tambahkan ke Layar Utama. Muncul satu kali setelah
  * kunjungan kedua dan selalu tersedia di Tentang dan Pengaturan.
  */
@@ -23,7 +23,7 @@ export function captureInstallPrompt(): void {
   });
   window.addEventListener('appinstalled', () => {
     deferred = null;
-    toast('Paham TKA terpasang. Buka dari layar utama HP-mu.');
+    toast('Paham TKA terpasang. Buka dari layar utama perangkatmu.');
   });
 }
 
@@ -54,13 +54,13 @@ export function openInstallGuide(): void {
   if (deferred) {
     const ev = deferred;
     openSheet({
-      title: 'Pasang di HP',
-      body: `<p>Pasang Paham TKA di layar utama agar bisa dibuka seperti aplikasi, tanpa internet.</p>`,
+      title: 'Pasang di perangkat',
+      body: `<p>Pasang Paham TKA di perangkatmu agar bisa dibuka seperti aplikasi, tanpa internet.</p>`,
       actions: [
         {
           label: 'Pasang',
           kind: 'primary',
-          icon: 'smartphone',
+          icon: 'download',
           onClick: async () => {
             await ev.prompt();
             const r = await ev.userChoice;
@@ -73,11 +73,11 @@ export function openInstallGuide(): void {
     return;
   }
   openSheet({
-    title: 'Pasang di HP',
+    title: 'Pasang di perangkat',
     body: `<ol class="install-steps">
         ${step(1, 'Buka menu peramban (ikon tiga titik).')}
-        ${step(2, 'Pilih <b>Instal aplikasi</b> atau <b>Tambahkan ke layar utama</b>.')}
-        ${step(3, 'Buka Paham TKA dari layar utama. Setelah itu aplikasi berjalan tanpa internet.')}
+        ${step(2, 'Pilih <b>Instal aplikasi</b>, <b>Pasang Paham TKA</b>, atau <b>Tambahkan ke layar utama</b>. Di laptop, tombol pasang biasanya ada di ujung kanan kolom alamat.')}
+        ${step(3, 'Buka Paham TKA dari layar utama atau daftar aplikasi. Setelah itu aplikasi berjalan tanpa internet.')}
       </ol>`,
   });
 }

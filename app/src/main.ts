@@ -15,6 +15,7 @@ import { homePage } from './pages/home';
 import { settingsPage } from './pages/settings';
 import { startShell } from './shell/app';
 import { captureInstallPrompt, maybeShowInstallGuide } from './shell/install';
+import { maybeShowWelcome } from './shell/welcome';
 import { startOffline } from './shell/offline';
 import { mountRotate } from './shell/rotate';
 import { openSheet } from './shell/sheet';
@@ -65,4 +66,6 @@ startShell({
   tentang: aboutPage,
 });
 void startOffline();
-maybeShowInstallGuide(store.countVisit());
+// sambutan pertama masuk dulu; panduan pasang (kunjungan kedua) menunggu sambutan ditutup
+const visits = store.countVisit();
+maybeShowWelcome(() => maybeShowInstallGuide(visits));

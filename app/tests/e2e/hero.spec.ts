@@ -6,7 +6,7 @@ test.describe('Hero beranda: string art', () => {
     await page.addInitScript(() =>
       localStorage.setItem(
         'pahamtka:v1:ui',
-        JSON.stringify({ schemaVersion: 1, visits: 5, installGuideShown: true }),
+        JSON.stringify({ schemaVersion: 1, visits: 5, installGuideShown: true, welcomeSeen: true }),
       ),
     );
     await page.goto('./#/');

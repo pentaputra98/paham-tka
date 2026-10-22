@@ -58,6 +58,8 @@ export interface UiState {
   schemaVersion: 1;
   visits: number;
   installGuideShown: boolean;
+  /** sambutan pertama masuk sudah ditutup (v1.12) */
+  welcomeSeen: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -73,7 +75,7 @@ export const DEFAULT_SETTINGS: Settings = {
 };
 
 const DEFAULT_PROGRESS: Progress = { schemaVersion: 1, items: {}, totalMs: 0 };
-const DEFAULT_UI: UiState = { schemaVersion: 1, visits: 0, installGuideShown: false };
+const DEFAULT_UI: UiState = { schemaVersion: 1, visits: 0, installGuideShown: false, welcomeSeen: false };
 
 type Json = Record<string, unknown>;
 
@@ -146,6 +148,7 @@ function migrateUi(raw: Json | null): UiState {
     schemaVersion: 1,
     visits: typeof raw?.visits === 'number' ? raw.visits : 0,
     installGuideShown: bool(raw?.installGuideShown, false),
+    welcomeSeen: bool(raw?.welcomeSeen, false),
   };
 }
 
@@ -230,6 +233,11 @@ export const store = {
     storage.set(KEY_UI, JSON.stringify(ui));
     emit('ui');
     return ui.visits;
+  },
+  setWelcomeSeen(): void {
+    ui = { ...ui, welcomeSeen: true };
+    storage.set(KEY_UI, JSON.stringify(ui));
+    emit('ui');
   },
   setInstallGuideShown(): void {
     ui = { ...ui, installGuideShown: true };

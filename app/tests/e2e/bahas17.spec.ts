@@ -20,7 +20,7 @@ async function setup(page: Page): Promise<void> {
     );
     localStorage.setItem(
       'pahamtka:v1:ui',
-      JSON.stringify({ schemaVersion: 1, visits: 5, installGuideShown: true }),
+      JSON.stringify({ schemaVersion: 1, visits: 5, installGuideShown: true, welcomeSeen: true }),
     );
   });
 }

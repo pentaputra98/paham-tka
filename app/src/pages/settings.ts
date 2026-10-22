@@ -64,7 +64,7 @@ export function settingsPage(): PageView {
         ['reduce', 'Aktif'],
         ['full', 'Nonaktif'],
       ])}
-      ${toggle('lite', 'Mode ringan', 'Mengganti animasi 3D dengan gambar 2D dan mematikan efek berat. Cocok untuk HP yang terasa lambat.')}
+      ${toggle('lite', 'Mode ringan', 'Mengganti animasi 3D dengan gambar 2D dan mematikan efek berat. Cocok untuk perangkat yang terasa lambat.')}
       ${toggle('classroom', 'Mode kelas', 'Huruf papan dan pop-up 20% lebih besar untuk proyektor.')}
       ${seg<Path>('defaultMode', 'Jalur pembahasan bawaan', s.defaultMode, [
         ['amati', 'Amati'],
@@ -76,7 +76,7 @@ export function settingsPage(): PageView {
       <div class="row"><span class="row-label">Status<small data-offline-text>${esc(offlineText())}</small></span>
         <button type="button" class="btn" data-check>${icon('wifi-off')}<span>Periksa mode offline</span></button></div>
       <div class="row"><span class="row-label">Pasang di layar utama<small>Agar bisa dibuka seperti aplikasi.</small></span>
-        <button type="button" class="btn" data-install>${icon('smartphone')}<span>Pasang di HP</span></button></div>
+        <button type="button" class="btn" data-install>${icon('download')}<span>Pasang di perangkat</span></button></div>
     </section>
     <section class="panel">
       <h2>Data dan bantuan</h2>

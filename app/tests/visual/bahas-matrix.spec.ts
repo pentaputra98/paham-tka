@@ -56,9 +56,17 @@ const ALL: Array<[string, string, number]> = [
   ['17-catatan', '#/soal/17/bahas?m=amati&b=5', 1500],
   ['17-kartu', '#/soal/17/bahas?m=amati&b=6', 5000],
   ['18-pahami', '#/soal/18/bahas?m=amati&b=1&l=0', 5000],
-  ['18-3d', '#/soal/18/bahas?m=amati&b=2&l=0', 7000],
-  ['18-logam', '#/soal/18/bahas?m=amati&b=3&l=4', 7000],
-  ['18-kartu', '#/soal/18/bahas?m=amati&b=5&l=3', 5000],
+  ['18-pintu', '#/soal/18/bahas?m=amati&b=1&l=1', 7000],
+  ['18-tumpuk', '#/soal/18/bahas?m=amati&b=1&l=2', 6000],
+  ['18-angkat', '#/soal/18/bahas?m=amati&b=2&l=0', 5000],
+  ['18-segitiga', '#/soal/18/bahas?m=amati&b=2&l=1', 5000],
+  ['18-jari', '#/soal/18/bahas?m=amati&b=2&l=3', 8000],
+  ['18-sisi', '#/soal/18/bahas?m=amati&b=3&l=3', 8000],
+  ['18-penggaris', '#/soal/18/bahas?m=amati&b=3&l=4', 8000],
+  ['18-zona', '#/soal/18/bahas?m=amati&b=4&l=0', 7000],
+  ['18-pilihan1', '#/soal/18/bahas?m=amati&b=4&l=2', 7000],
+  ['18-catatan', '#/soal/18/bahas?m=amati&b=5', 1500],
+  ['18-kartu', '#/soal/18/bahas?m=amati&b=6', 5000],
   ['1-pahami', '#/soal/1/bahas?m=amati&b=1&l=1', 5000],
   ['1-cepat', '#/soal/1/bahas?m=amati&b=2&l=1', 7000],
   ['1-3x3', '#/soal/1/bahas?m=amati&b=2&l=3', 6000],
@@ -95,7 +103,7 @@ test.beforeEach(async ({ page }) => {
     );
     localStorage.setItem(
       'pahamtka:v1:ui',
-      JSON.stringify({ schemaVersion: 1, visits: 5, installGuideShown: true }),
+      JSON.stringify({ schemaVersion: 1, visits: 5, installGuideShown: true, welcomeSeen: true }),
     );
   });
 });

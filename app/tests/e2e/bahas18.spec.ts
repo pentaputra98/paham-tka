@@ -2,10 +2,10 @@ import { expect, test, type Page } from '@playwright/test';
 import q18 from '../../src/content/soal/q18';
 import { isReady } from '../../src/content';
 
-// dikunci sementara oleh pemilik sampai soal 1 selesai seluruh fiturnya (PRD v1.6, daftar OPEN)
-test.skip(!isReady(18), 'Soal 18 dikunci sementara (PRD v1.6)');
+// soal 18 dibuka (PRD v1.12); tetap dilewati bila suatu saat dikunci lagi lewat daftar OPEN
+test.skip(!isReady(18), 'Soal 18 dikunci sementara');
 
-/** G-Gerak soal 18 (adegan 3D pelengkap + padanan 2D, tabel Pas/Tidak Pas). */
+/** G-Gerak soal 18 (alur guru: pintu 3D pelengkap di Bagian 1, adegan 2D orn18, tabel Pas/Tidak Pas). */
 const steps = q18.steps;
 const expectedRows = (i: number): string[] | null => {
   const b = steps[i - 1]!.board;
@@ -20,7 +20,7 @@ async function setup(page: Page, lite = false): Promise<void> {
     );
     localStorage.setItem(
       'pahamtka:v1:ui',
-      JSON.stringify({ schemaVersion: 1, visits: 5, installGuideShown: true }),
+      JSON.stringify({ schemaVersion: 1, visits: 5, installGuideShown: true, welcomeSeen: true }),
     );
   }, lite);
 }
@@ -59,6 +59,7 @@ async function walk(page: Page): Promise<void> {
 
 test.describe('Pembahasan soal 18 (G-Gerak, 3D pelengkap)', () => {
   test('jalan penuh jalur Amati dengan 3D sampai SELESAI tanpa galat', async ({ page }) => {
+    test.setTimeout(180_000);
     const errors: string[] = [];
     page.on('pageerror', (e) => errors.push(e.message));
     await setup(page);
@@ -67,7 +68,9 @@ test.describe('Pembahasan soal 18 (G-Gerak, 3D pelengkap)', () => {
     expect(errors).toEqual([]);
   });
 
-  test('Mode ringan: padanan 2D, tanpa memuat Three.js, angka tetap terbang dari label', async ({ page }) => {
+  test('Mode ringan: pintu memakai padanan 2D tanpa memuat Three.js; ornamen 2D tersusun', async ({
+    page,
+  }) => {
     const errors: string[] = [];
     const three: string[] = [];
     page.on('pageerror', (e) => errors.push(e.message));
@@ -75,17 +78,55 @@ test.describe('Pembahasan soal 18 (G-Gerak, 3D pelengkap)', () => {
       if (/door3d-scene/.test(r.url())) three.push(r.url());
     });
     await setup(page, true);
-    await page.goto('./#/soal/18/bahas?m=amati&b=2&l=0');
-    await settled(page, 3);
+    await page.goto('./#/soal/18/bahas?m=amati&b=1&l=1');
+    await settled(page, 2);
     await expect(page.locator('.vis-door')).toHaveClass(/is-2d/);
-    await expect(page.locator('.ribbon18 [data-src="l3-merah"]')).toBeVisible();
-    for (const i of [4, 5, 6]) {
-      await page.locator('[data-next]').click();
-      await settled(page, i);
-    }
-    await expect(page.locator('.ribbon18')).toContainText('251,2');
+    await page.locator('[data-next]').click();
+    await settled(page, 3);
+    await expect(page.locator('.vis-orn')).toBeVisible();
     expect(three).toEqual([]);
     expect(errors).toEqual([]);
+  });
+
+  test('ornamen: persegi diangkat, kerangka per bagian, penggaris; r disimpan ke catatan', async ({
+    page,
+  }) => {
+    test.setTimeout(120_000);
+    await setup(page, true);
+    await page.goto('./#/soal/18/bahas?m=amati&b=2&l=0');
+    await settled(page, 5);
+    await expect(page.locator('.vis-orn.is-lift')).toHaveCount(1);
+    await page.goto('./#/soal/18/bahas?m=amati&b=2&l=3');
+    await settled(page, 8);
+    await expect(page.locator('.bd-pins [data-pin="pR"]')).toContainText('40', { timeout: 10_000 });
+    await page.goto('./#/soal/18/bahas?m=amati&b=3&l=2');
+    await settled(page, 11);
+    await expect(page.locator('.vis-orn.hl-diam')).toHaveCount(1);
+    await page.goto('./#/soal/18/bahas?m=amati&b=3&l=4');
+    await settled(page, 13);
+    await expect(page.locator('.vis-orn.is-ruler')).toHaveCount(1);
+    await expect(page.locator('.bd-pins [data-pin]')).toHaveCount(5);
+  });
+
+  test('tiap pilihan: soal tampil lagi, pilihan disorot dan disalin, lalu logam dibandingkan dengan zona', async ({
+    page,
+  }) => {
+    test.setTimeout(120_000);
+    await setup(page, true);
+    for (const [n, segs] of [
+      [1, 2],
+      [2, 1],
+      [3, 1],
+    ] as const) {
+      const l = 2 * n - 1;
+      await page.goto(`./#/soal/18/bahas?m=amati&b=4&l=${l}`);
+      await settled(page, 14 + l);
+      await expect(page.locator('.hl-q.focus [data-src]')).toHaveAttribute('data-src', `s-o${n}`);
+      await expect(page.locator(`.board .bl[data-row="c${n}"] .tk.q`)).toHaveCount(1);
+      await page.locator('[data-next]').click();
+      await settled(page, 15 + l);
+      await expect(page.locator('.vis-orn.show-zone .or-logam [data-seg]')).toHaveCount(segs);
+    }
   });
 
   test('Detail soal 18 memuat potongan 3D lebih awal', async ({ page }) => {
@@ -97,13 +138,13 @@ test.describe('Pembahasan soal 18 (G-Gerak, 3D pelengkap)', () => {
 
   test('Ikut berpikir: pertanyaan r²', async ({ page }) => {
     await setup(page, true);
-    await page.goto('./#/soal/18/bahas?m=ikut&b=2&l=1');
+    await page.goto('./#/soal/18/bahas?m=ikut&b=2&l=3');
     const foot = page.locator('.ask-ov');
     await expect(foot).toContainText('nilai', { timeout: 20_000 });
     await foot.getByRole('button', { name: /2079/ }).click();
     await expect(foot.locator('.ask-h')).toContainText('Belum tepat');
     await foot.getByRole('button', { name: /1600/ }).click();
-    await settled(page, 4);
-    await expect(page.locator('[data-row="b3"]')).toContainText('1600');
+    await settled(page, 8);
+    await expect(page.locator('[data-row="a5"]')).toContainText('1600');
   });
 });

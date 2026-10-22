@@ -1593,3 +1593,274 @@
     opacity: 0;
   }
 }
+/* ---------- soal 18: ornamen kaca patri (alur guru v1.12) ----------
+   Warna kaca = warna benda pada gambar soal. Persegi diangkat meninggalkan lubang putus-putus; mode kerangka
+   meredupkan kaca dan menyorot satu jenis garis logam; penggaris membandingkan panjang dengan zona pas. */
+@layer pages {
+  .vis-orn {
+    height: 100%;
+    display: grid;
+    place-items: center;
+  }
+
+  .vis-orn svg {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .or-orn,
+  .or-ruler {
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .or-ruler,
+  .is-ruler .or-orn {
+    opacity: 0;
+  }
+
+  .is-ruler .or-ruler {
+    opacity: 1;
+  }
+
+  .or-red {
+    fill: var(--red-600);
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .or-tri {
+    stroke: var(--sign-black);
+    stroke-width: var(--bw-1);
+    stroke-linejoin: round;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .or-yellow {
+    fill: var(--glass-yellow);
+  }
+
+  .or-green {
+    fill: var(--glass-green);
+  }
+
+  .or-hole {
+    fill: var(--color-stage);
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 6 5;
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .is-lift .or-hole,
+  .is-lift .or-lift-lbl {
+    opacity: 1;
+  }
+
+  /* satu segitiga disorot: garis tepi putus-putus, segitiga lain diredupkan */
+  .or-tri-hl {
+    fill: none;
+    stroke: var(--paper-0);
+    stroke-width: var(--bw-3);
+    stroke-dasharray: 6 4;
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .or-legs,
+  .or-val,
+  .or-frame,
+  .or-m,
+  .or-lift-lbl {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-tri .or-tri-hl,
+  .show-tri .or-legs,
+  .show-456 .or-val,
+  .is-frame .or-frame,
+  .show-r40 .or-m-r40,
+  .hl-diam .or-m-diam,
+  .hl-side .or-m-side {
+    opacity: 1;
+  }
+
+  .or-leg,
+  .or-dim {
+    fill: none;
+    stroke: var(--sign-black);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 5 4;
+  }
+
+  .or-dim {
+    stroke: var(--paper-0);
+  }
+
+  .or-val {
+    font-family: var(--font-display);
+    font-weight: var(--fw-black);
+    font-size: var(--svg-fs-md);
+    text-anchor: middle;
+    dominant-baseline: middle;
+    fill: var(--paper-0);
+    stroke: var(--sign-black);
+    stroke-width: var(--bw-3);
+    paint-order: stroke;
+  }
+
+  .or-lbl {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-sm);
+    fill: var(--color-on-stage);
+  }
+
+  .or-ink {
+    fill: var(--ink-900);
+  }
+
+  /* label di atas kaca berwarna: putih bergaris gelap */
+  .or-lbl-out {
+    fill: var(--paper-0);
+    stroke: var(--sign-black);
+    stroke-width: var(--bw-3);
+    paint-order: stroke;
+  }
+
+  .or-lift-lbl {
+    text-anchor: middle;
+  }
+
+  /* kerangka logam: kaca diredupkan, garis logam tampil; satu jenis garis disorot */
+  .is-frame .or-red,
+  .is-frame .or-tri {
+    opacity: 0.12;
+  }
+
+  .or-f,
+  .or-f-side1 {
+    fill: none;
+    stroke: var(--metal-400);
+    stroke-width: var(--bw-4);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .or-f-side1 {
+    opacity: 0;
+  }
+
+  .hl-ring .or-f:not(.or-f-ring),
+  .hl-diam .or-f:not(.or-f-diam),
+  .hl-side .or-f {
+    opacity: 0.3;
+  }
+
+  .hl-ring .or-f-ring,
+  .hl-diam .or-f-diam,
+  .hl-side .or-f-side1 {
+    stroke: var(--color-stage-accent);
+    stroke-width: calc(var(--bw-4) + var(--bw-2));
+    opacity: 1;
+  }
+
+  /* penggaris 0–8 m */
+  .or-axis,
+  .or-tick,
+  .or-limit {
+    fill: none;
+    stroke: var(--color-on-stage);
+    stroke-width: var(--bw-2);
+  }
+
+  .or-limit {
+    stroke-dasharray: 6 5;
+  }
+
+  .or-tick-lbl,
+  .or-zone-lbl,
+  .or-bar-lbl,
+  .or-bar-name {
+    text-anchor: middle;
+  }
+
+  .or-tick-lbl {
+    font-family: var(--font-mono);
+    font-size: var(--svg-fs-xs);
+    fill: var(--color-on-stage-muted);
+  }
+
+  .or-zone {
+    fill: var(--glass-green);
+    fill-opacity: 0.25;
+    stroke: var(--glass-green);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 5 4;
+  }
+
+  .or-zone,
+  .or-zone-lbl {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-zone .or-zone,
+  .show-zone .or-zone-lbl {
+    opacity: 1;
+  }
+
+  .or-zone-lbl,
+  .or-row-lbl,
+  .or-verdict {
+    font-family: var(--font-body);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-sm);
+    fill: var(--color-on-stage);
+  }
+
+  .or-verdict.is-pas {
+    fill: var(--color-result);
+  }
+
+  .or-bar {
+    stroke: var(--sign-black);
+    stroke-width: var(--bw-1);
+  }
+
+  .or-bar-ring {
+    fill: var(--red-600);
+  }
+
+  .or-bar-diam {
+    fill: var(--sign-blue);
+  }
+
+  .or-bar-side {
+    fill: var(--glass-green);
+  }
+
+  .or-bar-logam {
+    fill: var(--metal-400);
+  }
+
+  .or-bar-lbl {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-sm);
+    dominant-baseline: middle;
+    fill: var(--paper-0);
+    stroke: var(--sign-black);
+    stroke-width: var(--bw-3);
+    paint-order: stroke;
+  }
+
+  .or-bar-name {
+    font-family: var(--font-body);
+    font-size: var(--svg-fs-xs);
+    fill: var(--color-on-stage);
+  }
+}

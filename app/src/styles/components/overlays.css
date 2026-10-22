@@ -165,6 +165,43 @@
     max-width: 22em;
   }
 
+  /* saran layar lebar (layar putar dan sambutan) */
+  .rotate .rot-tip,
+  .welcome-tip {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2-5);
+    padding: var(--space-2-5) var(--space-3-5);
+    border-radius: var(--radius-md);
+    text-align: left;
+  }
+
+  .rotate .rot-tip {
+    border: var(--bw-1) solid var(--color-stage-border);
+    background: var(--color-stage-surface);
+    color: var(--color-on-stage);
+  }
+
+  .welcome-tip {
+    margin-top: var(--space-3);
+    border: var(--bw-1) solid var(--color-intermediate);
+    background: var(--color-intermediate-bg);
+    color: var(--color-text);
+  }
+
+  .rot-tip .lucide,
+  .welcome-tip .lucide {
+    flex: none;
+    width: var(--size-icon-lg);
+    height: var(--size-icon-lg);
+    color: var(--color-intermediate);
+  }
+
+  .rotate .rot-tip .lucide,
+  .rotate .rot-tip b {
+    color: var(--color-stage-accent);
+  }
+
   .phone-wrap {
     position: relative;
     display: grid;

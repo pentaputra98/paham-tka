@@ -46,8 +46,8 @@ export function aboutPage(): PageView {
       <h2>Memakai tanpa internet</h2>
       <p>Buka tautan kelas satu kali saat tersambung internet. Setelah lencana <b>Siap offline</b> muncul, semua soal yang dibuka berjalan tanpa internet, termasuk dalam mode pesawat.</p>
       <p>Pasang di layar utama agar kemajuanmu lebih aman tersimpan.</p>
-      <div class="row"><span class="row-label">Pasang di HP<small>Android: tombol Pasang. iPhone: Bagikan → Tambahkan ke Layar Utama.</small></span>
-        <button type="button" class="btn" data-install>${icon('smartphone')}<span>Pasang di HP</span></button></div>
+      <div class="row"><span class="row-label">Pasang di perangkat<small>HP, tablet, atau laptop. Android dan laptop: tombol Pasang. iPhone/iPad: Bagikan → Tambahkan ke Layar Utama.</small></span>
+        <button type="button" class="btn" data-install>${icon('download')}<span>Pasang di perangkat</span></button></div>
     </section>
     <section class="panel">
       <h2>Privasi</h2>

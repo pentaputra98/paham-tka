@@ -10,7 +10,32 @@ const cspErrors = (page: Page): string[] => {
   return errs;
 };
 
+test.describe('Sambutan pertama masuk (v1.12)', () => {
+  test('muncul sekali: tentang Paham TKA dan saran layar lebar; tidak muncul lagi setelah ditutup', async ({
+    page,
+  }) => {
+    await page.goto('./#/');
+    const dlg = page.getByRole('dialog');
+    await expect(dlg).toContainText('Selamat datang di Paham TKA');
+    await expect(dlg).toContainText('tablet atau laptop');
+    await dlg.getByRole('button', { name: 'Mulai belajar' }).click();
+    await expect(dlg).toHaveCount(0);
+    await page.reload();
+    await expect(page.locator('.qcard').first()).toBeVisible();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+  });
+});
+
 test.describe('Beranda dan rute (M0)', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() =>
+      localStorage.setItem(
+        'pahamtka:v1:ui',
+        JSON.stringify({ schemaVersion: 1, visits: 5, installGuideShown: true, welcomeSeen: true }),
+      ),
+    );
+  });
+
   test('25 kartu: hanya soal OPEN dibuka, sisanya segera hadir; tanpa pelanggaran CSP', async ({ page }) => {
     const errs = cspErrors(page);
     await page.goto('./#/');
@@ -76,6 +101,7 @@ test.describe('Orientasi (FR-ORI-1)', () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('./#/');
     await expect(page.locator('#rotate')).toBeVisible();
+    await expect(page.locator('#rotate')).toContainText('tablet atau laptop');
     await expect(page.locator('#app')).toBeHidden();
     await page.setViewportSize({ width: 844, height: 390 });
     await expect(page.locator('#rotate')).toBeHidden();

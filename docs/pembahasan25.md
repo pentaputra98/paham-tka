@@ -2225,6 +2225,36 @@ $$\begin{aligned}456&=\frac{(\pi-2)r^2}{4}\Rightarrow r^2=\frac{1824}{1{,}14}=16
   - Papan ringkasan s1–s3, ditambah s4 "Jawaban: Tidak Pas · Tidak Pas · Pas".
   - Pertanyaan kesimpulan "Pilihan yang pas adalah…": 2 buah logam A · 1 buah logam B · **1 buah logam C**.
 
+*Revisi alur dengan gaya mengajar pemilik materi (22 Okt 2026; kunci tidak berubah: Tidak Pas · Tidak Pas · Pas), dipakai di `app/src/content/soal/q18.ts`. Menggantikan blok "Ditambahkan M2" di atas. Angka sama dengan Bagian 2–3.*
+
+Gagasan utama: ornamen dipandang sebagai **tumpukan** lingkaran merah dan persegi miring (4 segitiga hijau/kuning), sehingga **4 kaca merah = lingkaran − persegi**. Hasil tiap langkah disimpan ke **catatan** (deret pin papan) dan diambil lagi dari sana. Pintu 3D (pelengkap, PRD §9.6) hanya di Bagian 1; selebihnya gambar 2D. Tata letak: panggung penuh dua kolom.
+
+- **Bagian 1 — Pahami soal**
+  - 1.1 Stabilo luas 1 kaca merah dan $\pi$. Baris: 1 kaca merah $=456$ cm² (4 kaca sama besar); $\pi=3{,}14$.
+  - 1.2 Pintu 3D: ornamen bulat dari kaca merah, hijau, kuning pada kerangka logam.
+  - 1.3 Ornamen ditumpuk: lingkaran merah, lalu 4 segitiga. Baris: kaca merah = sisa lingkaran di luar persegi.
+  - 1.4 Stabilo syarat pas dan logam. Baris: pas = cukup dan sisa ≤ 1 m; logam A 4 m, B 5 m, C 6,5 m; Ditanya.
+- **Bagian 2 — Jari-jari lingkaran**
+  - 2.1 Persegi diangkat, tersisa 4 kaca merah: 4 merah = lingkaran − persegi.
+  - 2.2 Satu segitiga disorot, kedua kakinya jari-jari $r$: persegi $=4\times\frac12\times r\times r=2r^2$ (setara $\frac12(2r)(2r)$ di atas).
+  - 2.3 Label 456 pada kaca merah terbang ke papan: $4\times456=3{,}14r^2-2r^2$, lalu $1824=1{,}14r^2$.
+  - 2.4 Pertanyaan cepat lama ($r^2$). $r^2=1824:1{,}14=1600$, $r=\sqrt{1600}=40$ cm (navy). Simpan $r$ ke catatan.
+- **Bagian 3 — Panjang kerangka** (kaca dilepas; tiap jenis garis logam disorot dengan ukurannya)
+  - 3.1 kerangka = lingkaran + 2 diameter + 4 sisi.
+  - 3.2 Lingkaran: $2\times3{,}14\times40=251{,}2$ cm ($r$ dari catatan). Simpan.
+  - 3.3 Dua diameter, masing-masing $80$ cm: $2\times80=160$ cm. Simpan.
+  - 3.4 Sisi persegi = sisi miring segitiga berkaki $40$ dan $40$: $\sqrt{40^2+40^2}=40\sqrt2\approx56{,}57$ cm; 4 sisi $\approx226{,}27$ cm. Simpan. Pertanyaan cepat baru: $40\sqrt2$ (benar) · $80$ ("itu diameter") · $40$ ("itu kaki segitiga").
+  - 3.5 Papan baru "Total kerangka", batang-batang dijajarkan pada penggaris: $251{,}2+160+226{,}27\approx637{,}5$ cm $\approx6{,}37$ m (angka dari catatan). Simpan.
+- **Bagian 4 — Uji ketiga pilihan**
+  - 4.1 Cara cepat (baru) "zona pas": cukup ⇔ logam $\ge637{,}5$ cm; sisa ≤ 1 m ⇔ logam $\le637{,}5+100=737{,}5$ cm. Simpan zona ke catatan. Diturunkan dari *Pemeriksaan hasil* di bawah.
+  - Tiap pilihan: kertas soal tampil, baris pilihan disorot dan disalin ke papan, logam diubah ke cm, lalu batang logam pada penggaris dibandingkan dengan zona.
+    - (1) $2\times4$ m $=800$ cm $>737{,}5$; sisa $162{,}5$ cm $\approx1{,}63$ m. **Tidak Pas.**
+    - (2) $5$ m $=500$ cm $<637{,}5$; tidak cukup. **Tidak Pas.**
+    - (3) $6{,}5$ m $=650$ cm, $637{,}5\le650\le737{,}5$; sisa $12{,}5$ cm $\approx0{,}13$ m. **Pas** (emas).
+- **Bagian 5 — Catatan lengkap.**
+- **Bagian 6 — Cocokkan pilihan:** satu langkah, ketiga kartu terbuka; pertanyaan kesimpulan seperti di atas.
+- **Bagian 7 — Selesai:** segel Tidak · Tidak · Pas (deret medali).
+
 ### Bagian 6 — Selesai
 - **Segel:** **Tidak · Tidak · Pas**
 - **Pop-up:** "Kerangka butuh sekitar **6,37 m**. Hanya 1 logam C (6,5 m) yang cukup dengan sisa kurang dari 1 meter."
