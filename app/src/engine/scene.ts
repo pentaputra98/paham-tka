@@ -4,7 +4,7 @@
  * Panggung penuh (layout 'full', PRD v1.5): grid dua kolom tanpa area bebas; kertas dan baris papan diskalakan agar muat.
  * Jenis adegan: soal (kertas), svg (visual interaktif), cards, notes, done. Mode `.narrow` dihapus (K4).
  */
-import { esc, html } from '../core/dom';
+import { esc, html, sizeObserver } from '../core/dom';
 import { icon, type IconName } from '../core/icons';
 import { renderMath } from '../core/math';
 import { play } from '../core/motion';
@@ -84,7 +84,7 @@ export class Scene {
     this.root.classList.toggle('lay-full', this.full);
     // panggung penuh: semua baris rumus harus muat setinggi kolom papan (tanpa gulir)
     board.fitHeight = this.full;
-    this.ro = new ResizeObserver(() => this.layout());
+    this.ro = sizeObserver(() => this.layout());
     this.ro.observe(this.root);
     // font KaTeX/tampilan bisa selesai dimuat setelah baris ditulis (kunjungan pertama): ukur ulang
     document.fonts?.addEventListener('loadingdone', this.onFonts);

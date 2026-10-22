@@ -7,6 +7,7 @@
  *   mana pun; menggambar tidak memicu layout (hanya kanvas digambar ulang).
  * Saat aktif, kanvas menerima semua sentuhan; saat nonaktif, coretan tetap terlihat tetapi tidak menghalangi.
  */
+import { sizeObserver } from '../core/dom';
 import { icon } from '../core/icons';
 import { storage } from '../core/storage';
 import { openSheet } from '../shell/sheet';
@@ -85,7 +86,7 @@ export class Ink {
     this.canvas.addEventListener('pointerup', () => this.up(), sig);
     this.canvas.addEventListener('pointercancel', () => this.up(), sig);
     this.bar.addEventListener('click', (e) => this.onBar(e), sig);
-    this.ro = new ResizeObserver(() => this.resize());
+    this.ro = sizeObserver(() => this.resize());
     this.ro.observe(host);
   }
 

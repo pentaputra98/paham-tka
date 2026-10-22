@@ -25,3 +25,22 @@ export const fmt = (n: number, digits = 0): string =>
 export const pad2 = (n: number): string => String(n).padStart(2, '0');
 
 export const clamp = (v: number, a: number, b: number): number => Math.max(a, Math.min(b, v));
+
+/**
+ * ResizeObserver yang menjalankan callback pada frame berikutnya, paling banyak sekali per frame. Callback kita
+ * mengubah tata letak (skala huruf, ukuran kanvas); bila dijalankan langsung di dalam notifikasi, peramban
+ * mencatat "ResizeObserver loop completed with undelivered notifications".
+ */
+export function sizeObserver(cb: () => void): ResizeObserver {
+  let raf = 0;
+  return new ResizeObserver(() => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      cb();
+    });
+  });
+}
+
+/** Peringatan ResizeObserver dari peramban: bukan galat aplikasi, tidak dilaporkan. */
+export const isBenignError = (msg: string): boolean => /ResizeObserver loop/i.test(msg);

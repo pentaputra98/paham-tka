@@ -10,7 +10,7 @@
  */
 import { SND } from '../core/audio';
 import { reducedMotion } from '../core/clock';
-import { esc, html, pad2 } from '../core/dom';
+import { esc, html, pad2, sizeObserver } from '../core/dom';
 import { icon } from '../core/icons';
 import { mathHtml, mathLabel, renderMath } from '../core/math';
 import { completeAll, play } from '../core/motion';
@@ -362,7 +362,7 @@ export function latihanPage(route: Route): PageView {
     const tb = t?.querySelector<HTMLElement>('[data-act="pause"]');
     if (tb) tb.hidden = mode === 'none';
 
-    const ro = new ResizeObserver(() => fitOpts());
+    const ro = sizeObserver(() => fitOpts());
     ro.observe(stage);
     cleanups.push(() => ro.disconnect());
     stage.addEventListener('click', onStage);

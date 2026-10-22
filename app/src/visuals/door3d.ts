@@ -4,6 +4,7 @@
  *  - padanan 2D (diagram pita) dipakai bila Mode ringan, tanpa WebGL, hemat gerak, atau fps < 30 selama 3 s;
  *  - tombol "Lewati animasi 3D" selalu tersedia.
  */
+import { sizeObserver } from '../core/dom';
 import { reducedMotion } from '../core/clock';
 import { store } from '../core/store';
 import type { Ctx } from '../engine/board';
@@ -48,7 +49,7 @@ export function createDoor3d(): VisualScene & {
   let loading: Promise<DoorApi | null> | null = null;
   let forced2d = false;
   let dead = false;
-  const ro = new ResizeObserver(() => door?.resize(host3d.clientWidth, host3d.clientHeight));
+  const ro = sizeObserver(() => door?.resize(host3d.clientWidth, host3d.clientHeight));
   ro.observe(host3d);
 
   const use2d = (): boolean => forced2d || store.settings.lite || reducedMotion() || !hasWebGL();

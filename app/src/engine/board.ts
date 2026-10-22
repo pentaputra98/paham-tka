@@ -9,7 +9,7 @@
  */
 import { SND } from '../core/audio';
 import { reducedMotion, sleep } from '../core/clock';
-import { esc, html } from '../core/dom';
+import { esc, html, sizeObserver } from '../core/dom';
 import { mathHtml, mathLabel, tex } from '../core/math';
 import { completeAll, play } from '../core/motion';
 import { DUR, EASE_OUT, RISE_PX } from '../core/tokens';
@@ -78,7 +78,7 @@ export class Board {
     this.askEl = html('<div class="ask-ov" hidden></div>');
     this.el.querySelector('.bd-re')!.addEventListener('click', () => this.onReplay());
     // lebar isi papan berubah saat papan diubah ukurannya atau scrollbar muncul: ukur ulang baris
-    this.ro = new ResizeObserver(() => this.refit());
+    this.ro = sizeObserver(() => this.refit());
     this.ro.observe(this.body);
   }
 

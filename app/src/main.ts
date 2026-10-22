@@ -1,4 +1,5 @@
 /** Bootstrap Paham TKA: gaya, keadaan, shell, router, offline. */
+import { isBenignError } from './core/dom';
 import 'katex/dist/katex-swap.min.css';
 import './styles/index.css';
 
@@ -42,7 +43,11 @@ function onFatal(msg: string): void {
     closeLabel: 'Tutup',
   });
 }
-window.addEventListener('error', (e) => onFatal(`${e.message} @${e.filename}:${e.lineno}`));
+window.addEventListener('error', (e) => {
+  // peringatan ResizeObserver dari peramban bukan galat: jangan tampilkan lembar galat
+  if (isBenignError(e.message ?? '')) return;
+  onFatal(`${e.message} @${e.filename}:${e.lineno}`);
+});
 window.addEventListener('unhandledrejection', (e) => onFatal(`promise: ${String(e.reason)}`));
 
 watchMotion();
