@@ -1915,3 +1915,145 @@
     fill: var(--color-on-stage);
   }
 }
+/* ---------- soal 15: lingkaran sepusat (alur guru v1.14) ----------
+   Bidang koordinat seperti gambar soal; lingkaran pilihan dengan pusat sama disorot emas (jawaban), lainnya merah. */
+@layer pages {
+  .vis-circ {
+    height: 100%;
+    display: grid;
+    place-items: center;
+  }
+
+  .vis-circ svg {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .c5-grid {
+    stroke: var(--color-stage-line);
+    stroke-width: var(--bw-hair);
+  }
+
+  .c5-axis {
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-2);
+  }
+
+  .c5-tick {
+    font-family: var(--font-mono);
+    font-size: var(--svg-fs-xs);
+    text-anchor: middle;
+    fill: var(--color-on-stage-muted);
+  }
+
+  .c5-tick-y {
+    text-anchor: start;
+  }
+
+  .c5-a {
+    fill: none;
+    stroke: var(--color-on-stage);
+    stroke-width: var(--bw-3);
+  }
+
+  .c5-diam {
+    stroke: var(--color-on-stage);
+    stroke-width: var(--bw-2);
+  }
+
+  .c5-end,
+  .c5-p {
+    fill: var(--color-stage-accent);
+    stroke: var(--color-stage);
+    stroke-width: var(--bw-2);
+  }
+
+  .c5-albl,
+  .c5-plbl,
+  .c5-rlbl,
+  .c5-dlbl,
+  .c5-note,
+  .c5-note-s,
+  .c5-olbl {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-sm);
+    fill: var(--color-on-stage);
+  }
+
+  .c5-plbl {
+    font-size: var(--svg-fs-md);
+    fill: var(--color-stage-accent);
+  }
+
+  .c5-rlbl {
+    font-size: var(--svg-fs-md);
+    text-anchor: middle;
+    fill: var(--color-stage-accent);
+  }
+
+  .c5-note-s {
+    font-weight: var(--fw-regular);
+    fill: var(--color-on-stage-muted);
+  }
+
+  .c5-dash {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 6 4;
+  }
+
+  .c5-read,
+  .c5-dlbl,
+  .c5-conc {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-read .c5-read,
+  .show-dlab .c5-dlbl,
+  .show-conc .c5-conc {
+    opacity: 1;
+  }
+
+  .c5-cc {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 6 4;
+  }
+
+  .c5-oc {
+    fill: none;
+    stroke: var(--red-400);
+    stroke-width: var(--bw-3);
+    stroke-dasharray: 7 4;
+  }
+
+  .c5-op {
+    fill: var(--red-400);
+  }
+
+  .c5-olbl {
+    fill: var(--red-300);
+  }
+
+  .c5-opt.is-same .c5-oc {
+    stroke: var(--color-result);
+  }
+
+  .c5-opt.is-same .c5-op {
+    fill: var(--color-result);
+  }
+
+  .c5-opt.is-same .c5-olbl {
+    fill: var(--color-result);
+  }
+
+  .c5-olbl-mid {
+    text-anchor: middle;
+  }
+}

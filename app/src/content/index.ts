@@ -1,7 +1,7 @@
 /**
  * Daftar 25 soal TKA Matematika Tingkat Lanjut 2025 (PRD §5).
  * Judul dari docs/pembahasan25.md (daftar isi); bentuk respons dari docs/soal25.md.
- * Status `ready` hanya untuk 10 soal Rilis 1 (K10); sisanya `soon` (K1).
+ * Status `ready` hanya untuk soal yang dibuka (OPEN, bagian dari Rilis 1); sisanya `soon` (K1).
  */
 export type Domain =
   | 'matriks'
@@ -64,14 +64,14 @@ export const RESPONSE_LABEL: Record<Response, string> = {
   truefalse: 'Tabel dua kolom',
 };
 
-/** Sepuluh soal Rilis 1 (K10): kontennya sudah ada dan tetap diverifikasi (verify:content, uji unit). */
-export const RELEASE_1: readonly number[] = [1, 2, 5, 6, 13, 16, 17, 18, 24, 25];
+/** Soal Rilis 1 (K10, ditambah soal 15 pada v1.14): kontennya sudah ada dan tetap diverifikasi (verify:content, uji unit). */
+export const RELEASE_1: readonly number[] = [1, 2, 5, 6, 13, 15, 16, 17, 18, 24, 25];
 
 /**
  * Soal yang DIBUKA untuk siswa (revisi pemilik PRD v1.6–1.7): dibuka satu per satu setelah pembahasannya
- * ditulis ulang mengikuti alur guru dan disetujui; soal lain tampil "Segera hadir". Soal 1, lalu 24, 17, dan 18 (PRD v1.12).
+ * ditulis ulang mengikuti alur guru dan disetujui; soal lain tampil "Segera hadir". Soal 1, lalu 24, 17, 18, dan 15 (PRD v1.14).
  */
-export const OPEN: readonly number[] = [1, 17, 18, 24];
+export const OPEN: readonly number[] = [1, 15, 17, 18, 24];
 
 type Row = [no: number, title: string, domain: Domain, response: Response, labels?: [string, string]];
 

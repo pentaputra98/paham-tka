@@ -1763,6 +1763,29 @@ Lingkaran A sendiri: $(x+3)^2+(y-4)^2=4$, yaitu $x^2+6x+y^2-8y+21=0$. Pilihan A 
 | D | $x^2-8x+y^2-6y+16=0$ | SALAH | pusat $(4,3)$ | $x$ dan $y$ tertukar. |
 | E | $x^2+8x+y^2-6y+21=0$ | SALAH | pusat $(-4,3)$ | $x$ dan $y$ tertukar. |
 
+*Alur aplikasi dengan gaya mengajar pemilik materi (23 Okt 2026; kunci tidak berubah: A), dipakai di `app/src/content/soal/q15.ts` (modul baru; soal 15 ditambahkan ke Rilis 1). Angka sama dengan Bagian 2–3.*
+
+Hasil yang didapat disimpan ke **catatan** (deret pin papan) dan diambil lagi dari sana. Tata letak: panggung penuh dua kolom.
+
+- **Bagian 1 — Pahami soal**
+  - 1.1 Stabilo diameter. Baris: diameter lingkaran A $=4$ (jari-jari $2$).
+  - 1.2 Lingkaran-lingkaran sepusat tumbuh dari $p$ (seperti papan target panahan). Baris: sepusat = pusatnya sama, jari-jari boleh beda.
+  - 1.3 Stabilo pertanyaan. Baris: Ditanya. "Jadi yang kita butuhkan hanya pusatnya."
+- **Bagian 2 — Baca pusat**
+  - 2.1 Garis putus-putus dari $p$ ke kedua sumbu, label $-3$ dan $4$ terbang ke papan. Baris: pusat = titik tengah diameter = $p$; $p=(-3,4)$ (navy), simpan ke catatan. Pertanyaan cepat lama (koordinat $p$).
+  - 2.2 Label $d=4$: $r_A=\frac12\times4=2$, simpan ke catatan (untuk mengenali jebakan B).
+- **Bagian 3 — Cara cepat** (baru)
+  - 3.1 Menjabarkan lingkaran berpusat $(-3,4)$: $(x+3)^2+(y-4)^2=r^2$ menjadi $x^2+6x+9+y^2-8y+16=r^2$.
+  - 3.2 Polanya: $\frac{6}{-2}=-3$ dan $\frac{-8}{-2}=4$, kembali ke pusat.
+  - 3.3 Cara cepat: untuk $x^2+Ax+y^2+By+C=0$, pusat $=\left(-\frac A2,-\frac B2\right)$ (navy, simpan ke catatan). Batas berlaku: koefisien $x^2$ dan $y^2$ sama-sama $1$, seperti di kelima pilihan.
+- **Bagian 4 — Uji kelima pilihan:** tiap pilihan disalin dari soal, pusatnya dihitung dengan cara cepat dan digambar di bidang koordinat (pusat sama dengan $p$ disorot emas, lainnya merah).
+  - A: $\left(\frac{6}{-2},\frac{-8}{-2}\right)=(-3,4)$, sama dengan $p$. **Cocok.**
+  - B: $(3,4)$, tanda $x$ terbalik. C: $(-3,-4)$, tanda $y$ terbalik. D: $(4,3)$ dan E: $(-4,3)$, koefisien $x$ dan $y$ tertukar. **Bukan.**
+- **Bagian 5 — Pastikan jawaban**
+  - 5.1 Melengkapkan kuadrat pilihan A: $(x^2+6x+9)+(y^2-8y+16)=-16+9+16=9$, jadi $(x+3)^2+(y-4)^2=9$: pusat $(-3,4)$, jari-jari $3$.
+  - 5.2 $r=3\ne r_A=2$ tidak masalah karena sepusat hanya mensyaratkan pusat sama. Hati-hati: B jari-jarinya $2$ (konstanta $21$) tetapi pusatnya $(3,4)$, bukan sepusat.
+- **Bagian 6 — Catatan lengkap. Bagian 7 — Cocokkan pilihan** (kartu A–E, pertanyaan kesimpulan). **Bagian 8 — Selesai:** segel A.
+
 ### Bagian 6 — Selesai
 - **Segel:** **A**
 - **Pop-up:** "Pusat lingkaran A adalah $(-3,4)$. Hanya pilihan A yang berpusat di sana."
