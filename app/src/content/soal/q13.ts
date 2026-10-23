@@ -97,7 +97,7 @@ const q13: SoalContent = {
         id: 'b1',
         toks: [
           H('b1a', 'titik tengah <i>AB</i>', 'tx'),
-          O('b1b', ':'),
+          O('b1b', '\\to'),
           T('b1c', 'x='),
           T('b1d', '\\dfrac{0+6}{2}', '', 'PB3'),
           O('b1e', '='),

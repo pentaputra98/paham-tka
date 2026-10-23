@@ -298,7 +298,7 @@ ${STMT.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
         id: 'p3',
         toks: [
           T('p3b', '\\theta=90^\\circ'),
-          O('p3c', ':'),
+          O('p3c', '\\Rightarrow'),
           T('p3d', '\\tan45^\\circ'),
           O('p3e', '='),
           T('p3f', '1', 'blue'),
@@ -322,7 +322,7 @@ ${STMT.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
         id: 'p5',
         toks: [
           T('p5a', '\\theta=60^\\circ'),
-          O('p5b', ':'),
+          O('p5b', '\\Rightarrow'),
           T('p5c', '\\dfrac{2}{\\pi\\cdot\\frac{\\sqrt3}{3}}'),
           O('p5d', '\\approx'),
           T('p5e', '1{,}10'),
@@ -338,7 +338,7 @@ ${STMT.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
         id: 'p6',
         toks: [
           T('p6b', '\\theta\\to\\tfrac{\\pi}{6}'),
-          O('p6c', ':'),
+          O('p6c', '\\Rightarrow'),
           T('p6d', '\\tan15^\\circ'),
           O('p6e', '='),
           T('p6f', '2-\\sqrt3', 'blue'),
@@ -363,7 +363,13 @@ ${STMT.map((t, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
       quote(5),
       {
         id: 'p8',
-        toks: [T('p8b', '\\theta=\\pi'), O('p8c', ':'), T('p8d', 't'), O('p8e', '='), T('p8f', '0', 'blue')],
+        toks: [
+          T('p8b', '\\theta=\\pi'),
+          O('p8c', '\\Rightarrow'),
+          T('p8d', 't'),
+          O('p8e', '='),
+          T('p8f', '0', 'blue'),
+        ],
         note: 'kaki segaris, titik $C$ jatuh di $AB$',
       },
       {

@@ -175,7 +175,7 @@ const q05: SoalContent = {
       },
       {
         id: 'h5',
-        toks: [H('h5a', 'akar', 'tx'), O('h5b', ':'), T('h5c', 'x=3,\\ -2,\\ -4', 'gold')],
+        toks: [H('h5a', 'akar', 'tx'), O('h5b', '\\to'), T('h5c', 'x=3,\\ -2,\\ -4', 'gold')],
         note: '$-4$ tidak ada di pilihan',
         box: 'gold',
       },

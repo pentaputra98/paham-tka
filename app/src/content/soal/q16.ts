@@ -143,7 +143,7 @@ ${OPTS.map((p, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
           T('a1b', 'C', '', '@g-C'),
           H('a1c', 'ke', 'tx'),
           T('a1d', 'D', '', '@g-D'),
-          O('a1e', ':'),
+          O('a1e', '\\to'),
           H('a1f', 'geser', 'tx'),
           T('a1g', '1', 'blue', '@g-run'),
           H('a1h', 'naik', 'tx'),
@@ -180,7 +180,7 @@ ${OPTS.map((p, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
           T('c2b', 'A', '', 'PA0'),
           H('c2c', 'ke', 'tx'),
           T('c2d', 'B', '', '@g-B'),
-          O('c2e', ':'),
+          O('c2e', '\\to'),
           H('c2f', 'geser', 'tx'),
           T('c2g', '1', 'blue', '@g-run2'),
           H('c2h', 'naik', 'tx'),
@@ -228,7 +228,12 @@ ${OPTS.map((p, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
     LT1: [
       {
         id: 't1',
-        toks: [H('t1a', 'searah', 'tx'), T('t1b', 'f'), O('t1c', ':'), T('t1d', '(1,\\ 2)', 'blue', 'PM2')],
+        toks: [
+          H('t1a', 'searah', 'tx'),
+          T('t1b', 'f'),
+          O('t1c', '\\to'),
+          T('t1d', '(1,\\ 2)', 'blue', 'PM2'),
+        ],
         note: 'gradien $2$: geser $1$, naik $2$',
       },
       {

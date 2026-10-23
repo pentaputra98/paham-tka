@@ -218,7 +218,7 @@ const q02: SoalContent = {
     L5p: [
       {
         id: 'q1',
-        toks: [H('q1a', 'gajah ÷ 2', 'tx'), O('q1b', ':'), T('q1c', '5x+y=19')],
+        toks: [H('q1a', 'gajah ÷ 2', 'tx'), O('q1b', '\\to'), T('q1c', '5x+y=19')],
         note: 'persamaan gamal tetap $10x+y=34$',
       },
       {

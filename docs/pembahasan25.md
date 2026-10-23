@@ -1383,6 +1383,29 @@ Periode: $\frac{2\pi}{\pi/6}=12$ jam, cocok dengan grafik (puncak di $t=0$ dan $
   - $y(15)=12{,}3$, kemunculan ke-3.
 - **Bagian 6–8:** catatan lengkap, kartu A–E, segel E.
 
+*Revisi 1.21 (24 Okt 2026, saran pemilik; kunci tidak berubah: E). Menggantikan alur Revisi 1.20 di atas.* Jalur utama memakai **logika dari grafik saja**, tanpa rumus. Baris papan tidak memakai tanda ":" (pakai panah atau teks).
+- **Bagian 1 — Pahami soal:** yang ditanya; langkah pertama: baca grafik (puncak, lembah, dan kapan terjadinya).
+- **Bagian 2 — Garis tengah:**
+  - puncak $14{,}3$ dan lembah $10{,}3$;
+  - selisih $14{,}3-10{,}3=4$, setengahnya $2$;
+  - garis tengah $10{,}3+2=12{,}3$, tepat kedalaman yang ditanya (pertanyaan cepat garis tengah).
+- **Bagian 3 — Waktu dari grafik:**
+  - lembah diperbesar dan dilingkari: dicapai saat $t=6$;
+  - *Tahukah kalian?* dari puncak ($t=0$) ke lembah ($t=6$) garis tengah dilewati tepat di tengah waktunya, $6\div2=3$ (3 jam + 3 jam);
+  - pola puncak $0$ → lembah $6$ → puncak $12$ berulang, jadi garis tengah dilewati tiap 6 jam: $t=3,9,15,\dots$
+- **Bagian 4 — Hitung kemunculan:**
+  - titik berjalan: ke-1 → $t=3$, ke-2 → $t=9$, ke-3 → $t=15$;
+  - hati-hati $t=12$ (puncak);
+  - tawaran cara alternatif.
+- **Bagian 5 — Cara alternatif dengan rumus (opsional, Ya/Lewati):**
+  - kenapa kosinus: grafik mulai dari puncak, $\cos0=1$, sedangkan sinus mulai dari tengah (kurva sinus pembanding);
+  - dari mana $\frac16\pi$: satu gelombang 12 jam, $\frac{2\pi}{12}=\frac\pi6$;
+  - $a=12{,}3$, $b=2$, model;
+  - $12{,}3$ pindah ruas, lalu $\cos\left(\frac16\pi t\right)=0$, lalu $t=3,9,15$;
+  - **kapan rumus diperlukan:** misalnya ditanya kedalaman $13{,}3$ m (bukan garis tengah): $\cos\left(\frac16\pi t\right)=\frac12$, $\frac16\pi t=\frac\pi3$, $t=2$ (bukan 3; diturunkan dari model dokumen).
+- **Bagian 6 — Uji kelima pilihan:** tiap pilihan disalin, lalu dicek dengan pola $3,9,15$: A ke-1, B ke-2, C bukan di garis tengah ($13{,}3$ m), D puncak $14{,}3$ m, E ke-3.
+- **Bagian 7–9:** catatan lengkap, kartu A–E, segel E.
+
 ---
 
 ## SOAL 12 — Panjang Vektor 3D

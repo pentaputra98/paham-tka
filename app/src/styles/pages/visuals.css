@@ -1498,11 +1498,51 @@
     place-items: center;
   }
 
+  /* kamera memperbesar: isi di luar bingkai tidak menimpa pop-up atau papan */
   .vis-tide svg {
     width: 100%;
     height: 100%;
     min-height: 0;
-    overflow: visible;
+    overflow: hidden;
+  }
+
+  .t11-guide,
+  .t11-midl,
+  .t11-cg,
+  .t11-arrow,
+  .t11-span,
+  .t11-curve,
+  .t11-sinc,
+  .t11-ax {
+    vector-effect: non-scaling-stroke;
+  }
+
+  .t11-sinc {
+    fill: none;
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 3 5;
+  }
+
+  .t11-cos {
+    fill: var(--color-on-stage);
+  }
+
+  .t11-pk,
+  .t11-rg {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-3);
+  }
+
+  .t11-span2 {
+    opacity: 0.7;
+  }
+
+  .t11-ap {
+    fill: var(--color-stage-accent);
+    stroke: var(--color-stage);
+    stroke-width: var(--bw-2);
   }
 
   .t11-ax {
@@ -1636,6 +1676,12 @@
     fill: var(--color-result);
   }
 
+  .t11-pts,
+  .t11-ring,
+  .t11-half,
+  .t11-sin,
+  .t11-per,
+  .t11-alt,
   .t11-ext,
   .t11-x,
   .t11-mid,
@@ -1649,6 +1695,12 @@
     transition: opacity var(--dur-slow) var(--ease);
   }
 
+  .show-pts .t11-pts,
+  .show-ring .t11-ring,
+  .show-half .t11-half,
+  .show-sin .t11-sin,
+  .show-per .t11-per,
+  .show-alt .t11-alt,
   .show-ext .t11-ext,
   .show-ext .t11-x,
   .show-mid .t11-mid,

@@ -123,7 +123,7 @@ const q18: SoalContent = {
       id: 'pZ',
       toks: [
         H('PZ1', 'zona pas', 'tx', 'z2a'),
-        O('PZ2', ':'),
+        O('PZ2', '='),
         T('PZ3', '637{,}5\\text{–}737{,}5\\ \\text{cm}', '', 'z2e'),
       ],
     },
@@ -147,13 +147,17 @@ const q18: SoalContent = {
       },
       {
         id: 'k4',
-        toks: [H('k4a', 'pas', 'tx'), O('k4b', ':'), H('k4c', 'cukup, dan sisa ≤ 1 m', 'blue', '@s-pas')],
+        toks: [
+          H('k4a', 'pas', 'tx'),
+          O('k4b', '\\Rightarrow'),
+          H('k4c', 'cukup, dan sisa ≤ 1 m', 'blue', '@s-pas'),
+        ],
       },
       {
         id: 'k5',
         toks: [
           H('k5a', 'logam', 'tx'),
-          O('k5b', ':'),
+          O('k5b', '\\to'),
           T('k5c', 'A=4\\ \\text{m},\\ B=5\\ \\text{m},\\ C=6{,}5\\ \\text{m}', '', '@s-logam'),
         ],
       },
@@ -285,7 +289,7 @@ const q18: SoalContent = {
         id: 'z1',
         toks: [
           H('z1a', 'cukup', 'tx'),
-          O('z1b', ':'),
+          O('z1b', '\\Rightarrow'),
           T('z1c', '\\text{logam}\\ge'),
           T('z1d', '637{,}5\\ \\text{cm}', '', 'PK3'),
         ],
@@ -294,7 +298,7 @@ const q18: SoalContent = {
         id: 'z2',
         toks: [
           H('z2a', 'sisa ≤ 1 m', 'tx'),
-          O('z2b', ':'),
+          O('z2b', '\\Rightarrow'),
           T('z2c', '\\text{logam}\\le637{,}5+100'),
           O('z2d', '='),
           T('z2e', '737{,}5\\ \\text{cm}', 'blue'),

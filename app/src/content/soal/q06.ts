@@ -128,7 +128,7 @@ const q06: SoalContent = {
         id: 'c1',
         toks: [
           H('c1a', 'konstanta', 'tx'),
-          O('c1b', ':'),
+          O('c1b', '\\to'),
           T('c1c', 'q', '', 'PH5'),
           O('c1d', '='),
           T('c1e', '-5', 'blue', 'PG5'),
@@ -140,7 +140,7 @@ const q06: SoalContent = {
         id: 'c2',
         toks: [
           H('c2a', 'koefisien <i>x</i>', 'tx'),
-          O('c2b', ':'),
+          O('c2b', '\\to'),
           T('c2c', 'p+q', '', 'PH4'),
           O('c2d', '='),
           T('c2e', '-4', '', 'PG4'),
@@ -163,7 +163,7 @@ const q06: SoalContent = {
         id: 'd1',
         toks: [
           H('d1a', 'koefisien <i>x</i><sup>3</sup>', 'tx'),
-          O('d1b', ':'),
+          O('d1b', '\\to'),
           T('d1c', 'a', '', 'PG2'),
           O('d1d', '='),
           T('d1e', 'p+1', '', 'PH2'),
@@ -185,7 +185,7 @@ const q06: SoalContent = {
         id: 'd3',
         toks: [
           H('d3a', 'koefisien <i>x</i><sup>2</sup>', 'tx'),
-          O('d3b', ':'),
+          O('d3b', '\\to'),
           T('d3c', 'b', '', 'PG3'),
           O('d3d', '='),
           T('d3e', 'p+q+1', '', 'PH3'),
