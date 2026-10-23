@@ -7,6 +7,7 @@ import type { Generator } from './types';
 const LOADERS: Partial<Record<number, () => Promise<Generator>>> = {
   1: () => import('./gen01').then((m) => m.gen01),
   15: () => import('./gen15').then((m) => m.gen15),
+  16: () => import('./gen16').then((m) => m.gen16),
   17: () => import('./gen17').then((m) => m.gen17),
   24: () => import('./gen24').then((m) => m.gen24),
 };

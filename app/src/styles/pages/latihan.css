@@ -640,6 +640,13 @@
     text-anchor: start;
   }
 
+  /* naskah soal 16: nama titik C, D, A, B */
+  .lat-fig .lg-pl {
+    font-size: var(--fs-lat-fig-sm);
+    text-anchor: start;
+    fill: var(--color-text);
+  }
+
   .lat-fig .lg-plbl {
     font-style: italic;
     fill: var(--color-intermediate);

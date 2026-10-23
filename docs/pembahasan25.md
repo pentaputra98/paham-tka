@@ -2002,6 +2002,19 @@ Garis singgungnya (gradien $-\frac12$): di $(3,-1)$: $x+2y-1=0$; di $(1,-5)$: $x
   - 5.7 Hasilnya sama dengan cara pertama. Rumus ini berlaku di mana pun letak $B$, karena $B$ hanya dipakai untuk mencari $r$.
 - Bagian sesudahnya bergeser: 6 uji pilihan, 7 catatan lengkap, 8 kartu, 9 selesai.
 
+*Latihan serupa (Revisi 1.19, `app/src/practice/gen16.ts`).* Gambar baru: garis $f$ melalui $C$, $D$ dan lingkaran berpusat $A$ melalui $B$ (semua titik bulat, pusat bukan $(2,-3)$). Pilih kedua titik singgung dari lima kandidat.
+- **Mudah:** seperti soal asli ($B$ sendiri titik singgung, langkah dari pusat tepat sejauh $r$).
+- **Sedang:** $f$ bisa naik atau turun; $B$ di tempat lain dan hanya memberi $r$.
+- **Menantang:** jari-jari dua kali langkah (langkah dikali $\frac rk$), atau garis singgung yang sejajar $f$.
+- Distraktor dari *Kesalahan umum* dan alur pembahasan:
+  - titik yang garis singgungnya sejajar $f$;
+  - tanda gradien terbalik;
+  - geser–naik tertukar;
+  - langkah belum dikali $\frac rk$;
+  - titik $B$;
+  - titik pada garis $f$;
+  - titik di luar lingkaran.
+
 ### Bagian 6 — Selesai
 - **Segel:** **(3,−1), (1,−5)**
 - **Pop-up:** "Jari-jari yang sejajar $f$ menembus lingkaran di $(3,-1)$ dan $(1,-5)$; di dua titik itulah garis singgung tegak lurus $f$."
