@@ -2,10 +2,10 @@ import { expect, test, type Page } from '@playwright/test';
 import q16 from '../../src/content/soal/q16';
 import { isReady } from '../../src/content';
 
-// dikunci sementara oleh pemilik sampai soal 1 selesai seluruh fiturnya (PRD v1.6, daftar OPEN)
-test.skip(!isReady(16), 'Soal 16 dikunci sementara (PRD v1.6)');
+// soal 16 dibuka (PRD v1.17); tetap dilewati bila suatu saat dikunci lagi lewat daftar OPEN
+test.skip(!isReady(16), 'Soal 16 dikunci sementara');
 
-/** G-Gerak soal 16 (garis singgung, multi-jawaban). */
+/** G-Gerak soal 16 (alur guru v1.17: data dari gambar, jari-jari sejajar f, uji pilihan). */
 const steps = q16.steps;
 const expectedRows = (i: number): string[] | null => {
   const b = steps[i - 1]!.board;
@@ -63,16 +63,37 @@ test.describe('Pembahasan soal 16 (G-Gerak, garis dan lingkaran)', () => {
     expect(errors).toEqual([]);
   });
 
-  test('label titik pada grafik menjadi sumber; uji kandidat emas/merah', async ({ page }) => {
+  test('data dari gambar disimpan ke catatan; titik singgung dari pusat searah f', async ({ page }) => {
     await setup(page);
     await page.goto('./#/soal/16/bahas?m=amati&b=1&l=1');
     await settled(page, 2);
-    await expect(page.locator('.vis-tan [data-src="g-A"]')).toBeVisible();
-    await page.goto('./#/soal/16/bahas?m=amati&b=3&l=2');
-    await settled(page, 7);
-    await expect(page.locator('.t16-cand[data-i="1"]')).toHaveClass(/no/);
-    await expect(page.locator('.t16-cand[data-i="2"]')).toHaveClass(/ok/);
-    await expect(page.locator('.cb-opt[data-i="2"]')).toHaveClass(/ok/);
+    await expect(page.locator('.vis-sing [data-src="g-A"]')).toBeVisible();
+    await page.goto('./#/soal/16/bahas?m=amati&b=2&l=2');
+    await settled(page, 5);
+    await expect(page.locator('.vis-sing.is-zoom.show-rad')).toHaveCount(1);
+    await expect(page.locator('.bd-pins [data-pin]')).toHaveCount(3, { timeout: 10_000 });
+    await page.goto('./#/soal/16/bahas?m=amati&b=4&l=2');
+    await settled(page, 11);
+    await expect(page.locator('.vis-sing.show-par.show-go2.show-pts2')).toHaveCount(1);
+    await expect(page.locator('.bd-pins [data-pin="pT"]')).toContainText('-5', { timeout: 10_000 });
+  });
+
+  test('tiap pilihan: disalin dari soal, diuji dengan AT²; hanya (2) dan (4) titik singgung', async ({
+    page,
+  }) => {
+    test.setTimeout(120_000);
+    await setup(page);
+    for (let n = 1; n <= 5; n++) {
+      const l = 2 * (n - 1);
+      await page.goto(`./#/soal/16/bahas?m=amati&b=5&l=${l}`);
+      await settled(page, 14 + l);
+      await expect(page.locator('.hl-q.focus [data-src]')).toHaveAttribute('data-src', `s-o${n}`);
+      await expect(page.locator(`.board .bl[data-row="q${n}"] .tk.q`)).toHaveCount(1);
+      await page.locator('[data-next]').click();
+      await settled(page, 15 + l);
+      await expect(page.locator(`.s16-cand[data-i="${n}"]`)).toHaveCount(1);
+      await expect(page.locator('.s16-cand.is-ok')).toHaveCount(n === 2 || n === 4 ? 1 : 0);
+    }
   });
 
   test('Ikut berpikir: gradien dan jari-jari sejajar f', async ({ page }) => {
@@ -81,13 +102,13 @@ test.describe('Pembahasan soal 16 (G-Gerak, garis dan lingkaran)', () => {
     const foot = page.locator('.ask-ov');
     await expect(foot).toContainText('Gradien', { timeout: 20_000 });
     await foot.locator('.opt').nth(1).click();
-    await expect(foot.locator('.ask-h')).toContainText('perubahan');
+    await expect(foot.locator('.ask-h')).toContainText('naik dibagi geser');
     await foot.locator('.opt').first().click();
     await settled(page, 3);
-    await page.goto('./#/soal/16/bahas?m=ikut&b=3&l=0');
+    await page.goto('./#/soal/16/bahas?m=ikut&b=3&l=1');
     await expect(foot).toContainText('jari-jari', { timeout: 20_000 });
     await foot.locator('.opt').first().click();
-    await settled(page, 5);
-    await expect(page.locator('[data-row="c4"]')).toBeVisible();
+    await settled(page, 8);
+    await expect(page.locator('[data-row="s3"]')).toBeVisible();
   });
 });

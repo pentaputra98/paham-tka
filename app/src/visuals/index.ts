@@ -8,7 +8,7 @@ import { createOrn } from './orn18';
 import { createBars } from './bars17';
 import { createCirc } from './circ15';
 import { createSign } from './sign17';
-import { createTan16 } from './tan16';
+import { createSing16 } from './sing16';
 import { createTrap13 } from './trap13';
 
 export const VISUALS: Record<string, VisualFactory> = {
@@ -20,6 +20,6 @@ export const VISUALS: Record<string, VisualFactory> = {
   mat1: createMat1,
   orn18: createOrn,
   sign: createSign,
-  tan16: createTan16,
+  sing16: createSing16,
   trap13: createTrap13,
 };

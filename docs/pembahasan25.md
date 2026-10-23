@@ -1967,6 +1967,28 @@ Garis singgungnya (gradien $-\frac12$): di $(3,-1)$: $x+2y-1=0$; di $(1,-5)$: $x
   - Pertanyaan kesimpulan: $(3,-1)$ saja · $(3,1)$ dan $(1,-5)$ · **$(3,-1)$ dan $(1,-5)$** · $(-1,5)$ dan $(-3,-1)$.
 - **Ringkasan `LR`** memuat persamaan kedua garis singgung dari *Catatan lengkap*.
 
+*Alur aplikasi dengan gaya mengajar pemilik materi (Revisi 1.17, 23 Okt 2026; kunci tidak berubah: (3, −1) dan (1, −5)). Menggantikan alur M2 di atas pada `app/src/content/soal/q16.ts`; adegan baru `sing16` menggantikan `tan16`.* Prinsipnya: kumpulkan data dari gambar dulu (hitung kotak), pakai sifat garis singgung, lalu cari titik singgung dari pusat. Hasil disimpan ke **catatan**: $m_f=2$, $A=(2,-3)$, $r=\sqrt5$, $T_1$ dan $T_2$. Tata letak: panggung penuh dua kolom.
+
+- **Bagian 1 — Pahami soal**
+  - 1.1 Stabilo pertanyaan. Baris: Ditanya, titik singgung dari garis singgung $\perp f$.
+  - 1.2 Langkah pertama: kumpulkan data dari gambar (gradien $f$, pusat, jari-jari).
+- **Bagian 2 — Data dari gambar**
+  - 2.1 Gambar diperbesar ke garis $f$: dari $C$ ke $D$ geser $1$ kotak, naik $2$ kotak (angka terbang dari gambar). $m_f=\frac{\text{naik}}{\text{geser}}=\frac21=2$, simpan ke catatan. Pertanyaan cepat lama (gradien).
+  - 2.2 Pusat $A=(2,-3)$, simpan ke catatan.
+  - 2.3 Dari $A$ ke $B$ geser $1$, naik $2$: $r=\sqrt{1^2+2^2}=\sqrt5$ (dokumen: $r^2=1+4=5$), simpan ke catatan.
+  - 2.4 *Tahukah kalian?* $AB\parallel f$: keduanya geser $1$, naik $2$.
+- **Bagian 3 — Sifat garis singgung**
+  - 3.1 Garis singgung selalu tegak lurus jari-jari (contoh di titik paling kiri lingkaran, tanda siku).
+  - 3.2 Garis singgung $\perp f$ dan $\perp$ jari-jari, jadi jari-jari $\parallel f$: salinan garis $f$ digeser sampai melewati $A$. Pertanyaan cepat lama (jari-jari sejajar $f$).
+- **Bagian 4 — Titik singgung**
+  - 4.1 Dari $A$ searah $f$: $(1,2)$, panjangnya $\sqrt{1^2+2^2}=\sqrt5=r$, jadi langsung sampai di lingkaran (dokumen langkah 3.1, c1–c2).
+  - 4.2 $T_1=(2+1,\ -3+2)=(3,-1)$, yaitu titik $B$.
+  - 4.3 Hati-hati, arah sebaliknya: $T_2=(2-1,\ -3-2)=(1,-5)$; simpan $T_1$, $T_2$ ke catatan.
+  - 4.4 Kedua garis singgung tegak lurus $f$, gradiennya $m_s=-\frac1{m_f}=-\frac12$ (dari *Catatan lengkap*): dua titik singgung, bukan satu.
+  - 4.5 **Hati-hati** (dari *Kesalahan umum*): jangan mencari perpotongan $f$ dengan lingkaran. Jarak $A$ ke $f$ $=\frac9{\sqrt5}\approx4{,}02>\sqrt5$, jadi $f$ tidak menyentuh lingkaran; yang dipakai hanya arahnya.
+- **Bagian 5 — Uji kelima pilihan:** tiap pilihan disalin dari soal, lalu $AT^2$ dihitung dan dibandingkan dengan $r^2=5$ (angka d1–d5); pilihan (2) dan (4) sama dengan $T_2$ dan $T_1$ di catatan.
+- **Bagian 6–8:** catatan lengkap, kartu (1)–(5) dengan pertanyaan kesimpulan, segel.
+
 ### Bagian 6 — Selesai
 - **Segel:** **(3,−1), (1,−5)**
 - **Pop-up:** "Jari-jari yang sejajar $f$ menembus lingkaran di $(3,-1)$ dan $(1,-5)$; di dua titik itulah garis singgung tegak lurus $f$."
