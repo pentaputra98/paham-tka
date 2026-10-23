@@ -7,7 +7,7 @@
  *  - count: dari p turun kotak demi kotak (1, 2) sampai titik terbawah lingkaran, lalu garis ke sumbu y (label 2);
  *  - rad: ruas jari-jari dari p ke titik terbawah dengan labelnya; lab mengganti label pusat dan jari-jari
  *    ('ask' = belum diketahui, 'ab' = bentuk baku, 'AB' = bentuk umum, 'num' = angka lingkaran A);
- *  - panel: tulisan di kanan bidang (dua bentuk persamaan, persamaan lingkaran A baku/jabaran/umum);
+ *  - panel: tulisan di kanan bidang (dua bentuk persamaan, persamaan lingkaran A baku/jabaran/pindah ruas/umum);
  *  - dlab: label diameter 4 pada ruas garis tengah;
  *  - conc: lingkaran-lingkaran sepusat tumbuh dari p (jari-jari 1 dan 3): pusat sama, jari-jari boleh beda;
  *  - opts: lingkaran pilihan digambar dari pusat dan jari-jarinya; pusat yang sama dengan p disorot emas,
@@ -25,7 +25,7 @@ export type Opt = 'A' | 'B' | 'C' | 'D' | 'E';
 /** p/x/y/r = diperbesar; 'wide' = bidang utuh (pilihan C di bawah sumbu x); tanpa cam = bingkai bawaan 'fit' */
 export type Cam = 'p' | 'x' | 'y' | 'r' | 'wide';
 export type Lab = 'ask' | 'ab' | 'AB' | 'num';
-export type Panel = 'forms' | 'baku' | 'jabar' | 'umum';
+export type Panel = 'forms' | 'baku' | 'jabar' | 'pindah' | 'umum';
 export interface CircState {
   cam?: Cam;
   rx?: boolean;
@@ -107,6 +107,11 @@ const PANEL: Record<Panel, Array<[string, boolean]>> = {
     ['dijabarkan:', true],
     ['(x+3)² = x²+6x+9', false],
     ['(y−4)² = y²−8y+16', false],
+  ],
+  pindah: [
+    ['4 pindah ruas:', true],
+    ['... + 16 = 4', false],
+    ['... + 16 − 4 = 0', false],
   ],
   umum: [
     ['bentuk umum:', true],

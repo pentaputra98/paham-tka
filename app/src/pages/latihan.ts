@@ -392,6 +392,7 @@ export function latihanPage(route: Route): PageView {
     const box = stage.querySelector<HTMLElement>('.lat-opts')!;
     const multi = !!inst.multi;
     box.classList.toggle('is-multi', multi);
+    box.classList.toggle('is-col', !!inst.col);
     box.setAttribute('role', multi ? 'group' : 'radiogroup');
     box.setAttribute('aria-label', multi ? 'Pernyataan; pilih semua yang benar' : 'Pilihan jawaban');
     stage.querySelector('[data-ans-k]')!.textContent = multi ? 'Pilih semua yang benar' : 'Pilih jawaban';

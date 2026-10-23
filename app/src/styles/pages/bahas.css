@@ -1068,8 +1068,9 @@
     align-items: center;
   }
 
+  /* safe center: rumus yang lebih lebar dari kartu meluap ke kanan (terukur oleh Cards.fit), bukan ke kiri */
   .front.is-math .st {
-    justify-content: center;
+    justify-content: safe center;
     font-size: 2em;
   }
 
@@ -1151,7 +1152,7 @@
   }
 
   .back.is-math .bs {
-    justify-content: center;
+    justify-content: safe center;
     font-size: 2em;
     font-weight: var(--fw-regular);
     color: var(--color-text);
@@ -2298,6 +2299,16 @@
 
   .lay-full .abc {
     grid-template-columns: repeat(auto-fill, minmax(var(--size-key-col-sm), 1fr));
+  }
+
+  /* pilihan berupa persamaan panjang: satu kolom, A–E berurutan ke bawah, rumus tidak dipatahkan */
+  .abc.abc-col,
+  .lay-full .abc.abc-col {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .abc-col .katex {
+    white-space: nowrap;
   }
 
   .lay-full .p-soal .soal {

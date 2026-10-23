@@ -1805,7 +1805,8 @@ Hasil yang didapat disimpan ke **catatan** (deret pin papan) dan diambil lagi da
   - 4.1 $(x-(-3))^2+(y-4)^2=2^2$; angka $-3$, $4$, $2$ diambil dari catatan.
   - 4.2 $(x+3)^2+(y-4)^2=4$.
   - 4.3 $x^2+6x+9+y^2-8y+16=4$.
-  - 4.4 $9$, $16$, dan $4$ dicoret, lalu $x^2+6x+y^2-8y+21=0$ ($9+16-4=21$; sama dengan "Lingkaran A sendiri" di Bagian 4 dokumen), simpan ke catatan.
+  - 4.4 *(Revisi 1.16: tanpa coretan.)* Angka $4$ pindah dari ruas kanan ke ruas kiri menjadi $-4$ dan berkumpul dengan $+9$ dan $+16$: $x^2+6x+y^2-8y+9+16-4=0$.
+  - 4.5 Hitung angkanya, $9+16-4=21$, jadi $x^2+6x+y^2-8y+21=0$ (sama dengan "Lingkaran A sendiri" di Bagian 4 dokumen); simpan ke catatan.
 - **Bagian 5 — Cocokkan hasil**
   - 5.1 Tidak ada pilihan yang persis sama dengan hasil.
   - 5.2 **Hati-hati:** stabilo "sepusat"; yang ditanya lingkaran sepusat, bukan lingkaran A sendiri. Pertanyaan cepat dari *Kesalahan umum*: sepusat harus memiliki pusat yang sama (bukan jari-jari yang sama).
@@ -1818,6 +1819,8 @@ Hasil yang didapat disimpan ke **catatan** (deret pin papan) dan diambil lagi da
   - 7.2 $r=3\ne2$ tidak masalah: sepusat hanya meminta pusat sama.
   - 7.3 Hati-hati B: konstanta $21$ sama dengan hasil ($r=2$), tetapi $-6x$ menggeser pusat ke $(3,4)$.
 - **Bagian 8–10:** catatan lengkap, kartu A–E, segel A.
+
+*Latihan serupa (Revisi 1.16, `app/src/practice/gen15.ts`).* Gambar lingkaran baru di bidang koordinat (pusat dan jari-jari acak, bukan pusat $(-3,4)$), diameter disebut di naskah. **Mudah:** persamaan lingkaran itu dalam bentuk baku. **Sedang:** dalam bentuk umum. **Menantang:** lingkaran yang sepusat seperti soal asli, atau sepusat dengan jari-jari dua/tiga kali (bentuk baku atau umum). Distraktor dari *Kesalahan umum* dan kesalahan menjabarkan: tanda pusat, $x$ dan $y$ tertukar, $r$ tidak dikuadratkan, diameter dipakai sebagai jari-jari, $r^2$ tidak berganti tanda saat pindah ruas, lupa faktor $2$, konstanta sama tetapi pusat beda.
 
 ### Bagian 6 — Selesai
 - **Segel:** **A**

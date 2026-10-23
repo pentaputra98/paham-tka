@@ -437,6 +437,20 @@
     gap: var(--space-2);
   }
 
+  /* pilihan persamaan panjang (soal 15): satu kolom A–E ke bawah, rumus rata kiri */
+  .lat-opts.is-col {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+
+  .lat-opts.is-col .lat-opt {
+    min-height: var(--size-touch);
+  }
+
+  .lat-opts.is-col .lat-opt-m {
+    text-align: left;
+  }
+
   .lat-opts.is-multi .lat-opt {
     min-height: var(--size-touch);
   }
@@ -587,6 +601,48 @@
 
   .lat-fig .lr-ink {
     fill: var(--ink-900);
+  }
+
+  /* naskah soal 15: lingkaran di bidang koordinat */
+  .lat-fig .lg-grid {
+    stroke: var(--color-line);
+    stroke-width: var(--bw-hair);
+  }
+
+  .lat-fig .lg-axis {
+    stroke: var(--color-text-muted);
+    stroke-width: var(--bw-1);
+  }
+
+  .lat-fig .lg-c {
+    fill: none;
+    stroke: var(--color-text);
+    stroke-width: var(--bw-2);
+  }
+
+  .lat-fig .lg-d {
+    stroke: var(--color-text);
+    stroke-width: var(--bw-1);
+  }
+
+  .lat-fig .lg-p,
+  .lat-fig .lg-e {
+    fill: var(--color-intermediate);
+  }
+
+  .lat-fig .lg-tick {
+    font-size: var(--fs-lat-fig-sm);
+    font-weight: var(--fw-regular);
+    fill: var(--color-text-muted);
+  }
+
+  .lat-fig .lg-tick-y {
+    text-anchor: start;
+  }
+
+  .lat-fig .lg-plbl {
+    font-style: italic;
+    fill: var(--color-intermediate);
   }
 
   .lat-stage.is-paused::before {

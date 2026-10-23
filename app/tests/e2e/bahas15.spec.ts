@@ -77,8 +77,12 @@ test.describe('Pembahasan soal 15 (G-Gerak, bidang koordinat)', () => {
     await expect(page.locator('.bd-pins [data-pin="pR"]')).toContainText('2', { timeout: 10_000 });
     await page.goto('./#/soal/15/bahas?m=amati&b=4&l=3');
     await settled(page, 14);
+    // 4 pindah ruas: terbang dari ruas kanan menjadi −4 di ruas kiri (bukan dicoret)
+    await expect(page.locator('.board .bl[data-row="j5"] .tk.red')).toContainText('4');
+    await expect(page.locator('.board .bl.cut')).toHaveCount(0);
+    await page.goto('./#/soal/15/bahas?m=amati&b=4&l=4');
+    await settled(page, 15);
     await expect(page.locator('.vis-circ.is-zoom')).toHaveCount(0);
-    await expect(page.locator('.board .bl[data-row="j3"].cut')).toHaveCount(1);
     // catatan: pusat, jari-jari, hasil bentuk umum (pin rumus baku hanya dipakai saat substitusi)
     await expect(page.locator('.bd-pins [data-pin]')).toHaveCount(3, { timeout: 10_000 });
     await expect(page.locator('.bd-pins [data-pin="pHasil"]')).toContainText('21');
@@ -96,11 +100,11 @@ test.describe('Pembahasan soal 15 (G-Gerak, bidang koordinat)', () => {
     ] as const) {
       const l = 2 * i;
       await page.goto(`./#/soal/15/bahas?m=amati&b=6&l=${l}`);
-      await settled(page, 18 + l);
+      await settled(page, 19 + l);
       await expect(page.locator('.hl-q.focus [data-src]')).toHaveAttribute('data-src', `s-o${o}`);
       await expect(page.locator(`.board .bl[data-row="c${o}"] .tk.q`)).toHaveCount(1);
       await page.locator('[data-next]').click();
-      await settled(page, 19 + l);
+      await settled(page, 20 + l);
       await expect(page.locator(`.vis-circ [data-opt="${o}"]`)).toHaveCount(1);
       await expect(page.locator('.vis-circ .c5-opt.is-same')).toHaveCount(o === 'A' ? 1 : 0);
     }
@@ -134,7 +138,7 @@ test.describe('Pembahasan soal 15 (G-Gerak, bidang koordinat)', () => {
       .locator('.opt')
       .filter({ hasText: /^pusat yang sama$/ })
       .click();
-    await settled(page, 16);
+    await settled(page, 17);
     await expect(foot).toBeEmpty();
   });
 });

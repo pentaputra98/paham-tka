@@ -85,8 +85,8 @@ const q15: SoalContent = {
 <p>Perhatikan gambar lingkaran berikut.</p>
 <p><span class="hl hl-red" data-hl="1"><span data-src="s-d">Diameter lingkaran pada gambar adalah 4 satuan</span></span>. <span class="hl hl-gold" data-hl="2"><span data-src="s-tanya">Persamaan lingkaran yang <span class="hl hl-blue" data-hl="3"><span data-src="s-pusat">sepusat</span></span> dengan lingkaran pada gambar</span></span> tersebut adalah ....</p>
 </div><figure class="soal-fig"><img src="${fig}" width="529" height="591" alt="Bidang koordinat dengan Lingkaran A; titik pusat p berada di x = −3 (di antara label −4 dan −2) dan y = 4; sebuah diameter melewati p." /></figure></div>
-<ol class="abc">
-${LETTERS.map((o) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-src="s-o${o}">$${OPTS[o]}$</span></span></li>`).join('\n')}
+<ol class="abc abc-col">
+${LETTERS.map((o) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" data-hl="9"><span data-src="s-o${o}">$${OPTS[o]}$</span></span></li>`).join('\n')}
 </ol>`,
     srcNames: ['s-d', 's-tanya', 's-pusat', 's-oA', 's-oB', 's-oC', 's-oD', 's-oE'],
   },
@@ -286,29 +286,56 @@ ${LETTERS.map((o) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
         toks: [T('j2a', '(x+3)^2+(y-4)^2'), O('j2b', '='), T('j2c', '4')],
         note: '$-(-3)=+3$ dan $2^2=4$',
       },
+    ],
+    // jabarkan, lalu 4 pindah ruas (terbang melewati "=" menjadi −4) dan angkanya dihitung (revisi pemilik v1.16)
+    LJ: [
       {
         id: 'j3',
         toks: [
           T('j3a', 'x^2+6x'),
-          T('j3b', '+9', 'x'),
+          T('j3b', '+9'),
           T('j3c', '+y^2-8y'),
-          T('j3d', '+16', 'x'),
+          T('j3d', '+16'),
           O('j3e', '='),
-          T('j3f', '4', 'x'),
+          T('j3f', '4'),
         ],
         note: '$(x+3)^2=x^2+6x+9$ dan $(y-4)^2=y^2-8y+16$',
       },
       {
+        id: 'j5',
+        toks: [
+          T('j5a', 'x^2+6x', '', 'j3a'),
+          T('j5c', '+y^2-8y', '', 'j3c'),
+          T('j5b', '+9', 'blue', 'j3b'),
+          T('j5d', '+16', 'blue', 'j3d'),
+          T('j5f', '-4', 'red', 'j3f'),
+          O('j5e', '='),
+          T('j5g', '0'),
+        ],
+        note: '$4$ pindah ke ruas kiri menjadi $-4$, berkumpul dengan $+9$ dan $+16$',
+      },
+      {
+        id: 'j6',
+        toks: [
+          T('j6a', '9', '', 'j5b'),
+          T('j6b', '+16', '', 'j5d'),
+          T('j6c', '-4', '', 'j5f'),
+          O('j6d', '='),
+          T('j6e', '21', 'blue'),
+        ],
+        note: 'hitung angkanya',
+      },
+      {
         id: 'j4',
         toks: [
-          T('j4a', 'x^2'),
-          T('j4b', '+6x', 'blue'),
-          T('j4c', '+y^2'),
-          T('j4d', '-8y', 'blue'),
-          T('j4e', '+21', 'blue'),
+          T('j4a', 'x^2', '', 'j5a'),
+          T('j4b', '+6x', 'blue', 'j5a'),
+          T('j4c', '+y^2', '', 'j5c'),
+          T('j4d', '-8y', 'blue', 'j5c'),
+          T('j4e', '+21', 'blue', 'j6e'),
           T('j4f', '=0'),
         ],
-        note: '$4$ pindah ke kiri: $9+16-4=21$; simpan ke catatan',
+        note: 'bentuk umum lingkaran A; simpan ke catatan',
         box: 'navy',
       },
     ],
@@ -539,21 +566,19 @@ ${LETTERS.map((o) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
       ch: 4,
       cap: 'Sekarang jabarkan kedua kuadrat: $(x+3)^2=x^2+6x+9$ dan $(y-4)^2=y^2-8y+16$.',
       visual: circ({ rad: true, lab: 'num', panel: 'jabar' }),
-      board: { title: 'Masukkan ke bentuk baku', pins: N2, list: 'LB', upTo: 3, from: 2 },
+      board: { title: 'Jabarkan', pins: N2, list: 'LJ', upTo: 1, from: 0 },
     },
     {
       ch: 4,
-      cap: 'Pindahkan $4$ ke kiri dan jumlahkan: $9+16-4=21$. Bentuk umum lingkaran A: $x^2+6x+y^2-8y+21=0$, simpan ke catatan.',
+      cap: 'Perhatikan angka $4$ di ruas kanan. Pindahkan ke ruas kiri, tandanya berubah menjadi $-4$, lalu berkumpul dengan $+9$ dan $+16$.',
+      visual: circ({ rad: true, lab: 'num', panel: 'pindah' }),
+      board: { title: 'Jabarkan', pins: N2, list: 'LJ', upTo: 2, from: 1 },
+    },
+    {
+      ch: 4,
+      cap: 'Hitung angkanya: $9+16-4=21$. Jadi bentuk umum lingkaran A adalah $x^2+6x+y^2-8y+21=0$, simpan ke catatan.',
       visual: circ({ rad: true, lab: 'num', panel: 'umum' }),
-      board: {
-        title: 'Masukkan ke bentuk baku',
-        pins: N2,
-        list: 'LB',
-        upTo: 4,
-        from: 3,
-        cut: ['j3'],
-        save: ['pHasil'],
-      },
+      board: { title: 'Jabarkan', pins: N2, list: 'LJ', upTo: 4, from: 2, save: ['pHasil'] },
     },
     // ---- 5 · Cocokkan hasil (hati-hati: sepusat) ----
     {
@@ -700,7 +725,7 @@ ${LETTERS.map((o) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
         lists: ['LF'],
         why: 'Bentuk baku $(x-a)^2+(y-b)^2=r^2$ dijabarkan menjadi bentuk umum $x^2+y^2+Ax+By+C=0$.',
       },
-      { title: 'Baku ke umum', lists: ['LB'] },
+      { title: 'Baku ke umum', lists: ['LB', 'LJ'] },
       {
         title: 'Cocokkan hasil',
         lists: ['LM'],
@@ -723,6 +748,7 @@ ${LETTERS.map((o) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
     'Rumus jari-jari bentuk umum ditulis seperti disampaikan pemilik: √((−A/2)² + (−B/2)² − C), setara dengan dokumen √(A²/4 + B²/4 − C).',
     'Pertanyaan cepat "sepusat harus memiliki…" dari Kesalahan umum dokumen (mengira jari-jari juga sama).',
     'Baris "Hati-hati" pilihan B (konstanta 21 sama, pusat beda) dari kolom jebakan kartu B dokumen.',
+    'Revisi pemilik v1.16: angka 4 tidak dicoret, tetapi pindah ruas menjadi −4 (terbang melewati "="), lalu 9 + 16 − 4 = 21 dihitung di baris sendiri; kertas soal memakai huruf A–E satu kolom.',
   ],
 };
 

@@ -40,6 +40,8 @@ export interface Instance {
   key: number;
   /** pilihan banyak: siswa memilih semua pernyataan yang benar (label (1)–(5)) */
   multi?: boolean;
+  /** pilihan berupa persamaan panjang: satu kolom, A–E berurutan ke bawah */
+  col?: boolean;
   /** rumus singkat untuk baris ringkasan (LaTeX); tanpa nilai = rumus tampilan pertama pada naskah */
   summary?: string;
   /** bagian pembahasan bawaan untuk "Bahas bagian terkait" bila tidak ada jebakan yang dipilih */
