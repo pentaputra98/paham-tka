@@ -101,6 +101,11 @@ export interface Step {
   ask?: Ask;
   /** konten opsional (mis. tabel nilai) yang ditawarkan Ya/Tidak */
   optional?: { label: string; yes: string; panel: string };
+  /**
+   * tawaran bagian opsional beranimasi (bagian berikutnya, `chapters[ch + 1].opt`): "Ya" masuk ke bagian itu;
+   * "Tidak" dan Lanjut melewatinya (revisi pemilik v1.18)
+   */
+  branch?: { yes: string };
 }
 
 export interface Fact {
@@ -135,7 +140,8 @@ export interface SoalContent {
   /** HTML kertas soal; rumus $…$, stabilo lewat \htmlClass/\htmlData (KaTeX trust terbatas) */
   paper: { html: string; srcNames: string[] };
   lobby: { eyebrow: string; titleLines: [string, string, string]; lede: string; facts: [Fact, Fact, Fact] };
-  chapters: Array<{ t: string; d: string }>;
+  /** opt = bagian opsional (hanya dimasuki lewat tawaran `Step.branch`, dilewati bila siswa tidak mau) */
+  chapters: Array<{ t: string; d: string; opt?: boolean }>;
   pins: Record<string, Pin>;
   /** label deret pin (mis. "Catatan luas"); bawaan "Hasil sebelumnya" */
   pinsLabel?: string;

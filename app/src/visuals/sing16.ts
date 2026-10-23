@@ -10,6 +10,11 @@
  *  - tan: dua garis singgung tegak lurus f di T₁(3, −1) dan T₂(1, −5), titik singgung emas;
  *  - miss: "hati-hati" — jarak A ke garis f (≈ 4,02) lebih dari jari-jari, f tidak menyentuh lingkaran;
  *  - cand: satu pilihan diuji: titiknya dan ruas AT; emas bila titik singgung, merah bila bukan.
+ * Revisi pemilik v1.18:
+ *  - cam 'T': perbesar ke pusat A; walk: berjalan dari pusat 1 ke kanan lalu 2 ke atas sampai T₁ (1), dan
+ *    kebalikannya 1 ke kiri lalu 2 ke bawah sampai T₂ (2: keduanya);
+ *  - cara alternatif (bagian opsional): rot = titik B diputar ke tempat lain di lingkaran (B hanya memberi r);
+ *    pq = segitiga gradien di pusat: q = 1 (geser), p = 2 (naik) (1), ditambah sisi miring k = √5 (2).
  * Angka dari docs/pembahasan25.md soal 16 (jarak 9/√5 ≈ 4,02 dari Kesalahan umum). Gerak hanya transform/opacity.
  */
 import { reducedMotion } from '../core/clock';
@@ -18,9 +23,15 @@ import { EASE, EASE_OUT } from '../core/tokens';
 import type { Ctx } from '../engine/board';
 import type { VisualScene } from '../engine/scene';
 
-export type Cam16 = 'f' | 'A';
+export type Cam16 = 'f' | 'A' | 'T';
 export interface Sing16State {
   cam?: Cam16;
+  /** jalan dari pusat: 1 = ke T₁ (kanan 1, atas 2), 2 = juga ke T₂ (kiri 1, bawah 2) */
+  walk?: 0 | 1 | 2;
+  /** titik B diputar ke tempat lain di lingkaran */
+  rot?: boolean;
+  /** segitiga gradien di pusat: 1 = q dan p, 2 = ditambah sisi miring k */
+  pq?: 0 | 1 | 2;
   grad?: boolean;
   rad?: boolean;
   sifat?: boolean;
@@ -68,7 +79,15 @@ const CAM: Record<Cam16 | 'all', [number, number, number]> = {
   all: [(X0 + X1) / 2, (Y0 + Y1) / 2, 1],
   f: [-0.5, 1, 2.2],
   A: [2.4, -2.4, 1.7],
+  T: [2, -3, 2],
 };
+/**
+ * sudut putar titik B (derajat, searah jarum jam di layar): dari arah (1, 2) ke sudut −80° (bawah, agak ke kanan),
+ * tempat yang tidak menimpa label langkah 1–2, q, p, k, maupun T₂
+ */
+const ROT = (Math.atan2(2, 1) * 180) / Math.PI + 80;
+const ROT_RAD = ((Math.atan2(2, 1) * 180) / Math.PI - ROT) * (Math.PI / 180);
+const B2: [number, number] = [A[0] + R * Math.cos(ROT_RAD), A[1] + R * Math.sin(ROT_RAD)];
 const camT = (k: Cam16 | 'all'): string => {
   if (k === 'all') return 'none';
   const [cx, cy, s] = CAM[k];
@@ -153,6 +172,33 @@ function markup(live: boolean): string {
     </g>
     <path class="s16-arrow s16-go1" d="M${px(2)} ${py(-3)}L${px(3)} ${py(-1)}"/>
     <path class="s16-arrow s16-go2" d="M${px(2)} ${py(-3)}L${px(1)} ${py(-5)}"/>
+    <g class="s16-w1">
+      <path class="s16-run" d="M${px(2)} ${py(-3)}H${px(3)}"/>
+      <path class="s16-rise" d="M${px(3)} ${py(-3)}V${py(-1)}"/>
+      <text class="s16-step" x="${px(2.5)}" y="${py(-3) + 20}">1</text>
+      <text class="s16-step" x="${px(3) + 14}" y="${py(-2) + 6}">2</text>
+    </g>
+    <g class="s16-w2">
+      <path class="s16-run" d="M${px(2)} ${py(-3)}H${px(1)}"/>
+      <path class="s16-rise" d="M${px(1)} ${py(-3)}V${py(-5)}"/>
+      <text class="s16-step" x="${px(1.5)}" y="${py(-3) - 10}">1</text>
+      <text class="s16-step" x="${px(1) - 14}" y="${py(-4) + 6}">2</text>
+    </g>
+    <g class="s16-pq">
+      <path class="s16-run" d="M${px(2)} ${py(-3)}H${px(3)}"/>
+      <path class="s16-rise" d="M${px(3)} ${py(-3)}V${py(-1)}"/>
+      <text class="s16-step" x="${px(2.5)}" y="${py(-3) + 20}">q</text>
+      <text class="s16-step" x="${px(3) + 14}" y="${py(-2) + 6}">p</text>
+      <g class="s16-k">
+        <path class="s16-rline" d="M${px(2)} ${py(-3)}L${px(3)} ${py(-1)}"/>
+        <text class="s16-tag s16-tag-end" x="${px(2.4) - 8}" y="${py(-1.9)}">k</text>
+      </g>
+    </g>
+    <g class="s16-bmove">
+      <path class="s16-rline" d="M${px(2)} ${py(-3)}L${px(3)} ${py(-1)}"/>
+      <circle class="s16-pt" cx="${px(3)}" cy="${py(-1)}" r="6"/>
+    </g>
+    <text class="s16-lbl s16-B2t" x="${n1(px(B2[0]) + 10)}" y="${n1(py(B2[1]) + 16)}">B</text>
     <g class="s16-cands"></g>
     <circle class="s16-pt" cx="${px(-1)}" cy="${py(0)}" r="5"/><circle class="s16-pt" cx="${px(0)}" cy="${py(2)}" r="5"/>
     <circle class="s16-pt" cx="${px(A[0])}" cy="${py(A[1])}" r="5"/><circle class="s16-pt s16-B" cx="${px(3)}" cy="${py(-1)}" r="5"/>
@@ -160,8 +206,9 @@ function markup(live: boolean): string {
     <text class="s16-lbl s16-Tt" x="${px(T2[0]) - 10}" y="${py(T2[1]) + 20}">(1, −5)</text>
     <text class="s16-lbl s16-lbl-end" x="${px(-1) - 8}" y="${py(0) - 10}"${src('g-C')}>C = (−1, 0)</text>
     <text class="s16-lbl" x="${px(0) + 10}" y="${py(2) + 4}"${src('g-D')}>D = (0, 2)</text>
-    <text class="s16-lbl s16-lbl-end" x="${px(A[0]) - 8}" y="${py(A[1]) + 22}"${src('g-A')}>A = (2, −3)</text>
-    <text class="s16-lbl" x="${px(3) + 12}" y="${py(-1) + 4}"${src('g-B')}>B = (3, −1)</text>
+    <text class="s16-lbl s16-lbl-end s16-At" x="${px(A[0]) - 8}" y="${py(A[1]) + 22}"${src('g-A')}>A = (2, −3)</text>
+    <text class="s16-lbl s16-Ash" x="${px(A[0]) + 7}" y="${py(A[1]) - 8}">A</text>
+    <text class="s16-lbl s16-Bt" x="${px(3) + 12}" y="${py(-1) + 4}"${src('g-B')}>B = (3, −1)</text>
   </g>
   </svg>`;
 }
@@ -186,6 +233,7 @@ export function createSing16(): VisualScene {
   const parG = el.querySelector<SVGGElement>('.s16-par')!;
   const go1 = el.querySelector<SVGPathElement>('.s16-go1')!;
   const go2 = el.querySelector<SVGPathElement>('.s16-go2')!;
+  const bmove = el.querySelector<SVGGElement>('.s16-bmove')!;
   const grow = (sel: string): SVGElement[] => [...el.querySelectorAll<SVGElement>(sel)];
   let camKey: Cam16 | 'all' = 'all';
   let shown = 0;
@@ -224,6 +272,8 @@ export function createSing16(): VisualScene {
       const moved = next !== camKey;
       camKey = next;
       el.classList.toggle('is-zoom', next !== 'all');
+      // diperbesar di pusat: label A diringkas agar tidak menimpa langkah 1–2 ke T₁ dan T₂
+      el.classList.toggle('cam-T', next === 'T');
       cam.style.transform = toT;
       if (moved && anim)
         await play(cam, [{ transform: fromT }, { transform: toT }], {
@@ -243,21 +293,47 @@ export function createSing16(): VisualScene {
         pts2: (s.pts ?? 0) >= 2,
         tan: !!s.tan,
         miss: !!s.miss,
+        w1: (s.walk ?? 0) >= 1,
+        w2: (s.walk ?? 0) >= 2,
+        pq: (s.pq ?? 0) >= 1,
+        k: (s.pq ?? 0) >= 2,
+        rot: !!s.rot,
       };
       const fresh = (k: string): boolean => flags[k]! && (!prev.has(k) || c.replay) && anim;
       const runs: Array<Promise<boolean>> = [];
-      // segitiga geser–naik: ruas mendatar tumbuh dari kiri, lalu ruas tegak dari bawah, lalu angkanya
-      for (const k of ['grad', 'rad'] as const)
+      // langkah geser lalu naik/turun: ruas mendatar tumbuh dari titik awal, lalu ruas tegak, lalu angkanya
+      const WALKS: Array<[string, number, number, number]> = [
+        ['grad', px(-1), py(0), U],
+        ['rad', px(2), py(-3), U],
+        ['w1', px(2), py(-3), U],
+        ['w2', px(2), py(-3), -U],
+        ['pq', px(2), py(-3), U],
+      ];
+      for (const [k, x0, y0, dx] of WALKS)
         if (fresh(k)) {
           const g = el.querySelector(`.s16-${k}`)!;
           const [run, rise] = [
-            g.querySelector<SVGElement>('.s16-run')!,
-            g.querySelector<SVGElement>('.s16-rise')!,
+            g.querySelector<SVGElement>(':scope > .s16-run')!,
+            g.querySelector<SVGElement>(':scope > .s16-rise')!,
           ];
-          const [x0, y0] = k === 'grad' ? [px(-1), py(0)] : [px(2), py(-3)];
-          runs.push(growFrom(run, x0, y0, 0), growFrom(rise, x0 + U, y0, 600));
-          g.querySelectorAll('text, .s16-rline').forEach((e, i) => runs.push(fadeIn(e, 900 + i * 300)));
+          runs.push(growFrom(run, x0, y0, 0), growFrom(rise, x0 + dx, y0, 600));
+          g.querySelectorAll(':scope > text, :scope > .s16-rline').forEach((e, i) =>
+            runs.push(fadeIn(e, 900 + i * 300)),
+          );
         }
+      if (fresh('k') && !fresh('pq')) grow('.s16-k > *').forEach((e, i) => runs.push(fadeIn(e, i * 300)));
+      // titik B berputar mengelilingi pusat A: B boleh di mana saja, ia hanya memberi panjang jari-jari
+      bmove.style.transformBox = 'view-box';
+      bmove.style.transformOrigin = `${px(A[0])}px ${py(A[1])}px`;
+      bmove.style.transform = s.rot ? `rotate(${ROT}deg)` : 'none';
+      if (fresh('rot'))
+        runs.push(
+          play(bmove, [{ transform: 'none' }, { transform: `rotate(${ROT}deg)` }], {
+            duration: 1600,
+            easing: EASE,
+            tag: 'sing',
+          }).finished,
+        );
       if (fresh('par'))
         runs.push(
           play(parG, [{ transform: `translateY(${-9 * U}px)` }, { transform: 'none' }], {

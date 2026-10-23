@@ -71,6 +71,8 @@ export function validateSoal(raw: unknown): { errors: string[]; warns: string[] 
     if (st.cap.length > 220) errors.push(`${tag}: pop-up ${st.cap.length} karakter (> 220)`);
     else if (st.cap.length > 160) warns.push(`${tag}: pop-up ${st.cap.length} karakter (> 160)`);
     if (n > 2) errors.push(`${tag}: pop-up ${n} kalimat (> 2)`);
+    if (st.branch && !c.chapters[st.ch + 1]?.opt)
+      errors.push(`${tag}: tawaran branch harus diikuti bagian opsional (chapters[${st.ch + 1}].opt)`);
     if (st.visual.kind === 'cards' && (st.visual.flip < 0 || st.visual.flip > c.cards.length))
       errors.push(`${tag}: flip ${st.visual.flip} di luar jumlah kartu`);
     const b = st.board;

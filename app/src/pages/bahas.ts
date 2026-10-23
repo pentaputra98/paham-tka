@@ -331,9 +331,11 @@ export function bahasPage(route: Route): PageView {
         ? 'Lihat jawaban'
         : p.isLast
           ? 'Selesai'
-          : lastOfCh
-            ? 'Bagian berikutnya'
-            : 'Lanjut';
+          : 'branch' in st && st.branch
+            ? 'Lewati'
+            : lastOfCh
+              ? 'Bagian berikutnya'
+              : 'Lanjut';
       nav.querySelector('[data-next]')!.classList.toggle('is-skip', p.pending);
       // animasi langkah sedang berjalan: Lanjut akan menyelesaikannya dulu (juga penanda bagi uji)
       nav.toggleAttribute('data-running', p.running);

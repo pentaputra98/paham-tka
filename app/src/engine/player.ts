@@ -4,7 +4,10 @@
  *  - konteks c = {run, dir, seq, replay, entered, live};
  *  - setiap langkah idempoten; mundur = keadaan akhir tanpa animasi;
  *  - pertanyaan hanya muncul bila jawabannya belum ditulis, maju, dan jalur "Ikut berpikir";
- *  - putar otomatis: jeda 1,2 s × kecepatan, berhenti pada pertanyaan, konten opsional, dan langkah terakhir;
+ *  - putar otomatis: jeda 1,2 s × kecepatan, berhenti pada pertanyaan, konten opsional, tawaran bagian opsional,
+ *    dan langkah terakhir;
+ *  - bagian opsional (v1.18): tawaran `branch` → "Ya" masuk, "Tidak"/Lanjut melewati; Kembali dari bagian
+ *    sesudahnya ke tawaran bila bagian opsional belum dimasuki;
  *  - Lanjut saat animasi langkah masih berjalan = selesaikan langkah itu dulu (keadaan akhir tanpa animasi);
  *    tekanan berikutnya baru pindah langkah. Ditekan beruntun pun setiap langkah tampil selesai, berurutan.
  */
@@ -49,6 +52,8 @@ export class Player {
   private animating = false;
   /** run tempat pop-up SELESAI terakhir dibuka (cegah dibuka dua kali oleh tombol dan jeda akhir) */
   private doneRun = -1;
+  /** bagian opsional yang sudah dimasuki siswa di halaman ini (Kembali tidak tersesat ke bagian yang dilewati) */
+  private readonly optSeen = new Set<number>();
   path: Path;
 
   constructor(
@@ -109,6 +114,7 @@ export class Player {
     const fromLobby = !this.started || pst.ch === 0;
     if (toLobby !== fromLobby || !this.started) this.hooks.stage(toLobby, dir);
     const entered = !this.started || pst.ch !== st.ch;
+    if (this.content.chapters[st.ch]?.opt) this.optSeen.add(st.ch);
     this.i = i;
     this.started = true;
     this.board.foot.replaceChildren();
@@ -139,8 +145,16 @@ export class Player {
   next(): void {
     // animasi belum selesai: tampilkan dulu keadaan akhir langkah ini, jangan melompat
     if (this.running) return this.settle();
+    // tawaran bagian opsional: Lanjut = tidak mau, lewati bagian itu
+    if ((this.current as Step).branch) return this.go(this.afterOpt(this.current.ch + 1), 1);
     if (!this.isLast) this.go(this.i + 1, 1);
     else this.showDone();
+  }
+
+  /** Indeks langkah pertama sesudah bagian ch. */
+  private afterOpt(ch: number): number {
+    const ids = this.stepsOfCh(ch);
+    return ids.length ? ids[ids.length - 1]! + 1 : this.i + 1;
   }
 
   /** Selesaikan langkah saat ini seketika (baris lengkap, visual di keadaan akhir). */
@@ -155,7 +169,12 @@ export class Player {
   }
 
   prev(): void {
-    if (this.i > 0) this.go(this.i - 1, -1);
+    if (this.i <= 0) return;
+    const ch = this.steps[this.i - 1]!.ch;
+    // langkah sebelumnya ada di bagian opsional yang dilewati: kembali ke tawarannya
+    if (ch !== this.current.ch && this.content.chapters[ch]?.opt && !this.optSeen.has(ch))
+      return this.go(this.indexOfCh(ch) - 1, -1);
+    this.go(this.i - 1, -1);
   }
 
   setAuto(on: boolean): void {
@@ -179,6 +198,23 @@ export class Player {
           onClick: () => this.hooks.optional(opt.panel, opt.label),
         },
         { label: 'Tidak, lanjut saja', icon: 'arrow-right', kind: 'secondary', onClick: () => this.next() },
+      );
+    }
+    if (st.branch) {
+      const opt = st.ch + 1;
+      actions.push(
+        {
+          label: st.branch.yes,
+          icon: 'play',
+          kind: 'secondary',
+          onClick: () => this.go(this.indexOfCh(opt), 1),
+        },
+        {
+          label: 'Tidak, lanjut saja',
+          icon: 'arrow-right',
+          kind: 'secondary',
+          onClick: () => this.go(this.afterOpt(opt), 1),
+        },
       );
     }
     this.scene.setCap(st, chTitle, actions);
@@ -220,7 +256,7 @@ export class Player {
 
   private afterStep(run: number): void {
     const st = this.current as Step;
-    if (!this.auto || this.pending || st.optional || this.isLast) return;
+    if (!this.auto || this.pending || st.optional || st.branch || this.isLast) return;
     void sleep(DUR.autoplayGap).then((ok) => {
       if (ok && this.auto && this.live(run) && !this.pending) this.next();
     });

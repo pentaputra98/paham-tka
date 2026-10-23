@@ -1624,6 +1624,12 @@
     text-anchor: end;
   }
 
+  .s16-w1,
+  .s16-w2,
+  .s16-pq,
+  .s16-k,
+  .s16-bmove,
+  .s16-B2t,
   .s16-grad,
   .s16-rad,
   .s16-sifat,
@@ -1638,6 +1644,12 @@
     transition: opacity var(--dur-slow) var(--ease);
   }
 
+  .show-w1 .s16-w1,
+  .show-w2 .s16-w2,
+  .show-pq .s16-pq,
+  .show-k .s16-k,
+  .show-rot .s16-bmove,
+  .show-rot .s16-B2t,
   .show-grad .s16-grad,
   .show-rad .s16-rad,
   .show-sifat .s16-sifat,
@@ -1652,6 +1664,29 @@
   .show-pts2 .s16-Tt,
   .show-tan .s16-Tt {
     opacity: 1;
+  }
+
+  /* cara alternatif: B dipindah ke tempat lain di lingkaran, titik B asal disembunyikan */
+  .s16-B,
+  .s16-Bt,
+  .s16-At,
+  .s16-Ash {
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  /* diperbesar di pusat: "A = (2, −3)" diringkas menjadi "A" */
+  .s16-Ash,
+  .cam-T .s16-At {
+    opacity: 0;
+  }
+
+  .cam-T .s16-Ash {
+    opacity: 1;
+  }
+
+  .show-rot .s16-B,
+  .show-rot .s16-Bt {
+    opacity: 0;
   }
 
   /* pilihan yang diuji: merah bila bukan titik singgung, emas bila titik singgung */

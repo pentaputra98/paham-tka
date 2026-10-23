@@ -1989,6 +1989,19 @@ Garis singgungnya (gradien $-\frac12$): di $(3,-1)$: $x+2y-1=0$; di $(1,-5)$: $x
 - **Bagian 5 — Uji kelima pilihan:** tiap pilihan disalin dari soal, lalu $AT^2$ dihitung dan dibandingkan dengan $r^2=5$ (angka d1–d5); pilihan (2) dan (4) sama dengan $T_2$ dan $T_1$ di catatan.
 - **Bagian 6–8:** catatan lengkap, kartu (1)–(5) dengan pertanyaan kesimpulan, segel.
 
+*Revisi 1.18 (23 Okt 2026, permintaan pemilik; kunci tidak berubah).*
+- **Langkah 4.1–4.3:** gambar diperbesar di pusat $A$. Dari $A$ digambar langkah geser $1$ ke kanan lalu naik $2$ sampai $T_1$, dan kebalikannya geser $1$ ke kiri lalu turun $2$ sampai $T_2=(1,-5)$. Pemilik menulis "1 ke bawah dan 2 ke kiri"; yang sesuai dengan $T_2=(1,-5)$ adalah 1 ke kiri, 2 ke bawah.
+- **Langkah 4.6 (tawaran):** "Di soal ini $B$ kebetulan searah $f$… Mau lihat cara alternatif?" Tombol **Ya, lihat cara alternatif** membuka Bagian 5. Tombol **Tidak, lanjut saja** (atau Lewati) langsung ke uji pilihan.
+- **Bagian 5 — Cara alternatif (opsional), rumus geser dari pusat** (rumus dari pemilik, disajikan dengan bahasa guru):
+  - 5.1 Titik $B$ diputar ke tempat lain pada lingkaran: $B$ hanya berguna untuk mencari $r=\sqrt5$.
+  - 5.2 Jari-jari sejajar $f$, jadi gradiennya $m=2=\frac pq$: geser $q=1$, naik $p=2$.
+  - 5.3 Sisi miring segitiga geser–naik: $k=\sqrt{q^2+p^2}=\sqrt{1^2+2^2}=\sqrt5$.
+  - 5.4 Rumus geser dari pusat: $x_T=x_A\pm r\cdot\frac qk$, $y_T=y_A\pm r\cdot\frac pk$ (panah ke dua arah).
+  - 5.5 Tanda plus: $x=2+\sqrt5\cdot\frac1{\sqrt5}=2+1=3$, $y=-3+\sqrt5\cdot\frac2{\sqrt5}=-3+2=-1$, jadi $T_1=(3,-1)$.
+  - 5.6 Tanda minus: $x=2-1=1$, $y=-3-2=-5$, jadi $T_2=(1,-5)$.
+  - 5.7 Hasilnya sama dengan cara pertama. Rumus ini berlaku di mana pun letak $B$, karena $B$ hanya dipakai untuk mencari $r$.
+- Bagian sesudahnya bergeser: 6 uji pilihan, 7 catatan lengkap, 8 kartu, 9 selesai.
+
 ### Bagian 6 — Selesai
 - **Segel:** **(3,−1), (1,−5)**
 - **Pop-up:** "Jari-jari yang sejajar $f$ menembus lingkaran di $(3,-1)$ dan $(1,-5)$; di dua titik itulah garis singgung tegak lurus $f$."
