@@ -1488,6 +1488,180 @@
   }
 }
 
+/* ---------- soal 11 alur guru (tide11, v1.20): kedalaman air laut ----------
+   gelombang putih; garis bantu, garis tengah, amplitudo, titik berjalan biru langit; emas hanya kemunculan ke-3
+   (jawaban) dan pilihan yang benar; pilihan yang bukan jawaban merah. */
+@layer pages {
+  .vis-tide {
+    height: 100%;
+    display: grid;
+    place-items: center;
+  }
+
+  .vis-tide svg {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .t11-ax {
+    fill: none;
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-2);
+  }
+
+  .t11-brk {
+    fill: none;
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-2);
+  }
+
+  .t11-curve {
+    fill: none;
+    stroke: var(--color-on-stage);
+    stroke-width: var(--bw-3);
+    stroke-linecap: round;
+  }
+
+  .t11-guide,
+  .t11-midl,
+  .t11-cg {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 6 4;
+  }
+
+  .t11-arrow,
+  .t11-span {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-3);
+    stroke-linecap: round;
+  }
+
+  .t11-num,
+  .t11-axl,
+  .t11-yl,
+  .t11-tag,
+  .t11-mk text {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-sm);
+    fill: var(--color-on-stage);
+  }
+
+  .t11-num,
+  .t11-tag-mid,
+  .t11-mk text {
+    text-anchor: middle;
+  }
+
+  .t11-a,
+  .t11-ct-l {
+    text-anchor: end;
+  }
+
+  .t11-num {
+    font-weight: var(--fw-regular);
+    fill: var(--color-on-stage-muted);
+  }
+
+  .t11-yl {
+    text-anchor: end;
+    fill: var(--color-stage-accent);
+  }
+
+  .t11-tag {
+    fill: var(--color-stage-accent);
+    paint-order: stroke;
+    stroke: var(--color-stage);
+    stroke-width: var(--bw-4);
+    stroke-linejoin: round;
+  }
+
+  .t11-z,
+  .t11-dot {
+    fill: var(--color-stage-accent);
+    stroke: var(--color-stage);
+    stroke-width: var(--bw-2);
+  }
+
+  .t11-mk circle {
+    fill: var(--color-stage);
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-2);
+  }
+
+  .t11-mk.is-ans circle {
+    stroke: var(--color-result);
+  }
+
+  .t11-mk.is-ans text {
+    fill: var(--color-result);
+  }
+
+  .t11-wp {
+    fill: none;
+    stroke: var(--red-400);
+    stroke-width: var(--bw-3);
+  }
+
+  .t11-wt {
+    text-anchor: middle;
+    fill: var(--red-300);
+  }
+
+  .t11-cand .t11-cg {
+    stroke: var(--red-400);
+  }
+
+  .t11-cp {
+    fill: var(--red-400);
+    stroke: var(--color-stage);
+    stroke-width: var(--bw-2);
+  }
+
+  .t11-ct {
+    fill: var(--red-300);
+  }
+
+  .t11-cand.is-ok .t11-cg {
+    stroke: var(--color-result);
+  }
+
+  .t11-cand.is-ok .t11-cp,
+  .t11-cand.is-ok .t11-ct {
+    fill: var(--color-result);
+  }
+
+  .t11-ext,
+  .t11-x,
+  .t11-mid,
+  .t11-amp,
+  .t11-zeros,
+  .t11-gap,
+  .t11-warn,
+  .t11-mk,
+  .t11-dot {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-ext .t11-ext,
+  .show-ext .t11-x,
+  .show-mid .t11-mid,
+  .show-amp .t11-amp,
+  .show-zeros .t11-zeros,
+  .show-gap .t11-gap,
+  .show-warn .t11-warn,
+  .t11-mk.on,
+  .show-dot .t11-dot {
+    opacity: 1;
+  }
+}
+
 /* ---------- soal 16 alur guru (sing16, v1.17): garis f dan lingkaran c ----------
    f dan lingkaran putih; langkah hitung (geser–naik, jari-jari, panah) biru langit; garis singgung putih putus-putus;
    emas hanya titik singgung (jawaban); pilihan yang bukan titik singgung merah. */

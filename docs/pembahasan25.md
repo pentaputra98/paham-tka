@@ -1359,6 +1359,30 @@ Periode: $\frac{2\pi}{\pi/6}=12$ jam, cocok dengan grafik (puncak di $t=0$ dan $
 - Salah menghitung urutan: dalam satu periode (12 jam) garis tengah dilewati **dua** kali ($t=3$ dan $t=9$); kemunculan ketiga baru terjadi di periode berikutnya ($t=15$).
 - Menjawab 12 jam karena menganggapnya "akhir satu siklus".
 
+*Alur aplikasi dengan gaya mengajar pemilik materi (Revisi 1.20, 24 Okt 2026; kunci tidak berubah: E). Dipakai di `app/src/content/soal/q11.ts` (modul baru, adegan `tide11`); soal 11 ditambahkan ke Rilis 1 dan dibuka.* Hasil disimpan ke **catatan**: $a$, $b$, model, dan $t=3+6k$. Tata letak: panggung penuh dua kolom.
+- **Bagian 1 — Pahami soal:** stabilo pertanyaan; langkah pertama: cari dulu $a$ dan $b$ dari grafik (label "a = ?", "b = ?").
+- **Bagian 2 — Mencari $a$ dan $b$:**
+  - puncak $14{,}3$ dan lembah $10{,}3$ dibaca dari grafik;
+  - garis tengah $a=\frac{14{,}3+10{,}3}2=12{,}3$ (pertanyaan cepat lama);
+  - amplitudo $b=\frac{14{,}3-10{,}3}2=2$;
+  - model $y=12{,}3+2\cos\left(\frac16\pi t\right)$ (kotak biru, bukan emas). Semuanya disimpan ke catatan.
+- **Bagian 3 — Kapan $y=12{,}3$:**
+  - *Tahukah kalian?* $12{,}3=a$, garis tengah;
+  - $12{,}3+2\cos\left(\frac16\pi t\right)=12{,}3$;
+  - **$12{,}3$ pindah ruas** menjadi $-12{,}3$ (terbang, bukan dicoret);
+  - $2\cos(\dots)=0$, lalu $\cos\left(\frac16\pi t\right)=0$;
+  - kosinus nol di $\frac\pi2,\frac{3\pi}2,\frac{5\pi}2,\dots$;
+  - $t=3+6k$ (garis tengah dilewati tiap 6 jam).
+- **Bagian 4 — Hitung kemunculan:**
+  - titik berjalan menyusuri gelombang (diteruskan sampai $t=18$) dan menandai 1, 2, 3 di $t=3,9,15$ (pertanyaan cepat lama sebelum $t=15$);
+  - **Hati-hati:** $t=12$ adalah puncak $14{,}3$ m.
+- **Bagian 5 — Uji kelima pilihan:** tiap pilihan disalin dari soal, lalu disubstitusikan ke model:
+  - $y(3)=y(9)=12{,}3$, tetapi kemunculan ke-1 dan ke-2;
+  - $y(10)=12{,}3+2\cos\frac{5\pi}3=13{,}3$;
+  - $y(12)=14{,}3$;
+  - $y(15)=12{,}3$, kemunculan ke-3.
+- **Bagian 6–8:** catatan lengkap, kartu A–E, segel E.
+
 ---
 
 ## SOAL 12 — Panjang Vektor 3D
