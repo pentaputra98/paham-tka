@@ -1786,6 +1786,39 @@ Hasil yang didapat disimpan ke **catatan** (deret pin papan) dan diambil lagi da
   - 5.2 $r=3\ne r_A=2$ tidak masalah karena sepusat hanya mensyaratkan pusat sama. Hati-hati: B jari-jarinya $2$ (konstanta $21$) tetapi pusatnya $(3,4)$, bukan sepusat.
 - **Bagian 6 — Catatan lengkap. Bagian 7 — Cocokkan pilihan** (kartu A–E, pertanyaan kesimpulan). **Bagian 8 — Selesai:** segel A.
 
+*Revisi alur dari cara pemilik menyampaikan ke siswa (Revisi 1.15, 23 Okt 2026; kunci tidak berubah: A). Menggantikan alur di atas pada `app/src/content/soal/q15.ts`.* Prinsipnya: untuk soal persamaan lingkaran, cari dulu pusat dan jari-jari, pahami dua bentuk persamaan, masukkan ke bentuk baku, jabarkan menjadi bentuk umum, lalu cocokkan dengan pilihan. Hasil disimpan ke **catatan**: pusat $(-3,4)$, $r=2$, bentuk baku, dan hasil bentuk umum.
+
+- **Bagian 1 — Pahami soal**
+  - 1.1 Stabilo pertanyaan. Baris: Ditanya.
+  - 1.2 Label "pusat = ?" dan "r = ?" pada gambar. Baris: langkah pertama, cari pusat dan jari-jari lingkaran A.
+- **Bagian 2 — Pusat dan jari-jari**
+  - 2.1 Gambar diperbesar ke titik $p$. Baris: pusat = titik $p$.
+  - 2.2 Kamera bergeser ke bawah, garis dari $p$ ke sumbu $x$: $x=-3$.
+  - 2.3 Kamera bergeser ke kanan, garis dari $p$ ke sumbu $y$: $y=4$. Baris: pusat $=(-3,4)$, simpan ke catatan. Pertanyaan cepat: penulisan titik ($x$ dulu, baru $y$).
+  - 2.4 Hitung kotak dari $p$ turun ke lingkaran: $1$, $2$; titik terbawah di $y=2$ (garis ke sumbu $y$). Baris: $r=4-2=2$, simpan ke catatan.
+  - 2.5 Cek dengan naskah: diameter $=2\times2=4$ ✓.
+- **Bagian 3 — Rumus lingkaran**
+  - 3.1 Bentuk baku $(x-a)^2+(y-b)^2=r^2$, pusat $(a,b)$, jari-jari $r$ (label pada gambar), simpan ke catatan.
+  - 3.2 Dijabarkan menjadi bentuk umum $x^2+y^2+Ax+By+C=0$.
+  - 3.3 Dari bentuk umum: pusat $\left(-\frac A2,-\frac B2\right)$, jari-jari $r=\sqrt{\left(-\frac A2\right)^2+\left(-\frac B2\right)^2-C}$ (setara dengan prasyarat konsep Bagian 3). "Tolong diingat semua rumus ini."
+- **Bagian 4 — Baku ke umum** (pilihan berbentuk umum, jadi mulai dari bentuk baku)
+  - 4.1 $(x-(-3))^2+(y-4)^2=2^2$; angka $-3$, $4$, $2$ diambil dari catatan.
+  - 4.2 $(x+3)^2+(y-4)^2=4$.
+  - 4.3 $x^2+6x+9+y^2-8y+16=4$.
+  - 4.4 $9$, $16$, dan $4$ dicoret, lalu $x^2+6x+y^2-8y+21=0$ ($9+16-4=21$; sama dengan "Lingkaran A sendiri" di Bagian 4 dokumen), simpan ke catatan.
+- **Bagian 5 — Cocokkan hasil**
+  - 5.1 Tidak ada pilihan yang persis sama dengan hasil.
+  - 5.2 **Hati-hati:** stabilo "sepusat"; yang ditanya lingkaran sepusat, bukan lingkaran A sendiri. Pertanyaan cepat dari *Kesalahan umum*: sepusat harus memiliki pusat yang sama (bukan jari-jari yang sama).
+  - 5.3 Lingkaran sepusat tumbuh dari $p$. Cukup cocokkan $+6x$ dan $-8y$; konstanta boleh beda karena $C$ hanya mengubah jari-jari.
+- **Bagian 6 — Uji kelima pilihan:** tiap pilihan disalin dari soal, lalu suku $x$ dan $y$-nya dibandingkan dan lingkarannya digambar.
+  - A memuat $+6x$, $-8y$ → pusat $(-3,4)$, **sepusat**.
+  - B $-6x$ → $(3,4)$; C $+8y$ → $(-3,-4)$; D $-8x$, $-6y$ → $(4,3)$; E $+8x$, $-6y$ → $(-4,3)$: **bukan**.
+- **Bagian 7 — Pastikan jawaban**
+  - 7.1 Rumus bentuk umum untuk A: pusat $\left(-\frac62,-\frac{-8}2\right)=(-3,4)$, $r=\sqrt{(-3)^2+4^2-16}=\sqrt9=3$.
+  - 7.2 $r=3\ne2$ tidak masalah: sepusat hanya meminta pusat sama.
+  - 7.3 Hati-hati B: konstanta $21$ sama dengan hasil ($r=2$), tetapi $-6x$ menggeser pusat ke $(3,4)$.
+- **Bagian 8–10:** catatan lengkap, kartu A–E, segel A.
+
 ### Bagian 6 — Selesai
 - **Segel:** **A**
 - **Pop-up:** "Pusat lingkaran A adalah $(-3,4)$. Hanya pilihan A yang berpusat di sana."

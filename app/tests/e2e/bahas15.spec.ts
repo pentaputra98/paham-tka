@@ -63,15 +63,25 @@ test.describe('Pembahasan soal 15 (G-Gerak, bidang koordinat)', () => {
     expect(errors).toEqual([]);
   });
 
-  test('pusat dibaca dari grafik dan disimpan; cara cepat masuk catatan', async ({ page }) => {
+  test('pusat dan jari-jari dibaca dari gambar lalu disimpan; hasil jabaran masuk catatan', async ({
+    page,
+  }) => {
     await setup(page);
-    await page.goto('./#/soal/15/bahas?m=amati&b=2&l=0');
-    await settled(page, 4);
-    await expect(page.locator('.vis-circ.show-read')).toHaveCount(1);
+    await page.goto('./#/soal/15/bahas?m=amati&b=2&l=2');
+    await settled(page, 5);
+    await expect(page.locator('.vis-circ.is-zoom.show-rx.show-ry')).toHaveCount(1);
     await expect(page.locator('.bd-pins [data-pin="pP"]')).toContainText('4', { timeout: 10_000 });
-    await page.goto('./#/soal/15/bahas?m=amati&b=3&l=2');
-    await settled(page, 8);
+    await page.goto('./#/soal/15/bahas?m=amati&b=2&l=3');
+    await settled(page, 6);
+    await expect(page.locator('.vis-circ.show-count')).toHaveCount(1);
+    await expect(page.locator('.bd-pins [data-pin="pR"]')).toContainText('2', { timeout: 10_000 });
+    await page.goto('./#/soal/15/bahas?m=amati&b=4&l=3');
+    await settled(page, 14);
+    await expect(page.locator('.vis-circ.is-zoom')).toHaveCount(0);
+    await expect(page.locator('.board .bl[data-row="j3"].cut')).toHaveCount(1);
+    // catatan: pusat, jari-jari, hasil bentuk umum (pin rumus baku hanya dipakai saat substitusi)
     await expect(page.locator('.bd-pins [data-pin]')).toHaveCount(3, { timeout: 10_000 });
+    await expect(page.locator('.bd-pins [data-pin="pHasil"]')).toContainText('21');
   });
 
   test('tiap pilihan: disalin dari soal, pusatnya digambar; hanya A sepusat', async ({ page }) => {
@@ -85,12 +95,12 @@ test.describe('Pembahasan soal 15 (G-Gerak, bidang koordinat)', () => {
       [4, 'E'],
     ] as const) {
       const l = 2 * i;
-      await page.goto(`./#/soal/15/bahas?m=amati&b=4&l=${l}`);
-      await settled(page, 9 + l);
+      await page.goto(`./#/soal/15/bahas?m=amati&b=6&l=${l}`);
+      await settled(page, 18 + l);
       await expect(page.locator('.hl-q.focus [data-src]')).toHaveAttribute('data-src', `s-o${o}`);
       await expect(page.locator(`.board .bl[data-row="c${o}"] .tk.q`)).toHaveCount(1);
       await page.locator('[data-next]').click();
-      await settled(page, 10 + l);
+      await settled(page, 19 + l);
       await expect(page.locator(`.vis-circ [data-opt="${o}"]`)).toHaveCount(1);
       await expect(page.locator('.vis-circ .c5-opt.is-same')).toHaveCount(o === 'A' ? 1 : 0);
     }
@@ -98,15 +108,33 @@ test.describe('Pembahasan soal 15 (G-Gerak, bidang koordinat)', () => {
 
   test('Ikut berpikir: pertanyaan koordinat p', async ({ page }) => {
     await setup(page);
-    await page.goto('./#/soal/15/bahas?m=ikut&b=2&l=0');
+    await page.goto('./#/soal/15/bahas?m=ikut&b=2&l=2');
     const foot = page.locator('.ask-ov');
-    await expect(foot).toContainText('Koordinatnya', { timeout: 20_000 });
+    await expect(foot).toContainText('ditulis', { timeout: 20_000 });
     // KaTeX: teks tombol memuat MathML, jadi dicocokkan longgar tanpa memedulikan spasi
     const opt = (re: RegExp) => foot.locator('.opt').filter({ hasText: re }).first();
     await opt(/4,\s*[−-]\s*3/).click();
     await expect(foot.locator('.ask-h')).toContainText('Belum tepat');
     await opt(/[−-]\s*3,\s*4/).click();
-    await settled(page, 4);
+    await settled(page, 5);
+    await expect(foot).toBeEmpty();
+  });
+
+  test('Ikut berpikir: hati-hati arti sepusat', async ({ page }) => {
+    await setup(page);
+    await page.goto('./#/soal/15/bahas?m=ikut&b=5&l=1');
+    const foot = page.locator('.ask-ov');
+    await expect(foot).toContainText('sepusat', { timeout: 20_000 });
+    await foot
+      .locator('.opt')
+      .filter({ hasText: /^jari-jari yang sama$/ })
+      .click();
+    await expect(foot.locator('.ask-h')).toContainText('Belum tepat');
+    await foot
+      .locator('.opt')
+      .filter({ hasText: /^pusat yang sama$/ })
+      .click();
+    await settled(page, 16);
     await expect(foot).toBeEmpty();
   });
 });

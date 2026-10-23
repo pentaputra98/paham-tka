@@ -1,10 +1,12 @@
 /**
  * SOAL 15 — Lingkaran yang Sepusat (lingkaran; pilihan tunggal). Kunci: A.
  * Sumber: docs/pembahasan25.md "SOAL 15", docs/soal25.md no. 15, docs/lingkaran_A.png.
- * Alur gaya mengajar Pak Penta (23 Okt 2026, dicatat di dokumen): sepusat = pusat sama, jari-jari boleh beda
- * → baca pusat p(−3, 4) dan r = 2 dari grafik (disimpan ke catatan) → cara cepat pusat (−A/2, −B/2), dengan alasan
- * dan batas berlakunya → tiap pilihan disalin dari soal, pusatnya dihitung dan digambar di grafik → pastikan A
- * dengan melengkapkan kuadrat → hati-hati dengan B (jari-jari sama, pusat beda).
+ * Alur cara Pak Penta menyampaikan ke siswa (revisi pemilik v1.15, dicatat di dokumen): cari dulu pusat dan
+ * jari-jari → pusat: perbesar ke p, geser ke sumbu x (−3) dan sumbu y (4) → jari-jari: hitung kotak dari pusat
+ * turun ke titik terbawah (y = 2), r = 4 − 2 = 2 → dua bentuk persamaan (baku, umum) beserta rumus pusat dan
+ * jari-jari bentuk umum → masukkan pusat dan jari-jari ke bentuk baku, jabarkan menjadi bentuk umum
+ * x² + 6x + y² − 8y + 21 = 0 → cocokkan dengan pilihan (hati-hati: yang ditanya SEPUSAT, cukup +6x dan −8y)
+ * → pastikan A dengan rumus bentuk umum, hati-hati dengan B.
  * Tata letak: panggung penuh dua kolom (PRD v1.5).
  */
 import { H, O, T } from '../../engine/dsl';
@@ -15,9 +17,11 @@ import { getSoal } from '../index';
 /** Gambar asli soal (docs/lingkaran_A.png), dibundel dan ikut precache. */
 const fig = new URL('../../assets/soal/lingkaran_A.png', import.meta.url).href;
 const circ = (state: CircState): Visual => ({ kind: 'svg', scene: 'circ15', state });
+/** catatan: pusat, jari-jari, bentuk baku, hasil bentuk umum lingkaran A */
 const N1 = ['pP'];
-const N2 = ['pP', 'pRA'];
-const N3 = ['pP', 'pRA', 'pRule'];
+const N2 = ['pP', 'pR'];
+const N3 = ['pP', 'pR', 'pBaku'];
+const N4 = ['pP', 'pR', 'pHasil'];
 const LETTERS: Opt[] = ['A', 'B', 'C', 'D', 'E'];
 /** Kelima pilihan (docs/soal25.md no. 15): kertas soal dan kutipan di papan memakai teks yang sama. */
 const OPTS: Record<Opt, string> = {
@@ -31,33 +35,45 @@ const quote = (o: Opt): Row => ({
   id: `c${o}`,
   toks: [T(`c${o}a`, `\\text{${o}}`, 'sp'), H(`c${o}b`, `$${OPTS[o]}$`, 'q', `@s-o${o}`)],
 });
-/** baris pusat pilihan: koefisien x dan y masing-masing dibagi −2 */
-const center = (o: Opt, a: number, b: number, note: string, ok = false): Row => {
-  const t = (v: number): string => (v < 0 ? `-${-v}` : String(v));
-  const h = -a / 2;
-  const k = -b / 2;
+/**
+ * baris cocokkan: suku x dan suku y pilihan (terbang dari kutipan) dibandingkan dengan +6x dan −8y di catatan;
+ * pusatnya (−A/2, −B/2) ditulis sesudah tanda ⇒.
+ */
+const match = (
+  o: Opt,
+  xs: string,
+  ys: string,
+  okX: boolean,
+  okY: boolean,
+  ctr: string,
+  note: string,
+): Row => {
+  const ok = okX && okY;
   return {
     id: `o${o}`,
     toks: [
-      T(`o${o}a`, `\\left(\\tfrac{${t(a)}}{-2},\\ \\tfrac{${t(b)}}{-2}\\right)`),
-      O(`o${o}d`, '='),
-      T(`o${o}e`, `(${t(h)},\\ ${t(k)})`, ok ? 'gold' : 'red'),
+      T(`o${o}x`, xs, okX ? 'blue' : 'red', `c${o}b`),
+      T(`o${o}y`, ys, okY ? 'blue' : 'red', `c${o}b`),
+      O(`o${o}r`, '\\Rightarrow'),
+      H(`o${o}t`, 'pusat', 'tx'),
+      T(`o${o}c`, ctr, ok ? 'gold' : 'red'),
     ],
     note,
     ...(ok ? { box: 'gold' as const } : {}),
   };
 };
-const open4 = (o: Opt, cap: string): Step => ({
-  ch: 4,
+const open6 = (o: Opt, cap: string): Step => ({
+  ch: 6,
   cap,
   visual: { kind: 'soal', hl: 0, focus: `s-o${o}` },
-  board: { title: `Pilihan ${o}`, pins: N3, list: `L4${o}`, upTo: 1, from: 0 },
+  board: { title: `Pilihan ${o}`, pins: N4, list: `L6${o}`, upTo: 1, from: 0 },
 });
-const check4 = (o: Opt, cap: string): Step => ({
-  ch: 4,
+const check6 = (o: Opt, cap: string): Step => ({
+  ch: 6,
   cap,
-  visual: circ({ opts: [o] }),
-  board: { title: `Pilihan ${o}`, pins: N3, list: `L4${o}`, upTo: 2, from: 1 },
+  // pusat C di bawah sumbu x: bidang utuh
+  visual: circ(o === 'C' ? { opts: [o], cam: 'wide' } : { opts: [o] }),
+  board: { title: `Pilihan ${o}`, pins: N4, list: `L6${o}`, upTo: 2, from: 1 },
 });
 
 const q15: SoalContent = {
@@ -67,14 +83,14 @@ const q15: SoalContent = {
   paper: {
     html: `<div class="soal-split"><div>
 <p>Perhatikan gambar lingkaran berikut.</p>
-<p><span class="hl hl-red" data-hl="1"><span data-src="s-d">Diameter lingkaran pada gambar adalah 4 satuan</span></span>. <span class="hl hl-gold" data-hl="2"><span data-src="s-tanya">Persamaan lingkaran yang <span data-src="s-pusat">sepusat</span> dengan lingkaran pada gambar</span></span> tersebut adalah ....</p>
+<p><span class="hl hl-red" data-hl="1"><span data-src="s-d">Diameter lingkaran pada gambar adalah 4 satuan</span></span>. <span class="hl hl-gold" data-hl="2"><span data-src="s-tanya">Persamaan lingkaran yang <span class="hl hl-blue" data-hl="3"><span data-src="s-pusat">sepusat</span></span> dengan lingkaran pada gambar</span></span> tersebut adalah ....</p>
 </div><figure class="soal-fig"><img src="${fig}" width="529" height="591" alt="Bidang koordinat dengan Lingkaran A; titik pusat p berada di x = −3 (di antara label −4 dan −2) dan y = 4; sebuah diameter melewati p." /></figure></div>
 <ol class="abc">
 ${LETTERS.map((o) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-src="s-o${o}">$${OPTS[o]}$</span></span></li>`).join('\n')}
 </ol>`,
     srcNames: ['s-d', 's-tanya', 's-pusat', 's-oA', 's-oB', 's-oC', 's-oD', 's-oE'],
   },
-  visualSrc: ['g-p', 'g-x', 'g-y', 'g-d'],
+  visualSrc: ['g-p', 'g-x', 'g-y', 'g-low', 'g-d'],
   lobby: {
     eyebrow: 'Kelas 12 · Matematika Lanjut · Lingkaran',
     titleLines: ['Pembahasan Soal', 'Lingkaran <span class="accent">Sepusat</span>', 'Koordinat'],
@@ -87,11 +103,13 @@ ${LETTERS.map((o) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
   },
   chapters: [
     { t: 'Lobi', d: 'Halaman awal' },
-    { t: 'Pahami soal', d: 'Arti sepusat' },
-    { t: 'Baca pusat', d: 'p = (−3, 4)' },
-    { t: 'Cara cepat', d: 'Pusat (−A/2, −B/2)' },
+    { t: 'Pahami soal', d: 'Cari pusat dan jari-jari' },
+    { t: 'Pusat dan jari-jari', d: 'Dibaca dari gambar' },
+    { t: 'Rumus lingkaran', d: 'Bentuk baku dan umum' },
+    { t: 'Baku ke umum', d: 'Masukkan lalu jabarkan' },
+    { t: 'Cocokkan hasil', d: 'Hati-hati: sepusat' },
     { t: 'Uji kelima pilihan', d: 'Satu per satu' },
-    { t: 'Pastikan jawaban', d: 'Melengkapkan kuadrat' },
+    { t: 'Pastikan jawaban', d: 'Rumus bentuk umum' },
     { t: 'Catatan lengkap', d: 'Simpan dan cetak' },
     { t: 'Cocokkan pilihan', d: '5 kartu' },
     { t: 'Selesai', d: 'Jawaban A' },
@@ -100,18 +118,33 @@ ${LETTERS.map((o) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
   pins: {
     pP: {
       id: 'pP',
-      toks: [T('PP1', 'p', '', 'a2a'), O('PP2', '='), T('PP3', '(-3,\\ 4)', '', 'a2c')],
-    },
-    pRA: {
-      id: 'pRA',
-      toks: [T('PA1', 'r_A', '', 'a3a'), O('PA2', '='), T('PA3', '2', '', 'a3e')],
-    },
-    pRule: {
-      id: 'pRule',
       toks: [
-        H('PU1', 'pusat', 'tx', 'e4a'),
-        O('PU2', '='),
-        T('PU3', '\\left(-\\tfrac A2,\\ -\\tfrac B2\\right)', '', 'e4c'),
+        H('PP0', 'pusat', 'tx', 'a4a'),
+        O('PP1', '='),
+        T('PP2', '(', '', 'a4b'),
+        T('PPx', '-3', '', 'a4c'),
+        T('PP3', ',\\ ', '', 'a4d'),
+        T('PPy', '4', '', 'a4e'),
+        T('PP4', ')', '', 'a4f'),
+      ],
+    },
+    pR: {
+      id: 'pR',
+      toks: [T('PR0', 'r', '', 'r2a'), O('PR1', '='), T('PRv', '2', '', 'r2g')],
+    },
+    pBaku: {
+      id: 'pBaku',
+      toks: [T('PB0', '(x-a)^2+(y-b)^2=r^2', '', 'f1b')],
+    },
+    pHasil: {
+      id: 'pHasil',
+      toks: [
+        T('PH1', 'x^2', '', 'j4a'),
+        T('PH2', '+6x', '', 'j4b'),
+        T('PH3', '+y^2', '', 'j4c'),
+        T('PH4', '-8y', '', 'j4d'),
+        T('PH5', '+21', '', 'j4e'),
+        T('PH6', '=0', '', 'j4f'),
       ],
     },
   },
@@ -119,23 +152,13 @@ ${LETTERS.map((o) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
     L1: [
       {
         id: 'k1',
-        toks: [H('k1a', 'diameter lingkaran A', 'tx'), O('k1b', '='), T('k1c', '4', 'red', '@s-d')],
-        note: 'jadi jari-jarinya $2$',
+        toks: [H('k1a', 'Ditanya', 'lbl'), H('k1b', 'persamaan lingkaran sepusat', 'gold', '@s-tanya')],
+        note: 'sepusat dengan lingkaran A pada gambar',
       },
       {
         id: 'k2',
-        toks: [
-          H('k2a', 'sepusat', 'blue', '@s-pusat'),
-          O('k2b', '='),
-          H('k2c', 'pusatnya sama, jari-jari boleh beda', 'tx'),
-        ],
-      },
-      {
-        id: 'k3',
-        toks: [
-          H('k3a', 'Ditanya', 'lbl'),
-          H('k3b', 'persamaan yang sepusat dengan lingkaran A', 'gold', '@s-tanya'),
-        ],
+        toks: [H('k2a', 'Langkah pertama', 'lbl'), H('k2b', 'cari pusat dan jari-jari lingkaran A', 'tx')],
+        note: 'keduanya dibaca dari gambar',
       },
     ],
     LP: [
@@ -144,219 +167,482 @@ ${LETTERS.map((o) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
         toks: [
           H('a1a', 'pusat', 'tx'),
           O('a1b', '='),
-          H('a1c', 'titik tengah diameter, yaitu', 'tx'),
+          H('a1c', 'titik', 'tx'),
           T('a1d', 'p', 'blue', '@g-p'),
         ],
       },
       {
         id: 'a2',
-        toks: [T('a2a', 'p'), O('a2b', '='), T('a2c', '(-3,\\ 4)', 'blue')],
-        note: '$x=-3$ (di antara $-4$ dan $-2$), $y=4$; simpan ke catatan',
-        box: 'navy',
+        toks: [T('a2a', 'x'), O('a2b', '='), T('a2c', '-3', 'blue', '@g-x')],
+        note: 'garis dari $p$ lurus ke bawah, di tengah antara $-4$ dan $-2$',
       },
       {
         id: 'a3',
-        toks: [
-          T('a3a', 'r_A'),
-          O('a3b', '='),
-          T('a3c', '\\tfrac12\\times'),
-          T('a3d', '4', '', '@g-d'),
-          O('a3f', '='),
-          T('a3e', '2', 'blue'),
-        ],
-        note: 'jari-jari lingkaran A; simpan ke catatan',
-      },
-    ],
-    LC: [
-      {
-        id: 'e1',
-        toks: [T('e1a', '(x+3)^2+(y-4)^2=r^2')],
-        note: 'lingkaran berpusat $(-3,4)$',
+        toks: [T('a3a', 'y'), O('a3b', '='), T('a3c', '4', 'blue', '@g-y')],
+        note: 'garis dari $p$ lurus ke kanan',
       },
       {
-        id: 'e2',
+        id: 'a4',
         toks: [
-          T('e2a', 'x^2'),
-          T('e2b', '+6x', 'blue'),
-          T('e2c', '+9+y^2'),
-          T('e2d', '-8y', 'blue'),
-          T('e2e', '+16=r^2'),
+          H('a4a', 'pusat', 'tx'),
+          O('a4o', '='),
+          T('a4b', '('),
+          T('a4c', '-3', 'blue', 'a2c'),
+          T('a4d', ',\\ '),
+          T('a4e', '4', 'blue', 'a3c'),
+          T('a4f', ')'),
         ],
-        note: 'dijabarkan: $+6x$ dari $2\\cdot3$, $-8y$ dari $2\\cdot(-4)$',
-      },
-      {
-        id: 'e3',
-        toks: [
-          T('e3a', '\\left(\\tfrac{6}{-2},\\ \\tfrac{-8}{-2}\\right)', '', 'e2b'),
-          O('e3d', '='),
-          T('e3e', '(-3,\\ 4)', 'blue'),
-        ],
-        note: 'koefisien $x$ dan $y$ dibagi $-2$: kembali ke pusat',
-      },
-      {
-        id: 'e4',
-        toks: [
-          H('e4a', 'pusat', 'tx'),
-          O('e4b', '='),
-          T('e4c', '\\left(-\\tfrac A2,\\ -\\tfrac B2\\right)', 'blue'),
-        ],
-        note: 'untuk $x^2+Ax+y^2+By+C=0$; berlaku bila koefisien $x^2$ dan $y^2$ sama-sama $1$',
+        note: '$x$ dulu, baru $y$; simpan ke catatan',
         box: 'navy',
       },
     ],
-    L4A: [quote('A'), center('A', 6, -8, 'sama dengan $p$ di catatan → <b class="k-gold">cocok</b>', true)],
-    L4B: [quote('B'), center('B', -6, -8, 'tanda $x$ terbalik → <b class="k-red">bukan</b>')],
-    L4C: [quote('C'), center('C', 6, 8, 'tanda $y$ terbalik → <b class="k-red">bukan</b>')],
-    L4D: [quote('D'), center('D', -8, -6, 'koefisien $x$ dan $y$ tertukar → <b class="k-red">bukan</b>')],
-    L4E: [quote('E'), center('E', 8, -6, 'koefisien $x$ dan $y$ tertukar → <b class="k-red">bukan</b>')],
-    LK: [
-      {
-        id: 'f2',
-        toks: [T('f2a', '(x^2+6x+9)+(y^2-8y+16)', '', '@s-oA')],
-        note: 'pilihan A, lengkapkan kuadrat: tambah $\\left(\\frac62\\right)^2=9$ dan $\\left(\\frac82\\right)^2=16$',
-      },
-      {
-        id: 'f6',
-        toks: [O('f6a', '='), T('f6b', '-16+9+16'), O('f6c', '='), T('f6d', '9')],
-        note: 'kedua ruas ditambah $9$ dan $16$',
-      },
-      {
-        id: 'f3',
-        toks: [T('f3a', '(x+3)^2+(y-4)^2=9')],
-        note: 'pusat $(-3,4)$, jari-jari $3$',
-        box: 'navy',
-      },
-      {
-        id: 'f4',
-        toks: [T('f4a', 'r=3'), O('f4b', '\\ne'), T('f4c', 'r_A=2', '', 'PA3')],
-        note: 'tidak masalah: sepusat hanya mensyaratkan pusat sama',
-      },
-      {
-        id: 'f5',
-        toks: [H('f5a', 'Hati-hati', 'lbl'), H('f5b', 'B: jari-jari 2 sama, tetapi pusat (3, 4)', 'tx')],
-        note: 'konstanta $21$ memberi $r=2$, tetapi tanda $x$ salah → bukan sepusat',
-      },
-    ],
-    L7: [{ id: 's1', toks: [H('s1a', 'Jawaban', 'lbl'), H('s1b', 'A', 'tx')], box: 'gold' }],
     LR: [
       {
         id: 'r1',
-        toks: [T('r1a', '\\text{pusat}=(-3,\\ 4)')],
+        toks: [
+          H('r1a', 'titik terbawah', 'tx'),
+          T('r1b', 'y'),
+          O('r1c', '='),
+          T('r1d', '2', 'blue', '@g-low'),
+        ],
+        note: 'dari $p$ turun $2$ kotak',
+      },
+      {
+        id: 'r2',
+        toks: [
+          T('r2a', 'r'),
+          O('r2b', '='),
+          T('r2c', '4', '', 'PPy'),
+          O('r2d', '-'),
+          T('r2e', '2', '', 'r1d'),
+          O('r2f', '='),
+          T('r2g', '2', 'blue'),
+        ],
+        note: 'selisih $y$ pusat dan titik terbawah; simpan ke catatan',
+        box: 'navy',
+      },
+      {
+        id: 'r3',
+        toks: [
+          H('r3a', 'Cek', 'lbl'),
+          H('r3b', 'diameter', 'tx'),
+          O('r3c', '='),
+          T('r3d', '2\\times'),
+          T('r3e', '2', '', 'PRv'),
+          O('r3f', '='),
+          T('r3g', '4', 'blue', '@g-d'),
+        ],
+        note: 'sama dengan soal: diameter $4$ satuan',
+      },
+    ],
+    LF: [
+      {
+        id: 'f1',
+        toks: [H('f1a', 'Baku', 'lbl'), T('f1b', '(x-a)^2+(y-b)^2=r^2', 'blue')],
+        note: 'pusat $(a,b)$, jari-jari $r$; simpan ke catatan',
+        box: 'navy',
+      },
+      {
+        id: 'f2',
+        toks: [H('f2a', 'Umum', 'lbl'), T('f2b', 'x^2+y^2+Ax+By+C=0', 'blue')],
+        note: 'hasil menjabarkan bentuk baku',
+        box: 'navy',
+      },
+      {
+        id: 'f3',
+        toks: [
+          H('f3a', 'pusat', 'tx'),
+          O('f3b', '='),
+          T('f3c', '\\left(-\\tfrac A2,\\ -\\tfrac B2\\right)', 'blue'),
+        ],
+        note: 'rumus pusat dari bentuk umum',
+      },
+      {
+        id: 'f4',
+        toks: [
+          T('f4a', 'r'),
+          O('f4b', '='),
+          T('f4c', '\\sqrt{\\left(-\\tfrac A2\\right)^2+\\left(-\\tfrac B2\\right)^2-C}', 'blue'),
+        ],
+        note: 'rumus jari-jari dari bentuk umum',
+      },
+    ],
+    LB: [
+      {
+        id: 'j1',
+        toks: [
+          T('j1a', '(x-'),
+          T('j1b', '(-3)', 'blue', 'PPx'),
+          T('j1c', ')^2+(y-'),
+          T('j1d', '4', 'blue', 'PPy'),
+          T('j1e', ')^2'),
+          O('j1f', '='),
+          T('j1g', '2^2', 'blue', 'PRv'),
+        ],
+        note: 'bentuk baku dengan $a=-3$, $b=4$, $r=2$ dari catatan',
+      },
+      {
+        id: 'j2',
+        toks: [T('j2a', '(x+3)^2+(y-4)^2'), O('j2b', '='), T('j2c', '4')],
+        note: '$-(-3)=+3$ dan $2^2=4$',
+      },
+      {
+        id: 'j3',
+        toks: [
+          T('j3a', 'x^2+6x'),
+          T('j3b', '+9', 'x'),
+          T('j3c', '+y^2-8y'),
+          T('j3d', '+16', 'x'),
+          O('j3e', '='),
+          T('j3f', '4', 'x'),
+        ],
+        note: '$(x+3)^2=x^2+6x+9$ dan $(y-4)^2=y^2-8y+16$',
+      },
+      {
+        id: 'j4',
+        toks: [
+          T('j4a', 'x^2'),
+          T('j4b', '+6x', 'blue'),
+          T('j4c', '+y^2'),
+          T('j4d', '-8y', 'blue'),
+          T('j4e', '+21', 'blue'),
+          T('j4f', '=0'),
+        ],
+        note: '$4$ pindah ke kiri: $9+16-4=21$; simpan ke catatan',
+        box: 'navy',
+      },
+    ],
+    LM: [
+      {
+        id: 'm1',
+        toks: [
+          H('m1a', 'hasil kita', 'tx'),
+          T('m1b', '+6x', 'blue', 'PH2'),
+          T('m1c', '-8y', 'blue', 'PH4'),
+          T('m1d', '+21', 'blue', 'PH5'),
+        ],
+        note: 'tidak ada pilihan yang persis sama',
+      },
+      {
+        id: 'm2',
+        toks: [
+          H('m2a', 'sepusat', 'blue', '@s-pusat'),
+          O('m2b', '='),
+          H('m2c', 'pusat sama, jari-jari boleh beda', 'tx'),
+        ],
+      },
+      {
+        id: 'm3',
+        toks: [
+          H('m3a', 'cukup cocokkan', 'tx'),
+          T('m3b', '+6x', 'blue', 'PH2'),
+          T('m3c', '-8y', 'blue', 'PH4'),
+        ],
+        note: '$A$ dan $B$ menentukan pusat; $C$ hanya mengubah jari-jari, jadi $21$ boleh beda',
+      },
+    ],
+    L6A: [
+      quote('A'),
+      match(
+        'A',
+        '+6x',
+        '-8y',
+        true,
+        true,
+        '(-3,\\ 4)',
+        'sama dengan $+6x$ dan $-8y$ di catatan → <b class="k-gold">sepusat</b>',
+      ),
+    ],
+    L6B: [
+      quote('B'),
+      match(
+        'B',
+        '-6x',
+        '-8y',
+        false,
+        true,
+        '(3,\\ 4)',
+        '$-6x$, seharusnya $+6x$ → <b class="k-red">bukan</b>',
+      ),
+    ],
+    L6C: [
+      quote('C'),
+      match(
+        'C',
+        '+6x',
+        '+8y',
+        true,
+        false,
+        '(-3,\\ -4)',
+        '$+8y$, seharusnya $-8y$ → <b class="k-red">bukan</b>',
+      ),
+    ],
+    L6D: [
+      quote('D'),
+      match(
+        'D',
+        '-8x',
+        '-6y',
+        false,
+        false,
+        '(4,\\ 3)',
+        'angka $x$ dan $y$ tertukar → <b class="k-red">bukan</b>',
+      ),
+    ],
+    L6E: [
+      quote('E'),
+      match(
+        'E',
+        '+8x',
+        '-6y',
+        false,
+        false,
+        '(-4,\\ 3)',
+        'angka $x$ dan $y$ tertukar → <b class="k-red">bukan</b>',
+      ),
+    ],
+    LK: [
+      {
+        id: 'g1',
+        toks: [
+          H('g1a', 'pusat', 'tx'),
+          O('g1b', '='),
+          T('g1c', '\\left(-\\tfrac{6}{2},\\ -\\tfrac{-8}{2}\\right)'),
+          O('g1d', '='),
+          T('g1e', '(-3,\\ 4)', 'blue'),
+        ],
+        note: 'pilihan A: $A=6$, $B=-8$; sama dengan pusat di catatan',
+      },
+      {
+        id: 'g2',
+        toks: [
+          T('g2a', 'r'),
+          O('g2b', '='),
+          T('g2c', '\\sqrt{(-3)^2+4^2-16}'),
+          O('g2d', '='),
+          T('g2e', '\\sqrt9'),
+          O('g2f', '='),
+          T('g2g', '3', 'blue'),
+        ],
+        note: '$C=16$',
+        box: 'navy',
+      },
+      {
+        id: 'g3',
+        toks: [T('g3a', 'r=3'), O('g3b', '\\ne'), T('g3c', 'r'), O('g3e', '='), T('g3d', '2', '', 'PRv')],
+        note: 'tidak masalah: sepusat hanya meminta pusat sama',
+      },
+      {
+        id: 'g4',
+        toks: [H('g4a', 'Hati-hati', 'lbl'), H('g4b', 'B: +21 sama, tetapi pusatnya (3, 4)', 'tx')],
+        note: 'konstanta $21$ memberi $r=2$ seperti lingkaran A, tetapi $-6x$ menggeser pusat → bukan sepusat',
+      },
+    ],
+    L7: [{ id: 's1', toks: [H('s1a', 'Jawaban', 'lbl'), H('s1b', 'A', 'tx')], box: 'gold' }],
+    LS: [
+      {
+        id: 'y1',
+        toks: [T('y1a', '\\text{pusat}=(-3,\\ 4)')],
         note: 'hanya pilihan A yang berpusat di sana',
         box: 'navy',
       },
-      { id: 'r2', toks: [H('r2a', 'Jawaban', 'lbl'), H('r2b', 'A', 'tx')], box: 'gold' },
+      { id: 'y2', toks: [H('y2a', 'Jawaban', 'lbl'), H('y2b', 'A', 'tx')], box: 'gold' },
     ],
   },
   steps: [
     // ---- 1 · Pahami soal ----
     {
       ch: 1,
-      cap: 'Perhatikan lingkaran A pada bidang koordinat. Diketahui diameternya $4$ satuan.',
-      visual: { kind: 'soal', hl: 1 },
+      cap: 'Perhatikan gambar pada soal. Kita diminta mencari persamaan lingkaran yang sepusat dengan lingkaran A.',
+      visual: { kind: 'soal', hl: 2 },
       board: { title: 'Pahami soal', list: 'L1', upTo: 1, from: 0 },
     },
     {
       ch: 1,
-      cap: 'Tahukah kalian? Sepusat artinya pusatnya sama, jari-jarinya boleh berbeda, seperti lingkaran-lingkaran pada papan target panahan.',
-      visual: circ({ conc: true }),
+      cap: 'Untuk soal persamaan lingkaran, langkah pertama selalu sama: cari dulu titik pusat dan jari-jarinya.',
+      visual: circ({ rad: true, lab: 'ask' }),
       board: { title: 'Pahami soal', list: 'L1', upTo: 2, from: 1 },
     },
-    {
-      ch: 1,
-      cap: 'Yang ditanya: persamaan lingkaran yang sepusat dengan lingkaran A. Jadi yang kita butuhkan hanya pusatnya.',
-      visual: { kind: 'soal', hl: 2 },
-      board: { title: 'Pahami soal', list: 'L1', upTo: 3, from: 2 },
-    },
-    // ---- 2 · Baca pusat ----
+    // ---- 2 · Pusat dan jari-jari ----
     {
       ch: 2,
-      cap: 'Pusat lingkaran A adalah titik $p$, tepat di tengah diameter. Tarik garis ke kedua sumbu: $x=-3$ dan $y=4$.',
-      visual: circ({ read: true }),
-      board: { title: 'Pusat lingkaran A', list: 'LP', upTo: 2, from: 0, save: ['pP'] },
+      cap: 'Perhatikan titik $p$, itulah pusat lingkaran A. Kita perbesar di sekitar titik $p$.',
+      visual: circ({ cam: 'p' }),
+      board: { title: 'Pusat lingkaran A', list: 'LP', upTo: 1, from: 0 },
+    },
+    {
+      ch: 2,
+      cap: 'Dari $p$ tarik garis lurus ke bawah sampai sumbu $x$. Garis jatuh di $x=-3$, tepat di tengah antara $-4$ dan $-2$.',
+      visual: circ({ cam: 'x', rx: true }),
+      board: { title: 'Pusat lingkaran A', list: 'LP', upTo: 2, from: 1 },
+    },
+    {
+      ch: 2,
+      cap: 'Dari $p$ tarik garis ke kanan sampai sumbu $y$: $y=4$. Jadi pusatnya $(-3,4)$, kita simpan ke catatan.',
+      visual: circ({ cam: 'y', rx: true, ry: true }),
+      board: { title: 'Pusat lingkaran A', list: 'LP', upTo: 4, from: 2, save: ['pP'] },
       ask: {
-        before: 'a2',
-        q: 'Titik $p$ berada di antara $x=-4$ dan $x=-2$ serta tepat pada $y=4$. Koordinatnya…',
+        before: 'a4',
+        q: 'Dengan $x=-3$ dan $y=4$, titik pusatnya ditulis…',
         opts: [
           { tex: '(-3,\\ 4)', ok: true },
           { tex: '(4,\\ -3)', hint: 'Urutan koordinat tertukar. Pertama $x$ (mendatar), baru $y$ (tegak).' },
-          { tex: '(3,\\ 4)', hint: '$p$ berada di sebelah kiri sumbu tegak, jadi $x$-nya negatif.' },
+          { tex: '(3,\\ 4)', hint: '$p$ berada di sebelah kiri sumbu $y$, jadi $x$-nya negatif.' },
         ],
       },
     },
     {
       ch: 2,
-      cap: 'Diameternya $4$, jadi jari-jari lingkaran A $=2$. Catat juga, nanti berguna untuk mengenali jebakan.',
-      visual: circ({ dlab: true }),
-      board: { title: 'Pusat lingkaran A', pins: N1, list: 'LP', upTo: 3, from: 2, save: ['pRA'] },
-    },
-    // ---- 3 · Cara cepat ----
-    {
-      ch: 3,
-      cap: 'Tahukah kalian? Lingkaran berpusat $(-3,4)$ kalau dijabarkan memunculkan $+6x$ dan $-8y$.',
-      visual: circ({}),
-      board: { title: 'Cara cepat', pins: N2, list: 'LC', upTo: 2, from: 0 },
+      cap: 'Jari-jari: hitung kotak dari pusat ke lingkaran. Dari $p$ turun $2$ kotak, titik terbawah di $y=2$, jadi $r=4-2=2$.',
+      visual: circ({ cam: 'r', ry: true, count: true }),
+      board: { title: 'Jari-jari lingkaran A', pins: N1, list: 'LR', upTo: 2, from: 0, save: ['pR'] },
     },
     {
+      ch: 2,
+      cap: 'Cek dengan soal: diameternya $4$, jadi jari-jarinya $2$, cocok. Data kita lengkap: pusat $(-3,4)$ dan jari-jari $2$.',
+      visual: circ({ rad: true, dlab: true }),
+      board: { title: 'Jari-jari lingkaran A', pins: N2, list: 'LR', upTo: 3, from: 2 },
+    },
+    // ---- 3 · Rumus lingkaran ----
+    {
       ch: 3,
-      cap: 'Lihat polanya: $6$ dibagi $-2$ jadi $-3$, dan $-8$ dibagi $-2$ jadi $4$. Itulah pusatnya!',
-      visual: circ({ read: true }),
-      board: { title: 'Cara cepat', pins: N2, list: 'LC', upTo: 3, from: 2 },
+      cap: 'Tahukah kalian? Bentuk baku persamaan lingkaran adalah $(x-a)^2+(y-b)^2=r^2$, dengan pusat $(a,b)$ dan jari-jari $r$.',
+      visual: circ({ rad: true, lab: 'ab' }),
+      board: { title: 'Rumus lingkaran', pins: N2, list: 'LF', upTo: 1, from: 0, save: ['pBaku'] },
     },
     {
       ch: 3,
-      cap: 'Cara cepat: pusat $=\\left(-\\frac A2,-\\frac B2\\right)$. Ingat, ini berlaku bila koefisien $x^2$ dan $y^2$ sama-sama $1$, seperti di kelima pilihan.',
-      visual: circ({}),
-      board: { title: 'Cara cepat', pins: N2, list: 'LC', upTo: 4, from: 3, save: ['pRule'] },
+      cap: 'Kalau bentuk baku dijabarkan, kita dapat bentuk umum: $x^2+y^2+Ax+By+C=0$.',
+      visual: circ({ rad: true, lab: 'ab', panel: 'forms' }),
+      board: { title: 'Rumus lingkaran', pins: N3, list: 'LF', upTo: 2, from: 1 },
     },
-    // ---- 4 · Uji kelima pilihan ----
-    open4('A', 'Kita cek pilihan A dulu. Salin persamaannya ke papan.'),
-    check4(
+    {
+      ch: 3,
+      cap: 'Dari bentuk umum, pusatnya $\\left(-\\frac A2,-\\frac B2\\right)$ dan jari-jarinya $\\sqrt{\\left(-\\frac A2\\right)^2+\\left(-\\frac B2\\right)^2-C}$. Tolong diingat semua rumus ini ya.',
+      visual: circ({ rad: true, lab: 'AB', panel: 'forms' }),
+      board: { title: 'Rumus lingkaran', pins: N3, list: 'LF', upTo: 4, from: 2 },
+    },
+    // ---- 4 · Baku ke umum ----
+    {
+      ch: 4,
+      cap: 'Kembali ke soal. Pilihan jawabannya berbentuk umum, jadi masukkan dulu pusat dan jari-jari ke bentuk baku.',
+      visual: circ({ rad: true, lab: 'num' }),
+      board: { title: 'Masukkan ke bentuk baku', pins: N3, list: 'LB', upTo: 1, from: 0 },
+    },
+    {
+      ch: 4,
+      cap: 'Rapikan tandanya: $-(-3)$ menjadi $+3$ dan $2^2=4$. Inilah bentuk baku lingkaran A.',
+      visual: circ({ rad: true, lab: 'num', panel: 'baku' }),
+      board: { title: 'Masukkan ke bentuk baku', pins: N2, list: 'LB', upTo: 2, from: 1 },
+    },
+    {
+      ch: 4,
+      cap: 'Sekarang jabarkan kedua kuadrat: $(x+3)^2=x^2+6x+9$ dan $(y-4)^2=y^2-8y+16$.',
+      visual: circ({ rad: true, lab: 'num', panel: 'jabar' }),
+      board: { title: 'Masukkan ke bentuk baku', pins: N2, list: 'LB', upTo: 3, from: 2 },
+    },
+    {
+      ch: 4,
+      cap: 'Pindahkan $4$ ke kiri dan jumlahkan: $9+16-4=21$. Bentuk umum lingkaran A: $x^2+6x+y^2-8y+21=0$, simpan ke catatan.',
+      visual: circ({ rad: true, lab: 'num', panel: 'umum' }),
+      board: {
+        title: 'Masukkan ke bentuk baku',
+        pins: N2,
+        list: 'LB',
+        upTo: 4,
+        from: 3,
+        cut: ['j3'],
+        save: ['pHasil'],
+      },
+    },
+    // ---- 5 · Cocokkan hasil (hati-hati: sepusat) ----
+    {
+      ch: 5,
+      cap: 'Sekarang cocokkan dengan pilihan jawaban. Ternyata tidak ada pilihan yang persis sama dengan hasil kita.',
+      visual: { kind: 'soal', hl: 9 },
+      board: { title: 'Cocokkan dengan pilihan', pins: N4, list: 'LM', upTo: 1, from: 0 },
+    },
+    {
+      ch: 5,
+      cap: 'Hati-hati, baca lagi soalnya. Yang ditanya lingkaran yang sepusat, bukan lingkaran A itu sendiri.',
+      visual: { kind: 'soal', hl: 3, focus: 's-pusat' },
+      board: { title: 'Cocokkan dengan pilihan', pins: N4, list: 'LM', upTo: 2, from: 1 },
+      ask: {
+        before: 'm2',
+        q: 'Lingkaran yang sepusat dengan lingkaran A harus memiliki…',
+        opts: [
+          { txt: 'pusat yang sama', ok: true },
+          { txt: 'jari-jari yang sama', hint: 'Jari-jari boleh berbeda. Yang wajib sama adalah pusatnya.' },
+          {
+            txt: 'pusat dan jari-jari yang sama',
+            hint: 'Kalau keduanya sama, itu lingkaran A sendiri. Sepusat cukup pusatnya sama.',
+          },
+        ],
+      },
+    },
+    {
+      ch: 5,
+      cap: 'Sepusat artinya pusatnya sama, jari-jarinya boleh beda. Jadi cukup cari pilihan yang memuat $+6x$ dan $-8y$; angka $21$ boleh berbeda.',
+      visual: circ({ conc: true }),
+      board: { title: 'Cocokkan dengan pilihan', pins: N4, list: 'LM', upTo: 3, from: 2 },
+    },
+    // ---- 6 · Uji kelima pilihan ----
+    open6('A', 'Kita cek pilihan A dulu. Salin persamaannya ke papan.'),
+    check6(
       'A',
-      'Koefisien $x$ adalah $6$ dan $y$ adalah $-8$: pusatnya $(-3,4)$, sama dengan $p$ di catatan. A <b class="k-gold">cocok</b>.',
+      'Pilihan A memuat $+6x$ dan $-8y$, sama dengan hasil kita. Pusatnya $(-3,4)$, jadi A <b class="k-gold">sepusat</b>.',
     ),
-    open4('B', 'Lanjut pilihan B.'),
-    check4(
+    open6('B', 'Lanjut pilihan B.'),
+    check6(
       'B',
-      'Di B koefisien $x$-nya $-6$, jadi pusatnya $(3,4)$, di sebelah kanan. Tanda $x$ terbalik, B <b class="k-red">bukan</b>.',
+      'Pilihan B memuat $-6x$, bukan $+6x$, jadi pusatnya pindah ke $(3,4)$. B <b class="k-red">bukan</b>.',
     ),
-    open4('C', 'Pilihan C.'),
-    check4(
+    open6('C', 'Pilihan C.'),
+    check6(
       'C',
-      'Di C koefisien $y$-nya $+8$, jadi pusatnya $(-3,-4)$, di bawah. Tanda $y$ terbalik, C <b class="k-red">bukan</b>.',
+      'Pilihan C memuat $+8y$, bukan $-8y$, jadi pusatnya turun ke $(-3,-4)$. C <b class="k-red">bukan</b>.',
     ),
-    open4('D', 'Pilihan D.'),
-    check4(
+    open6('D', 'Pilihan D.'),
+    check6(
       'D',
-      'Di D angka $8$ ada di $x$ dan $6$ di $y$: pusatnya $(4,3)$. Koefisiennya tertukar, D <b class="k-red">bukan</b>.',
+      'Pilihan D memuat $-8x$ dan $-6y$: angkanya tertukar, pusatnya $(4,3)$. D <b class="k-red">bukan</b>.',
     ),
-    open4('E', 'Terakhir, pilihan E.'),
-    check4('E', 'Di E pusatnya $(-4,3)$, juga tertukar. E <b class="k-red">bukan</b>.'),
-    // ---- 5 · Pastikan jawaban ----
+    open6('E', 'Terakhir, pilihan E.'),
+    check6(
+      'E',
+      'Pilihan E memuat $+8x$ dan $-6y$, juga tertukar, pusatnya $(-4,3)$. E <b class="k-red">bukan</b>.',
+    ),
+    // ---- 7 · Pastikan jawaban ----
     {
-      ch: 5,
-      cap: 'Kita pastikan pilihan A dengan melengkapkan kuadrat: hasilnya $(x+3)^2+(y-4)^2=9$, pusat $(-3,4)$ dan jari-jari $3$.',
+      ch: 7,
+      cap: 'Kita pastikan pilihan A dengan rumus bentuk umum: pusatnya $(-3,4)$ dan jari-jarinya $\\sqrt{9+16-16}=3$.',
       visual: circ({ opts: ['A'] }),
-      board: { title: 'Pastikan jawaban', pins: N3, list: 'LK', upTo: 3, from: 0 },
+      board: { title: 'Pastikan jawaban', pins: N4, list: 'LK', upTo: 2, from: 0 },
     },
     {
-      ch: 5,
-      cap: 'Jari-jari $3$ berbeda dengan $2$, tidak masalah karena sepusat hanya meminta pusat sama. Hati-hati dengan B: jari-jarinya $2$, tetapi pusatnya $(3,4)$.',
-      visual: circ({ opts: ['A', 'B'] }),
-      board: { title: 'Pastikan jawaban', pins: N3, list: 'LK', upTo: 5, from: 3 },
+      ch: 7,
+      cap: 'Jari-jari $3$ berbeda dengan $2$, tidak masalah. Sepusat hanya meminta pusatnya sama.',
+      visual: circ({ opts: ['A'], rad: true }),
+      board: { title: 'Pastikan jawaban', pins: N4, list: 'LK', upTo: 3, from: 2 },
     },
-    // ---- 6 · Catatan lengkap ----
     {
-      ch: 6,
+      ch: 7,
+      cap: 'Hati-hati dengan B: konstantanya $21$ sama dengan hasil kita sehingga jari-jarinya $2$, tetapi $-6x$ membuat pusatnya $(3,4)$.',
+      visual: circ({ opts: ['A', 'B'], rad: true }),
+      board: { title: 'Pastikan jawaban', pins: N4, list: 'LK', upTo: 4, from: 3 },
+    },
+    // ---- 8 · Catatan lengkap ----
+    {
+      ch: 8,
       cap: 'Semua langkah dari awal sampai akhir. Simpan untuk belajar lagi.',
       visual: { kind: 'notes' },
     },
-    // ---- 7 · Cocokkan pilihan ----
+    // ---- 9 · Cocokkan pilihan ----
     {
-      ch: 7,
+      ch: 9,
       cap: 'Cocokkan dengan pilihan: hanya A yang berpusat di $(-3,4)$. Pilih jawabannya di bawah.',
       visual: { kind: 'cards', flip: 5 },
-      board: { title: 'Cocokkan pilihan', pins: N3, list: 'L7', upTo: 1, from: 0 },
+      board: { title: 'Cocokkan pilihan', pins: N4, list: 'L7', upTo: 1, from: 0 },
       ask: {
         before: 's1',
         q: 'Persamaan lingkaran yang sepusat dengan lingkaran A adalah…',
@@ -372,12 +658,12 @@ ${LETTERS.map((o) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
         ],
       },
     },
-    // ---- 8 · Selesai ----
+    // ---- 10 · Selesai ----
     {
-      ch: 8,
+      ch: 10,
       cap: '<span class="verdict"><span class="seal">A</span><span>Pusat lingkaran A adalah $(-3,4)$. Hanya pilihan A yang berpusat di sana.</span></span>',
       visual: { kind: 'done' },
-      board: { title: 'Ringkasan', list: 'LR', upTo: 2, from: 2 },
+      board: { title: 'Ringkasan', list: 'LS', upTo: 2, from: 2 },
     },
   ],
   cards: [
@@ -405,16 +691,22 @@ ${LETTERS.map((o) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
     sections: [
       { title: 'Pahami soal', lists: ['L1'] },
       {
-        title: 'Baca pusat',
-        lists: ['LP'],
-        why: 'Pusat lingkaran = titik tengah diameter; baca dari garis kisi: $x$ dulu, baru $y$.',
+        title: 'Pusat dan jari-jari',
+        lists: ['LP', 'LR'],
+        why: 'Pusat: tarik garis dari $p$ ke kedua sumbu ($x$ dulu, baru $y$). Jari-jari: hitung kotak dari pusat ke lingkaran.',
       },
       {
-        title: 'Cara cepat',
-        lists: ['LC'],
-        why: 'Untuk $x^2+Ax+y^2+By+C=0$ (koefisien $x^2$ dan $y^2$ sama-sama 1), pusatnya $\\left(-\\frac A2,-\\frac B2\\right)$.',
+        title: 'Rumus lingkaran',
+        lists: ['LF'],
+        why: 'Bentuk baku $(x-a)^2+(y-b)^2=r^2$ dijabarkan menjadi bentuk umum $x^2+y^2+Ax+By+C=0$.',
       },
-      { title: 'Uji kelima pilihan', lists: ['L4A', 'L4B', 'L4C', 'L4D', 'L4E'] },
+      { title: 'Baku ke umum', lists: ['LB'] },
+      {
+        title: 'Cocokkan hasil',
+        lists: ['LM'],
+        why: 'Sepusat: cukup $+6x$ dan $-8y$ yang sama; konstanta boleh beda karena jari-jari boleh beda.',
+      },
+      { title: 'Uji kelima pilihan', lists: ['L6A', 'L6B', 'L6C', 'L6D', 'L6E'] },
       { title: 'Pastikan jawaban', lists: ['LK'] },
     ],
     answer: 'Jawaban: <b>A</b>, $x^2+6x+y^2-8y+16=0$ (pusat $(-3,4)$, jari-jari $3$).',
@@ -423,11 +715,14 @@ ${LETTERS.map((o) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-s
     seal: 'A',
     message: 'Pusat lingkaran A adalah $(-3,4)$. Hanya pilihan A yang berpusat di sana.',
   },
-  key: { answer: 'A', cardOk: [true, false, false, false, false], goldRows: ['oA', 's1', 'r2'] },
+  key: { answer: 'A', cardOk: [true, false, false, false, false], goldRows: ['oA', 's1', 'y2'] },
   authorNotes: [
-    'Modul baru (23 Okt 2026), disusun dari docs/pembahasan25.md soal 15 dengan gaya mengajar Pak Penta.',
-    'Cara cepat pusat (−A/2, −B/2) ditunjukkan dari menjabarkan (x+3)² + (y−4)² (dokumen: prasyarat konsep Bagian 3); batas berlakunya disebut.',
-    'Baris "Hati-hati" pilihan B (jari-jari 2 sama, pusat beda) dari kolom jebakan kartu B dokumen.',
+    'Revisi pemilik v1.15 (23 Okt 2026): alur mengikuti cara Pak Penta menyampaikan ke siswa — cari pusat dan jari-jari dulu, dua bentuk persamaan, masukkan ke bentuk baku, jabarkan, cocokkan dengan pilihan.',
+    'Jari-jari dibaca dengan menghitung kotak dari pusat turun ke titik terbawah (−3, 2): r = 4 − 2 = 2 (diturunkan dari pusat dan jari-jari dokumen); dicek dengan diameter 4 dari naskah.',
+    'Hasil jabaran x² + 6x + y² − 8y + 21 = 0 adalah persamaan lingkaran A sendiri (dokumen Bagian 4); tidak ada di pilihan, sehingga ditambahkan langkah "Hati-hati": yang ditanya sepusat, cukup +6x dan −8y yang sama.',
+    'Rumus jari-jari bentuk umum ditulis seperti disampaikan pemilik: √((−A/2)² + (−B/2)² − C), setara dengan dokumen √(A²/4 + B²/4 − C).',
+    'Pertanyaan cepat "sepusat harus memiliki…" dari Kesalahan umum dokumen (mengira jari-jari juga sama).',
+    'Baris "Hati-hati" pilihan B (konstanta 21 sama, pusat beda) dari kolom jebakan kartu B dokumen.',
   ],
 };
 
