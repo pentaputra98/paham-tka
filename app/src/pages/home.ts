@@ -5,7 +5,7 @@
 import { esc, html, pad2 } from '../core/dom';
 import { icon, type IconName } from '../core/icons';
 import { HERO_CAPTION, heroArt, startHero } from './hero';
-import { progressSummary, store } from '../core/store';
+import { itemStatus, progressSummary, store } from '../core/store';
 import {
   DOMAIN_LABEL,
   FILTERS,
@@ -27,17 +27,13 @@ const RESP_ICON: Record<Response, IconName> = {
 
 /** Status siswa per soal (PRD §7.4) dengan teks, tidak hanya warna. */
 function statusPill(no: number): string {
-  const it = store.progress.items[String(no)];
-  if (!it || (!it.done && !it.watched)) return '';
-  const last3 = it.practice.slice(-3);
-  const mastered =
-    last3.length >= 2 &&
-    last3.filter((p) => p.correct && p.hints === 0).length >= 2 &&
-    !!last3.at(-1)?.correct;
-  const review = it.marks.length > 0 || (last3.length > 0 && !last3.at(-1)!.correct);
-  if (mastered) return `<span class="pill pill--mastered">${icon('circle-check')}Sudah paham</span>`;
-  if (review) return `<span class="pill pill--review">${icon('flag')}Perlu diulang</span>`;
-  if (it.done) return `<span class="pill pill--done">${icon('check')}Sudah dibahas</span>`;
+  const st = itemStatus(store.progress.items[String(no)]);
+  if (st === 'mastered') return `<span class="pill pill--mastered">${icon('circle-check')}Sudah paham</span>`;
+  if (st === 'review-mark')
+    return `<span class="pill pill--review" title="Ada bagian yang ditandai belum paham">${icon('flag')}Perlu diulang</span>`;
+  if (st === 'review-practice')
+    return `<span class="pill pill--review" title="Jawaban latihan terakhir belum tepat">${icon('flag')}Perlu diulang</span>`;
+  if (st === 'done') return `<span class="pill pill--done">${icon('check')}Sudah dibahas</span>`;
   return '';
 }
 

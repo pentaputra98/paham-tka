@@ -44,6 +44,26 @@ export interface ItemProgress {
   marks: number[];
   practice: PracticeRecord[];
   lastTs?: number;
+  /** waktu pop-up SELESAI terakhir tercapai (revisi pemilik v1.23) */
+  doneTs?: number;
+}
+
+export type ItemStatus = 'mastered' | 'review-mark' | 'review-practice' | 'done' | 'none';
+
+/**
+ * Status siswa per soal (PRD §7.4). Latihan terakhir yang salah hanya membuat "Perlu diulang" bila terjadi
+ * sesudah pembahasan terakhir diselesaikan: menyelesaikan pembahasan lagi berarti sudah diulang (revisi pemilik v1.23).
+ */
+export function itemStatus(it: ItemProgress | undefined): ItemStatus {
+  if (!it || (!it.done && !it.watched)) return 'none';
+  const last3 = it.practice.slice(-3);
+  const last = last3.at(-1);
+  const mastered =
+    last3.length >= 2 && last3.filter((p) => p.correct && p.hints === 0).length >= 2 && !!last?.correct;
+  if (mastered) return 'mastered';
+  if (it.marks.length > 0) return 'review-mark';
+  if (last && !last.correct && last.ts > (it.doneTs ?? 0)) return 'review-practice';
+  return it.done ? 'done' : 'none';
 }
 
 export interface Progress {
@@ -133,6 +153,7 @@ export function migrateProgress(raw: Json | null): Progress {
       marks: Array.isArray(it.marks) ? it.marks.filter((m): m is number => typeof m === 'number') : [],
       practice: Array.isArray(it.practice) ? (it.practice as PracticeRecord[]) : [],
       lastTs: typeof it.lastTs === 'number' ? it.lastTs : undefined,
+      doneTs: typeof it.doneTs === 'number' ? it.doneTs : undefined,
     };
   }
   return {
@@ -204,7 +225,7 @@ export const store = {
   },
   /** Pop-up SELESAI tercapai (status Sudah dibahas, §7.4). */
   markDone(no: number): void {
-    store.updateItem(no, (it) => ({ ...it, done: true, watched: it.watched + 1 }));
+    store.updateItem(no, (it) => ({ ...it, done: true, watched: it.watched + 1, doneTs: Date.now() }));
   },
   /** Satu soal latihan selesai (FR-LAT-8); status Sudah paham/Perlu diulang dihitung dari sini (§7.4). */
   addPractice(no: number, rec: PracticeRecord): void {
