@@ -29,10 +29,17 @@ export function flyClone(from: Element, to: HTMLElement, o: FlyOptions): { g: HT
     fontSize: getComputedStyle(to).fontSize,
   });
   document.body.append(g);
-  // pendaran sumber (dipicu ulang)
+  // pendaran sumber (dipicu ulang). Kelasnya dilepas begitu animasi selesai/batal: bila tertinggal, pendaran
+  // terulang setiap kali kertas soal tampil lagi (revisi pemilik v1.22). Sumber yang terpatah ke beberapa baris
+  // tidak diberi pendaran karena kotaknya tidak membungkus teks dengan benar.
   from.classList.remove('src-glow');
-  void (from as HTMLElement).offsetWidth;
-  from.classList.add('src-glow');
+  if (from.getClientRects().length <= 1) {
+    void (from as HTMLElement).offsetWidth;
+    from.classList.add('src-glow');
+    const off = (): void => from.classList.remove('src-glow');
+    from.addEventListener('animationend', off, { once: true });
+    from.addEventListener('animationcancel', off, { once: true });
+  }
   const dx = a.left + a.width / 2 - (b.left + b.width / 2);
   const dy = a.top + a.height / 2 - (b.top + b.height / 2);
   const sc = o.scaleFromSource ? Math.max(0.6, Math.min(1.5, a.height / Math.max(b.height, 1))) : 0.9;

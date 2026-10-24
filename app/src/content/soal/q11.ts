@@ -653,6 +653,7 @@ ${LETTERS.map((o) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" data-h
     'Contoh "angka tidak cantik" kedalaman 13,3 m → t = 2 diturunkan dari model dokumen (12,3 + 2 cos(π/3) = 13,3), untuk menunjukkan kapan cara logika tengah-waktu tidak berlaku.',
     'Tanpa simbol ":" di baris papan (revisi pemilik v1.21): kemunculan ditulis "ke-1 → t = 3".',
     'Langkah Hati-hati t = 12 dari Kesalahan umum dokumen; nilai pilihan C (13,3) dan D (14,3) dibaca dari grafik, sesuai model dokumen.',
+    'Revisi pemilik v1.22: tiap titik garis tengah (t = 3, 9, 15) diberi garis putus-putus ke sumbu t, dan rentang 6 jam ditaruh dekat sumbu, agar jelas 6 jam itu antara titik yang mana. Sorotan sumber angka tidak lagi muncul ulang di kertas soal (perbaikan mesin fly.ts).',
   ],
 };
 

@@ -1406,6 +1406,20 @@ Periode: $\frac{2\pi}{\pi/6}=12$ jam, cocok dengan grafik (puncak di $t=0$ dan $
 - **Bagian 6 — Uji kelima pilihan:** tiap pilihan disalin, lalu dicek dengan pola $3,9,15$: A ke-1, B ke-2, C bukan di garis tengah ($13{,}3$ m), D puncak $14{,}3$ m, E ke-3.
 - **Bagian 7–9:** catatan lengkap, kartu A–E, segel E.
 
+
+*Revisi 1.22 (24 Okt 2026, pemilik; kunci tidak berubah: E).*
+- Kotak sorot sumber angka di kertas soal hanya tampil sesaat ketika angka terbang, tidak muncul lagi setiap kali kertas tampil (perbaikan mesin).
+- **Bagian 3:** tiap titik di garis tengah ($t=3,9,15$) diberi garis putus-putus ke sumbu $t$, dan rentang "6 jam" ditaruh dekat sumbu, sehingga jelas 6 jam itu jarak antartitik garis tengah.
+
+*Latihan serupa (Revisi 1.22, `app/src/practice/gen11.ts`).* Grafik baru $y=a+b\cos(kt)$ yang mulai dari puncak ($a$ dan $b$ tidak diberikan). Ditanya kapan suatu kedalaman dicapai untuk ke-$n$ kalinya; pilihan "x jam" urut naik.
+- **Mudah:** garis tengah ke-2 sampai ke-4, seperti soal asli (cukup logika grafik).
+- **Sedang:** garis tengah lebih jauh (ke-3 sampai ke-5) atau lembah ke-2/ke-3.
+- **Menantang:** kedalaman setengah amplitudo di atas atau di bawah garis tengah, sehingga perlu rumus seperti contoh $13{,}3$ m di cara alternatif.
+- Distraktor dari *Kesalahan umum* dan alur pembahasan:
+  - urutan kurang atau lebih satu;
+  - waktu puncak (akhir satu gelombang);
+  - waktu yang tidak ada di pola;
+  - tengah-tengah waktu dipakai untuk kedalaman yang bukan garis tengah.
 ---
 
 ## SOAL 12 — Panjang Vektor 3D

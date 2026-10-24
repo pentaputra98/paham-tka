@@ -6,7 +6,8 @@
  *  - amp: selisih puncak dan garis tengah = 2 (setengah selisih puncak–lembah); mid: garis tengah y = 12,3;
  *  - cam 'low': diperbesar ke lembah; ring: lembah dilingkari jelas dengan label t = 6 (sumber terbang g-t6);
  *  - cam 'half' + half: dari t = 0 ke t = 6 dibagi dua sama panjang (3 jam + 3 jam): garis tengah di t = 3;
- *  - ext: gelombang diteruskan sampai t = 18; zeros: titik pada garis tengah (t = 3, 9, 15); gap: tiap 6 jam;
+ *  - ext: gelombang diteruskan sampai t = 18; zeros: titik pada garis tengah (t = 3, 9, 15), masing-masing dengan
+ *    garis putus-putus ke sumbu t; gap: rentang 6 jam di antara garis-garis itu, dekat sumbu t;
  *  - walk: titik berjalan menyusuri gelombang sampai kemunculan ke-n, meninggalkan penanda bernomor 1–3
  *    (ke-3 emas, jawaban); warn: hati-hati t = 12 adalah puncak 14,3 m;
  *  - cand: satu pilihan diuji: titik (t, y(t)) dengan garis bantu; emas bila jawaban, merah bila bukan.
@@ -132,12 +133,12 @@ function markup(): string {
     <path class="t11-guide" d="M${f1(px(3))} ${f1(py(12.3))}V${f1(py(Y0))}"/>
     <circle class="t11-z" cx="${f1(px(3))}" cy="${f1(py(12.3))}" r="6"/>
   </g>
-  <g class="t11-zeros">${ZEROS.map((t) => `<circle class="t11-z${t > 12 ? ' t11-x' : ''}" cx="${f1(px(t))}" cy="${f1(py(12.3))}" r="5"/>`).join('')}</g>
+  <g class="t11-zeros">${ZEROS.map((t) => `<path class="t11-guide${t > 12 ? ' t11-x' : ''}" d="M${f1(px(t))} ${f1(py(12.3))}V${f1(py(Y0))}"/><circle class="t11-z${t > 12 ? ' t11-x' : ''}" cx="${f1(px(t))}" cy="${f1(py(12.3))}" r="5"/>`).join('')}</g>
   <g class="t11-gap">
-    <path class="t11-span" d="M${f1(px(3))} ${f1(py(11.3))}H${f1(px(9))}"/>
-    <text class="t11-tag t11-tag-mid" x="${f1(px(6))}" y="${f1(py(11.3) - 8)}">6 jam</text>
-    <path class="t11-span t11-x" d="M${f1(px(9))} ${f1(py(13.3))}H${f1(px(15))}"/>
-    <text class="t11-tag t11-tag-mid t11-x" x="${f1(px(12))}" y="${f1(py(13.3) - 8)}">6 jam</text>
+    <path class="t11-span" d="M${f1(px(3))} ${f1(yb)}H${f1(px(9))}"/>
+    <text class="t11-tag t11-tag-mid" x="${f1(px(6))}" y="${f1(yb - 8)}">6 jam</text>
+    <path class="t11-span t11-span2 t11-x" d="M${f1(px(9))} ${f1(yb)}H${f1(px(15))}"/>
+    <text class="t11-tag t11-tag-mid t11-x" x="${f1(px(12))}" y="${f1(yb - 8)}">6 jam</text>
   </g>
   <g class="t11-warn">
     <circle class="t11-wp" cx="${f1(px(12))}" cy="${f1(py(14.3))}" r="8"/>
@@ -247,8 +248,8 @@ export function createTide11(): VisualScene {
         else prev.delete(k);
       }
       const [aL, bL] = LABELS[s.lab ?? 'val'];
-      // saat titik berjalan atau menguji pilihan, label garis tengah disembunyikan agar tidak menimpa penanda
-      aT.textContent = s.cand || s.walk ? '' : aL;
+      // saat titik garis tengah, titik berjalan, atau pilihan tampil, label garis tengah disembunyikan agar tidak menimpanya
+      aT.textContent = s.cand || s.walk || s.zeros ? '' : aL;
       bT.textContent = bL;
 
       // titik berjalan menyusuri gelombang; penanda bernomor muncul saat titik melewati garis tengah

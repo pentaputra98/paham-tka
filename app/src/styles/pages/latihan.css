@@ -640,6 +640,45 @@
     text-anchor: start;
   }
 
+  /* naskah soal 11: grafik kedalaman air laut */
+  .lat-fig .lt-ax {
+    fill: none;
+    stroke: var(--color-text-muted);
+    stroke-width: var(--bw-1);
+  }
+
+  .lat-fig .lt-curve {
+    fill: none;
+    stroke: var(--color-text);
+    stroke-width: var(--bw-2);
+  }
+
+  .lat-fig .lt-guide {
+    fill: none;
+    stroke: var(--color-constraint);
+    stroke-width: var(--bw-1);
+    stroke-dasharray: 3 2;
+  }
+
+  .lat-fig .lt-eq {
+    font-size: var(--fs-lat-fig-sm);
+    font-style: italic;
+  }
+
+  .lat-fig .lt-yl,
+  .lat-fig .lt-tl {
+    font-size: var(--fs-lat-fig);
+  }
+
+  /* grafik soal 11 butuh lebar lebih agar label sumbu terbaca di layar pendek */
+  .lat-fig.is-graph svg {
+    width: calc(var(--size-lat-fig) * 1.3);
+  }
+
+  .lat-fig .lt-yl {
+    text-anchor: end;
+  }
+
   /* naskah soal 16: nama titik C, D, A, B */
   .lat-fig .lg-pl {
     font-size: var(--fs-lat-fig-sm);
