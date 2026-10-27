@@ -42,6 +42,26 @@ Menu khusus untuk mengukur penguasaan siswa per materi TKA Matematika Tingkat La
    - aksi: Coba lagi dengan soal baru, Simpan PDF / cetak (lembar A4 ringkas), Riwayat tes, Beranda.
 7. **Riwayat** (`#/tes/riwayat`): percobaan dikelompokkan per peserta (nama dan sekolah), dengan batang mini per materi. Riwayat bisa dihapus setelah konfirmasi.
 
+## Tampilan dan kertas coretan (revisi 1.25)
+
+**Ruang layar.** Kertas soal memenuhi kolomnya, dan hurufnya membesar sampai 200 % selama seluruh soal masih muat (`fitPaper`). Pilihan jawaban memenuhi papan jawaban: rumus membesar sampai 170 %, kalimat sampai 135 %, dan rumus satu baris mengecil sampai 60 % bila tidak muat (`fitOpts`). Di papan yang tingginya ≥ 400 px, pilihan pendek berjajar satu kolom A–E.
+
+**Kertas coretan** (`app/src/tes/scratch.ts`) dibuka lewat tombol **Coretan** di bilah bawah atau tombol C.
+- **Letak:** papan jawaban diganti kertas putih, sedangkan soal tetap terlihat di kiri. Tombol Coretan sekaligus menjadi sakelar untuk kembali menjawab. Mode ini tetap aktif saat berpindah soal dan setelah aplikasi dimuat ulang.
+- **Alat** (di bilah bawah):
+  - pena, stabilo, dan penghapus goresan;
+  - tinta hitam, biru, dan merah (gelap dan kontras di kertas putih, tanpa emas);
+  - urungkan dan ulangi;
+  - sakelar Hanya stylus;
+  - menu ⋯ berisi ketebalan, latar (kotak, garis, polos), Ulangi, Tampilan awal, dan Hapus coretan soal ini.
+- **Kertas:** berukuran 1600 × 2000 satuan dan bisa digeser serta diperbesar sampai 4×. Latarnya ikut bergeser.
+- **Masukan:**
+  - **Stylus** selalu menulis. Tombol penghapus stylus menghapus.
+  - **Hanya stylus** otomatis aktif begitu stylus terdeteksi. Saat aktif, jari dan telapak tidak menulis: satu jari menggeser, dua jari memperbesar.
+  - Dengan **jari**, satu jari menulis. Sentuhan selebar telapak (> 44 px) diabaikan. Saat jari kedua datang, goresan yang sedang dibuat dibatalkan, lalu gestur menjadi geser/perbesar sampai semua jari terangkat. Cubitan di bawah 4 % dianggap geser saja.
+  - **Tetikus:** tombol kiri menulis, roda menggeser, Ctrl + roda memperbesar.
+- **Penyimpanan:** coretan disimpan per soal di `pahamtka:v1:tes-coret`, terikat ke id tes. Coretan dihapus saat tes dikumpulkan atau dibatalkan. Pilihan alat disimpan di `pahamtka:v1:coret-pref`.
+
 ## Bank soal (`app/src/tes/bank.ts`)
 
 Ada 21 cetakan soal. Setiap cetakan membuat soal baru dari benih dengan parameter acak dalam rentang di bawah ini. Pengecoh diambil dari kesalahan umum siswa.

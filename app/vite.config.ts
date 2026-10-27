@@ -82,6 +82,8 @@ export default defineConfig({
   base: './',
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
+    // waktu build: ditampilkan di Pengaturan agar siswa dan guru bisa memastikan versi terbaru
+    __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
   },
   plugins: [katexFonts(), pahamServiceWorker()],
   build: {

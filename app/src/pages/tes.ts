@@ -33,6 +33,7 @@ import {
   type Level,
   type Summary,
 } from '../tes/score';
+import { clearScratch, Scratch } from '../tes/scratch';
 import { tes, type Attempt, type Profile } from '../tes/state';
 import {
   KIND_LABEL,
@@ -350,6 +351,7 @@ function lobbyView(route: Route): PageView {
             icon: 'trash-2',
             onClick: () => {
               tes.cancelActive();
+              clearScratch();
               toast('Tes dibatalkan.');
               showIdentity();
             },
@@ -417,10 +419,11 @@ function sessionView(route: Route): PageView {
       </div>
     </section>
     <nav class="tes-nav" aria-label="Navigasi soal">
-      <button type="button" class="btn" data-prev>${icon('arrow-left')}<span class="btn-label">Sebelumnya</span></button>
+      <button type="button" class="btn" data-prev aria-label="Sebelumnya">${icon('arrow-left')}<span class="btn-label">Sebelumnya</span></button>
       <div class="tes-nav-mid">
-        <button type="button" class="btn tes-map-btn" data-map aria-expanded="false">${icon('layout-grid')}<span class="btn-label">Daftar soal</span><span class="tes-count num" data-count></span></button>
-        <button type="button" class="btn tes-flag" data-flag aria-pressed="false">${icon('flag')}<span>Ragu-ragu</span></button>
+        <button type="button" class="btn tes-map-btn" data-map aria-expanded="false" aria-label="Daftar soal">${icon('layout-grid')}<span class="btn-label">Daftar soal</span><span class="tes-count num" data-count></span></button>
+        <button type="button" class="btn tes-flag" data-flag aria-pressed="false" aria-label="Ragu-ragu">${icon('flag')}<span class="btn-label">Ragu-ragu</span></button>
+        <button type="button" class="btn tes-ink-btn" data-ink aria-pressed="false" aria-label="Coretan" title="Kertas coretan (C)">${icon('notebook-pen')}<span class="btn-label">Coretan</span></button>
       </div>
       <button type="button" class="btn btn--primary" data-next><span data-next-t>Berikutnya</span>${icon('arrow-right')}</button>
     </nav>
@@ -456,6 +459,24 @@ function sessionView(route: Route): PageView {
   const opts = node.querySelector<HTMLElement>('.tes-opts')!;
   const map = node.querySelector<HTMLElement>('.tes-map')!;
   const nav = node.querySelector<HTMLElement>('.tes-nav')!;
+  const ans = node.querySelector<HTMLElement>('.tes-ans')!;
+
+  // kertas coretan (v1.25): menggantikan papan jawaban selama aktif, soal tetap terlihat
+  const sc = new Scratch(a.id);
+  stage.append(sc.el);
+  nav.insertBefore(sc.bar, nav.querySelector('[data-next]'));
+  nav.append(sc.menu);
+  cleanups.push(() => sc.destroy());
+  function setInk(on: boolean): void {
+    node.classList.toggle('is-ink', on);
+    ans.hidden = on;
+    sc.setVisible(on);
+    nav.querySelector('[data-ink]')!.setAttribute('aria-pressed', String(on));
+    requestAnimationFrame(() => {
+      fitPaper();
+      if (!on) fitOpts();
+    });
+  }
 
   const item = (): TesItem => items[cur]!;
   const resp = () => resps[cur]!;
@@ -476,15 +497,60 @@ function sessionView(route: Route): PageView {
     tb.querySelector('.tb-t')!.textContent = t;
   };
 
-  /** Pilihan rumus tidak boleh terpotong: satu skala huruf untuk semua pilihan (min 60 %). */
+  /**
+   * Isi ruang papan jawaban (v1.25): satu skala huruf untuk semua pilihan. Rumus satu baris tidak boleh
+   * terpotong (turun sampai 60 %); kalimat boleh mengecil sampai 88 % agar semua pilihan terlihat tanpa
+   * digulir; bila ruang masih lega, huruf membesar sampai pilihan memenuhi papan.
+   */
   function fitOpts(): void {
-    const ms = [...opts.querySelectorAll<HTMLElement>('.tes-opt-m.is-fit')];
-    ms.forEach((m) => m.style.removeProperty('--k'));
-    const need = Math.min(
-      1,
-      ...ms.map((m) => (m.clientWidth && m.scrollWidth ? m.clientWidth / m.scrollWidth : 1)),
-    );
-    if (need < 0.99) ms.forEach((m) => m.style.setProperty('--k', Math.max(0.6, need).toFixed(3)));
+    if (ans.hidden) return;
+    const fits = [...opts.querySelectorAll<HTMLElement>('.tes-opt-m.is-fit')];
+    const textual = opts.classList.contains('is-col') || opts.classList.contains('is-tf');
+    const over = (e: HTMLElement): boolean => e.scrollHeight > e.clientHeight + 1;
+    const ok = (k: number, tall: boolean): boolean => {
+      opts.style.setProperty('--k', k.toFixed(3));
+      if (fits.some((m) => m.scrollWidth > m.clientWidth + 1)) return false;
+      return !tall || !(over(ans) || over(opts));
+    };
+    let lo = textual ? 0.88 : 0.6;
+    // tidak muat tinggi walau sudah dikecilkan: cukup jaga lebar, papan boleh digulir
+    const tall = ok(lo, true);
+    let hi = tall ? (textual ? 1.35 : 1.7) : 1;
+    if (ok(hi, tall)) return;
+    if (!ok(lo, tall)) return;
+    for (let n = 0; n < 7; n++) {
+      const mid = (lo + hi) / 2;
+      if (ok(mid, tall)) lo = mid;
+      else hi = mid;
+    }
+    ok(lo, tall);
+  }
+
+  /** Kertas soal memenuhi kolomnya: huruf membesar (maks. 200 %) selama seluruh soal tetap terlihat. */
+  function fitPaper(): void {
+    const body = paper.querySelector<HTMLElement>('.soal-b');
+    if (!body) return;
+    const wide = (): boolean =>
+      [...paper.querySelectorAll<HTMLElement>('.katex-display, .tes-fig')].some(
+        (d) => d.scrollWidth > d.clientWidth + 1,
+      );
+    const ok = (z: number): boolean => {
+      paper.style.setProperty('--z', z.toFixed(3));
+      return paper.scrollHeight <= paper.clientHeight + 1 && !wide();
+    };
+    let lo = 1;
+    let hi = 2;
+    if (ok(hi)) return;
+    if (!ok(lo)) {
+      paper.style.setProperty('--z', '1');
+      return;
+    }
+    for (let n = 0; n < 6; n++) {
+      const mid = (lo + hi) / 2;
+      if (ok(mid)) lo = mid;
+      else hi = mid;
+    }
+    ok(lo);
   }
 
   function showItem(anim: boolean): void {
@@ -534,9 +600,12 @@ function sessionView(route: Route): PageView {
       });
     }
     renderState();
+    sc.setPage(cur);
+    fitPaper();
     fitOpts();
     stage.scrollTop = 0;
-    node.querySelector('.tes-ans')!.scrollTop = 0;
+    paper.scrollTop = 0;
+    ans.scrollTop = 0;
     if (anim)
       play(
         stage,
@@ -572,6 +641,7 @@ function sessionView(route: Route): PageView {
     const last = cur === total - 1;
     const nb = nav.querySelector<HTMLElement>('[data-next]')!;
     nav.querySelector('[data-next-t]')!.textContent = last ? 'Kumpulkan' : 'Berikutnya';
+    nb.setAttribute('aria-label', last ? 'Kumpulkan' : 'Berikutnya');
     nb.querySelector('.lucide')!.outerHTML = icon(last ? 'check' : 'arrow-right');
     // daftar soal
     map.querySelectorAll<HTMLElement>('[data-go]').forEach((b) => {
@@ -669,6 +739,8 @@ function sessionView(route: Route): PageView {
     closeMap();
     const at = tes.submit(timeUp);
     if (!at) return;
+    sc.setVisible(false);
+    clearScratch();
     void processing(at).then(() => navigate(`#/tes/hasil?id=${at.id}&baru=1`, { replace: true }));
   }
 
@@ -741,6 +813,11 @@ function sessionView(route: Route): PageView {
       else closeMap();
       return;
     }
+    if (tg.closest('[data-ink]')) {
+      SND.click();
+      setInk(!sc.isVisible);
+      return;
+    }
     const o = tg.closest<HTMLElement>('[data-opt]');
     const tf = tg.closest<HTMLElement>('[data-tf]');
     const g = tg.closest<HTMLElement>('[data-go]');
@@ -805,7 +882,8 @@ function sessionView(route: Route): PageView {
       resp().flag = !resp().flag;
       save();
       renderState();
-    } else if (item().kind !== 'tf' && !(e.target as Element | null)?.closest?.('button, a')) {
+    } else if (k === 'c') setInk(!sc.isVisible);
+    else if (!sc.isVisible && item().kind !== 'tf' && !(e.target as Element | null)?.closest?.('button, a')) {
       const i = item().kind === 'multi' ? '12345'.indexOf(k) : 'abcde'.indexOf(k);
       if (i >= 0) pickOpt(i);
     }
@@ -813,12 +891,18 @@ function sessionView(route: Route): PageView {
   document.addEventListener('keydown', onKey);
   cleanups.push(() => document.removeEventListener('keydown', onKey));
 
-  const ro = new ResizeObserver(() => requestAnimationFrame(fitOpts));
+  const ro = new ResizeObserver(() =>
+    requestAnimationFrame(() => {
+      fitPaper();
+      fitOpts();
+    }),
+  );
   ro.observe(stage);
   cleanups.push(() => ro.disconnect());
 
   save();
   showItem(false);
+  if (sc.pref.on) setInk(true);
   tick();
   return view;
 }

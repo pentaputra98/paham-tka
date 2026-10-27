@@ -137,3 +137,27 @@ test.describe('Offline (G-Offline, PRD §14.12)', () => {
     await context.setOffline(false);
   });
 });
+
+test.describe('Pembaruan aplikasi (v1.25)', () => {
+  test('Pengaturan: versi dan waktu build tampil; Cek pembaruan menyatakan versi terbaru', async ({
+    page,
+  }) => {
+    await page.addInitScript(() =>
+      localStorage.setItem(
+        'pahamtka:v1:ui',
+        JSON.stringify({ schemaVersion: 1, visits: 5, installGuideShown: true, welcomeSeen: true }),
+      ),
+    );
+    await page.goto('./#/pengaturan');
+    const panel = page.locator('section.panel', {
+      has: page.getByRole('heading', { name: 'Pembaruan aplikasi' }),
+    });
+    await expect(panel).toContainText(/Versi \d+\.\d+\.\d+, dibuat/);
+    await page.waitForFunction(async () => !!(await navigator.serviceWorker.getRegistration()), null, {
+      timeout: 30_000,
+    });
+    await panel.getByRole('button', { name: 'Cek pembaruan' }).click();
+    await expect(panel.locator('[data-upd-text]')).toHaveText('Sudah versi terbaru.', { timeout: 30_000 });
+    await expect(panel.getByRole('button', { name: 'Perbaiki aplikasi' })).toBeVisible();
+  });
+});

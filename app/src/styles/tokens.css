@@ -168,6 +168,10 @@
     --size-tes-mini-h: calc(28px * var(--ui));
     --size-tes-mini-w: calc(7px * var(--ui));
     --size-tes-print-bar: calc(120px * var(--ui));
+    /* kertas coretan tes (v1.25): lebar menu alat; tombol Benar/Salah ringkas di HP */
+    --size-sc-menu: calc(380px * var(--ui));
+    --size-sc-menu-wide: calc(620px * var(--ui));
+    --size-tes-tf-btn-sm: calc(64px * var(--ui));
     --fs-tes-big: calc(clamp(56px, 7.5vw, 120px) * var(--ui));
     --dur-caret: 1060ms;
     /* lembar catatan lengkap: dua kolom bila tiap kolom ≥ 340 px */
@@ -198,6 +202,13 @@
     --ink-blue: var(--blue-300);
     --ink-white: var(--paper-0);
     --ink-grey: var(--metal-400);
+    /* tinta kertas coretan tes: gelap di kertas putih (kontras ≥ 5,9:1), tanpa emas */
+    --coret-1: var(--ink-900);
+    --coret-2: var(--blue-600);
+    --coret-3: var(--red-600);
+    --coret-paper: var(--paper-0);
+    --coret-line: var(--a-sky-30);
+    --coret-margin: var(--a-red-35);
     /* angka matriks pada adegan soal 1: besar, dibaca dari jauh */
     --fs-mat: calc(clamp(24px, 2.9vw, 52px) * var(--ui));
     --size-seal: calc(58px * var(--ui));

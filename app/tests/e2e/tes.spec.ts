@@ -153,6 +153,107 @@ test.describe('Tes penguasaan', () => {
     await expect(page.locator('.tes-res-sub')).toContainText('1 dari 21');
   });
 
+  test('coretan: kertas terpisah, tersimpan per soal, cubit dan telapak tidak menulis, dihapus saat dikumpulkan', async ({
+    page,
+  }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+    await setup(page);
+    await startTest(page, 'Dewi');
+    const pages = (): Promise<Record<string, unknown[]>> =>
+      page.evaluate(
+        () =>
+          (
+            JSON.parse(localStorage.getItem('pahamtka:v1:tes-coret') ?? '{"pages":{}}') as {
+              pages: Record<string, unknown[]>;
+            }
+          ).pages,
+      );
+
+    // aktifkan: papan jawaban diganti kertas coretan, soal tetap terlihat
+    const ink = page.getByRole('button', { name: 'Coretan' });
+    await ink.click();
+    await expect(ink).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('.sc')).toBeVisible();
+    await expect(page.locator('.tes-ans')).toBeHidden();
+    await expect(page.locator('.tes-paper')).toBeVisible();
+    await expect(page.getByRole('toolbar', { name: 'Alat coretan' })).toBeVisible();
+
+    // dua goresan tetikus
+    const box = (await page.locator('.sc-cv').boundingBox())!;
+    for (const y of [60, 110]) {
+      await page.mouse.move(box.x + 40, box.y + y);
+      await page.mouse.down();
+      await page.mouse.move(box.x + 160, box.y + y + 20, { steps: 6 });
+      await page.mouse.up();
+    }
+    expect((await pages())['0']).toHaveLength(2);
+    await page.getByRole('button', { name: 'Urungkan' }).click();
+    expect((await pages())['0']).toHaveLength(1);
+
+    // cubit dua jari dan telapak: tidak ada goresan baru, kertas membesar
+    await page.evaluate(() => {
+      const cv = document.querySelector('.sc-cv')!;
+      const r = cv.getBoundingClientRect();
+      const ev = (type: string, id: number, x: number, y: number, size = 12): void => {
+        cv.dispatchEvent(
+          new PointerEvent(type, {
+            pointerId: id,
+            pointerType: 'touch',
+            clientX: r.left + x,
+            clientY: r.top + y,
+            width: size,
+            height: size,
+            bubbles: true,
+            cancelable: true,
+          }),
+        );
+      };
+      ev('pointerdown', 11, 150, 150);
+      ev('pointermove', 11, 160, 152);
+      ev('pointerdown', 12, 230, 150);
+      for (let i = 1; i <= 8; i++) {
+        ev('pointermove', 11, 160 - i * 8, 150);
+        ev('pointermove', 12, 230 + i * 8, 150);
+      }
+      ev('pointerup', 12, 294, 150);
+      ev('pointermove', 11, 60, 200);
+      ev('pointerup', 11, 60, 200);
+      ev('pointerdown', 21, 100, 100, 80);
+      ev('pointermove', 21, 140, 160, 80);
+      ev('pointerup', 21, 140, 160, 80);
+    });
+    expect((await pages())['0']).toHaveLength(1);
+    await expect(page.locator('.sc-zoom')).toBeVisible();
+    await page.locator('.sc-zoom').click();
+    await expect(page.locator('.sc-zoom')).toBeHidden();
+
+    // pindah soal: halaman coretan baru; kembali: coretan lama masih ada; mode coretan tetap aktif
+    await page.getByRole('button', { name: 'Berikutnya' }).click();
+    await expect(page.locator('.tes-paper .soal-h')).toContainText('Soal 2 dari 21');
+    await expect(page.locator('.sc-hint')).toBeVisible();
+    await page.getByRole('button', { name: 'Sebelumnya' }).click();
+    await expect(page.locator('.sc-hint')).toBeHidden();
+
+    // muat ulang: coretan dan mode aktif dipulihkan
+    await page.reload();
+    await expect(page.locator('.sc')).toBeVisible();
+    expect((await pages())['0']).toHaveLength(1);
+
+    // matikan: papan jawaban kembali
+    await page.getByRole('button', { name: 'Coretan' }).click();
+    await expect(page.locator('.tes-ans')).toBeVisible();
+    await expect(page.locator('.sc')).toBeHidden();
+
+    // dikumpulkan: coretan ikut dihapus
+    await page.getByRole('button', { name: /Daftar soal/ }).click();
+    await page.getByRole('button', { name: 'Kumpulkan tes' }).click();
+    await page.getByRole('button', { name: 'Kumpulkan sekarang' }).click();
+    await expect(page).toHaveURL(/#\/tes\/hasil\?id=/, { timeout: 20_000 });
+    expect(await page.evaluate(() => localStorage.getItem('pahamtka:v1:tes-coret'))).toBeNull();
+    expect(errors).toEqual([]);
+  });
+
   test('meninggalkan tes meminta konfirmasi; tes bisa dilanjutkan dari menu', async ({ page }) => {
     await setup(page);
     await startTest(page, 'Citra');

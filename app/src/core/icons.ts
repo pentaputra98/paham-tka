@@ -61,6 +61,15 @@ import trendingDown from 'lucide-static/icons/trending-down.svg?raw';
 import hourglass from 'lucide-static/icons/hourglass.svg?raw';
 import circleX from 'lucide-static/icons/circle-x.svg?raw';
 import chartColumn from 'lucide-static/icons/chart-column.svg?raw';
+import wrench from 'lucide-static/icons/wrench.svg?raw';
+import hand from 'lucide-static/icons/hand.svg?raw';
+import ellipsis from 'lucide-static/icons/ellipsis.svg?raw';
+import scan from 'lucide-static/icons/scan.svg?raw';
+import grid3x3 from 'lucide-static/icons/grid-3x3.svg?raw';
+import rows3 from 'lucide-static/icons/rows-3.svg?raw';
+import square from 'lucide-static/icons/square.svg?raw';
+import penTool from 'lucide-static/icons/pen-tool.svg?raw';
+import notebookPen from 'lucide-static/icons/notebook-pen.svg?raw';
 
 const RAW = {
   'arrow-left': arrowLeft,
@@ -122,6 +131,15 @@ const RAW = {
   hourglass: hourglass,
   'circle-x': circleX,
   'chart-column': chartColumn,
+  wrench: wrench,
+  hand: hand,
+  ellipsis: ellipsis,
+  scan: scan,
+  'grid-3x3': grid3x3,
+  'rows-3': rows3,
+  square: square,
+  'pen-tool': penTool,
+  'notebook-pen': notebookPen,
 } as const;
 
 export type IconName = keyof typeof RAW;

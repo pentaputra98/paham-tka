@@ -70,6 +70,7 @@ function headerHtml(h: HeaderSpec, home: boolean): string {
   return `<div class="top-side">${left}${block}</div>${homeBtn}
     <div class="top-side top-side--end"><div class="top-ctrls">
       <span class="offline-badge" data-offline-badge hidden></span>
+      <button type="button" class="btn upd-badge" data-update-badge hidden></button>
       ${h.extra ?? ''}
       ${h.progress ? `<a class="btn" href="#/kemajuan">${icon('list-checks')}<span class="btn-label">Kemajuan</span></a>` : ''}
       <a class="icon-btn" href="#/pengaturan" aria-label="Pengaturan" title="Pengaturan">${icon('settings')}</a>
@@ -113,7 +114,7 @@ function render(route: Route, prev: Route | null): void {
 
   top.innerHTML = headerHtml(next.header, route.name !== 'home');
   const badge = top.querySelector<HTMLElement>('[data-offline-badge]');
-  if (badge) mountBadge(badge);
+  if (badge) mountBadge(badge, top.querySelector<HTMLButtonElement>('[data-update-badge]'));
   foot.innerHTML = footerHtml();
   foot.hidden = next.footer === false;
   document.title = next.title ? `${next.title} · Paham TKA` : 'Paham TKA';

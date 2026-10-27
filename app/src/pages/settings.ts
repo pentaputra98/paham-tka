@@ -6,7 +6,15 @@ import { store, type MotionPref, type Path, type Settings, type Speed } from '..
 import { storage } from '../core/storage';
 import type { PageView } from '../shell/app';
 import { openInstallGuide } from '../shell/install';
-import { checkOffline, offlineStatus } from '../shell/offline';
+import {
+  checkOffline,
+  checkUpdate,
+  offlineStatus,
+  onUpdateStatus,
+  repairApp,
+  updateStatus,
+  applyUpdate,
+} from '../shell/offline';
 import { openSheet } from '../shell/sheet';
 import { toast } from '../shell/toast';
 import { tes } from '../tes/state';
@@ -44,10 +52,48 @@ function offlineText(): string {
   }
 }
 
+export const buildLabel = (): string =>
+  `Versi ${__APP_VERSION__}, dibuat ${new Date(__BUILD_TIME__).toLocaleString('id-ID', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })}`;
+
+function updateText(): string {
+  const u = updateStatus();
+  switch (u.phase) {
+    case 'checking':
+      return 'Memeriksa versi terbaru…';
+    case 'downloading':
+      return `Mengunduh versi baru… ${u.pct}%`;
+    case 'ready':
+      return 'Versi baru sudah siap. Tekan Perbarui sekarang.';
+    case 'latest':
+      return 'Sudah versi terbaru.';
+    case 'offline':
+      return 'Tidak tersambung internet. Sambungkan internet, lalu cek lagi.';
+    case 'error':
+      return 'Pemeriksaan gagal. Coba lagi, atau pakai Perbaiki aplikasi.';
+    case 'unsupported':
+      return 'Pembaruan otomatis aktif saat aplikasi dibuka dari tautan kelas (https).';
+    default:
+      return 'Aplikasi memeriksa versi baru setiap kali dibuka.';
+  }
+}
+
 export function settingsPage(): PageView {
   const s = store.settings;
   const el = html(`<div class="page-scroll"><div class="page-col">
     <h1 class="page-title">Pengaturan</h1>
+    <section class="panel">
+      <h2>Pembaruan aplikasi</h2>
+      <div class="row"><span class="row-label">${esc(buildLabel())}<small data-upd-text aria-live="polite">${esc(updateText())}</small></span>
+        <button type="button" class="btn btn--primary" data-upd>${icon('refresh-cw')}<span data-upd-l>Cek pembaruan</span></button></div>
+      <div class="row"><span class="row-label">Perbaiki aplikasi<small>Bila tampilan tetap versi lama atau ada yang macet. Aplikasi diunduh ulang dari internet; kemajuan, coretan, dan hasil tes tetap aman.</small></span>
+        <button type="button" class="btn" data-repair>${icon('wrench')}<span>Perbaiki aplikasi</span></button></div>
+    </section>
     <section class="panel">
       <h2>Suara</h2>
       ${toggle('sfx', 'Efek suara', 'Bunyi kapur, angka terbang, dan jawaban.')}
@@ -86,9 +132,20 @@ export function settingsPage(): PageView {
       <div class="row"><span class="row-label">Hapus semua data<small>Pengaturan, kemajuan, dan coretan di perangkat ini.</small></span>
         <button type="button" class="btn btn--danger" data-reset>${icon('trash-2')}<span>Hapus semua data</span></button></div>
       <p class="muted" data-storage-warn ${storage.healthy ? 'hidden' : ''}>Penyimpanan perangkat penuh atau diblokir. Perubahan hanya berlaku sampai halaman ditutup.</p>
-      <p class="muted">Versi ${esc(__APP_VERSION__)}</p>
+      <p class="muted">${esc(buildLabel())}</p>
     </section>
   </div></div>`);
+
+  const updText = el.querySelector<HTMLElement>('[data-upd-text]')!;
+  const updBtn = el.querySelector<HTMLButtonElement>('[data-upd]')!;
+  const syncUpd = (): void => {
+    const ph = updateStatus().phase;
+    updText.textContent = updateText();
+    updBtn.disabled = ph === 'checking' || ph === 'downloading';
+    el.querySelector('[data-upd-l]')!.textContent = ph === 'ready' ? 'Perbarui sekarang' : 'Cek pembaruan';
+  };
+  syncUpd();
+  const offUpd = onUpdateStatus(syncUpd);
 
   el.addEventListener('click', async (e) => {
     const t = e.target as Element;
@@ -111,6 +168,26 @@ export function settingsPage(): PageView {
       return;
     }
     if (t.closest('[data-install]')) return openInstallGuide();
+    if (t.closest('[data-upd]')) {
+      if (updateStatus().phase === 'ready') applyUpdate();
+      else void checkUpdate();
+      return;
+    }
+    if (t.closest('[data-repair]')) {
+      if (!navigator.onLine) {
+        toast('Sambungkan internet dulu, lalu tekan Perbaiki aplikasi lagi.');
+        return;
+      }
+      openSheet({
+        title: 'Perbaiki aplikasi?',
+        body: '<p>Paham TKA akan diunduh ulang dari internet lalu dimuat ulang. <b>Kemajuan belajar, coretan, dan hasil tes tidak terhapus.</b> Setelah itu tunggu lencana <b>Siap offline</b> muncul lagi.</p>',
+        actions: [
+          { label: 'Perbaiki sekarang', kind: 'primary', icon: 'wrench', onClick: () => void repairApp() },
+        ],
+        closeLabel: 'Batal',
+      });
+      return;
+    }
     if (t.closest('[data-check]')) {
       const r = await checkOffline();
       openSheet({
@@ -174,5 +251,11 @@ export function settingsPage(): PageView {
     }
   });
 
-  return { el, title: 'Pengaturan', header: { back: { label: 'Kembali', href: '#/' } }, footer: true };
+  return {
+    el,
+    title: 'Pengaturan',
+    header: { back: { label: 'Kembali', href: '#/' } },
+    footer: true,
+    destroy: offUpd,
+  };
 }
