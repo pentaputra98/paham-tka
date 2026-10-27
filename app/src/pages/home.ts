@@ -17,6 +17,7 @@ import {
   type SoalMeta,
 } from '../content';
 import type { PageView } from '../shell/app';
+import { tes } from '../tes/state';
 import { showSoonSheet } from '../shell/app';
 
 const RESP_ICON: Record<Response, IconName> = {
@@ -61,6 +62,8 @@ function heroHtml(): string {
   const cta = last
     ? `<a class="btn btn--primary btn--lg" href="#/soal/${last}">${icon('play')}<span>Lanjutkan soal ${last}</span></a>`
     : `<a class="btn btn--primary btn--lg" href="#/soal/${OPEN[0]}">${icon('play')}<span>Mulai dari soal ${OPEN[0]}</span></a>`;
+  // tes penguasaan (v1.24): menu khusus di samping tombol utama; tes yang sedang berjalan dapat dilanjutkan
+  const tesBtn = `<a class="btn btn--lg hero-tes" href="#/tes">${icon('clipboard-check')}<span>${tes.active ? 'Lanjutkan tes' : 'Tes penguasaan'}</span></a>`;
   return `<section class="hero bp crop" aria-labelledby="hero-t">
     <div>
       <p class="eyebrow">TKA Matematika Tingkat Lanjut · 2025</p>
@@ -76,6 +79,7 @@ function heroHtml(): string {
     </div>
     <div class="hero-foot">
       ${cta}
+      ${tesBtn}
       <div class="hero-stats">
         <span><b class="num">${sum.done}/${sum.ready}</b>dibahas</span>
         <span><b class="num">${sum.practiceOk}/${sum.practiceTotal}</b>latihan benar</span>

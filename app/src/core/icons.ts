@@ -50,6 +50,17 @@ import refreshCw from 'lucide-static/icons/refresh-cw.svg?raw';
 import monitorSmartphone from 'lucide-static/icons/monitor-smartphone.svg?raw';
 import clipboardCopy from 'lucide-static/icons/clipboard-copy.svg?raw';
 import circleAlert from 'lucide-static/icons/circle-alert.svg?raw';
+import arrowBigUp from 'lucide-static/icons/arrow-big-up.svg?raw';
+import del from 'lucide-static/icons/delete.svg?raw';
+import cornerDownLeft from 'lucide-static/icons/corner-down-left.svg?raw';
+import clipboardCheck from 'lucide-static/icons/clipboard-check.svg?raw';
+import history from 'lucide-static/icons/history.svg?raw';
+import layoutGrid from 'lucide-static/icons/layout-grid.svg?raw';
+import trendingUp from 'lucide-static/icons/trending-up.svg?raw';
+import trendingDown from 'lucide-static/icons/trending-down.svg?raw';
+import hourglass from 'lucide-static/icons/hourglass.svg?raw';
+import circleX from 'lucide-static/icons/circle-x.svg?raw';
+import chartColumn from 'lucide-static/icons/chart-column.svg?raw';
 
 const RAW = {
   'arrow-left': arrowLeft,
@@ -100,6 +111,17 @@ const RAW = {
   'monitor-smartphone': monitorSmartphone,
   'clipboard-copy': clipboardCopy,
   'circle-alert': circleAlert,
+  'arrow-big-up': arrowBigUp,
+  delete: del,
+  'corner-down-left': cornerDownLeft,
+  'clipboard-check': clipboardCheck,
+  history: history,
+  'layout-grid': layoutGrid,
+  'trending-up': trendingUp,
+  'trending-down': trendingDown,
+  hourglass: hourglass,
+  'circle-x': circleX,
+  'chart-column': chartColumn,
 } as const;
 
 export type IconName = keyof typeof RAW;

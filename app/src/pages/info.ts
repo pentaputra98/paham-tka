@@ -51,7 +51,7 @@ export function aboutPage(): PageView {
     </section>
     <section class="panel">
       <h2>Privasi</h2>
-      <p>Tidak ada akun, iklan, pelacakan, atau pengiriman data. Pengaturan, kemajuan, dan coretanmu hanya tersimpan di perangkat ini.</p>
+      <p>Tidak ada akun, iklan, pelacakan, atau pengiriman data. Pengaturan, kemajuan, coretan, dan hasil tes penguasaan (termasuk nama dan sekolah yang kamu isi) hanya tersimpan di perangkat ini.</p>
     </section>
     <section class="panel">
       <h2>Pintasan keyboard</h2>

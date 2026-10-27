@@ -3,7 +3,18 @@
  * dapat dibagikan. Contoh: #/soal/5/bahas?b=2&l=1&m=amati
  */
 export type RouteName =
-  'home' | 'detail' | 'bahas' | 'latihan' | 'catatan' | 'kemajuan' | 'pengaturan' | 'tentang';
+  | 'home'
+  | 'detail'
+  | 'bahas'
+  | 'latihan'
+  | 'catatan'
+  | 'kemajuan'
+  | 'pengaturan'
+  | 'tentang'
+  | 'tes'
+  | 'tes-kerjakan'
+  | 'tes-hasil'
+  | 'tes-riwayat';
 
 export interface Route {
   name: RouteName;
@@ -22,7 +33,14 @@ const DEPTH: Record<RouteName, number> = {
   bahas: 2,
   latihan: 2,
   catatan: 2,
+  tes: 1,
+  'tes-kerjakan': 2,
+  'tes-hasil': 2,
+  'tes-riwayat': 2,
 };
+
+/** Halaman tes penguasaan (v1.24): #/tes, #/tes/kerjakan, #/tes/hasil, #/tes/riwayat. */
+const TES_SUB = ['kerjakan', 'hasil', 'riwayat'] as const;
 
 /** Fungsi murni: hash → rute. Rute yang tidak dikenal menjadi beranda. */
 export function parseHash(hash: string): Route {
@@ -43,6 +61,11 @@ export function parseHash(hash: string): Route {
     if (parts.length === 3 && (c === 'bahas' || c === 'latihan' || c === 'catatan')) return mk(c, no);
     return mk('home');
   }
+  if (a === 'tes') {
+    if (parts.length === 1) return mk('tes');
+    if (parts.length === 2 && (TES_SUB as readonly string[]).includes(b!)) return mk(`tes-${b}` as RouteName);
+    return mk('home');
+  }
   if (parts.length === 1 && (a === 'kemajuan' || a === 'pengaturan' || a === 'tentang')) return mk(a);
   return mk('home');
 }
@@ -59,6 +82,10 @@ export function toHash(r: Pick<Route, 'name' | 'no'> & { query?: Record<string, 
     case 'latihan':
     case 'catatan':
       return `#/soal/${r.no}/${r.name}${q}`;
+    case 'tes-kerjakan':
+    case 'tes-hasil':
+    case 'tes-riwayat':
+      return `#/tes/${r.name.slice(4)}${q}`;
     default:
       return `#/${r.name}${q}`;
   }

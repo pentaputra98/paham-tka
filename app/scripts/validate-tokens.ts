@@ -2,7 +2,7 @@
  * validate:tokens (PRD §16.4) — gagal bila gaya komponen memuat nilai mentah.
  * Diadaptasi dari skrip validate-tokens.cjs milik skill design-system, diperketat:
  *  CSS (selain tokens.css): heks, rgb()/hsl(), px ≥ 2 (jarak/ukuran), ms/s (durasi),
- *   cubic-bezier mentah, z-index angka. Pengecualian: baris @media (kueri tidak bisa var()).
+ *   cubic-bezier mentah, z-index angka. Pengecualian: baris @media/@container (kueri tidak bisa var()).
  *  TS (selain core/tokens.ts): warna heks/rgb dan nilai px/ms di dalam string gaya/keyframes.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
@@ -63,7 +63,7 @@ for (const file of walk(ROOT)) {
         inComment = true;
         line = line.slice(0, start);
       }
-      if (/^\s*@media/.test(line)) return;
+      if (/^\s*@(media|container)/.test(line)) return;
       // nilai pecahan khusus SVG/rangka (viewBox, d) tidak di CSS; keyframe persentase diizinkan
     } else {
       const t = line.trim();

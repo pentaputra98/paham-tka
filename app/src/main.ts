@@ -14,6 +14,7 @@ import { latihanPage } from './pages/latihan';
 import { detailPage } from './pages/detail';
 import { homePage } from './pages/home';
 import { settingsPage } from './pages/settings';
+import { tesPage } from './pages/tes';
 import { startShell } from './shell/app';
 import { captureInstallPrompt, maybeShowInstallGuide } from './shell/install';
 import { maybeShowWelcome } from './shell/welcome';
@@ -69,6 +70,10 @@ startShell({
   kemajuan: progressPage,
   pengaturan: settingsPage,
   tentang: aboutPage,
+  tes: tesPage,
+  'tes-kerjakan': tesPage,
+  'tes-hasil': tesPage,
+  'tes-riwayat': tesPage,
 });
 void startOffline();
 // sambutan pertama masuk dulu; panduan pasang (kunjungan kedua) menunggu sambutan ditutup

@@ -9,6 +9,7 @@ import { openInstallGuide } from '../shell/install';
 import { checkOffline, offlineStatus } from '../shell/offline';
 import { openSheet } from '../shell/sheet';
 import { toast } from '../shell/toast';
+import { tes } from '../tes/state';
 
 type BoolKey = 'sfx' | 'music' | 'lite' | 'classroom';
 
@@ -156,6 +157,7 @@ export function settingsPage(): PageView {
                       icon: 'trash-2',
                       onClick: () => {
                         store.resetAll();
+                        tes.reload();
                         toast('Semua data di perangkat ini sudah dihapus.');
                         location.hash = '#/';
                       },

@@ -151,6 +151,25 @@
     --fs-lat-mat: calc(clamp(18px, 1.6vw, 28px) * var(--ui));
     --fs-lat-opt: calc(clamp(15px, 1.25vw, 22px) * var(--ui));
     --fs-lat-big: calc(clamp(56px, 7vw, 120px) * var(--ui));
+    /* tes penguasaan (v1.24) */
+    --size-kb-max: calc(980px * var(--ui));
+    --size-tes-opt: calc(160px * var(--ui));
+    --size-tes-tf-btn: calc(84px * var(--ui));
+    --size-tes-lbl: calc(150px * var(--ui));
+    --size-tes-pill: calc(132px * var(--ui));
+    --size-tes-map: calc(860px * var(--ui));
+    --size-tes-maprow: calc(250px * var(--ui));
+    --size-tes-cell-sm: calc(20px * var(--ui));
+    --size-tes-bar-h: calc(10px * var(--ui));
+    --size-tes-proc: calc(640px * var(--ui));
+    --size-tes-res: calc(1240px * var(--ui));
+    --size-tes-trend-h: calc(132px * var(--ui));
+    --size-tes-trend-w: calc(56px * var(--ui));
+    --size-tes-mini-h: calc(28px * var(--ui));
+    --size-tes-mini-w: calc(7px * var(--ui));
+    --size-tes-print-bar: calc(120px * var(--ui));
+    --fs-tes-big: calc(clamp(56px, 7.5vw, 120px) * var(--ui));
+    --dur-caret: 1060ms;
     /* lembar catatan lengkap: dua kolom bila tiap kolom ≥ 340 px */
     --size-notes-max: calc(1180px * var(--ui));
     --size-notes-col: calc(340px * var(--ui));
@@ -298,6 +317,7 @@
     --z-fly: 95;
     --z-fly-num: 96;
     --z-header: 100;
+    --z-kb: 110;
     --z-drawer: 120;
     --z-toast: 130;
     --z-tip: 140;
@@ -400,6 +420,7 @@
       --fs-board: 15.5px;
       --fs-board-full: 18px;
       --fs-mat: 24px;
+      --fs-tes-big: 56px;
       --gutter: 10px;
     }
   }
