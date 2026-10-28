@@ -14,6 +14,7 @@ import { latihanPage } from './pages/latihan';
 import { detailPage } from './pages/detail';
 import { homePage } from './pages/home';
 import { settingsPage } from './pages/settings';
+import { eksPage } from './pages/eks';
 import { tesPage } from './pages/tes';
 import { startShell } from './shell/app';
 import { captureInstallPrompt, maybeShowInstallGuide } from './shell/install';
@@ -74,6 +75,7 @@ startShell({
   'tes-kerjakan': tesPage,
   'tes-hasil': tesPage,
   'tes-riwayat': tesPage,
+  ekspedisi: eksPage,
 });
 void startOffline();
 // sambutan pertama masuk dulu; panduan pasang (kunjungan kedua) menunggu sambutan ditutup

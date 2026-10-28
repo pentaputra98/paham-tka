@@ -168,6 +168,16 @@
     --size-tes-mini-h: calc(28px * var(--ui));
     --size-tes-mini-w: calc(7px * var(--ui));
     --size-tes-print-bar: calc(120px * var(--ui));
+    /* Ekspedisi TKA (v1.26) */
+    --size-eks-col: calc(1180px * var(--ui));
+    --size-eks-card: calc(560px * var(--ui));
+    --size-eks-pos: calc(220px * var(--ui));
+    --size-eks-side: calc(400px * var(--ui));
+    --size-eks-veil: calc(620px * var(--ui));
+    --fs-eks-code: calc(clamp(44px, 7vw, 96px) * var(--ui));
+    --fs-eks-clock: calc(clamp(48px, 8vw, 120px) * var(--ui));
+    --fs-eks-big: calc(clamp(28px, 3.4vw, 48px) * var(--ui));
+    --fs-eks-who: calc(clamp(32px, 4.5vw, 64px) * var(--ui));
     /* kertas coretan tes (v1.25): lebar menu alat; tombol Benar/Salah ringkas di HP */
     --size-sc-menu: calc(380px * var(--ui));
     --size-sc-menu-wide: calc(620px * var(--ui));

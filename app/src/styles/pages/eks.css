@@ -1,0 +1,932 @@
+/* Ekspedisi TKA (v1.26): permainan kelas. Peran → tim (peta pos, soal dua fase, kode bukti) dan papan Game
+   Master (waktu, kode bukti, peringkat). Soal memakai kertas dan papan jawaban tes penguasaan. Emas hanya untuk
+   juara pada pengumuman hasil akhir. */
+@layer pages {
+  .eks {
+    height: 100%;
+    min-height: 0;
+  }
+
+  /* tombol di beranda: merah TKA, beda dari dua tombol lain */
+  .hero-foot .hero-eks {
+    --btn-bg: var(--red-600);
+    --btn-fg: var(--paper-0);
+    --btn-border: var(--red-600);
+    --btn-bg-hover: var(--red-400);
+    --btn-border-hover: var(--red-400);
+    --btn-bg-press: var(--red-400);
+
+    font-weight: var(--fw-bold);
+  }
+
+  .eks-scroll {
+    height: 100%;
+    overflow: hidden auto;
+  }
+
+  .eks-col {
+    display: grid;
+    gap: var(--space-4);
+    width: min(100%, var(--size-eks-col));
+    margin: 0 auto;
+    padding: var(--space-4) max(var(--gutter), var(--safe-right)) var(--space-6)
+      max(var(--gutter), var(--safe-left));
+  }
+
+  .eks-center {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    overflow: hidden auto;
+    padding: var(--space-4) var(--gutter);
+  }
+
+  .eks-card {
+    display: grid;
+    gap: var(--space-3);
+    width: min(100%, var(--size-eks-card));
+    padding: var(--space-5);
+    border: var(--bw-1) solid var(--color-line);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-2);
+  }
+
+  .eks-card--wide {
+    width: min(100%, var(--size-eks-col));
+  }
+
+  .eks-hero {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-5) var(--space-6);
+    border-radius: var(--radius-xl);
+    background: var(--color-stage);
+    color: var(--color-on-stage);
+    box-shadow: var(--shadow-art);
+  }
+
+  .eks-title,
+  .eks-h1 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-ui);
+    font-weight: var(--fw-black);
+    font-size: var(--fs-eks-big);
+    line-height: var(--lh-heading);
+  }
+
+  .eks-h1 {
+    font-size: var(--fs-title);
+    color: var(--color-brand);
+  }
+
+  .eks-lede {
+    max-width: 70ch;
+    font-size: var(--fs-lead);
+    color: var(--color-on-stage-muted);
+  }
+
+  .eks-h2 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-ui);
+    font-weight: var(--fw-heavy);
+    font-size: var(--fs-title);
+    color: var(--color-brand);
+  }
+
+  .eks-note {
+    font-size: var(--fs-small);
+    color: var(--color-text-secondary);
+  }
+
+  .eks-code-in {
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+  }
+
+  /* ---------- peran ---------- */
+  .eks-roles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--size-eks-pos), 1fr));
+    gap: var(--space-3);
+  }
+
+  .eks-role {
+    display: grid;
+    align-content: start;
+    gap: var(--space-1);
+    min-height: var(--size-lat-opt-h);
+    padding: var(--space-4);
+    border: var(--bw-2) solid var(--color-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    color: var(--color-text);
+    text-align: left;
+    box-shadow: var(--shadow-1);
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+
+  .eks-role .lucide {
+    width: var(--size-icon-lg);
+    height: var(--size-icon-lg);
+    color: var(--color-brand);
+  }
+
+  .eks-role b {
+    font-family: var(--font-display);
+    font-size: var(--fs-lead);
+    color: var(--color-brand);
+  }
+
+  .eks-role span {
+    font-size: var(--fs-small);
+    color: var(--color-text-secondary);
+  }
+
+  .eks-role--main {
+    border-color: var(--color-brand);
+    background: var(--color-brand);
+  }
+
+  .eks-role--main .lucide,
+  .eks-role--main b,
+  .eks-role--main span {
+    color: var(--color-on-brand);
+  }
+
+  .eks-role--gm {
+    border-style: dashed;
+  }
+
+  .eks-role:active {
+    transform: scale(var(--press-scale));
+  }
+
+  /* ---------- anggota dan giliran ---------- */
+  .eks-add {
+    display: flex;
+    align-items: end;
+    gap: var(--space-2);
+  }
+
+  .eks-add .tes-field {
+    flex: 1;
+  }
+
+  .eks-names,
+  .eks-order {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--size-eks-pos), 1fr));
+    gap: var(--space-2);
+    list-style: none;
+  }
+
+  .eks-names li,
+  .eks-order li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--size-touch);
+    padding: 0 var(--space-1) 0 var(--space-2);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-sunken);
+    font-weight: var(--fw-semibold);
+  }
+
+  .eks-nm {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .eks-num {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: var(--size-ring);
+    height: var(--size-ring);
+    border-radius: 50%;
+    background: var(--color-brand);
+    color: var(--color-on-brand);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-bold);
+  }
+
+  .eks-order li {
+    font-size: var(--fs-lead);
+  }
+
+  .eks-rules {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2) var(--space-4);
+    list-style: none;
+    font-size: var(--fs-small);
+  }
+
+  .eks-rules li {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .eks-rules .lucide {
+    flex: none;
+    width: var(--size-icon-md);
+    height: var(--size-icon-md);
+    color: var(--color-brand);
+  }
+
+  /* ---------- peta ---------- */
+  .eks-map-h {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .eks-map-h .eks-h1 {
+    font-size: var(--fs-eks-big);
+  }
+
+  .eks-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .eks-stats div {
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-1);
+  }
+
+  .eks-stats dt {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .eks-stats dd {
+    font-family: var(--font-display);
+    font-weight: var(--fw-heavy);
+    font-size: var(--fs-title);
+    color: var(--color-brand);
+  }
+
+  .eks-map {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--size-eks-pos), 1fr));
+    gap: var(--space-3);
+  }
+
+  .eks-pos {
+    display: grid;
+    align-content: start;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    border: var(--bw-2) solid var(--color-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    color: var(--color-text);
+    text-align: left;
+    box-shadow: var(--shadow-1);
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+
+  .eks-pos:active {
+    transform: scale(var(--press-scale));
+  }
+
+  .eks-pos-n {
+    font-family: var(--font-display);
+    font-weight: var(--fw-black);
+    font-size: var(--fs-title);
+    color: var(--color-constraint);
+  }
+
+  .eks-pos b {
+    font-family: var(--font-display);
+    font-size: var(--fs-lead);
+    color: var(--color-brand);
+  }
+
+  .eks-pos-g {
+    font-size: var(--fs-small);
+    color: var(--color-text-secondary);
+  }
+
+  .eks-pos-s {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1-5);
+    margin-top: var(--space-2);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-semibold);
+    color: var(--color-brand);
+  }
+
+  .eks-pos-s .lucide {
+    width: var(--size-icon-sm);
+    height: var(--size-icon-sm);
+  }
+
+  .eks-pos.is-done {
+    border-color: var(--color-intermediate);
+    background: var(--color-intermediate-bg);
+  }
+
+  .eks-pos.is-locked {
+    opacity: 0.6;
+  }
+
+  .eks-foot {
+    text-align: center;
+  }
+
+  .eks-sum {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-xl);
+    background: var(--color-stage);
+    color: var(--color-on-stage);
+  }
+
+  .eks-sum .eks-h2 {
+    color: var(--color-on-stage);
+  }
+
+  .eks-traps {
+    display: grid;
+    gap: var(--space-1-5);
+    padding-left: var(--space-5);
+  }
+
+  /* ---------- soal ---------- */
+  .eks-play {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    height: 100%;
+    background: var(--color-stage);
+  }
+
+  .eks-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) max(var(--gutter), var(--safe-right)) var(--space-2)
+      max(var(--gutter), var(--safe-left));
+    border-bottom: var(--bw-1) solid var(--color-line);
+    background: var(--color-surface);
+  }
+
+  .eks-bar-sp {
+    flex: 1;
+  }
+
+  .eks-who,
+  .eks-phase {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1-5);
+    min-height: var(--size-touch);
+    padding: 0 var(--space-3);
+    border-radius: var(--radius-pill);
+    font-weight: var(--fw-bold);
+  }
+
+  .eks-who {
+    background: var(--color-brand);
+    color: var(--color-on-brand);
+    font-size: var(--fs-lead);
+  }
+
+  .eks-phase {
+    background: var(--color-surface-sunken);
+    color: var(--color-brand);
+    font-size: var(--fs-small);
+  }
+
+  .eks-phase:empty {
+    display: none;
+  }
+
+  .eks-phase[data-p='diskusi'],
+  .eks-phase[data-p='pacu'] {
+    background: var(--color-intermediate-bg);
+    color: var(--color-intermediate);
+  }
+
+  .eks-phase[data-p='kedua'] {
+    background: var(--color-constraint-bg);
+    color: var(--color-constraint);
+  }
+
+  .eks-who .lucide,
+  .eks-phase .lucide {
+    width: var(--size-icon-md);
+    height: var(--size-icon-md);
+  }
+
+  .eks-clock {
+    min-width: var(--size-tes-pill);
+    font-family: var(--font-display);
+    font-weight: var(--fw-heavy);
+    font-size: var(--fs-title);
+    color: var(--color-brand);
+    text-align: center;
+  }
+
+  .eks-clock--big {
+    font-size: var(--fs-eks-big);
+  }
+
+  .eks-clock.is-warn,
+  .eks-b-clock.is-warn {
+    color: var(--color-constraint);
+  }
+
+  .eks-stage {
+    grid-row: 3;
+  }
+
+  .eks-play[data-ph='siap'] .eks-stage {
+    visibility: hidden;
+  }
+
+  .eks-paper {
+    font-size: var(--fs-board);
+  }
+
+  .eks-stage .tes-opt-m {
+    font-size: var(--fs-board);
+  }
+
+  .eks-paper .eq {
+    margin: var(--space-2) 0;
+    text-align: center;
+    font-size: 1.15em;
+  }
+
+  .eks-lines {
+    display: grid;
+    gap: var(--space-1-5);
+    margin: var(--space-2) 0;
+    padding-left: var(--space-6);
+    list-style: decimal;
+  }
+
+  .eks-lines li::marker {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    color: var(--color-constraint);
+  }
+
+  .eks-hintbox {
+    margin-top: var(--space-3);
+    padding: var(--space-3);
+    border-left: var(--bw-4) solid var(--color-intermediate);
+    border-radius: var(--radius-md);
+    background: var(--color-intermediate-bg);
+    font-size: var(--fs-small);
+  }
+
+  .eks-hintbox .tes-k {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    color: var(--color-intermediate);
+  }
+
+  .tes-opt.is-struck {
+    opacity: 0.35;
+    text-decoration: line-through;
+  }
+
+  .tes-opt.is-key {
+    border-color: var(--color-intermediate);
+    box-shadow:
+      0 0 0 var(--bw-4) var(--color-intermediate-bg),
+      var(--shadow-1);
+  }
+
+  .tes-opt.is-bad {
+    border-color: var(--color-constraint);
+  }
+
+  /* serah giliran dan umpan balik: menutup panggung */
+  .eks-veil {
+    position: absolute;
+    inset: 0;
+    z-index: var(--z-panel);
+    display: grid;
+    place-items: center;
+    padding: var(--space-4);
+    background: var(--color-scrim);
+  }
+
+  .eks-veil-c {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-3);
+    width: min(100%, var(--size-eks-veil));
+    max-height: 100%;
+    overflow: hidden auto;
+    padding: var(--space-5) var(--space-6);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    text-align: center;
+    box-shadow: var(--shadow-3);
+  }
+
+  .eks-veil-k {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .eks-veil-who {
+    font-family: var(--font-display);
+    font-weight: var(--fw-black);
+    font-size: var(--fs-eks-who);
+    line-height: var(--lh-heading);
+    color: var(--color-brand);
+  }
+
+  .eks-veil-t {
+    color: var(--color-text-secondary);
+  }
+
+  .eks-fb-k {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-display);
+    font-weight: var(--fw-heavy);
+    font-size: var(--fs-title);
+  }
+
+  .eks-fb-k .lucide {
+    width: var(--size-icon-lg);
+    height: var(--size-icon-lg);
+  }
+
+  .eks-fb-k.is-ok {
+    color: var(--color-intermediate);
+  }
+
+  .eks-fb-k.is-no {
+    color: var(--color-constraint);
+  }
+
+  .eks-fb-big {
+    font-family: var(--font-display);
+    font-weight: var(--fw-black);
+    font-size: var(--fs-eks-code);
+    line-height: 1;
+    color: var(--color-brand);
+  }
+
+  .eks-fb-t {
+    font-size: var(--fs-lead);
+    font-weight: var(--fw-semibold);
+  }
+
+  .eks-fb-ex {
+    font-size: var(--fs-small);
+    color: var(--color-text-secondary);
+  }
+
+  /* ---------- Pacu Waktu ---------- */
+  .eks-alarm {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--gutter);
+    background: var(--color-constraint);
+    color: var(--color-on-brand);
+  }
+
+  .eks-pacu {
+    grid-row: 3;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3);
+    align-content: center;
+    padding: var(--space-4) var(--gutter);
+  }
+
+  .eks-tile {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-1);
+    min-height: var(--size-lat-opt-h);
+    padding: var(--space-4);
+    border: var(--bw-2) solid transparent;
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    color: var(--color-text);
+    text-align: left;
+  }
+
+  .eks-tile-t {
+    font-family: var(--font-display);
+    font-size: var(--fs-lead);
+    font-weight: var(--fw-bold);
+    color: var(--color-brand);
+  }
+
+  .eks-tile-s {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--fs-small);
+  }
+
+  .eks-tile-s .lucide {
+    width: var(--size-icon-sm);
+    height: var(--size-icon-sm);
+  }
+
+  .eks-tile.is-benar {
+    border-color: var(--color-intermediate);
+    background: var(--color-intermediate-bg);
+  }
+
+  .eks-tile.is-salah {
+    border-color: var(--color-constraint);
+    background: var(--color-constraint-bg);
+  }
+
+  /* ---------- kode bukti ---------- */
+  .eks-report {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .eks-code {
+    padding: var(--space-2) var(--space-5);
+    border: var(--bw-2) dashed var(--color-brand);
+    border-radius: var(--radius-lg);
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-eks-code);
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-brand);
+  }
+
+  .eks-rep {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--fs-lead);
+  }
+
+  .eks-bonus {
+    color: var(--color-intermediate);
+  }
+
+  /* ---------- Game Master ---------- */
+  .eks-setup .row {
+    flex-wrap: wrap;
+  }
+
+  .eks-stepper {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--fs-lead);
+  }
+
+  .eks-poslist {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-1) var(--space-4);
+  }
+
+  .eks-board {
+    display: grid;
+    grid-template-columns: minmax(0, var(--size-eks-side)) minmax(0, 1fr);
+    gap: var(--space-4);
+    height: 100%;
+    padding: var(--space-4) max(var(--gutter), var(--safe-right)) var(--space-4)
+      max(var(--gutter), var(--safe-left));
+    background: var(--color-stage);
+  }
+
+  .eks-b-side,
+  .eks-b-main {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+    min-height: 0;
+    overflow: hidden auto;
+    padding: var(--space-4);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-2);
+  }
+
+  .eks-b-clock {
+    font-family: var(--font-display);
+    font-weight: var(--fw-black);
+    font-size: var(--fs-eks-clock);
+    line-height: 1;
+    color: var(--color-brand);
+    text-align: center;
+  }
+
+  .eks-b-state {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--color-text-muted);
+  }
+
+  .eks-b-ctl {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-1-5);
+  }
+
+  .eks-b-entry {
+    display: flex;
+    align-items: end;
+    gap: var(--space-2);
+  }
+
+  .eks-b-entry .tes-field {
+    flex: 1;
+  }
+
+  .eks-b-msg {
+    min-height: var(--size-touch);
+    font-weight: var(--fw-semibold);
+  }
+
+  .eks-b-msg.is-ok {
+    color: var(--color-intermediate);
+  }
+
+  .eks-b-msg.is-no {
+    color: var(--color-constraint);
+  }
+
+  .eks-b-more {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .eks-rank,
+  .eks-final {
+    display: grid;
+    gap: var(--space-2);
+    list-style: none;
+  }
+
+  .eks-rank li,
+  .eks-final li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-sunken);
+  }
+
+  .eks-rank li.is-top {
+    background: var(--color-intermediate-bg);
+  }
+
+  .eks-rk {
+    display: grid;
+    place-items: center;
+    width: var(--size-touch);
+    height: var(--size-touch);
+    border-radius: 50%;
+    background: var(--color-brand);
+    color: var(--color-on-brand);
+    font-family: var(--font-display);
+    font-weight: var(--fw-black);
+    font-size: var(--fs-title);
+  }
+
+  .eks-rk-n {
+    display: grid;
+    gap: var(--space-1);
+    font-family: var(--font-display);
+    font-weight: var(--fw-heavy);
+    font-size: var(--fs-title);
+    color: var(--color-brand);
+  }
+
+  .eks-rk-p {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+
+  .eks-dot {
+    padding: 0 var(--space-1-5);
+    border: var(--bw-1) solid var(--color-line);
+    border-radius: var(--radius-xs);
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+  }
+
+  .eks-dot.is-on {
+    border-color: var(--color-intermediate);
+    background: var(--color-intermediate);
+    color: var(--color-on-brand);
+  }
+
+  .eks-rk-s {
+    font-family: var(--font-display);
+    font-weight: var(--fw-black);
+    font-size: var(--fs-eks-big);
+    color: var(--color-brand);
+  }
+
+  .eks-final li.is-first {
+    background: var(--color-result-bg);
+  }
+
+  .eks-final li.is-first .eks-rk {
+    background: var(--color-result);
+    color: var(--color-result-ink);
+  }
+
+  .eks-final li.is-first .eks-rk-s,
+  .eks-final li.is-first .eks-rk-n {
+    color: var(--color-result-ink);
+  }
+
+  .eks-joins {
+    display: grid;
+    gap: var(--space-2);
+    margin: var(--space-3) 0;
+    list-style: none;
+  }
+
+  .eks-joins li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-sunken);
+    font-weight: var(--fw-semibold);
+  }
+
+  .eks-joins b {
+    font-family: var(--font-mono);
+    font-size: var(--fs-title);
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-brand);
+  }
+
+  .eks-hard {
+    display: grid;
+    gap: var(--space-1);
+    padding-left: var(--space-5);
+  }
+
+  @media (max-height: 560px) {
+    .eks-rules {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .eks-card {
+      padding: var(--space-3) var(--space-4);
+    }
+
+    .eks-pacu {
+      gap: var(--space-2);
+    }
+  }
+}

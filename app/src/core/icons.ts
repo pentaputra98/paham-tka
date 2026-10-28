@@ -70,6 +70,17 @@ import rows3 from 'lucide-static/icons/rows-3.svg?raw';
 import square from 'lucide-static/icons/square.svg?raw';
 import penTool from 'lucide-static/icons/pen-tool.svg?raw';
 import notebookPen from 'lucide-static/icons/notebook-pen.svg?raw';
+import mapIc from 'lucide-static/icons/map.svg?raw';
+import usersIc from 'lucide-static/icons/users.svg?raw';
+import keyRoundIc from 'lucide-static/icons/key-round.svg?raw';
+import plusIc from 'lucide-static/icons/plus.svg?raw';
+import minusIc from 'lucide-static/icons/minus.svg?raw';
+import shuffleIc from 'lucide-static/icons/shuffle.svg?raw';
+import armchairIc from 'lucide-static/icons/armchair.svg?raw';
+import lightbulbIc from 'lucide-static/icons/lightbulb.svg?raw';
+import userIc from 'lucide-static/icons/user.svg?raw';
+import footprintsIc from 'lucide-static/icons/footprints.svg?raw';
+import trophyIc from 'lucide-static/icons/trophy.svg?raw';
 
 const RAW = {
   'arrow-left': arrowLeft,
@@ -140,6 +151,17 @@ const RAW = {
   square: square,
   'pen-tool': penTool,
   'notebook-pen': notebookPen,
+  map: mapIc,
+  users: usersIc,
+  'key-round': keyRoundIc,
+  plus: plusIc,
+  minus: minusIc,
+  shuffle: shuffleIc,
+  armchair: armchairIc,
+  lightbulb: lightbulbIc,
+  user: userIc,
+  footprints: footprintsIc,
+  trophy: trophyIc,
 } as const;
 
 export type IconName = keyof typeof RAW;

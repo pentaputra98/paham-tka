@@ -28,7 +28,7 @@ export function frac(n: number, d: number): string {
 }
 
 /** Jumlah suku [koefisien, monomial]; koefisien 1 disembunyikan kecuali suku tetap. */
-function terms(list: Array<[number, string]>): string {
+export function terms(list: Array<[number, string]>): string {
   let out = '';
   for (const [c, mono] of list) {
     if (c === 0) continue;
@@ -48,9 +48,9 @@ function poly(cs: number[], v: string): string {
 }
 
 /** x − a dengan tanda yang rapi: x−3, x+3, x. */
-const lin = (v: string, a: number): string => (a === 0 ? v : a > 0 ? `${v}-${a}` : `${v}+${-a}`);
-const sq = (v: string, a: number): string => (a === 0 ? `${v}^2` : `(${lin(v, a)})^2`);
-const pt = (...c: number[]): string => `(${c.join(',\\,')})`;
+export const lin = (v: string, a: number): string => (a === 0 ? v : a > 0 ? `${v}-${a}` : `${v}+${-a}`);
+export const sq = (v: string, a: number): string => (a === 0 ? `${v}^2` : `(${lin(v, a)})^2`);
+export const pt = (...c: number[]): string => `(${c.join(',\\,')})`;
 const colv = (...c: Array<number | string>): string => `\\begin{pmatrix} ${c.join(' \\\\ ')} \\end{pmatrix}`;
 const mat2 = (a: number, b: number, c: number, d: number): string =>
   `\\begin{pmatrix} ${a} & ${b} \\\\ ${c} & ${d} \\end{pmatrix}`;

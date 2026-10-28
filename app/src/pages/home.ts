@@ -80,6 +80,7 @@ function heroHtml(): string {
     <div class="hero-foot">
       ${cta}
       ${tesBtn}
+      <a class="btn btn--lg hero-eks" href="#/ekspedisi">${icon('map')}<span>Ekspedisi TKA</span></a>
       <div class="hero-stats">
         <span><b class="num">${sum.done}/${sum.ready}</b>dibahas</span>
         <span><b class="num">${sum.practiceOk}/${sum.practiceTotal}</b>latihan benar</span>

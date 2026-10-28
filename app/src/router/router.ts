@@ -14,7 +14,8 @@ export type RouteName =
   | 'tes'
   | 'tes-kerjakan'
   | 'tes-hasil'
-  | 'tes-riwayat';
+  | 'tes-riwayat'
+  | 'ekspedisi';
 
 export interface Route {
   name: RouteName;
@@ -37,6 +38,7 @@ const DEPTH: Record<RouteName, number> = {
   'tes-kerjakan': 2,
   'tes-hasil': 2,
   'tes-riwayat': 2,
+  ekspedisi: 1,
 };
 
 /** Halaman tes penguasaan (v1.24): #/tes, #/tes/kerjakan, #/tes/hasil, #/tes/riwayat. */
@@ -66,7 +68,8 @@ export function parseHash(hash: string): Route {
     if (parts.length === 2 && (TES_SUB as readonly string[]).includes(b!)) return mk(`tes-${b}` as RouteName);
     return mk('home');
   }
-  if (parts.length === 1 && (a === 'kemajuan' || a === 'pengaturan' || a === 'tentang')) return mk(a);
+  if (parts.length === 1 && (a === 'kemajuan' || a === 'pengaturan' || a === 'tentang' || a === 'ekspedisi'))
+    return mk(a);
   return mk('home');
 }
 
