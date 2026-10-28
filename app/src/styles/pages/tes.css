@@ -420,8 +420,17 @@
     }
   }
 
+  /* tombol sembunyikan: merah agar beda dari tombol huruf (v1.27) */
   .kb-x {
-    color: var(--color-on-stage);
+    --btn-bg: var(--red-600);
+    --btn-fg: var(--paper-0);
+    --btn-border: var(--red-600);
+    --btn-bg-hover: var(--red-400);
+    --btn-border-hover: var(--red-400);
+    --btn-bg-press: var(--red-400);
+
+    min-height: var(--size-touch);
+    font-weight: var(--fw-bold);
   }
 
   .kb-rows {

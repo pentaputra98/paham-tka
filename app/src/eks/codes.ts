@@ -82,6 +82,27 @@ export function parseJoin(raw: string): Join | null {
   return joinCode(game, team) === `${game}-${s.slice(4)}` ? { game, team } : null;
 }
 
+// ---------- kode mulai ----------
+/** Kode mulai (3 huruf) baru tampil di papan saat guru menekan Mulai: kelompok tidak bisa mulai lebih dulu. */
+export const startCode = (game: string): string => enc(hash32(`${SALT}|mulai|${game}`) & 0x7fff, 3);
+
+export const checkStart = (game: string, raw: string): boolean => clean(raw) === startCode(game);
+
+// ---------- lambang kelompok ----------
+/** Lambang per nomor kelompok, sama di tablet dan papan Game Master (tanpa server, foto tidak bisa dikirim). */
+export const EMBLEMS = [
+  { name: 'Kompas', icon: 'compass' },
+  { name: 'Roket', icon: 'rocket' },
+  { name: 'Jangkar', icon: 'anchor' },
+  { name: 'Gunung', icon: 'mountain' },
+  { name: 'Api', icon: 'flame' },
+  { name: 'Elang', icon: 'bird' },
+] as const;
+
+export const emblem = (team: number): (typeof EMBLEMS)[number] =>
+  EMBLEMS[(team - 1 + EMBLEMS.length) % EMBLEMS.length]!;
+export const teamName = (team: number): string => `Kelompok ${team} · ${emblem(team).name}`;
+
 // ---------- kode bukti pos ----------
 export interface Proof {
   pos: PosId;

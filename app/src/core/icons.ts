@@ -81,6 +81,22 @@ import lightbulbIc from 'lucide-static/icons/lightbulb.svg?raw';
 import userIc from 'lucide-static/icons/user.svg?raw';
 import footprintsIc from 'lucide-static/icons/footprints.svg?raw';
 import trophyIc from 'lucide-static/icons/trophy.svg?raw';
+import compassIc from 'lucide-static/icons/compass.svg?raw';
+import anchorIc from 'lucide-static/icons/anchor.svg?raw';
+import rocketIc from 'lucide-static/icons/rocket.svg?raw';
+import mountainIc from 'lucide-static/icons/mountain.svg?raw';
+import flameIc from 'lucide-static/icons/flame.svg?raw';
+import birdIc from 'lucide-static/icons/bird.svg?raw';
+import cameraIc from 'lucide-static/icons/camera.svg?raw';
+import sunIc from 'lucide-static/icons/sun.svg?raw';
+import partyPopperIc from 'lucide-static/icons/party-popper.svg?raw';
+import medalIc from 'lucide-static/icons/medal.svg?raw';
+import crownIc from 'lucide-static/icons/crown.svg?raw';
+import sparklesIc from 'lucide-static/icons/sparkles.svg?raw';
+import mapPinIc from 'lucide-static/icons/map-pin.svg?raw';
+import routeIc from 'lucide-static/icons/route.svg?raw';
+import logOutIc from 'lucide-static/icons/log-out.svg?raw';
+import flagTriangleRightIc from 'lucide-static/icons/flag-triangle-right.svg?raw';
 
 const RAW = {
   'arrow-left': arrowLeft,
@@ -162,6 +178,22 @@ const RAW = {
   user: userIc,
   footprints: footprintsIc,
   trophy: trophyIc,
+  compass: compassIc,
+  anchor: anchorIc,
+  rocket: rocketIc,
+  mountain: mountainIc,
+  flame: flameIc,
+  bird: birdIc,
+  camera: cameraIc,
+  sun: sunIc,
+  'party-popper': partyPopperIc,
+  medal: medalIc,
+  crown: crownIc,
+  sparkles: sparklesIc,
+  'map-pin': mapPinIc,
+  route: routeIc,
+  'log-out': logOutIc,
+  'flag-triangle-right': flagTriangleRightIc,
 } as const;
 
 export type IconName = keyof typeof RAW;

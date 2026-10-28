@@ -176,6 +176,36 @@
     --size-eks-veil: calc(620px * var(--ui));
     --fs-eks-code: calc(clamp(44px, 7vw, 96px) * var(--ui));
     --fs-eks-clock: calc(clamp(48px, 8vw, 120px) * var(--ui));
+    --size-eks-pin: calc(56px * var(--ui));
+    --size-eks-emb: calc(40px * var(--ui));
+    --size-eks-emb-lg: calc(56px * var(--ui));
+    --size-eks-emb-xl: calc(112px * var(--ui));
+    --size-eks-lens: min(52vh, calc(340px * var(--ui)));
+    --size-eks-ring: calc(220px * var(--ui));
+    --size-eks-ring-sm: min(calc(220px * var(--ui)), 22vh);
+    --size-eks-pod-1: calc(170px * var(--ui));
+    --size-eks-pod-2: calc(124px * var(--ui));
+    --size-eks-pod-3: calc(92px * var(--ui));
+    --size-eks-seg: calc(10px * var(--ui));
+    --fs-eks-cd: calc(clamp(96px, 16vw, 220px) * var(--ui));
+    --dur-eks-pulse: 1400ms;
+    --dur-eks-shake: 500ms;
+    /* warna kelompok (teks putih di atasnya ≥ 5:1) */
+    --team-1: #2a5bb0;
+    --team-2: #c8102e;
+    --team-3: #237a4b;
+    --team-4: #6a3fc7;
+    --team-5: #a8540c;
+    --team-6: #0b7272;
+    /* nuansa fase permainan dan konfeti */
+    --eks-tint-diskusi: rgb(42 91 176 / 0.62);
+    --eks-tint-kedua: rgb(200 16 46 / 0.22);
+    --eks-tint-low: rgb(200 16 46 / 0.3);
+    --confetti-1: #7fb2ff;
+    --confetti-2: #e5394f;
+    --confetti-3: #f2c14e;
+    --confetti-4: #ffffff;
+    --confetti-5: #2fbf71;
     --fs-eks-big: calc(clamp(28px, 3.4vw, 48px) * var(--ui));
     --fs-eks-who: calc(clamp(32px, 4.5vw, 64px) * var(--ui));
     /* kertas coretan tes (v1.25): lebar menu alat; tombol Benar/Salah ringkas di HP */
@@ -328,6 +358,7 @@
     --z-label3d: 4;
     --z-crop: 6;
     --z-lab: 9;
+    --z-lift: 1;
     --z-panel: 10;
     --z-sticky: 11;
     --z-notes: 12;

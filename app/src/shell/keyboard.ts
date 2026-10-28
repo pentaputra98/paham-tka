@@ -14,6 +14,8 @@ import { DUR, EASE_OUT, RISE_PX } from '../core/tokens';
 export interface KbField {
   input: HTMLInputElement;
   label: string;
+  /** selalu huruf kapital (kode) */
+  caps?: boolean;
 }
 
 type Shift = 'off' | 'once' | 'lock';
@@ -60,7 +62,7 @@ export function mountKeyboard(host: HTMLElement, fields: KbField[], onDone: () =
     <div class="kb-top">
       <span class="kb-lbl" data-kb-lbl></span>
       <span class="kb-val" aria-hidden="true"><span data-kb-val></span><span class="kb-caret"></span></span>
-      <button type="button" class="icon-btn kb-x" data-k="close" aria-label="Tutup papan ketik">${icon('chevron-down')}</button>
+      <button type="button" class="btn kb-x" data-k="close" aria-label="Sembunyikan papan ketik">${icon('chevron-down')}<span>Sembunyikan</span></button>
     </div>
     <div class="kb-rows">${ROWS.map((r) => `<div class="kb-row">${r.map(keyHtml).join('')}</div>`).join('')}</div>
   </div>`);
@@ -69,6 +71,10 @@ export function mountKeyboard(host: HTMLElement, fields: KbField[], onDone: () =
   const field = (): KbField | undefined => fields[cur];
 
   const autoShift = (): void => {
+    if (field()?.caps) {
+      shift = 'lock';
+      return;
+    }
     if (shift === 'lock') return;
     const f = field();
     const v = f?.input.value ?? '';
@@ -188,6 +194,15 @@ export function mountKeyboard(host: HTMLElement, fields: KbField[], onDone: () =
     insert(k);
   });
 
+  // ketukan di luar papan ketik dan kolomnya menyembunyikan papan ketik
+  const onOutside = (e: PointerEvent): void => {
+    if (el.hidden) return;
+    const t = e.target as Node;
+    if (el.contains(t) || fields.some((f) => f.input === t)) return;
+    close();
+  };
+  document.addEventListener('pointerdown', onOutside, true);
+
   const onFocus = (i: number) => (): void => open(i);
   const onInput = (): void => render();
   const handlers = fields.map((f, i) => {
@@ -233,6 +248,7 @@ export function mountKeyboard(host: HTMLElement, fields: KbField[], onDone: () =
     },
     destroy() {
       stopRepeat();
+      document.removeEventListener('pointerdown', onOutside, true);
       fields.forEach((f, i) => {
         f.input.removeEventListener('focus', handlers[i]!);
         f.input.removeEventListener('click', handlers[i]!);

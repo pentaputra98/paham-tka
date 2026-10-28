@@ -12,8 +12,12 @@ import { hash32, type PosId } from './codes';
 const KEY_TEAM = 'pahamtka:v1:eks-tim';
 const KEY_GM = 'pahamtka:v1:eks-gm';
 const KEY_GM_OK = 'pahamtka:v1:eks-gm-ok';
+const KEY_HIST = 'pahamtka:v1:eks-riwayat';
+const KEY_GM_HIST = 'pahamtka:v1:eks-gm-riwayat';
 
 export const HINTS = 3;
+/** "Panggil tim lebih awal" hanya sekali per pos (fase Diskusi otomatis setelah waktu Mandiri tetap berlaku) */
+export const HELP_PER_POS = 1;
 export const PTS = { mandiri: 10, diskusi: 6, kedua: 3, bonus: 5, pacu: 10 } as const;
 export const T_MANDIRI = 40_000;
 export const T_SOAL = 120_000;
@@ -38,6 +42,8 @@ export interface Progress {
   firstAll: boolean;
   /** soal ke-i sudah dibuka penjawab; ditinggal = hangus */
   open: boolean;
+  /** berapa kali "Panggil tim lebih awal" dipakai di pos ini */
+  help?: number;
   /** Pacu Waktu: batas waktu dan keadaan tiap soal */
   end?: number;
   st?: Array<'belum' | 'benar' | 'salah'>;
@@ -57,6 +63,12 @@ export interface TeamState {
   results: Partial<Record<PosId | 0, PosResult>>;
   traps: string[];
   cur?: Progress | null;
+  /** sudah memasukkan kode mulai dari Game Master */
+  started?: boolean;
+  startAt?: number;
+  /** swafoto kelompok (data URL JPEG), hanya di tablet ini */
+  photo?: string;
+  finished?: boolean;
 }
 
 function shuffle(n: number, seed: number): number[] {
@@ -217,3 +229,62 @@ export function ranking(g: GmState): Array<{ no: number; name: string; score: nu
     .sort((a, b) => b.score - a.score || b.done.length - a.done.length || a.last - b.last)
     .map(({ no, name, score, done }) => ({ no, name, score, done }));
 }
+
+// ---------------------------------------------------------------------------------------------
+// Riwayat (tablet dan Game Master), hanya di perangkat
+// ---------------------------------------------------------------------------------------------
+export interface TeamHistory {
+  id: string;
+  at: number;
+  team: number;
+  members: string[];
+  photo?: string;
+  score: number;
+  pos: Array<{ pos: PosId; score: number }>;
+  traps: string[];
+}
+
+export interface GmHistory {
+  id: string;
+  at: number;
+  minutes: number;
+  rank: Array<{ no: number; name: string; score: number; done: number }>;
+}
+
+function list<T>(key: string): T[] {
+  try {
+    const v = JSON.parse(storage.get(key) ?? '[]') as unknown;
+    return Array.isArray(v) ? (v as T[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+export const history = {
+  team: (): TeamHistory[] => list<TeamHistory>(KEY_HIST),
+  addTeam(h: TeamHistory): void {
+    const all = [h, ...list<TeamHistory>(KEY_HIST).filter((x) => x.id !== h.id)].slice(0, 20);
+    // foto paling besar; bila penyimpanan penuh, simpan tanpa foto lama
+    if (!storage.set(KEY_HIST, JSON.stringify(all)))
+      storage.set(KEY_HIST, JSON.stringify(all.map((x, i) => (i === 0 ? x : { ...x, photo: undefined }))));
+  },
+  removeTeam(id: string): void {
+    storage.set(KEY_HIST, JSON.stringify(list<TeamHistory>(KEY_HIST).filter((x) => x.id !== id)));
+  },
+  clearTeam(): void {
+    storage.remove(KEY_HIST);
+  },
+  gm: (): GmHistory[] => list<GmHistory>(KEY_GM_HIST),
+  addGm(h: GmHistory): void {
+    storage.set(
+      KEY_GM_HIST,
+      JSON.stringify([h, ...list<GmHistory>(KEY_GM_HIST).filter((x) => x.id !== h.id)].slice(0, 30)),
+    );
+  },
+  removeGm(id: string): void {
+    storage.set(KEY_GM_HIST, JSON.stringify(list<GmHistory>(KEY_GM_HIST).filter((x) => x.id !== id)));
+  },
+  clearGm(): void {
+    storage.remove(KEY_GM_HIST);
+  },
+};
