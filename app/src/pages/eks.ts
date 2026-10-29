@@ -1361,7 +1361,7 @@ export function eksPage(): PageView {
         <section class="eks-frame" aria-labelledby="s-w">
           <h2 class="eks-frame-h" id="s-w">${icon('timer')}Waktu permainan</h2>
           <div class="eks-stepper"><button type="button" class="icon-btn" data-min="-5" aria-label="Kurangi 5 menit">${icon('minus')}</button><b class="num" data-mins></b><button type="button" class="icon-btn" data-min="5" aria-label="Tambah 5 menit">${icon('plus')}</button></div>
-          <div class="seg" role="radiogroup" aria-label="Pilihan cepat">${[10, 30, 45, 60].map((m) => `<button type="button" role="radio" data-quick="${m}">${m} menit</button>`).join('')}</div>
+          <div class="seg" role="radiogroup" aria-label="Pilihan cepat">${[5, 10, 30, 45, 60].map((m) => `<button type="button" role="radio" data-quick="${m}">${m} menit</button>`).join('')}</div>
           <p class="eks-note">Bisa ditambah, dikurangi, atau dijeda saat bermain.</p>
         </section>
         <section class="eks-frame" aria-labelledby="s-k">

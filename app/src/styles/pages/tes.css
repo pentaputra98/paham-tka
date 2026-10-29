@@ -7,19 +7,6 @@
     min-height: 0;
   }
 
-  /* tombol tes di beranda (v1.25): terisi biru langit agar mudah ditemukan; teks biru tua ≈ 6,3:1 */
-  .hero-foot .hero-tes {
-    --btn-bg: var(--blue-300);
-    --btn-fg: var(--blue-900);
-    --btn-border: var(--blue-300);
-    --btn-bg-hover: var(--bp-ink-100);
-    --btn-border-hover: var(--bp-ink-100);
-    --btn-bg-press: var(--bp-ink-100);
-
-    font-weight: var(--fw-bold);
-    box-shadow: 0 0 0 var(--bw-4) var(--a-sky-30);
-  }
-
   .tes-k {
     font-family: var(--font-mono);
     font-size: var(--fs-label);
@@ -2017,10 +2004,6 @@
       min-width: var(--size-tes-tf-btn-sm);
     }
 
-    .hero-foot .hero-tes {
-      box-shadow: none;
-    }
-
     /* menu coretan di HP mendatar: dua kolom agar tidak lebih tinggi dari panggung */
     .sc-menu {
       gap: var(--space-2) var(--space-4);
@@ -2050,15 +2033,6 @@
     .tes-map-b {
       gap: var(--space-1-5) var(--space-4);
       padding: var(--space-2) var(--space-3);
-    }
-
-    .hero-foot {
-      display: grid;
-      gap: var(--space-1-5);
-    }
-
-    .hero-foot .btn--lg {
-      min-height: var(--size-touch);
     }
 
     .tes-nav {

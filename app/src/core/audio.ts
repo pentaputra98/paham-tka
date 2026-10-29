@@ -162,6 +162,11 @@ class Synth {
     this.lastTick = n;
     this.note(2100, { dur: 0.025, vol: 0.025, type: 'triangle' });
   }
+  /** hitung mundur Ekspedisi: bip pendek tiap angka, bip tinggi saat mulai */
+  count(last = false): void {
+    if (!this.ok()) return;
+    this.note(last ? 1760 : 880, { dur: last ? 0.45 : 0.16, vol: 0.13, type: 'triangle', rev: 0.3 });
+  }
   chalk(): void {
     if (this.ok()) this.noise({ dur: 0.07, vol: 0.035, f0: 3000, f1: 5200, q: 2 });
   }

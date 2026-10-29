@@ -8,18 +8,6 @@
     min-height: 0;
   }
 
-  /* tombol di beranda: merah TKA, beda dari dua tombol lain */
-  .hero-foot .hero-eks {
-    --btn-bg: var(--red-600);
-    --btn-fg: var(--paper-0);
-    --btn-border: var(--red-600);
-    --btn-bg-hover: var(--red-400);
-    --btn-border-hover: var(--red-400);
-    --btn-bg-press: var(--red-400);
-
-    font-weight: var(--fw-bold);
-  }
-
   .eks-scroll {
     height: 100%;
     overflow: hidden auto;
@@ -1444,6 +1432,7 @@
 
   .eks-ring {
     position: relative;
+    container-type: size;
     display: grid;
     place-items: center;
     width: var(--size-eks-ring);
@@ -1478,11 +1467,12 @@
     stroke: var(--color-constraint);
   }
 
+  /* angka jam selalu di dalam cincin: ukuran huruf mengikuti diameter cincin */
   .eks-b-clock {
     position: relative;
     font-family: var(--font-display);
     font-weight: var(--fw-black);
-    font-size: var(--fs-eks-big);
+    font-size: var(--fs-eks-ring);
     line-height: 1;
     color: var(--color-brand);
   }
@@ -1723,9 +1713,12 @@
   }
 
   .eks-timeup-s b,
-  .eks-end-btn b,
-  .eks-role--main b {
+  .eks-end-btn b {
     color: inherit;
+  }
+
+  .eks-role--main b {
+    color: var(--color-on-brand);
   }
 
   /* ---------- hasil akhir: podium ---------- */

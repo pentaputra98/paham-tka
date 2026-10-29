@@ -80,8 +80,7 @@ function headerHtml(h: HeaderSpec, home: boolean): string {
 
 function footerHtml(): string {
   return `<span class="foot-copy">${esc(COPYRIGHT)}</span>
-    <a class="link-btn" href="#/tentang">Tentang</a>
-    <span class="ver">v${esc(__APP_VERSION__)}</span>`;
+    <a class="foot-about" href="#/tentang">${icon('info')}<span>Tentang aplikasi</span><span class="foot-ver num">v${esc(__APP_VERSION__)}</span></a>`;
 }
 
 function showSoonSheet(no: number): void {

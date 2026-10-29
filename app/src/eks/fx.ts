@@ -2,6 +2,7 @@
  * Efek Ekspedisi TKA (v1.27): hitung mundur sebelum soal, konfeti hasil akhir, swafoto kelompok.
  * Semua gerak memakai transform/opacity (atau kanvas) dan menghormati hemat gerak.
  */
+import { SND } from '../core/audio';
 import { reducedMotion } from '../core/clock';
 import { html } from '../core/dom';
 import { play } from '../core/motion';
@@ -18,10 +19,12 @@ export function countdown(host: HTMLElement, from = 5): Promise<void> {
     let k = from;
     const step = (): void => {
       if (k === 0) {
+        SND.count(true);
         el.remove();
         resolve();
         return;
       }
+      SND.count();
       n.textContent = String(k);
       play(
         n,

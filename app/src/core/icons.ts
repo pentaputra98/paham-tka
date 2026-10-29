@@ -81,6 +81,7 @@ import lightbulbIc from 'lucide-static/icons/lightbulb.svg?raw';
 import userIc from 'lucide-static/icons/user.svg?raw';
 import footprintsIc from 'lucide-static/icons/footprints.svg?raw';
 import trophyIc from 'lucide-static/icons/trophy.svg?raw';
+import targetIc from 'lucide-static/icons/target.svg?raw';
 import compassIc from 'lucide-static/icons/compass.svg?raw';
 import anchorIc from 'lucide-static/icons/anchor.svg?raw';
 import rocketIc from 'lucide-static/icons/rocket.svg?raw';
@@ -178,6 +179,7 @@ const RAW = {
   user: userIc,
   footprints: footprintsIc,
   trophy: trophyIc,
+  target: targetIc,
   compass: compassIc,
   anchor: anchorIc,
   rocket: rocketIc,

@@ -54,16 +54,34 @@ function card(s: SoalMeta, i: number): string {
     : `<button type="button" ${attrs} title="Sedang disiapkan">${inner}</button>`;
 }
 
-function heroHtml(): string {
+/** Cincin kemajuan kecil (SVG): persen 0–100. */
+const ring = (pct: number): string => {
+  const p = Math.max(0, Math.min(100, Math.round(pct)));
+  return `<span class="hs-ring"><svg viewBox="0 0 40 40" aria-hidden="true"><circle class="hs-bg" cx="20" cy="20" r="16" pathLength="100"/>${p > 0 ? `<circle class="hs-fg" cx="20" cy="20" r="16" pathLength="100" stroke-dashoffset="${100 - p}"/>` : ''}</svg><span class="hs-in num">${p}%</span></span>`;
+};
+
+/** Kemajuan belajar (revisi v1.28): bingkai sendiri di kepala katalog, dengan cincin, bukan angka lepas. */
+function statsHtml(): string {
   const sum = progressSummary(OPEN.length);
+  const done = Math.min(sum.done, sum.ready);
+  const pDone = sum.ready ? (done / sum.ready) * 100 : 0;
+  const pPrac = sum.practiceTotal ? (sum.practiceOk / sum.practiceTotal) * 100 : 0;
+  return `<a class="home-stats" href="#/kemajuan" title="Kemajuan belajar">
+    <span class="hs-item">${ring(pDone)}<span class="hs-t"><b class="num">${done}/${sum.ready}</b>dibahas</span></span>
+    <span class="hs-item">${ring(pPrac)}<span class="hs-t"><b class="num">${sum.practiceOk}/${sum.practiceTotal}</b>latihan benar</span></span>
+    <span class="hs-item"><span class="hs-ring hs-ring--plain"><span class="hs-in">${icon('timer')}</span></span><span class="hs-t"><b class="num">${sum.minutes}</b>menit</span></span>
+  </a>`;
+}
+
+function heroHtml(): string {
   // soal terakhir yang dibuka bisa saja sudah dikunci kembali (daftar OPEN): mulai dari soal pertama yang dibuka
   const lo = store.progress.lastOpened;
   const last = lo && isReady(lo) ? lo : null;
-  const cta = last
-    ? `<a class="btn btn--primary btn--lg" href="#/soal/${last}">${icon('play')}<span>Lanjutkan soal ${last}</span></a>`
-    : `<a class="btn btn--primary btn--lg" href="#/soal/${OPEN[0]}">${icon('play')}<span>Mulai dari soal ${OPEN[0]}</span></a>`;
-  // tes penguasaan (v1.24): menu khusus di samping tombol utama; tes yang sedang berjalan dapat dilanjutkan
-  const tesBtn = `<a class="btn btn--lg hero-tes" href="#/tes">${icon('clipboard-check')}<span>${tes.active ? 'Lanjutkan tes' : 'Tes penguasaan'}</span></a>`;
+  const no = last ?? OPEN[0];
+  const go = last ? 'Lanjutkan' : 'Mulai';
+  // tiga aksi seragam dalam satu baris (v1.28): panggung string art tetap terlihat di tablet
+  const act = (cls: string, href: string, ic: IconName, b: string, small: string): string =>
+    `<a class="hero-act ${cls}" href="${href}"><span class="hero-act-i">${icon(ic)}</span><b>${b}</b> <small>${small}</small></a>`;
   return `<section class="hero bp crop" aria-labelledby="hero-t">
     <div>
       <p class="eyebrow">TKA Matematika Tingkat Lanjut · 2025</p>
@@ -77,16 +95,11 @@ function heroHtml(): string {
       ${heroArt()}
       <p class="ha-cap" aria-live="off">${HERO_CAPTION}</p>
     </div>
-    <div class="hero-foot">
-      ${cta}
-      ${tesBtn}
-      <a class="btn btn--lg hero-eks" href="#/ekspedisi">${icon('map')}<span>Ekspedisi TKA</span></a>
-      <div class="hero-stats">
-        <span><b class="num">${sum.done}/${sum.ready}</b>dibahas</span>
-        <span><b class="num">${sum.practiceOk}/${sum.practiceTotal}</b>latihan benar</span>
-        <span><b class="num">${sum.minutes}</b>menit belajar</span>
-      </div>
-    </div>
+    <nav class="hero-acts" aria-label="Menu utama">
+      ${act('hero-act--go', `#/soal/${no}`, 'play', go, `soal ${no}`)}
+      ${act('hero-act--tes', '#/tes', 'clipboard-check', tes.active ? 'Lanjutkan' : 'Tes', tes.active ? 'tes' : 'penguasaan')}
+      ${act('hero-act--eks', '#/ekspedisi', 'map', 'Ekspedisi', 'TKA')}
+    </nav>
   </section>`;
 }
 
@@ -99,6 +112,7 @@ export function homePage(): PageView {
       <div class="catalog-head">
         <h2 id="cat-t">25 soal TKA 2025</h2>
         <span class="count">${readyCount} dibuka · ${25 - readyCount} segera hadir</span>
+        ${statsHtml()}
       </div>
       <div class="filters" role="group" aria-label="Saring menurut ranah materi">
         <button type="button" class="chip" data-filter="semua" aria-pressed="true">Semua</button>

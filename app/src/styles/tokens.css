@@ -169,6 +169,9 @@
     --size-tes-mini-w: calc(7px * var(--ui));
     --size-tes-print-bar: calc(120px * var(--ui));
     /* Ekspedisi TKA (v1.26) */
+    /* beranda v1.28: tiga tombol aksi seragam dan cincin kemajuan */
+    --size-hero-act: calc(76px * var(--ui));
+    --size-hs-ring: calc(38px * var(--ui));
     --size-eks-col: calc(1180px * var(--ui));
     --size-eks-card: calc(560px * var(--ui));
     --size-eks-pos: calc(220px * var(--ui));
@@ -182,6 +185,8 @@
     --size-eks-emb-xl: calc(112px * var(--ui));
     --size-eks-lens: min(52vh, calc(340px * var(--ui)));
     --size-eks-ring: calc(220px * var(--ui));
+    /* angka di dalam cincin waktu: 19 % diameter (lima karakter muat di lingkar dalam) */
+    --fs-eks-ring: 19cqi;
     --size-eks-ring-sm: min(calc(220px * var(--ui)), 22vh);
     --size-eks-pod-1: calc(170px * var(--ui));
     --size-eks-pod-2: calc(124px * var(--ui));
