@@ -48,7 +48,8 @@ const typ = (h: 'a' | 'b' | 'c', i: 0 | 1 | 2, n: string, out: string): Row => {
     toks: [
       H(`${id}a`, TYPES[i], 'tx'),
       T(`${id}b`, n, 'blue', `@h-${h}${i + 1}`),
-      T(`${id}c`, `\\times${PRICE[i]}`, '', `PT${i + 1}`),
+      O(`${id}x`, '\\times'),
+      T(`${id}c`, PRICE[i], '', `PT${i + 1}`),
       O(`${id}d`, '='),
       T(`${id}e`, out),
     ],

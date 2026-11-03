@@ -711,10 +711,25 @@
   }
 
   .tk.tx {
+    margin-inline: 0.4em;
     font-family: var(--font-body);
     font-size: 0.7em;
     font-weight: var(--fw-semibold);
     color: var(--color-text);
+  }
+
+  /* teks di awal atau akhir baris tidak perlu jarak ke tepi */
+  .tk.tx:first-child {
+    margin-left: 0;
+  }
+
+  .tk.tx:last-child {
+    margin-right: 0;
+  }
+
+  /* label sudah memberi jarak kanannya sendiri */
+  .tk.lbl + .tk.tx {
+    margin-left: 0;
   }
 
   .tk.tx.gold {
@@ -1418,8 +1433,18 @@
   }
 
   .n-tx {
+    margin-inline: 0.35em;
     font-size: 0.82em;
     font-weight: var(--fw-semibold);
+  }
+
+  /* jarak teks–rumus seperti di papan; tidak ada jarak ke tepi baris */
+  .n-tx:first-child {
+    margin-left: 0;
+  }
+
+  .n-tx:last-child {
+    margin-right: 0;
   }
 
   .n-tx.lbl {
