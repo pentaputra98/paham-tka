@@ -3271,94 +3271,197 @@
   }
 }
 
-/* ---------- soal 6 alur v1.35 (div6): pembagian bersusun suku banyak ----------
-   angka dan garis putih; hasil bagi dan sisa hitungan biru langit; sisa soal merah muda (dari soal);
-   pasangan koefisien yang disamakan dibingkai biru langit. */
+/* ---------- soal 6 revisi pemilik (hk6, v1.36): Horner-Kino dengan angka terbang dan panah ----------
+   koefisien putih; pengali dan panah kali biru langit; hasil kali biru langit pudar; hasil jumlah putih tebal;
+   kolom sisa biru langit; sisa soal merah muda (dari soal); pasangan yang disamakan dibingkai biru langit. */
 @layer pages {
-  .vis-div {
+  .vis-hk {
     height: 100%;
     display: grid;
     place-items: center;
     color: var(--color-on-stage);
-    font-size: min(var(--fs-mat), var(--d6-fit-h), var(--d6-fit-w));
+    font-size: min(var(--fs-mat), var(--hk-fit-h), var(--hk-fit-w));
   }
 
-  .d6-grid {
+  .hk-wrap {
+    position: relative;
+  }
+
+  .hk-grid {
     display: grid;
-    grid-template-columns: auto 0.8em repeat(5, auto);
-    grid-auto-rows: 1.55em;
+    grid-template-columns: auto repeat(5, minmax(3.2em, auto));
+    grid-template-rows: 1.2em repeat(4, 1.7em) 1.2em 1.7em;
     align-items: center;
-    column-gap: 0.25em;
-    font-size: 0.62em;
+    justify-items: center;
+    column-gap: 0.7em;
+    font-size: 0.7em;
   }
 
-  .d6-c,
-  .d6-ln,
-  .d6-br,
-  .d6-lb {
+  .hk-c {
+    position: relative;
+    padding-inline: 0.15em;
+    white-space: nowrap;
     opacity: 0;
     transition: opacity var(--dur-slow) var(--ease);
   }
 
-  .d6-c.on,
-  .d6-ln.on,
-  .d6-br.on,
-  .d6-lb.on {
+  .hk-c.on {
     opacity: 1;
   }
 
-  .d6-c {
-    position: relative;
-    justify-self: start;
-    padding-inline: 0.12em;
-    white-space: nowrap;
-  }
-
-  .d6-p {
-    justify-self: end;
-    padding-right: 0.3em;
-  }
-
-  .d6-q,
-  .d6-r {
-    color: var(--color-stage-accent);
-  }
-
-  .d6-g {
-    color: var(--red-300);
-  }
-
-  .d6-br {
-    align-self: stretch;
-    border-top: var(--bw-3) solid var(--color-on-stage);
-    border-left: var(--bw-3) solid var(--color-on-stage);
-    border-top-left-radius: var(--radius-md);
-  }
-
-  .d6-ln {
-    align-self: end;
-    border-bottom: var(--bw-2) solid var(--color-on-stage);
-  }
-
-  .d6-lb {
-    justify-self: end;
-    padding-right: 0.3em;
-    font-family: var(--font-mono);
-    font-size: max(var(--fs-label), 0.5em);
+  .hk-pw,
+  .hk-hd {
+    font-size: 0.62em;
     color: var(--color-on-stage-muted);
   }
 
-  .d6-ring {
+  .hk-hd {
+    justify-self: end;
+    padding-right: 0.6em;
+    color: var(--color-stage-accent);
+  }
+
+  .hk-m {
+    justify-self: end;
+    padding-right: 0.6em;
+    font-weight: var(--fw-bold);
+    color: var(--color-stage-accent);
+  }
+
+  .hk-p {
+    color: var(--color-stage-accent);
+    opacity: 0;
+  }
+
+  .hk-p.on {
+    opacity: 0.85;
+  }
+
+  .hk-s {
+    font-weight: var(--fw-bold);
+  }
+
+  .show-mark .hk-r {
+    color: var(--color-stage-accent);
+  }
+
+  .hk-g {
+    color: var(--red-300);
+  }
+
+  .hk-vl {
+    align-self: stretch;
+    justify-self: end;
+    border-right: var(--bw-3) solid var(--color-on-stage);
+  }
+
+  .hk-hl {
+    align-self: start;
+    justify-self: stretch;
+    border-top: var(--bw-3) solid var(--color-on-stage);
+  }
+
+  .hk-cut {
+    align-self: stretch;
+    justify-self: start;
+    margin-left: -0.35em;
+    border-left: var(--bw-2) dashed var(--color-stage-accent);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-cut .hk-cut {
+    opacity: 1;
+  }
+
+  .hk-lb {
+    font-family: var(--font-mono);
+    font-size: max(var(--fs-label), 0.42em);
+    color: var(--color-on-stage-muted);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .hk-ls {
+    color: var(--color-stage-accent);
+  }
+
+  .show-mark .hk-lq,
+  .show-mark .hk-ls,
+  .show-cmp .hk-lg {
+    opacity: 1;
+  }
+
+  .hk-lg {
+    justify-self: end;
+    padding-right: 0.6em;
+  }
+
+  .hk-ring {
     position: absolute;
-    inset: -0.1em -0.05em;
+    inset: -0.12em -0.1em;
     border: var(--bw-3) solid var(--color-stage-accent);
     border-radius: var(--radius-md);
     opacity: 0;
     transition: opacity var(--dur-slow) var(--ease);
   }
 
-  .vis-div[data-hl='x'] [data-p='x'] .d6-ring,
-  .vis-div[data-hl='c'] [data-p='c'] .d6-ring {
+  .vis-hk[data-hl='x'] [data-p='x'] .hk-ring,
+  .vis-hk[data-hl='c'] [data-p='c'] .hk-ring {
     opacity: 1;
+  }
+
+  /* panah dan angka terbang di atas skema */
+  .hk-arrows,
+  .hk-fly {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .hk-arrows marker path {
+    fill: var(--color-stage-accent);
+  }
+
+  .hk-a path {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-2);
+  }
+
+  .hk-down path {
+    stroke-dasharray: 5 4;
+  }
+
+  .hk-sum rect {
+    fill: var(--a-sky-09);
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 5 4;
+  }
+
+  .hk-sum text {
+    font-size: var(--fs-body);
+  }
+
+  .hk-a text {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-bold);
+    fill: var(--color-stage-accent);
+    paint-order: stroke;
+    stroke: var(--color-stage);
+    stroke-width: var(--bw-4);
+  }
+
+  .hk-gh {
+    position: absolute;
+    font-size: 0.7em;
+    padding-inline: 0.15em;
+    white-space: nowrap;
+    color: var(--color-stage-accent);
   }
 }

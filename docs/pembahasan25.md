@@ -990,6 +990,21 @@ Pin: $a+b=-1$.
 - **Bagian 5 — Kesamaan koefisien (opsional, Ya/Lewati):** alur utama dokumen di atas ($f(x)-(5x-1)=x^4+ax^3+bx^2-4x-5$, pertanyaan cepat lama $-4x$; hasil bagi $x^2+px+q$; $q=-5$, $p=1$, $a=2$, $b=-3$); *Tahukah kalian?* hasil bagi bersusun $x^2+(a-1)x+(b-a)$ menjadi $x^2+x-5$, sama dengan $x^2+px+q$.
 - **Bagian 6–8:** catatan lengkap, kartu A–E dengan pertanyaan berhuruf, segel C.
 
+*Revisi 1.36 (4 Nov 2026, arahan pemilik "membaginya dengan Horner-Kino, full animasi angka terbang dan panah cara menghitungnya lengkap"; kunci tidak berubah: C). Pembagian bersusun Revisi 1.35 di atas diganti **Horner-Kino**; adegan baru `hk6` (adegan `div6` dihapus).*
+- **Bagian 2 — Susun Horner-Kino:**
+  - koefisien $1$, $a$, $b$, $1$, $-6$ berurutan dari $x^4$, dengan label pangkat di atasnya;
+  - $x^2+x+1=0$ berarti $x^2=-x-1$, jadi pengali $-1$ dan $-1$ di kiri (pertanyaan cepat baru; pengecoh $x+1$, $-x+1$);
+  - **hati-hati**, hanya tiga kolom pertama yang dikali (hasil bagi berderajat $4-2=2$); garis putus-putus memisahkan dua kolom sisa.
+- **Bagian 3 — Hitung kolom $a$ dan $b$** (tiap operasi dianimasikan: panah, angka terbang, hasil muncul):
+  - $1$ turun; $1\cdot(-1)=-1$ terbang ke kolom $a$ (baris 1) dan kolom $b$ (baris 2), panah berlabel $\times(-1)$;
+  - kolom $a$ dibingkai dengan tanda $+$, angkanya terbang ke bawah: $a+(-1)=a-1$;
+  - $(a-1)\cdot(-1)=1-a$ ke kolom $b$ dan kolom $1$ (pertanyaan cepat baru; pengecoh $a-1$, $-a-1$);
+  - kolom $b$: $b+(-1)+(1-a)=b-a$.
+- **Bagian 4 — Hitung kolom sisa:** $(b-a)\cdot(-1)=a-b$ ke dua kolom terakhir (perkalian terakhir); kolom $1$: $1+(a-b)+(1-a)=2-b$; kolom $-6$: $-6+(a-b)=a-b-6$; label hasil bagi $x^2+(a-1)x+(b-a)$ dan sisa $(2-b)x+(a-b-6)$.
+- **Bagian 5–6:** sisa soal $5$ dan $-1$ ditulis di bawah kolom sisa, pasangan dibingkai; $b=-3$, $a=2$, $a+b=-1$ (pilihan C), cek, hati-hati pilihan B, tawaran cara alternatif.
+- **Bagian 7 — Kesamaan koefisien (opsional):** seperti Revisi 1.35; *Tahukah kalian?* hasil bagi Horner-Kino $x^2+(a-1)x+(b-a)=x^2+x-5$.
+- **Bagian 8–10:** catatan lengkap, kartu A–E, segel C.
+
 ### Bagian 6 — Selesai
 - **Segel:** **C**
 - **Pop-up:** "$f(x)=x^4+2x^3-3x^2+x-6$, sehingga $a=2$, $b=-3$, dan $a+b=-1$."
