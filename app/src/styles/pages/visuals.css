@@ -2432,9 +2432,9 @@
   }
 }
 
-/* ---------- soal 2 alur guru (pakan2, mul2; v1.29): pakan sapi dan kambing ----------
-   gambar soal dengan bingkai biru langit pada kebutuhan pakan; model batang putih (sapi) dan biru langit (kambing);
-   uji perkalian baris × kolom; emas hanya untuk hasil 3 sapi, 4 kambing dan pilihan yang benar; merah bila bukan. */
+/* ---------- soal 2 alur guru (pakan2, trans2; v1.32): pakan sapi dan kambing ----------
+   gambar soal dengan bingkai biru langit pada kebutuhan pakan; persamaan matriks berlabel konteks (biru langit bila
+   konteksnya sama, merah bila tidak); emas hanya untuk hasil 3 sapi, 4 kambing. */
 @layer pages {
   .vis-pakan {
     height: 100%;
@@ -2443,17 +2443,9 @@
   }
 
   .vis-pakan > svg {
-    grid-area: 1 / 1;
     width: 100%;
     height: 100%;
     min-height: 0;
-    transition: opacity var(--dur-slow) var(--ease);
-  }
-
-  .vis-pakan[data-view='pic'] .pk-bars,
-  .vis-pakan[data-view='bars'] .pk-pic {
-    opacity: 0;
-    visibility: hidden;
   }
 
   .pk-pic image {
@@ -2474,25 +2466,19 @@
     stroke-dasharray: 10 6;
   }
 
-  .pk-box.on {
-    opacity: 1;
-  }
-
   .pk-n {
     stroke: var(--blue-600);
   }
 
-  .pk-n.on {
+  .pk-box.on,
+  .pk-n.on,
+  .pk-tag.on {
     opacity: 1;
   }
 
   .pk-tag {
     opacity: 0;
     transition: opacity var(--dur-slow) var(--ease);
-  }
-
-  .pk-tag.on {
-    opacity: 1;
   }
 
   .pk-tag rect {
@@ -2516,221 +2502,169 @@
     fill: var(--color-result);
   }
 
-  .pk-blk,
-  .pk-tot,
-  .pk-rl {
-    opacity: 0;
-    transition: opacity var(--dur-slow) var(--ease);
-  }
-
-  .pk-blk.on,
-  .pk-tot.on,
-  .pk-rl.on {
-    opacity: 1;
-  }
-
-  .pk-blk rect {
-    fill: var(--color-stage-surface);
-    stroke: var(--color-on-stage);
-    stroke-width: var(--bw-2);
-  }
-
-  .pk-kambing rect {
-    stroke: var(--color-stage-accent);
-  }
-
-  .pk-bt,
-  .pk-tot,
-  .pk-rl {
-    font-family: var(--font-mono);
-    font-weight: var(--fw-bold);
-    font-size: var(--svg-fs-md);
-    fill: var(--color-on-stage);
-  }
-
-  .pk-kambing .pk-bt {
-    font-size: var(--svg-fs-sm);
-    fill: var(--color-stage-accent);
-  }
-
-  .pk-cap,
-  .pk-note {
-    font-family: var(--font-mono);
-    font-size: var(--svg-fs-xs);
-    fill: var(--color-on-stage-muted);
-  }
-
-  .show-x .pk-sapi .pk-cap {
-    font-weight: var(--fw-bold);
-    fill: var(--color-on-stage);
-  }
-
-  .pk-align {
-    opacity: 0;
-    transition: opacity var(--dur-slow) var(--ease);
-  }
-
-  .show-align .pk-align {
-    opacity: 1;
-  }
-
-  .pk-dash {
-    fill: none;
-    stroke: var(--color-stage-accent);
-    stroke-width: var(--bw-2);
-    stroke-dasharray: 6 4;
-  }
-
-  .pk-extra {
-    fill: var(--a-sky-30);
-    stroke: var(--color-stage-accent);
-    stroke-width: var(--bw-4);
-  }
-
-  .pk-diff {
-    font-family: var(--font-mono);
-    font-weight: var(--fw-bold);
-    font-size: var(--svg-fs-sm);
-    fill: var(--color-stage-accent);
-  }
-
-  /* ---- uji perkalian baris × kolom ---- */
-  .vis-mul {
+  /* ---- persamaan matriks berlabel konteks ---- */
+  .vis-tr {
     height: 100%;
     display: grid;
-    align-content: center;
-    justify-items: center;
-    gap: var(--space-4);
+    place-items: center;
     color: var(--color-on-stage);
-    font-size: min(var(--fs-mat), var(--mul-fit-h), var(--mul-fit-w));
+    font-size: min(var(--fs-mat), var(--tr-fit-h), var(--tr-fit-w));
   }
 
-  .m2-eq,
-  .m2-calc {
-    display: flex;
-    align-items: center;
-    gap: 0.4em;
-  }
-
-  .m2-name {
-    font-family: var(--font-mono);
-    font-weight: var(--fw-bold);
-    font-size: 0.7em;
-    color: var(--color-on-stage-muted);
-  }
-
-  .m2-br {
+  .t2-mx,
+  .t2-el {
+    grid-area: 1 / 1;
     display: grid;
-    gap: 0.15em 0.55em;
-    padding: 0.15em 0.3em;
+    align-items: center;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .vis-tr[data-view='mx'] .t2-el,
+  .vis-tr[data-view='elim'] .t2-mx {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .t2-mx {
+    grid-template-columns:
+      auto repeat(2, minmax(1.7em, auto)) 0.2em minmax(1.2em, auto) auto auto minmax(1.7em, auto)
+      auto;
+    grid-template-rows: auto 1.7em 1.7em auto;
+    gap: 0.15em 0.3em;
+  }
+
+  .t2-br {
+    align-self: stretch;
+    justify-self: stretch;
+    margin-inline: -0.2em;
     border-inline: var(--bw-3) solid var(--color-on-stage);
     border-radius: var(--radius-xl);
   }
 
-  .m2-g2 {
-    grid-template-columns: repeat(2, minmax(1.4em, auto));
-  }
-
-  .m2-g1 {
-    grid-template-columns: minmax(1.4em, auto);
-  }
-
-  .m2-c {
+  .t2-c {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 1.7em;
+    height: 100%;
   }
 
-  .m2-ring {
+  .t2-ring {
     position: absolute;
-    inset: -0.06em -0.2em;
+    inset: 0 -0.12em;
     border: var(--bw-3) solid var(--color-stage-accent);
     border-radius: var(--radius-md);
     opacity: 0;
     transition: opacity var(--dur-slow) var(--ease);
   }
 
-  .vis-mul[data-row='1'] [data-r='1'] .m2-ring,
-  .vis-mul[data-row='2'] [data-r='2'] .m2-ring,
-  .vis-mul:not([data-row='0']) [data-col] .m2-ring {
+  .vis-tr[data-row='1'] .t2-c[data-r='1'] .t2-ring,
+  .vis-tr[data-row='2'] .t2-c[data-r='2'] .t2-ring,
+  .vis-tr[data-vec='1'] .t2-vc .t2-ring,
+  .vis-tr[data-res='1'] .t2-rc[data-i='1'] .t2-ring,
+  .vis-tr[data-res='2'] .t2-rc[data-i='2'] .t2-ring,
+  .vis-tr[data-e='1'] .t2-ey .t2-ring {
     opacity: 1;
   }
 
-  .m2-vcol {
-    display: grid;
-    justify-items: center;
-    gap: var(--space-1);
-  }
-
-  .m2-op,
-  .m2-cmp {
-    font-size: 1.1em;
-  }
-
-  .m2-lbl,
-  .m2-v19 {
+  .t2-lb,
+  .t2-vl,
+  .t2-rl {
     font-family: var(--font-mono);
-    font-size: var(--fs-caption);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
+    font-size: max(var(--fs-label), 0.4em);
+    font-weight: var(--fw-semibold);
+    white-space: nowrap;
     color: var(--color-on-stage-muted);
+    transition:
+      opacity var(--dur-slow) var(--ease),
+      color var(--dur-slow) var(--ease);
   }
 
-  .m2-v19 {
-    font-weight: var(--fw-bold);
+  .t2-lb[data-pos='top'] {
+    justify-self: center;
+    align-self: end;
+  }
+
+  .t2-lb[data-pos='left'] {
+    justify-self: end;
+  }
+
+  .vis-tr[data-top='acc'] .t2-lb[data-pos='top'],
+  .vis-tr[data-left='acc'] .t2-lb[data-pos='left'],
+  .vis-tr[data-row='1'][data-left='row'] .t2-lb[data-r='1'],
+  .vis-tr[data-row='2'][data-left='row'] .t2-lb[data-r='2'],
+  .vis-tr[data-vl='acc'] .t2-vl,
+  .vis-tr[data-rl='acc'] .t2-rl {
     color: var(--color-stage-accent);
-    text-transform: none;
+  }
+
+  .vis-tr[data-top='bad'] .t2-lb[data-pos='top'],
+  .vis-tr[data-vl='bad'] .t2-vl {
+    color: var(--red-300);
+  }
+
+  .t2-vl,
+  .t2-rl,
+  .t2-nm {
     opacity: 0;
   }
 
-  .show-v19 .m2-v19 {
+  .no-lab .t2-lb,
+  .no-lab .t2-vl,
+  .no-lab .t2-rl {
+    display: none;
+  }
+
+  .show-vars .t2-vl,
+  .show-res .t2-rl,
+  .show-ax .t2-nm {
     opacity: 1;
   }
 
-  .m2-res {
-    border-color: var(--color-stage-accent);
-  }
-
-  .m2-res .m2-c {
-    opacity: 0;
+  .t2-nm {
+    justify-self: center;
+    font-size: 0.7em;
     color: var(--color-stage-accent);
     transition: opacity var(--dur-slow) var(--ease);
   }
 
-  .m2-res .m2-c.on {
-    opacity: 1;
+  /* ---- eliminasi (opsional) ---- */
+  .t2-el {
+    grid-template-columns: repeat(6, auto);
+    grid-template-rows: 1.6em 1.6em auto 1.6em;
+    gap: 0.1em 0.3em;
+    justify-items: end;
   }
 
-  .m2-cmp,
-  .m2-w2 {
+  .t2-ey {
+    position: relative;
+    justify-self: stretch;
+    text-align: center;
+  }
+
+  .t2-cut {
+    position: absolute;
+    inset: 48% -0.1em auto;
+    border-top: var(--bw-3) solid var(--red-300);
     opacity: 0;
   }
 
-  .show-cmp .m2-cmp,
-  .show-cmp .m2-w2 {
+  .t2-e2 {
+    opacity: 0;
+  }
+
+  .t2-rule {
+    justify-self: stretch;
+    border-top: var(--bw-3) solid var(--color-on-stage);
+  }
+
+  .t2-ans {
+    color: var(--color-stage-accent);
+  }
+
+  .vis-tr[data-e='2'] .t2-e2,
+  .vis-tr[data-e='2'] .t2-cut {
     opacity: 1;
-  }
-
-  .show-cmp .m2-calc:not(.is-ok) .m2-res,
-  .show-cmp .m2-calc:not(.is-ok) .m2-cmp {
-    border-color: var(--red-400);
-    color: var(--red-300);
-  }
-
-  .show-cmp .m2-calc:not(.is-ok) .m2-res .m2-c {
-    color: var(--red-300);
-  }
-
-  .show-cmp .m2-calc.is-ok .m2-res,
-  .show-cmp .m2-calc.is-ok .m2-w2 {
-    border-color: var(--color-result);
-  }
-
-  .show-cmp .m2-calc.is-ok .m2-res .m2-c,
-  .show-cmp .m2-calc.is-ok .m2-cmp {
-    color: var(--color-result);
   }
 }
 
@@ -3072,6 +3006,20 @@
     font-weight: var(--fw-bold);
     font-size: var(--svg-fs-md);
     fill: var(--color-on-stage);
+  }
+
+  .h4-bv {
+    paint-order: stroke;
+    stroke: var(--color-stage);
+    stroke-width: var(--bw-4);
+  }
+
+  .h4-sv {
+    font-size: var(--svg-fs-sm);
+  }
+
+  .h4-stack[data-k='type'] .h4-sv {
+    font-size: var(--svg-fs-xs);
   }
 
   .h4-dt {

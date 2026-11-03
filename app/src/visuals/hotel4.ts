@@ -3,7 +3,7 @@
  * Tiga tampilan pada panggung yang sama:
  *  - pic: tabel kapasitas dari gambar soal; col 'A' | 'B' | 'C' membingkai kolom hotel itu, price membingkai kolom
  *    harga. Angka sel menjadi sumber terbang (h-a1 … h-c3 per hotel dan tipe kamar, h-p1 … h-p3 harga).
- *  - bars: batang pendapatan per hari (juta rupiah), n = banyak hotel yang sudah dihitung; hl = hotel yang
+ *  - bars: batang pendapatan per hari (rupiah utuh, revisi pemilik v1.32), n = banyak hotel yang sudah dihitung; hl = hotel yang
  *    dibandingkan (biru langit); win = hotel terbesar (emas, jawaban pernyataan 3); diff = selisih dua hotel
  *    (bagian batang yang lebih panjang disorot, berlabel); bad = pernyataan salah (pasangan merah).
  *  - total: batang bertumpuk ketiga hotel (stack 'hotel') atau per tipe kamar (stack 'type', cara cepat), dibandingkan
@@ -32,9 +32,9 @@ export interface Hotel4State {
 
 const fig = new URL('../assets/soal/ikon_hotel.png', import.meta.url).href;
 const HOTELS: Hotel[] = ['A', 'B', 'C'];
-/** pendapatan per hari, juta rupiah (docs) */
+/** pendapatan per hari dalam juta rupiah (docs); label ditulis rupiah utuh tanpa desimal */
 const INC: Record<Hotel, number> = { A: 7.35, B: 6.4, C: 7.55 };
-const dec = (v: number): string => String(Math.round(v * 100) / 100).replace('.', ',');
+const rp = (v: number): string => Math.round(v * 1e6).toLocaleString('id-ID');
 
 // ---- gambar (piksel gambar asli 1178 × 605) ----
 const COLX: Record<Hotel | 'P', [number, number]> = {
@@ -70,9 +70,9 @@ function picMarkup(): string {
   <image href="${fig}" x="0" y="0" width="1178" height="605"/>${frames}${cells}</svg>`;
 }
 
-// ---- batang pendapatan (viewBox 640 × 300), skala 0–8 juta selebar 440 ----
+// ---- batang pendapatan (viewBox 640 × 300), skala 0–8 juta selebar 400 ----
 const BX = 110;
-const BW = 440;
+const BW = 400;
 const bx = (v: number): number => BX + (v / 8) * BW;
 const BY: Record<Hotel, number> = { A: 50, B: 130, C: 210 };
 const BH = 50;
@@ -82,17 +82,17 @@ function barsMarkup(): string {
     (h) => `<g class="h4-bar" data-h="${h}">
     <text class="h4-bl" x="${BX - 14}" y="${BY[h] + BH / 2 + 7}" text-anchor="end">Hotel ${h}</text>
     <rect class="h4-br" x="${BX}" y="${BY[h]}" width="${bx(INC[h]) - BX}" height="${BH}" rx="6"/>
-    <text class="h4-bv" x="${bx(INC[h]) + 10}" y="${BY[h] + BH / 2 + 7}">${dec(INC[h])}</text></g>`,
+    <text class="h4-bv" x="${bx(INC[h]) + 10}" y="${BY[h] + BH / 2 + 7}">${rp(INC[h])}</text></g>`,
   ).join('');
-  return `<svg class="h4-bars" viewBox="0 0 640 300" role="img" aria-label="Pendapatan per hari: Hotel A 7,35 juta, Hotel B 6,4 juta, Hotel C 7,55 juta">
+  return `<svg class="h4-bars" viewBox="0 0 640 300" role="img" aria-label="Pendapatan per hari: Hotel A Rp7.350.000, Hotel B Rp6.400.000, Hotel C Rp7.550.000">
   <path class="h4-ax" d="M${BX} 36V${BY.C + BH + 14}"/>
-  ${bars}<g class="h4-diffs"></g>
-  <text class="h4-note" x="${BX}" y="294">juta rupiah per hari</text></svg>`;
+  <g class="h4-dls"></g>${bars}<g class="h4-diffs"></g>
+  <text class="h4-note" x="${BX}" y="294">rupiah per hari</text></svg>`;
 }
 
-// ---- batang bertumpuk (viewBox 640 × 260), skala 0–24 juta selebar 520 ----
-const TX = 60;
-const tx = (v: number): number => TX + (v / 24) * 520;
+// ---- batang bertumpuk (viewBox 640 × 260), skala 0–23 juta selebar 580 ----
+const TX = 40;
+const tx = (v: number): number => TX + (v / 23) * 580;
 const STACK: Record<'hotel' | 'type', Array<[string, number]>> = {
   hotel: [
     ['A', 7.35],
@@ -115,17 +115,17 @@ function totalMarkup(): string {
         at += v;
         const x1 = tx(at);
         return `<g class="h4-seg" data-i="${i}"><rect class="h4-s${i}" x="${x0}" y="90" width="${x1 - x0}" height="64" rx="6"/>
-        <text class="h4-sv" x="${(x0 + x1) / 2}" y="129" text-anchor="middle">${dec(v)}</text>
+        <text class="h4-sv" x="${(x0 + x1) / 2}" y="129" text-anchor="middle">${rp(v)}</text>
         <text class="h4-sl" x="${(x0 + x1) / 2}" y="176" text-anchor="middle">${l}</text></g>`;
       })
       .join('');
   };
-  return `<svg class="h4-total" viewBox="0 0 640 260" role="img" aria-label="Total pendapatan ketiga hotel 21,3 juta, lebih dari 20 juta">
+  return `<svg class="h4-total" viewBox="0 0 640 260" role="img" aria-label="Total pendapatan ketiga hotel Rp21.300.000, lebih dari Rp20.000.000">
   <g class="h4-stack" data-k="hotel">${seg('hotel')}</g><g class="h4-stack" data-k="type">${seg('type')}</g>
   <path class="h4-brace" d="M${TX} 78V70H${tx(21.3)}V78"/>
-  <text class="h4-tt" x="${(TX + tx(21.3)) / 2}" y="60" text-anchor="middle">total 21,3</text>
+  <text class="h4-tt" x="${(TX + tx(21.3)) / 2}" y="60" text-anchor="middle">total 21.300.000</text>
   <path class="h4-line" d="M${tx(20)} 40V200"/>
-  <text class="h4-lt" x="${tx(20)}" y="222" text-anchor="middle">20 juta</text>
+  <text class="h4-lt" x="${tx(20)}" y="222" text-anchor="middle">20.000.000</text>
   </svg>`;
 }
 
@@ -134,6 +134,8 @@ export function createHotel4(): VisualScene {
   el.className = 'vis-hotel';
   el.innerHTML = picMarkup() + barsMarkup() + totalMarkup();
   const diffG = el.querySelector<SVGGElement>('.h4-diffs')!;
+  // garis selisih di belakang batang dan angka, agar tidak menimpa angka hotel lain
+  const lineG = el.querySelector<SVGGElement>('.h4-dls')!;
   let view = '';
   let n = 0;
   let col = '';
@@ -208,11 +210,14 @@ export function createHotel4(): VisualScene {
             const x0 = bx(INC[lo]);
             const x1 = bx(INC[hi]);
             const y = BY[hi];
-            return `<g class="h4-df"><path class="h4-dl" d="M${x0} ${BY[lo] + BH}V${y - 6}"/>
-            <rect class="h4-dr" x="${x0}" y="${y}" width="${x1 - x0}" height="${BH}" rx="4"/>
-            <text class="h4-dt" x="${x0 - 8}" y="${y - 10}" text-anchor="end">${hi} − ${lo} = ${dec(INC[hi] - INC[lo])}</text></g>`;
+            return `<g class="h4-df"><rect class="h4-dr" x="${x0}" y="${y}" width="${x1 - x0}" height="${BH}" rx="4"/>
+            <text class="h4-dt" x="${x0 - 8}" y="${y - 10}" text-anchor="end">${hi} − ${lo} = ${rp(INC[hi] - INC[lo])}</text></g>`;
           })
           .join('');
+        lineG.innerHTML = d
+          .map(([lo, hi]) => `<path class="h4-dl" d="M${bx(INC[lo])} ${BY[lo] + BH}V${BY[hi] - 6}"/>`)
+          .join('');
+        if (anim) lineG.querySelectorAll('.h4-dl').forEach((g, i) => runs.push(fadeIn(g, 300 + i * 450)));
         if (anim) diffG.querySelectorAll('.h4-df').forEach((g, i) => runs.push(fadeIn(g, 300 + i * 450)));
         diffKey = key;
       }

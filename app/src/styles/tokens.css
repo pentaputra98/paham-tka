@@ -243,8 +243,8 @@
     --mat-fit-w2: 5.6cqi;
     --mat-fit-w3: 4.4cqi;
     /* baris "matriks × vektor = hasil" soal 2 (≈ 21 em) muat di zona visual */
-    --mul-fit-h: 10cqh;
-    --mul-fit-w: 4.6cqi;
+    --tr-fit-h: 15cqh;
+    --tr-fit-w: 4.6cqi;
     /* matriks kebutuhan bahan soal 3 (4 baris × ≈ 17 em) muat di zona visual */
     --drink-fit-h: 9cqh;
     --drink-fit-w: 4.8cqi;

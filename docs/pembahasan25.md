@@ -418,6 +418,27 @@ Susunan setara pada opsi E: bagi persamaan gajah dengan 2 → $5x+y=19$ dan $10x
   - *Tahukah kalian?* matriks A $=5M'^{-1}$ dan matriks D $=10M^{-1}$ (turunan aljabar), sehingga hasilnya $5$ dan $10$ kali $(3,4)$.
 - **Bagian 8–10:** catatan lengkap, kartu A–E dengan pertanyaan berhuruf, segel E.
 
+*Alur aplikasi dengan gaya mengajar pemilik materi (Revisi 1.32, 3 Nov 2026; kunci tidak berubah: E). Menggantikan alur Revisi 1.29 di atas pada `app/src/content/soal/q02.ts`, atas arahan pemilik: matriks dibentuk dari tabel, konteksnya disamakan dengan transpos, lalu SPLDV dan invers. Adegan baru `trans2` (persamaan matriks berlabel konteks); adegan `mul2` dan model batang dihapus, `pakan2` tinggal gambar.* Hasil disimpan ke **catatan**: persamaan matriks sesudah ditranspos, $5x+y=19$, $10x+y=34$, $A$, dan $X=A^{-1}B$. Baris papan tanpa ":".
+- **Bagian 1 — Pahami soal:** yang ditanya $\begin{pmatrix}x\\y\end{pmatrix}$ ($x$ sapi, $y$ kambing); pilihan berbentuk matriks × vektor, jadi persamaan matriksnya disusun dulu.
+- **Bagian 2 — Data dari gambar:** sapi $10$ dan $10$, kambing $2$ dan $1$ (angka terbang dari gambar); tersedia $38$ dan $34$.
+- **Bagian 3 — Bentuk matriks:**
+  - dari tabel: $\begin{pmatrix}10&10\\2&1\end{pmatrix}\begin{pmatrix}x\\y\end{pmatrix}=\begin{pmatrix}38\\34\end{pmatrix}$, dengan label baris **sapi**, **kambing** di kiri dan label kolom **R. Gajah**, **R. Gamal** di atas;
+  - baris sapi disorot: satu sapi makan $10$ kg rumput gajah dan $10$ kg rumput gamal; begitu juga baris kambing ($2$ dan $1$);
+  - $x$ dan $y$ disorot, konteksnya hewan (sapi, kambing).
+- **Bagian 4 — Samakan konteks:**
+  - **Hati-hati:** konteks kolom (rumput) $\ne$ konteks variabel (hewan), ditandai merah (pertanyaan cepat baru: ditranspos; pengecoh diinverskan, barisnya ditukar, dikali 2);
+  - matriks **ditranspos** (elemen dan label berpindah tempat): $\begin{pmatrix}10&2\\10&1\end{pmatrix}\begin{pmatrix}x\\y\end{pmatrix}=\begin{pmatrix}38\\34\end{pmatrix}$, kolom kini sapi dan kambing, sama dengan $x$ dan $y$;
+  - konteks baris (rumput gajah, rumput gamal) kini sama dengan konteks hasil di ruas kanan ($38$ kg gajah, $34$ kg gamal); disimpan ke catatan.
+- **Bagian 5 — Bentuk SPLDV:**
+  - baris 1 × kolom: $10x+2y=38$ (pertanyaan cepat baru); baris 2 × kolom: $10x+y=34$;
+  - disederhanakan: $10x+2y=38$ dibagi 2 menjadi $5x+y=19$ (pertanyaan cepat baru); $10x+y=34$ tetap; keduanya disimpan ke catatan;
+  - tawaran: $x$ dan $y$ bisa langsung dicari, tetapi pilihan ganda hanya meminta bentuk inversnya.
+- **Bagian 6 — Cari x dan y (opsional, Ya/Lewati):** $(10x+y)-(5x+y)=34-19$, $y$ hilang, $5x=15$, $x=3$; $5(3)+y=19$, $15$ pindah ruas, $y=4$; 3 sapi dan 4 kambing ditempel di gambar.
+- **Bagian 7 — Kembali ke matriks:** dari SPLDV yang sudah sederhana, $\begin{pmatrix}5&1\\10&1\end{pmatrix}\begin{pmatrix}x\\y\end{pmatrix}=\begin{pmatrix}19\\34\end{pmatrix}$, yaitu $AX=B$, sehingga $X=A^{-1}B$.
+- **Bagian 8 — Invers matriks:** $\det A=5\cdot1-1\cdot10=-5$ (pertanyaan cepat baru); $A^{-1}=\frac1{-5}\begin{pmatrix}1&-1\\-10&5\end{pmatrix}=\begin{pmatrix}-\frac15&\frac15\\2&-1\end{pmatrix}$; $X=A^{-1}B=\begin{pmatrix}-\frac15&\frac15\\2&-1\end{pmatrix}\begin{pmatrix}19\\34\end{pmatrix}=\begin{pmatrix}3\\4\end{pmatrix}$, tepat pilihan **E**.
+- **Bagian 9 — Pilihan lain:** *Tahukah kalian?* matriks C adalah invers $\begin{pmatrix}10&2\\10&1\end{pmatrix}$ (sebelum disederhanakan, $M^{-1}$ di atas) dengan vektor terbalik $(34,38)$; **hati-hati** matriks A $=5A^{-1}$ dan matriks D $=10M^{-1}$ (turunan aljabar), hasil kalinya $(15,20)$ dan $(30,40)$.
+- **Bagian 10–12:** catatan lengkap, kartu A–E dengan pertanyaan berhuruf, segel E.
+
 ### Bagian 6 — Selesai
 - **Segel:** **E**
 - **Pop-up:** "Pak Andi memelihara **3 sapi** dan **4 kambing**. Pilihan E adalah satu-satunya yang matriks, vektor, dan hasil perkaliannya konsisten."
@@ -563,6 +584,8 @@ Data total **jahe** dan **gula merah** pada `soal25.md` tidak cocok dengan perhi
 - **Bagian 6 — Uji kelima pilihan:** tiap pilihan disalin dari soal, lalu batang $9.800+80k$ dibandingkan dengan garis $13.000$: A $12.200$, B $12.600$ (kurang), C tepat $13.000$, D $13.400$, E $13.800$ (lebih; hati-hati, $50$ adalah air wedang jahe).
 - **Bagian 7–9:** catatan lengkap, kartu A–E dengan pertanyaan berhuruf, segel C.
 
+*Revisi 1.32 (3 Nov 2026, arahan pemilik "tidak perlu diuji satu per satu, langsung dapat 40 ya sudah"; kunci tidak berubah: C).* Bagian 6 *Uji kelima pilihan* dihapus. Sesudah cek $9.800+40\cdot80=13.000$, langkah berikutnya langsung mencocokkan $k=40$ ml dengan pilihan **C** (baris jawaban emas di papan), lalu tawaran cara alternatif. Bagian kini: 1–4 seperti di atas, 5 cara alternatif (opsional), 6–8 catatan lengkap, kartu A–E, segel C.
+
 ---
 
 ## SOAL 4 — Pendapatan Tiga Hotel
@@ -689,6 +712,15 @@ Metode kedua, hitung per tipe kamar: Standard (9+6+7) = 22 kamar × Rp150.000 = 
   - (4) selisih $A-B=0{,}95$ dan $C-A=0{,}2$ disorot di batang, tidak sama → salah;
   - (5) **hati-hati satuan**, Rp20.000.000 = 20 juta; total $21{,}3$ juta melewati garis 20 juta → benar.
 - **Bagian 7–9:** catatan lengkap, kartu (1)–(5) dengan pertanyaan kesimpulan, segel 3 · 5.
+
+*Revisi 1.32 (3 Nov 2026, arahan pemilik "jangan pakai koma, gunakan angka apa adanya"; kunci tidak berubah: (3) dan (5)).* Semua angka ditulis **rupiah utuh tanpa desimal juta**, karena siswa bingung dengan koma:
+- Bagian 2 — harga per malam apa adanya: $150.000$, $500.000$, $1.000.000$;
+- Bagian 3 — tiap tipe kamar satu baris, misalnya Hotel A: $9\times150.000=1.350.000$, $6\times500.000=3.000.000$, $3\times1.000.000=3.000.000$, jadi $A=7.350.000$; Hotel B $=900.000+3.500.000+2.000.000=6.400.000$; Hotel C $=1.050.000+2.500.000+4.000.000=7.550.000$;
+- Bagian 4 — total $7.350.000+6.400.000+7.550.000=21.300.000$; cara cepat $22\times150.000=3.300.000$, $18\times500.000=9.000.000$, $9\times1.000.000=9.000.000$;
+- Bagian 5 — $K^{\mathsf T}$ dikali vektor harga $(150.000;\ 500.000;\ 1.000.000)$ memberi $(7.350.000;\ 6.400.000;\ 7.550.000)$;
+- Bagian 6 — (1) selisih Rp200.000; (2) $6.400.000<7.350.000$; (3) C terbesar; (4) $A-B=950.000\ne C-A=200.000$; (5) $21.300.000>20.000.000$ (langkah konversi satuan "20 juta" tidak diperlukan lagi).
+
+Batang pendapatan dan batang bertumpuk memakai label rupiah utuh.
 
 ---
 

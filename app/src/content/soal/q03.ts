@@ -1,7 +1,7 @@
 /**
  * SOAL 3 — Bahan Baku Pabrik Minuman (perkalian matriks; pilihan tunggal). Kunci: C (k = 40 ml).
  * Sumber: docs/pembahasan25.md "SOAL 3", docs/soal25.md no. 3.
- * Alur guru (v1.30, dicatat di dokumen):
+ * Alur guru (v1.30; revisi pemilik v1.32 "langsung dapat 40 ya sudah", dicatat di dokumen):
  *  - pahami: yang ditanya k, air untuk satu botol kunir asem; baris matriks = minuman, kolom = bahan;
  *  - data dari matriks: kolom air (50, 40, k) dan pesanan (100, 120, 80) terbang dari adegan; total air 13.000 dari
  *    soal; Tahukah kalian, hanya kolom air yang memuat k;
@@ -9,12 +9,12 @@
  *    9.800 + 80k = 13.000;
  *  - cari k: 9.800 pindah ruas (tidak dicoret) → 80k = 3.200 → k = 40; hati-hati 3.200 itu untuk 80 botol; cek;
  *  - bagian opsional "Cara alternatif": pesanan (baris) × matriks, entri air; kenapa kolom;
- *  - tiap pilihan disalin dari soal lalu diuji di batang air (9.800 + 80k dibandingkan 13.000).
+ *  - k = 40 ml langsung dicocokkan dengan pilihan C (uji tiap pilihan v1.30 dihapus).
  * Anomali sumber (total J dan GM tidak cocok, catatan dokumen): kolom J dan GM tidak dihitung atau dibandingkan.
  * Tanpa simbol ":" di baris papan. Tata letak: panggung penuh dua kolom (PRD v1.5).
  */
 import { H, O, T } from '../../engine/dsl';
-import type { Row, SoalContent, Step, Visual } from '../../engine/types';
+import type { SoalContent, Visual } from '../../engine/types';
 import type { Drink3State } from '../../visuals/drink3';
 import { getSoal } from '../index';
 
@@ -23,8 +23,6 @@ const LETTERS = ['A', 'B', 'C', 'D', 'E'] as const;
 type L = (typeof LETTERS)[number];
 /** pilihan (docs/soal25.md no. 3): ml */
 const OPTS: Record<L, number> = { A: 30, B: 35, C: 40, D: 45, E: 50 };
-/** total air 9.800 + 80k untuk tiap pilihan (docs, kartu A–E) */
-const TOT: Record<L, string> = { A: '12{.}200', B: '12{.}600', C: '13{.}000', D: '13{.}400', E: '13{.}800' };
 const N1 = ['pT'];
 const NE = ['pE'];
 const NK = ['pE', 'pK'];
@@ -36,41 +34,6 @@ const mx = (cols: string[], rows: Array<[string, string[]]>): string =>
     .join('')}<span class="smx-br" aria-hidden="true"></span></span>`;
 const K = '<span class="hl hl-red" data-hl="1"><span data-src="s-k"><i>k</i></span></span>';
 const AIR = '<span class="hl hl-red" data-hl="3"><span data-src="s-air">13000</span></span>';
-
-const quote = (o: L): Row => ({
-  id: `q${o}`,
-  toks: [T(`q${o}a`, `\\text{${o}}`, 'sp'), H(`q${o}b`, `${OPTS[o]} ml`, 'q', `@s-o${o}`)],
-});
-/** uji pilihan: 9.800 + 80 × (pilihan) dibandingkan dengan total air di catatan */
-const check = (o: L, note: string): Row => {
-  const ok = o === 'C';
-  const op = ok ? '=' : OPTS[o] < 40 ? '<' : '>';
-  return {
-    id: `o${o}`,
-    toks: [
-      T(`o${o}a`, '9{.}800+80\\cdot', '', 'PE1'),
-      T(`o${o}b`, String(OPTS[o]), '', `q${o}b`),
-      O(`o${o}c`, '='),
-      T(`o${o}d`, TOT[o], ok ? 'gold' : 'red'),
-      // pilihan yang tepat: hasilnya memang 13.000, tidak perlu dibandingkan lagi
-      ...(ok ? [] : [O(`o${o}e`, op), T(`o${o}f`, '13{.}000', '', 'PE5')]),
-    ],
-    note,
-    ...(ok ? { box: 'gold' as const } : {}),
-  };
-};
-const open6 = (o: L, cap: string): Step => ({
-  ch: 6,
-  cap,
-  visual: { kind: 'soal', hl: 0, focus: `s-o${o}` },
-  board: { title: `Pilihan ${o}`, pins: NK, list: `LO${o}`, upTo: 1, from: 0 },
-});
-const check6 = (o: L, cap: string): Step => ({
-  ch: 6,
-  cap,
-  visual: drink({ view: 'bar', bar: 1, cand: OPTS[o] }),
-  board: { title: `Pilihan ${o}`, pins: NK, list: `LO${o}`, upTo: 2, from: 1 },
-});
 
 const q03: SoalContent = {
   meta: getSoal(3)!,
@@ -125,9 +88,8 @@ ${LETTERS.map((o) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" data-h
     { t: 'Pahami soal', d: 'Baris dan kolom matriks' },
     { t: 'Data dari matriks', d: 'Kolom air dan pesanan' },
     { t: 'Hitung air', d: 'Per botol × banyak botol' },
-    { t: 'Cari k', d: 'k = 40 ml' },
+    { t: 'Cari k', d: 'k = 40 ml, pilihan C' },
     { t: 'Cara alternatif', d: 'Opsional: perkalian matriks', opt: true },
-    { t: 'Uji kelima pilihan', d: 'Di batang air' },
     { t: 'Catatan lengkap', d: 'Simpan dan cetak' },
     { t: 'Cocokkan pilihan', d: '5 kartu' },
     { t: 'Selesai', d: 'Jawaban C' },
@@ -309,6 +271,12 @@ ${LETTERS.map((o) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" data-h
         ],
         note: '$40\\cdot80=3.200$ dan $9.800+3.200=13.000$',
       },
+      {
+        id: 'c6',
+        toks: [H('c6a', 'Jawaban', 'lbl'), H('c6b', 'C · 40 ml', 'tx', '@s-oC')],
+        note: '$40$ ml ada di pilihan C',
+        box: 'gold',
+      },
     ],
     // cara alternatif (opsional): perkalian matriks
     LM: [
@@ -336,11 +304,6 @@ ${LETTERS.map((o) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" data-h
         note: 'baris matriks = minuman, jadi total satu bahan dikumpulkan dari kolomnya',
       },
     ],
-    LOA: [quote('A'), check('A', 'kurang dari $13.000$ → <b class="k-red">bukan</b>')],
-    LOB: [quote('B'), check('B', 'kurang dari $13.000$ → <b class="k-red">bukan</b>')],
-    LOC: [quote('C'), check('C', 'tepat $13.000$ → <b class="k-gold">benar</b>')],
-    LOD: [quote('D'), check('D', 'lebih dari $13.000$ → <b class="k-red">bukan</b>')],
-    LOE: [quote('E'), check('E', 'lebih; $50$ adalah air untuk wedang jahe → <b class="k-red">bukan</b>')],
     L8: [{ id: 's1', toks: [H('s1a', 'Jawaban', 'lbl'), H('s1b', 'C · 40 ml', 'tx')], box: 'gold' }],
     LR: [
       {
@@ -469,12 +432,18 @@ ${LETTERS.map((o) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" data-h
       visual: drink({ colA: true, kval: true }),
       board: { title: 'Cari k', pins: NK, list: 'LK', upTo: 5, from: 4 },
     },
-    // tawaran cara alternatif (opsional): Ya masuk Bagian 5, Tidak/Lewati langsung ke Bagian 6
+    {
+      ch: 4,
+      cap: 'Jadi satu botol kunir asem butuh $40$ ml air, dan $40$ ml ada di pilihan C. Jawabannya <b class="k-gold">C</b>.',
+      visual: { kind: 'soal', hl: 0, focus: 's-oC' },
+      board: { title: 'Cari k', pins: NK, list: 'LK', upTo: 6, from: 5 },
+    },
+    // tawaran cara alternatif (opsional): Ya masuk Bagian 5, Tidak/Lewati langsung ke Bagian 6 (catatan)
     {
       ch: 4,
       cap: 'Hitungan tadi sebenarnya perkalian matriks. Mau lihat cara alternatif dengan menuliskan perkaliannya?',
       visual: drink({ colA: true, kval: true }),
-      board: { title: 'Cari k', pins: NK, list: 'LK', upTo: 5, from: 5 },
+      board: { title: 'Cari k', pins: NK, list: 'LK', upTo: 6, from: 6 },
       branch: { yes: 'Ya, lihat perkalian matriks' },
     },
     // ---- 5 · Cara alternatif dengan perkalian matriks (opsional) ----
@@ -496,32 +465,15 @@ ${LETTERS.map((o) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" data-h
       visual: drink({ rc: true, colA: true }),
       board: { title: 'Perkalian matriks', list: 'LM', upTo: 3, from: 2 },
     },
-    // ---- 6 · Uji kelima pilihan ----
-    open6('A', 'Kita cek pilihan A dulu. Salin ke papan.'),
-    check6(
-      'A',
-      'Dengan $k=30$, totalnya $9.800+2.400=12.200$ ml, kurang dari $13.000$. A <b class="k-red">bukan</b>.',
-    ),
-    open6('B', 'Lanjut pilihan B.'),
-    check6('B', 'Dengan $k=35$, totalnya $12.600$ ml, masih kurang. B <b class="k-red">bukan</b>.'),
-    open6('C', 'Pilihan C.'),
-    check6('C', 'Dengan $k=40$, totalnya tepat $13.000$ ml. C <b class="k-gold">benar</b>.'),
-    open6('D', 'Pilihan D.'),
-    check6('D', 'Dengan $k=45$, totalnya $13.400$ ml, lebih dari $13.000$. D <b class="k-red">bukan</b>.'),
-    open6('E', 'Terakhir, pilihan E.'),
-    check6(
-      'E',
-      'Hati-hati, $50$ adalah air untuk wedang jahe; dengan $k=50$ totalnya $13.800$ ml, terlalu banyak. E <b class="k-red">bukan</b>.',
-    ),
-    // ---- 7 · Catatan lengkap ----
+    // ---- 6 · Catatan lengkap ----
     {
-      ch: 7,
+      ch: 6,
       cap: 'Semua langkah dari awal sampai akhir. Simpan untuk belajar lagi.',
       visual: { kind: 'notes' },
     },
-    // ---- 8 · Cocokkan pilihan ----
+    // ---- 7 · Cocokkan pilihan ----
     {
-      ch: 8,
+      ch: 7,
       cap: 'Cocokkan dengan pilihan: satu botol kunir asem butuh $40$ ml air. Pilih jawabannya di bawah.',
       visual: { kind: 'cards', flip: 5 },
       board: { title: 'Cocokkan pilihan', pins: NK, list: 'L8', upTo: 1, from: 0 },
@@ -539,9 +491,9 @@ ${LETTERS.map((o) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" data-h
         ],
       },
     },
-    // ---- 9 · Selesai ----
+    // ---- 8 · Selesai ----
     {
-      ch: 9,
+      ch: 8,
       cap: '<span class="verdict"><span class="seal">C</span><span>Satu botol kunir asem membutuhkan <b>40 ml</b> air. Seluruh pesanan memakai $5.000+4.800+3.200=13.000$ ml.</span></span>',
       visual: { kind: 'done' },
       board: { title: 'Ringkasan', list: 'LR', upTo: 2, from: 2 },
@@ -599,7 +551,6 @@ ${LETTERS.map((o) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" data-h
         lists: ['LM'],
         why: 'Pesanan (baris) dikali matriks kebutuhan memberi total tiap bahan; entri air memuat $k$.',
       },
-      { title: 'Uji kelima pilihan', lists: ['LOA', 'LOB', 'LOC', 'LOD', 'LOE'] },
     ],
     answer: 'Jawaban: <b>C</b>, 40 ml.',
   },
@@ -608,12 +559,13 @@ ${LETTERS.map((o) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" data-h
     message:
       'Satu botol kunir asem membutuhkan <b>40 ml</b> air. Seluruh pesanan memakai $5.000+4.800+3.200=13.000$ ml.',
   },
-  key: { answer: 'C', cardOk: [false, false, true, false, false], goldRows: ['c3', 'oC', 's1', 'r1', 'r2'] },
+  key: { answer: 'C', cardOk: [false, false, true, false, false], goldRows: ['c3', 'c6', 's1', 'r1', 'r2'] },
   authorNotes: [
-    'Modul baru (v1.30) dengan alur guru: data dari matriks (kolom air, pesanan), hitung air per minuman, batang air 13.000 ml, 9.800 pindah ruas (tidak dicoret), k = 40, hati-hati 3.200, cek, uji pilihan di batang air.',
+    'Modul baru (v1.30) dengan alur guru: data dari matriks (kolom air, pesanan), hitung air per minuman, batang air 13.000 ml, 9.800 pindah ruas (tidak dicoret), k = 40, hati-hati 3.200, cek, lalu langsung dicocokkan dengan pilihan C.',
+    'Revisi pemilik (v1.32): bagian "Uji kelima pilihan" (10 langkah) dihapus; cukup k = 40 ml lalu pilihan C. Kartu A–E tetap memuat total tiap pilihan.',
     'Bagian opsional "Cara alternatif": pesanan sebagai baris dikali matriks kebutuhan (bentuk lain dari MᵀP di dokumen), hanya entri air yang dihitung, ditambah alasan "kenapa kolom".',
     'Anomali sumber: total J (4.360) dan GM (4.960) di naskah tidak cocok dengan hitungan; sesuai catatan dokumen, kolom J dan GM tidak dihitung atau dibandingkan di depan siswa.',
-    'Batang air (model batang) dan nilai total tiap pilihan (12.200, 12.600, 13.000, 13.400, 13.800) dari kartu A–E dokumen.',
+    'Batang air (model batang) dari langkah dokumen; nilai total tiap pilihan (12.200, 12.600, 13.000, 13.400, 13.800) di kartu dari kartu A–E dokumen.',
     'Tanpa simbol ":" di baris papan; pembagian ditulis dengan ÷.',
   ],
 };
