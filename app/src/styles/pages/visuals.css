@@ -3270,3 +3270,95 @@
     color: var(--color-stage-accent);
   }
 }
+
+/* ---------- soal 6 alur v1.35 (div6): pembagian bersusun suku banyak ----------
+   angka dan garis putih; hasil bagi dan sisa hitungan biru langit; sisa soal merah muda (dari soal);
+   pasangan koefisien yang disamakan dibingkai biru langit. */
+@layer pages {
+  .vis-div {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: var(--color-on-stage);
+    font-size: min(var(--fs-mat), var(--d6-fit-h), var(--d6-fit-w));
+  }
+
+  .d6-grid {
+    display: grid;
+    grid-template-columns: auto 0.8em repeat(5, auto);
+    grid-auto-rows: 1.55em;
+    align-items: center;
+    column-gap: 0.25em;
+    font-size: 0.62em;
+  }
+
+  .d6-c,
+  .d6-ln,
+  .d6-br,
+  .d6-lb {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .d6-c.on,
+  .d6-ln.on,
+  .d6-br.on,
+  .d6-lb.on {
+    opacity: 1;
+  }
+
+  .d6-c {
+    position: relative;
+    justify-self: start;
+    padding-inline: 0.12em;
+    white-space: nowrap;
+  }
+
+  .d6-p {
+    justify-self: end;
+    padding-right: 0.3em;
+  }
+
+  .d6-q,
+  .d6-r {
+    color: var(--color-stage-accent);
+  }
+
+  .d6-g {
+    color: var(--red-300);
+  }
+
+  .d6-br {
+    align-self: stretch;
+    border-top: var(--bw-3) solid var(--color-on-stage);
+    border-left: var(--bw-3) solid var(--color-on-stage);
+    border-top-left-radius: var(--radius-md);
+  }
+
+  .d6-ln {
+    align-self: end;
+    border-bottom: var(--bw-2) solid var(--color-on-stage);
+  }
+
+  .d6-lb {
+    justify-self: end;
+    padding-right: 0.3em;
+    font-family: var(--font-mono);
+    font-size: max(var(--fs-label), 0.5em);
+    color: var(--color-on-stage-muted);
+  }
+
+  .d6-ring {
+    position: absolute;
+    inset: -0.1em -0.05em;
+    border: var(--bw-3) solid var(--color-stage-accent);
+    border-radius: var(--radius-md);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .vis-div[data-hl='x'] [data-p='x'] .d6-ring,
+  .vis-div[data-hl='c'] [data-p='c'] .d6-ring {
+    opacity: 1;
+  }
+}

@@ -977,6 +977,19 @@ Pin: $a+b=-1$.
   - Pertanyaan berhuruf A–E.
 - **Ringkasan `LR`:** $a=2$, $b=-3$ (navy) · $a+b=-1$ (emas) · **Jawaban C** (emas).
 
+*Alur aplikasi (Revisi 1.35, 4 Nov 2026; kunci tidak berubah: C). Usulan pembuat untuk dicek pemilik ("untuk nomor 6 dan seterusnya saya lihat dulu cara anda"). Menggantikan alur M2 di atas pada `app/src/content/soal/q06.ts`. Pilihan berupa nilai $a+b$, jadi tidak bisa disubstitusi langsung; jalur utama memakai **pembagian bersusun** (dari *Pemeriksaan hasil*) dengan $a$ dan $b$ dibawa sebagai huruf, dan kesamaan koefisien menjadi opsional. Adegan baru `div6` (pembagian bersusun per kolom pangkat).* Hasil disimpan ke **catatan**: sisa hitungan, $b=-3$, $a=2$. Baris papan tanpa ":". Tata letak: panggung penuh dua kolom.
+- **Bagian 1 — Pahami soal:** $f(x)$ memuat $a$ dan $b$; dibagi $x^2+x+1$ bersisa $5x-1$; ditanya $a+b$.
+- **Bagian 2 — Pembagian bersusun:**
+  - $x^4\div x^2=x^2$; dikali pembagi dan dikurangkan, sisa sementara $(a-1)x^3+(b-1)x^2+x-6$;
+  - $(a-1)x^3\div x^2=(a-1)x$; **hati-hati** tanda, $x-(a-1)x=(2-a)x$ (pertanyaan cepat baru; pengecoh $ax$, $(a-2)x$, $-ax$); sisa sementara $(b-a)x^2+(2-a)x-6$;
+  - $(b-a)x^2\div x^2=b-a$; sisa hitungan $(2-b)x+(a-b-6)$ (sama dengan bentuk $f(\omega)$ pada metode kedua di atas); pembagian berhenti; hasil bagi $x^2+(a-1)x+(b-a)$.
+- **Bagian 3 — Samakan sisanya:** $(2-b)x+(a-b-6)=5x-1$:
+  - koefisien $x$: $2-b=5$, $2$ pindah ruas, $-b=3$, $b=-3$ (pertanyaan cepat baru; pengecoh $3$, $7$, $-7$);
+  - konstanta: $a-b-6=-1$, $b=-3$ dimasukkan, $a-3=-1$, $-3$ pindah ruas, $a=2$.
+- **Bagian 4 — Jawaban:** $a+b=2+(-3)=-1$, pilihan **C**; cek $(2+3)x+(2+3-6)=5x-1$; **hati-hati** $5$ adalah koefisien $x$ pada sisa (pilihan B); tawaran cara alternatif.
+- **Bagian 5 — Kesamaan koefisien (opsional, Ya/Lewati):** alur utama dokumen di atas ($f(x)-(5x-1)=x^4+ax^3+bx^2-4x-5$, pertanyaan cepat lama $-4x$; hasil bagi $x^2+px+q$; $q=-5$, $p=1$, $a=2$, $b=-3$); *Tahukah kalian?* hasil bagi bersusun $x^2+(a-1)x+(b-a)$ menjadi $x^2+x-5$, sama dengan $x^2+px+q$.
+- **Bagian 6–8:** catatan lengkap, kartu A–E dengan pertanyaan berhuruf, segel C.
+
 ### Bagian 6 — Selesai
 - **Segel:** **C**
 - **Pop-up:** "$f(x)=x^4+2x^3-3x^2+x-6$, sehingga $a=2$, $b=-3$, dan $a+b=-1$."

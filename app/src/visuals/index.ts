@@ -3,6 +3,7 @@ import type { VisualFactory } from '../engine/scene';
 import { createCone } from './cone';
 import { createCubic5 } from './cubic5';
 import { createDoor3d } from './door3d';
+import { createDiv6 } from './div6';
 import { createDrink3 } from './drink3';
 import { createHotel4 } from './hotel4';
 import { createMat1 } from './mat1';
@@ -23,6 +24,7 @@ export const VISUALS: Record<string, VisualFactory> = {
   cone: createCone,
   cubic5: createCubic5,
   door3d: createDoor3d,
+  div6: createDiv6,
   drink3: createDrink3,
   hotel4: createHotel4,
   mat1: createMat1,
