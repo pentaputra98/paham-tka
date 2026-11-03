@@ -824,6 +824,25 @@ Pin: akar $=\{-4,\ -2,\ 3\}$.
   - Papan ringkasan s1–s5, ditambah s6 "Jawaban $(-2,0)$ dan $(3,0)$".
   - Pertanyaan kesimpulan: $(3,0)$ saja · **$(-2,0)$ dan $(3,0)$** · $(-2,0)$, $(3,0)$, dan $(4,0)$ · $(-1,0)$ dan $(3,0)$.
 
+*Alur aplikasi dengan gaya mengajar pemilik materi (Revisi 1.33, 3 Nov 2026; kunci tidak berubah: (−2, 0) dan (3, 0)). Menggantikan alur M2 di atas pada `app/src/content/soal/q05.ts`, atas arahan pemilik: substitusi langsung dari pilihan ganda, grafik dan cara esai ditawarkan sebagai bagian opsional. Adegan baru `subst5` (tabel substitusi pilihan dan skema Horner); `cubic5` tetap dipakai untuk grafik.* Hasil disimpan ke **catatan**: $f(x)$ dan, di cara esai, faktor $(x-3)$. Baris papan tanpa ":". Tata letak: panggung penuh dua kolom.
+- **Bagian 1 — Pahami soal:** diketahui $f(x)=x^3+3x^2-10x-24$ (disimpan ke catatan); ditanya titik potong dengan sumbu X, jawabannya bisa lebih dari satu.
+- **Bagian 2 — Titik potong sumbu X:**
+  - titik potong dengan sumbu X artinya $y=0$, karena semua titik di sumbu X tingginya nol, jadi $f(x)=0$ (pertanyaan cepat lama 2.1);
+  - semua pilihan berbentuk $(x,0)$, angka $0$ disorot; cukup substitusi $x$ tiap pilihan ke $f(x)$;
+  - tawaran: lihat dulu dengan grafik atau tidak.
+- **Bagian 3 — Lihat dengan grafik (opsional, Ya/Lewati):** kurva dan sumbu X berpendar, titik potong ada di tempat kurva bertemu sumbu X; contoh $f(-1)=-12$ di bawah sumbu X, penggeser $x$ untuk mencoba nilai lain.
+- **Bagian 4 — Substitusi pilihan** (satu langkah per pilihan, hasilnya muncul di tabel pilihan):
+  - $(-2)^3+3(-2)^2-10(-2)-24=-8+12+20-24=0$ → titik potong;
+  - $f(-1)=-1+3+10-24=-12$ (pertanyaan cepat baru; pengecoh $-18$, $-32$, $0$ dari kesalahan tanda);
+  - $f(3)=27+27-30-24=0$ → titik potong; $f(4)=48$ (**hati-hati**, $4$ pembagi $24$ tetapi bukan akar); $f(5)=126$.
+- **Bagian 5 — Jawaban:** hanya $(-2,0)$ dan $(3,0)$ yang hasilnya nol; tawaran cara normal bila soalnya esai tanpa pilihan ganda.
+- **Bagian 6 — Cara esai (opsional, Ya/Lewati):**
+  - calon akar bulat adalah pembagi suku tetap $-24$ ($\pm1,\pm2,\pm3,\pm4,\dots,\pm24$; dari *Kesalahan umum*);
+  - dicoba sampai nol, misalnya $f(3)=0$, jadi $(x-3)$ faktor (disimpan ke catatan);
+  - skema Horner (langkah 2.3 di atas): $1$ turun, $3+3=6$, $-10+18=8$, $-24+24=0$; $f(x)=(x-3)(x^2+6x+8)=(x-3)(x+2)(x+4)$;
+  - akar $3$, $-2$, $-4$ di grafik; **hati-hati** $(-4,0)$ juga titik potong, tetapi tidak ada di pilihan.
+- **Bagian 7–9:** catatan lengkap, kartu (1)–(5) dibuka sekaligus dengan pertanyaan kesimpulan, segel (−2, 0) · (3, 0).
+
 ### Bagian 5 — Selesai
 - **Segel:** **(−2,0), (3,0)**
 - **Pop-up:** "Grafik memotong sumbu X di $(-2,0)$ dan $(3,0)$ dari pilihan yang ada; titik potong ketiganya adalah $x=-4,\,-2,\,3$."

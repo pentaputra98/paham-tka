@@ -11,6 +11,7 @@ import { createPakan2 } from './pakan2';
 import { createBars } from './bars17';
 import { createCirc } from './circ15';
 import { createSign } from './sign17';
+import { createSubst5 } from './subst5';
 import { createTide11 } from './tide11';
 import { createTrans2 } from './trans2';
 import { createSing16 } from './sing16';
@@ -28,6 +29,7 @@ export const VISUALS: Record<string, VisualFactory> = {
   orn18: createOrn,
   pakan2: createPakan2,
   sign: createSign,
+  subst5: createSubst5,
   tide11: createTide11,
   trans2: createTrans2,
   sing16: createSing16,

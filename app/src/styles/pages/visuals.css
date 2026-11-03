@@ -3128,3 +3128,145 @@
     stroke: var(--color-on-stage);
   }
 }
+
+/* ---------- soal 5 alur pemilik (subst5, v1.33): substitusi pilihan dan skema Horner ----------
+   baris pilihan putih; y = 0 dan pilihan yang sedang diuji biru langit; emas hanya untuk f(x) = 0 (titik potong =
+   jawaban), merah bila bukan nol. */
+@layer pages {
+  .vis-subst {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: var(--color-on-stage);
+    font-size: min(var(--fs-mat), var(--s5-fit-h), var(--s5-fit-w));
+  }
+
+  .s5-tab,
+  .s5-horner {
+    grid-area: 1 / 1;
+    display: grid;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .vis-subst[data-view='tab'] .s5-horner,
+  .vis-subst[data-view='horner'] .s5-tab {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .s5-tab {
+    gap: 0.25em;
+  }
+
+  .s5-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 4.2em 7.6em auto;
+    white-space: nowrap;
+    align-items: center;
+    gap: 0.6em;
+    padding: 0.08em 0.4em;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .s5-ring {
+    position: absolute;
+    inset: 0;
+    border: var(--bw-3) solid var(--color-stage-accent);
+    border-radius: var(--radius-md);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .s5-row.is-cur .s5-ring {
+    opacity: 1;
+  }
+
+  .show-y0 .s5-y {
+    color: var(--color-stage-accent);
+  }
+
+  .s5-res,
+  .s5-tag {
+    opacity: 0;
+    color: var(--red-300);
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .s5-tag {
+    font-family: var(--font-mono);
+    font-size: max(var(--fs-label), 0.42em);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .s5-row.on .s5-res,
+  .s5-row.on .s5-tag {
+    opacity: 1;
+  }
+
+  .s5-row.is-zero .s5-res,
+  .s5-row.is-zero .s5-tag {
+    color: var(--color-result);
+  }
+
+  .is-win .s5-row:not(.is-zero) {
+    opacity: 0.45;
+  }
+
+  /* ---- skema Horner (opsional) ---- */
+  .s5-horner {
+    position: relative;
+    grid-template-columns: repeat(5, minmax(2.2em, auto));
+    grid-template-rows: repeat(3, 1.7em) auto;
+    align-items: center;
+    justify-items: center;
+    column-gap: 0.3em;
+  }
+
+  .s5-hc {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .s5-hc.on,
+  .s5-cap.on {
+    opacity: 1;
+  }
+
+  .s5-hd {
+    color: var(--color-stage-accent);
+  }
+
+  .s5-hs {
+    color: var(--color-stage-accent);
+    font-weight: var(--fw-bold);
+  }
+
+  .s5-vl {
+    grid-area: 1 / 2 / 3 / 2;
+    justify-self: start;
+    align-self: stretch;
+    border-left: var(--bw-3) solid var(--color-on-stage);
+  }
+
+  .s5-hl {
+    grid-area: 3 / 2 / 3 / 6;
+    justify-self: stretch;
+    align-self: start;
+    border-top: var(--bw-3) solid var(--color-on-stage);
+  }
+
+  .s5-cap {
+    font-family: var(--font-mono);
+    font-size: max(var(--fs-label), 0.36em);
+    color: var(--color-on-stage-muted);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .s5-cap.s5-hs {
+    color: var(--color-stage-accent);
+  }
+}
