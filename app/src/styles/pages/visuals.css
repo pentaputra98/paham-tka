@@ -2993,3 +2993,190 @@
     fill: var(--color-result);
   }
 }
+
+/* ---------- soal 4 alur guru (hotel4, v1.31): pendapatan tiga hotel ----------
+   tabel dari gambar dengan bingkai biru; batang pendapatan putih, yang dibandingkan biru langit; emas hanya
+   Hotel C terbesar (pernyataan 3) dan total di atas 20 juta (pernyataan 5); pasangan yang salah merah. */
+@layer pages {
+  .vis-hotel {
+    height: 100%;
+    display: grid;
+    place-items: center;
+  }
+
+  .vis-hotel > svg {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .vis-hotel:not([data-view='pic']) .h4-pic,
+  .vis-hotel:not([data-view='bars']) .h4-bars,
+  .vis-hotel:not([data-view='total']) .h4-total {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .h4-pic image {
+    clip-path: inset(0 round var(--radius-lg));
+  }
+
+  .h4-col,
+  .h4-cell {
+    fill: none;
+    stroke: var(--blue-600);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .h4-col {
+    stroke-width: var(--bw-3);
+    stroke-dasharray: 10 6;
+  }
+
+  .h4-cell {
+    stroke-width: var(--bw-4);
+  }
+
+  .vis-hotel[data-col='A'] [data-col='A'],
+  .vis-hotel[data-col='B'] [data-col='B'],
+  .vis-hotel[data-col='C'] [data-col='C'],
+  .show-price [data-col='P'] {
+    opacity: 1;
+  }
+
+  .h4-bar {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .h4-bar.on {
+    opacity: 1;
+  }
+
+  .h4-br {
+    fill: var(--color-stage-surface);
+    stroke: var(--color-on-stage);
+    stroke-width: var(--bw-2);
+  }
+
+  .h4-bl,
+  .h4-bv,
+  .h4-sv,
+  .h4-tt,
+  .h4-lt,
+  .h4-dt {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-md);
+    fill: var(--color-on-stage);
+  }
+
+  .h4-dt {
+    font-size: var(--svg-fs-sm);
+    fill: var(--color-stage-accent);
+    paint-order: stroke;
+    stroke: var(--color-stage);
+    stroke-width: var(--bw-4);
+  }
+
+  .h4-note,
+  .h4-sl {
+    font-family: var(--font-mono);
+    font-size: var(--svg-fs-xs);
+    fill: var(--color-on-stage-muted);
+  }
+
+  .h4-ax {
+    fill: none;
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-2);
+  }
+
+  .h4-bar.is-hl .h4-br {
+    fill: var(--a-sky-15);
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-3);
+  }
+
+  .h4-bar.is-hl .h4-bv {
+    fill: var(--color-stage-accent);
+  }
+
+  .h4-bar.is-bad .h4-br {
+    fill: var(--a-red-20);
+    stroke: var(--red-400);
+  }
+
+  .h4-bar.is-bad .h4-bv {
+    fill: var(--red-300);
+  }
+
+  .h4-bar.is-win .h4-br {
+    fill: var(--a-gold-20);
+    stroke: var(--color-result);
+    stroke-width: var(--bw-3);
+  }
+
+  .h4-bar.is-win .h4-bv,
+  .h4-bar.is-win .h4-bl {
+    fill: var(--color-result);
+  }
+
+  .h4-dl,
+  .h4-line {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 6 4;
+  }
+
+  .h4-dr {
+    fill: var(--a-sky-45);
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-3);
+  }
+
+  .h4-stack {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .vis-hotel[data-stack='hotel'] .h4-stack[data-k='hotel'],
+  .vis-hotel[data-stack='type'] .h4-stack[data-k='type'] {
+    opacity: 1;
+  }
+
+  .h4-seg rect {
+    stroke: var(--color-stage);
+    stroke-width: var(--bw-2);
+  }
+
+  .h4-s0 {
+    fill: var(--blue-600);
+  }
+
+  .h4-s1 {
+    fill: var(--blue-800);
+  }
+
+  .h4-s2 {
+    fill: var(--a-sky-30);
+  }
+
+  .h4-brace {
+    fill: none;
+    stroke: var(--color-result);
+    stroke-width: var(--bw-2);
+  }
+
+  .h4-tt {
+    fill: var(--color-result);
+  }
+
+  .h4-line {
+    stroke: var(--color-on-stage);
+  }
+}

@@ -2229,6 +2229,45 @@
     font-weight: var(--fw-semibold);
   }
 
+  /* matriks berlabel pada naskah soal (soal 3): label kolom di atas, label baris di kiri, kurung siku */
+  .soal-mxs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-2) var(--space-6);
+    margin: var(--space-2) 0;
+  }
+
+  .soal-mx {
+    position: relative;
+    display: inline-grid;
+    grid-template-columns: auto repeat(var(--n, 3), minmax(2.4em, auto));
+    column-gap: var(--space-1);
+    align-items: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .soal-mx > span {
+    padding: var(--space-0-5) var(--space-1);
+    text-align: center;
+  }
+
+  .soal-mx .smx-l {
+    font-family: var(--font-body);
+    font-size: var(--fs-small);
+    color: var(--color-text-muted);
+  }
+
+  /* kurung: diposisikan absolut di area angka, tidak ikut penempatan otomatis sel */
+  .soal-mx .smx-br {
+    position: absolute;
+    inset: 0;
+    grid-area: 2 / 2 / 5 / -1;
+    border-radius: var(--radius-xs);
+    border-inline: var(--bw-2) solid var(--color-text);
+    pointer-events: none;
+  }
+
   @media (max-height: 520px) {
     .soal-split {
       grid-template-columns: minmax(0, 1fr) minmax(0, 28%);

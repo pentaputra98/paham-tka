@@ -4,7 +4,7 @@
  *  - mat: matriks kebutuhan per botol (baris = minuman WJ, BK, KA; kolom = bahan J, GM, A) dan vektor pesanan.
  *    rc: label baris dan kolom disorot; colA: kolom air disorot, kolom lain diredupkan; pair n: baris 1..n
  *    dipasangkan (sel air × pesanan) dan hasil kalinya ditulis di kanan; kval: k = 40 masuk ke selnya (emas).
- *    Angka menjadi sumber terbang (d-a1, d-a2, d-k, d-o1, d-o2, d-o3, d-p1, d-p2, d-p3).
+ *    Angka menjadi sumber terbang (d-a1, d-a2, d-k, d-o1, d-o2, d-o3).
  *  - bar: batang air 13.000 ml. bar 1 = 5.000 + 4.800 (= 9.800); 2 = sisanya 80k sampai garis 13.000;
  *    3 = sisanya 3.200; cand k = batang 9.800 + 80k untuk suatu pilihan (emas bila tepat 13.000, merah bila
  *    kurang atau lebih).
@@ -35,7 +35,7 @@ const ROWS: Array<[string, [string, string, string], string]> = [
   ['BK', ['10', '25', '40'], '120'],
   ['KA', ['12', '8', 'k'], '80'],
 ];
-const PROD = ['5000', '4800', '80k'];
+const PROD = ['5{.}000', '4{.}800', '80k'];
 const COLS = ['J', 'GM', 'A'];
 const fmt = (n: number): string => n.toLocaleString('id-ID');
 
@@ -55,7 +55,7 @@ function matMarkup(): string {
         return `<div class="d3-c" data-c="${j}"${src}><span class="d3-ring" aria-hidden="true"></span><span class="d3-v">${tex(t)}</span>${i === 2 && j === 2 ? `<span class="d3-k40">${tex('40')}</span>` : ''}</div>`;
       })
       .join('');
-    return `<div class="d3-rl" data-r="${i}">${r}</div>${cs}<div class="d3-gap"></div><div class="d3-c d3-o" data-src="d-o${i + 1}" data-r="${i}"><span class="d3-ring" aria-hidden="true"></span>${tex(o)}</div><div class="d3-p" data-p="${i + 1}"><span data-src="d-p${i + 1}">${tex(`=${PROD[i]}`)}</span></div>`;
+    return `<div class="d3-rl" data-r="${i}">${r}</div>${cs}<div class="d3-gap"></div><div class="d3-c d3-o" data-src="d-o${i + 1}" data-r="${i}"><span class="d3-ring" aria-hidden="true"></span>${tex(o)}</div><div class="d3-p" data-p="${i + 1}"><span>${tex(`=${PROD[i]}`)}</span></div>`;
   }).join('');
   return `<div class="d3-mat" role="img" aria-label="Matriks kebutuhan per botol: baris wedang jahe, beras kencur, kunir asem; kolom jahe, gula merah, air. Air per botol 50, 40, dan k mililiter. Pesanan 100, 120, dan 80 botol.">
     <div class="d3-grid">${head}${body}</div>
@@ -78,8 +78,8 @@ function barMarkup(): string {
   <text class="d3-bt" x="${(BX + b) / 2}" y="${BY - 28}" text-anchor="middle">9.800</text>
   <g class="d3-seg d3-rest" data-s="2"><rect class="d3-ka" x="${b}" y="${BY}" width="${t - b}" height="${BH}" rx="6"/>
     <text class="d3-kt" x="${(b + t) / 2}" y="${BY + BH / 2 + 7}" text-anchor="middle">80k</text>
-    <text class="d3-sl" x="${(b + t) / 2}" y="${BY + BH + 20}" text-anchor="middle">KA</text></g>
-  <g class="d3-target"><path class="d3-tl" d="M${t} ${BY - 40}V${BY + BH + 34}"/>
+    <text class="d3-sl" x="${(b + t) / 2}" y="${BY + BH + 20}" text-anchor="middle">KA, 80k</text></g>
+  <g class="d3-target"><path class="d3-tl" d="M${t} ${BY - 12}V${BY + BH + 34}"/>
     <text class="d3-tt" x="${t}" y="${BY + BH + 52}" text-anchor="middle">13.000</text></g>
   <g class="d3-cand"><rect class="d3-cr" x="${b}" y="${BY + 8}" width="0" height="${BH - 16}" rx="4"/>
     <text class="d3-ct" x="${b}" y="${BY - 28}" text-anchor="middle"></text></g>
@@ -183,7 +183,8 @@ export function createDrink3(): VisualScene {
         if (k <= b && anim && (k > bars || c.replay)) runs.push(grow(g, i * 350));
       });
       const kt = el.querySelector<SVGTextElement>('.d3-kt')!;
-      kt.textContent = b >= 3 ? '80k = 3.200' : '80k';
+      // sisa batang: 80k, lalu nilainya 3.200 (label di bawah tetap "KA, 80k")
+      kt.textContent = b >= 3 ? '3.200' : '80k';
       if (b >= 3 && anim && (bars < 3 || c.replay)) runs.push(fadeIn(kt, 0));
       bars = b;
 
@@ -194,7 +195,8 @@ export function createDrink3(): VisualScene {
         const tot = 9800 + 80 * k;
         const x0 = sx(9800);
         candR.setAttribute('width', String(sx(tot) - x0));
-        candT.setAttribute('x', String((x0 + sx(tot)) / 2));
+        // label di tengah batang pilihan, digeser ke kiri agar tidak keluar bingkai (pilihan 13.800)
+        candT.setAttribute('x', String(Math.min((x0 + sx(tot)) / 2, 470)));
         candT.textContent = `80 × ${k} = ${fmt(80 * k)} → ${fmt(tot)}`;
         el.classList.toggle('cand-ok', tot === 13000);
         if (anim && (k !== cand || c.replay)) runs.push(grow(candR, 0), fadeIn(candT, 450));

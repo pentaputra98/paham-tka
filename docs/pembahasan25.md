@@ -544,6 +544,25 @@ Data total **jahe** dan **gula merah** pada `soal25.md` tidak cocok dengan perhi
 - Menjumlahkan alih-alih mengalikan kebutuhan per botol dengan banyak botol.
 - Berhenti di $80k=3200$ tanpa membagi 80.
 
+*Alur aplikasi dengan gaya mengajar pemilik materi (Revisi 1.30, 3 Nov 2026; kunci tidak berubah: C). Dipakai di `app/src/content/soal/q03.ts` (modul baru, adegan `drink3`); soal 3 ditambahkan ke Rilis 1 dan dibuka.* Hasil disimpan ke **catatan**: total air $13.000$, $9.800+80k=13.000$, dan $k=40$. Sesuai *Catatan sumber*, kolom J dan GM tidak dihitung atau dibandingkan. Baris papan tanpa ":". Tata letak: panggung penuh dua kolom; matriks di kertas soal berlabel baris dan kolom.
+- **Bagian 1 — Pahami soal:** yang ditanya air untuk satu botol kunir asem, yaitu $k$; langkah pertama membaca matriks (baris = minuman, kolom = bahan, label disorot).
+- **Bagian 2 — Data dari matriks:**
+  - kolom A disorot: $50$, $40$, $k$ terbang dari matriks; pesanan $100$, $120$, $80$ terbang dari vektor pesanan;
+  - total air $13.000$ dari kertas soal, disimpan ke catatan;
+  - *Tahukah kalian?* hanya kolom air yang memuat $k$, jadi cukup bahan air yang dihitung.
+- **Bagian 3 — Hitung air:**
+  - tiap baris dipasangkan (sel air dan pesanan dibingkai): $50\times100=5.000$ (pertanyaan cepat lama), $40\times120=4.800$, $k\times80=80k$;
+  - batang air: $5.000$ dan $4.800$ tumbuh, sisanya $80k$ sampai garis $13.000$;
+  - $5.000+4.800+80k=13.000$, lalu $9.800+80k=13.000$, disimpan ke catatan.
+- **Bagian 4 — Cari $k$:**
+  - **$9.800$ pindah ruas** menjadi $-9.800$ (terbang, tidak dicoret), $80k=3.200$ (sisa batang);
+  - $k=3.200\div80=40$ (pertanyaan cepat lama), disimpan ke catatan;
+  - **Hati-hati:** $3.200$ adalah air untuk 80 botol, bukan jawabannya; $40$ masuk ke sel $k$ di matriks;
+  - cek $9.800+40\cdot80=13.000$; tawaran cara alternatif.
+- **Bagian 5 — Cara alternatif dengan perkalian matriks (opsional, Ya/Lewati):** pesanan sebagai baris $(100\ \ 120\ \ 80)$ dikali matriks kebutuhan (bentuk lain dari $M^{\mathsf T}$ × pesanan di *Prasyarat konsep*); entri air $100\cdot50+120\cdot40+80k$, sama dengan hitungan tadi; kenapa kolom: satu kolom = satu bahan.
+- **Bagian 6 — Uji kelima pilihan:** tiap pilihan disalin dari soal, lalu batang $9.800+80k$ dibandingkan dengan garis $13.000$: A $12.200$, B $12.600$ (kurang), C tepat $13.000$, D $13.400$, E $13.800$ (lebih; hati-hati, $50$ adalah air wedang jahe).
+- **Bagian 7–9:** catatan lengkap, kartu A–E dengan pertanyaan berhuruf, segel C.
+
 ---
 
 ## SOAL 4 — Pendapatan Tiga Hotel
