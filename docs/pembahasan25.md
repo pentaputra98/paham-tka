@@ -396,6 +396,28 @@ Susunan setara pada opsi E: bagi persamaan gajah dengan 2 → $5x+y=19$ dan $10x
   - Pernyataan kartu ditulis dua baris (perkalian, lalu "= hasil") agar muat di kartu.
 - **Belum dibuat:** sorotan angka 3 dan 4 pada gambar sapi dan kambing. Gambar sumber dipakai apa adanya.
 
+*Alur aplikasi dengan gaya mengajar pemilik materi (Revisi 1.29, 3 Nov 2026; kunci tidak berubah: E). Menggantikan alur M2 di atas pada `app/src/content/soal/q02.ts`; adegan baru `pakan2` (gambar soal dan model batang) dan `mul2` (perkalian baris × kolom).* Jalur utama memakai **logika model batang** (metode eliminasi dari *Pemeriksaan hasil*); invers matriks pindah ke bagian opsional. Hasil disimpan ke **catatan**: kedua persamaan, $y=4$, $x=3$, dan $\begin{pmatrix}x\\y\end{pmatrix}=\begin{pmatrix}3\\4\end{pmatrix}$. Baris papan tanpa ":". Tata letak: panggung penuh dua kolom; kertas soal dengan gambar di kanan dan pilihan dua kolom.
+- **Bagian 1 — Pahami soal:** yang ditanya $\begin{pmatrix}x\\y\end{pmatrix}$ ($x$ sapi, $y$ kambing); semua pilihan berbentuk matriks × vektor = hasil, jadi cari dulu $x$ dan $y$, lalu uji tiap pilihan.
+- **Bagian 2 — Data dari gambar:**
+  - gambar sapi dibingkai, angka $10$ dan $10$ terbang dari gambar; lalu kambing, $2$ dan $1$;
+  - pakan tersedia $38$ dan $34$ dari kertas soal;
+  - model batang gajah tumbuh bagian demi bagian: $10x+2y=38$ (pertanyaan cepat lama); batang gamal $10x+y=34$. Kedua persamaan disimpan ke catatan.
+- **Bagian 3 — Model batang:**
+  - *Tahukah kalian?* bagian sapi $10x$ sama panjang di kedua batang (garis putus-putus), bedanya satu $y$ di ujung batang gajah;
+  - $y=38-34=4$ (pertanyaan cepat baru: $4$; pengecoh $2$, $72$, $8$), simpan ke catatan;
+  - batang gamal $10x+4=34$; **$4$ pindah ruas** menjadi $-4$ (terbang, tidak dicoret), $10x=30$, $x=30\div10=3$, simpan ke catatan;
+  - cek ke persamaan gajah $10\cdot3+2\cdot4=38$; hasil $3$ sapi dan $4$ kambing ditempel di atas hewannya pada gambar (pertanyaan cepat urutan);
+  - **Hati-hati:** $(4,3)$ berarti 4 sapi dan 3 kambing ($10(4)+2(3)=46\ne38$).
+- **Bagian 4 — Cara cepat:** syarat 1, hasil pilihan harus $(3,4)$; batas berlakunya, syarat 2, hasil yang tertulis belum tentu hasil perkalian sebenarnya. Pilihan A, B, C disalin dari soal, lalu klaimnya ditempel di gambar: A $(15,20)$, B dan C $(4,3)$ (urutan terbalik) → bukan.
+- **Bagian 5 — Uji pilihan D:** hasil tertulis $(3,4)$ lolos syarat 1; baris 1 × kolom $(-1)(38)+(2)(34)=30$, baris 2 × kolom $(10)(38)+(-10)(34)=40$; hasil kali $(30,40)\ne(3,4)$ → bukan (pertanyaan cepat hasil kali).
+- **Bagian 6 — Uji pilihan E:** hasil tertulis $(3,4)$; vektornya memakai $19=38\div2$ (persamaan gajah dibagi 2); baris 1 $-\frac{19}5+\frac{34}5=3$, baris 2 $38-34=4$; hasil kali $(3,4)$ → benar. Tawaran cara alternatif.
+- **Bagian 7 — Cara alternatif dengan invers matriks (opsional, Ya/Lewati):**
+  - bentuk matriks $M\begin{pmatrix}x\\y\end{pmatrix}=\begin{pmatrix}38\\34\end{pmatrix}$, lalu $\begin{pmatrix}x\\y\end{pmatrix}=M^{-1}\begin{pmatrix}38\\34\end{pmatrix}$;
+  - $\det M=-10$, $M^{-1}=\begin{pmatrix}-\frac1{10}&\frac2{10}\\1&-1\end{pmatrix}$, yaitu matriks pilihan C (vektornya terbalik);
+  - susunan setara $5x+y=19$, $M'$, $\det M'=-5$, $M'^{-1}$ = matriks pilihan E;
+  - *Tahukah kalian?* matriks A $=5M'^{-1}$ dan matriks D $=10M^{-1}$ (turunan aljabar), sehingga hasilnya $5$ dan $10$ kali $(3,4)$.
+- **Bagian 8–10:** catatan lengkap, kartu A–E dengan pertanyaan berhuruf, segel E.
+
 ### Bagian 6 — Selesai
 - **Segel:** **E**
 - **Pop-up:** "Pak Andi memelihara **3 sapi** dan **4 kambing**. Pilihan E adalah satu-satunya yang matriks, vektor, dan hasil perkaliannya konsisten."

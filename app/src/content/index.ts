@@ -69,9 +69,9 @@ export const RELEASE_1: readonly number[] = [1, 2, 5, 6, 11, 13, 15, 16, 17, 18,
 
 /**
  * Soal yang DIBUKA untuk siswa (revisi pemilik PRD v1.6–1.7): dibuka satu per satu setelah pembahasannya
- * ditulis ulang mengikuti alur guru dan disetujui; soal lain tampil "Segera hadir". Soal 1, lalu 24, 17, 18, dan 15 (PRD v1.14).
+ * ditulis ulang mengikuti alur guru dan disetujui; soal lain tampil "Segera hadir". Soal 1, lalu 24, 17, 18, 15, 16, 11 (PRD v1.14–1.20), dan 2 (v1.29).
  */
-export const OPEN: readonly number[] = [1, 11, 15, 16, 17, 18, 24];
+export const OPEN: readonly number[] = [1, 2, 11, 15, 16, 17, 18, 24];
 
 type Row = [no: number, title: string, domain: Domain, response: Response, labels?: [string, string]];
 

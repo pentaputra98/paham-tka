@@ -2431,3 +2431,565 @@
     text-anchor: end;
   }
 }
+
+/* ---------- soal 2 alur guru (pakan2, mul2; v1.29): pakan sapi dan kambing ----------
+   gambar soal dengan bingkai biru langit pada kebutuhan pakan; model batang putih (sapi) dan biru langit (kambing);
+   uji perkalian baris × kolom; emas hanya untuk hasil 3 sapi, 4 kambing dan pilihan yang benar; merah bila bukan. */
+@layer pages {
+  .vis-pakan {
+    height: 100%;
+    display: grid;
+    place-items: center;
+  }
+
+  .vis-pakan > svg {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .vis-pakan[data-view='pic'] .pk-bars,
+  .vis-pakan[data-view='bars'] .pk-pic {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .pk-pic image {
+    clip-path: inset(0 round var(--radius-lg));
+  }
+
+  .pk-box,
+  .pk-n {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-4);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .pk-box {
+    stroke-width: var(--bw-3);
+    stroke-dasharray: 10 6;
+  }
+
+  .pk-box.on {
+    opacity: 1;
+  }
+
+  .pk-n {
+    stroke: var(--blue-600);
+  }
+
+  .pk-n.on {
+    opacity: 1;
+  }
+
+  .pk-tag {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .pk-tag.on {
+    opacity: 1;
+  }
+
+  .pk-tag rect {
+    fill: var(--color-stage);
+    stroke: var(--red-400);
+    stroke-width: var(--bw-4);
+  }
+
+  .pk-tag text {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-lg);
+    fill: var(--red-300);
+  }
+
+  .pk-tag.is-ok rect {
+    stroke: var(--color-result);
+  }
+
+  .pk-tag.is-ok text {
+    fill: var(--color-result);
+  }
+
+  .pk-blk,
+  .pk-tot,
+  .pk-rl {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .pk-blk.on,
+  .pk-tot.on,
+  .pk-rl.on {
+    opacity: 1;
+  }
+
+  .pk-blk rect {
+    fill: var(--color-stage-surface);
+    stroke: var(--color-on-stage);
+    stroke-width: var(--bw-2);
+  }
+
+  .pk-kambing rect {
+    stroke: var(--color-stage-accent);
+  }
+
+  .pk-bt,
+  .pk-tot,
+  .pk-rl {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-md);
+    fill: var(--color-on-stage);
+  }
+
+  .pk-kambing .pk-bt {
+    font-size: var(--svg-fs-sm);
+    fill: var(--color-stage-accent);
+  }
+
+  .pk-cap,
+  .pk-note {
+    font-family: var(--font-mono);
+    font-size: var(--svg-fs-xs);
+    fill: var(--color-on-stage-muted);
+  }
+
+  .show-x .pk-sapi .pk-cap {
+    font-weight: var(--fw-bold);
+    fill: var(--color-on-stage);
+  }
+
+  .pk-align {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-align .pk-align {
+    opacity: 1;
+  }
+
+  .pk-dash {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 6 4;
+  }
+
+  .pk-extra {
+    fill: var(--a-sky-30);
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-4);
+  }
+
+  .pk-diff {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-sm);
+    fill: var(--color-stage-accent);
+  }
+
+  /* ---- uji perkalian baris × kolom ---- */
+  .vis-mul {
+    height: 100%;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: var(--space-4);
+    color: var(--color-on-stage);
+    font-size: min(var(--fs-mat), var(--mul-fit-h), var(--mul-fit-w));
+  }
+
+  .m2-eq,
+  .m2-calc {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+  }
+
+  .m2-name {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: 0.7em;
+    color: var(--color-on-stage-muted);
+  }
+
+  .m2-br {
+    display: grid;
+    gap: 0.15em 0.55em;
+    padding: 0.15em 0.3em;
+    border-inline: var(--bw-3) solid var(--color-on-stage);
+    border-radius: var(--radius-xl);
+  }
+
+  .m2-g2 {
+    grid-template-columns: repeat(2, minmax(1.4em, auto));
+  }
+
+  .m2-g1 {
+    grid-template-columns: minmax(1.4em, auto);
+  }
+
+  .m2-c {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 1.7em;
+  }
+
+  .m2-ring {
+    position: absolute;
+    inset: -0.06em -0.2em;
+    border: var(--bw-3) solid var(--color-stage-accent);
+    border-radius: var(--radius-md);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .vis-mul[data-row='1'] [data-r='1'] .m2-ring,
+  .vis-mul[data-row='2'] [data-r='2'] .m2-ring,
+  .vis-mul:not([data-row='0']) [data-col] .m2-ring {
+    opacity: 1;
+  }
+
+  .m2-vcol {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-1);
+  }
+
+  .m2-op,
+  .m2-cmp {
+    font-size: 1.1em;
+  }
+
+  .m2-lbl,
+  .m2-v19 {
+    font-family: var(--font-mono);
+    font-size: var(--fs-caption);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-on-stage-muted);
+  }
+
+  .m2-v19 {
+    font-weight: var(--fw-bold);
+    color: var(--color-stage-accent);
+    text-transform: none;
+    opacity: 0;
+  }
+
+  .show-v19 .m2-v19 {
+    opacity: 1;
+  }
+
+  .m2-res {
+    border-color: var(--color-stage-accent);
+  }
+
+  .m2-res .m2-c {
+    opacity: 0;
+    color: var(--color-stage-accent);
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .m2-res .m2-c.on {
+    opacity: 1;
+  }
+
+  .m2-cmp,
+  .m2-w2 {
+    opacity: 0;
+  }
+
+  .show-cmp .m2-cmp,
+  .show-cmp .m2-w2 {
+    opacity: 1;
+  }
+
+  .show-cmp .m2-calc:not(.is-ok) .m2-res,
+  .show-cmp .m2-calc:not(.is-ok) .m2-cmp {
+    border-color: var(--red-400);
+    color: var(--red-300);
+  }
+
+  .show-cmp .m2-calc:not(.is-ok) .m2-res .m2-c {
+    color: var(--red-300);
+  }
+
+  .show-cmp .m2-calc.is-ok .m2-res,
+  .show-cmp .m2-calc.is-ok .m2-w2 {
+    border-color: var(--color-result);
+  }
+
+  .show-cmp .m2-calc.is-ok .m2-res .m2-c,
+  .show-cmp .m2-calc.is-ok .m2-cmp {
+    color: var(--color-result);
+  }
+}
+
+/* ---------- soal 3 alur guru (drink3, v1.30): bahan baku pabrik minuman ----------
+   matriks putih; kolom air dan pasangan yang dikalikan biru langit; batang air WJ, BK biru, KA berarsir;
+   emas hanya untuk k = 40 dan pilihan yang tepat 13.000; merah bila kurang atau lebih. */
+@layer pages {
+  .vis-drink {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: var(--color-on-stage);
+  }
+
+  .vis-drink > * {
+    grid-area: 1 / 1;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .vis-drink[data-view='mat'] .d3-bar,
+  .vis-drink[data-view='bar'] .d3-mat {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .d3-mat {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-2);
+    font-size: min(var(--fs-mat), var(--drink-fit-h), var(--drink-fit-w));
+  }
+
+  .d3-grid {
+    display: grid;
+    grid-template-columns: auto repeat(3, minmax(1.7em, auto)) 0.6em auto minmax(4.2em, auto);
+    gap: 0.12em 0.2em;
+    align-items: center;
+  }
+
+  .d3-h,
+  .d3-rl,
+  .d3-cap span {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: 0.55em;
+    color: var(--color-on-stage-muted);
+    text-align: center;
+    transition:
+      opacity var(--dur-slow) var(--ease),
+      color var(--dur-slow) var(--ease);
+  }
+
+  .d3-rl {
+    padding-right: 0.4em;
+    text-align: right;
+  }
+
+  .d3-oh {
+    font-size: 0.45em;
+  }
+
+  .show-rc .d3-h[data-c],
+  .show-rc .d3-rl {
+    color: var(--color-stage-accent);
+  }
+
+  .d3-c {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 1.6em;
+    padding-inline: 0.25em;
+    border-radius: var(--radius-sm);
+    background: var(--color-stage-surface);
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .d3-c > * {
+    grid-area: 1 / 1;
+  }
+
+  .d3-o {
+    background: none;
+    border-inline: var(--bw-3) solid var(--color-on-stage);
+  }
+
+  .show-colA .d3-c[data-c='0'],
+  .show-colA .d3-c[data-c='1'],
+  .show-colA .d3-h[data-c='0'],
+  .show-colA .d3-h[data-c='1'] {
+    opacity: 0.35;
+  }
+
+  .show-colA .d3-c[data-c='2'] {
+    background: var(--a-sky-15);
+    color: var(--color-stage-accent);
+  }
+
+  .show-colA .d3-h[data-c='2'] {
+    color: var(--color-stage-accent);
+  }
+
+  .d3-ring {
+    position: absolute;
+    inset: -0.08em;
+    border: var(--bw-3) solid var(--color-stage-accent);
+    border-radius: var(--radius-md);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .vis-drink[data-pair='1'] [data-r='0'] .d3-ring,
+  .vis-drink[data-pair='2'] [data-r='1'] .d3-ring,
+  .vis-drink[data-pair='3'] [data-r='2'] .d3-ring {
+    opacity: 1;
+  }
+
+  .d3-k40 {
+    opacity: 0;
+    color: var(--color-result);
+  }
+
+  .show-kval .d3-k40 {
+    opacity: 1;
+  }
+
+  .show-kval .d3-c[data-r='2'] .d3-v {
+    opacity: 0;
+  }
+
+  .show-kval .d3-c[data-r='2'] {
+    box-shadow: inset 0 0 0 var(--bw-3) var(--color-result);
+  }
+
+  .d3-p {
+    padding-left: 0.3em;
+    color: var(--color-stage-accent);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .d3-p.on {
+    opacity: 1;
+  }
+
+  .d3-cap {
+    display: flex;
+    gap: var(--space-4);
+  }
+
+  .d3-bar {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .d3-seg {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .d3-seg.on {
+    opacity: 1;
+  }
+
+  .d3-seg rect {
+    stroke: var(--color-stage);
+    stroke-width: var(--bw-2);
+  }
+
+  .d3-wj {
+    fill: var(--blue-600);
+  }
+
+  .d3-bk {
+    fill: var(--blue-800);
+  }
+
+  .d3-seg .d3-ka {
+    fill: var(--a-sky-15);
+    stroke: var(--color-stage-accent);
+    stroke-dasharray: 6 4;
+  }
+
+  .d3-seg text,
+  .d3-bt,
+  .d3-tt,
+  .d3-ct {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-md);
+    fill: var(--color-on-stage);
+  }
+
+  .d3-seg .d3-kt {
+    fill: var(--color-stage-accent);
+  }
+
+  .d3-seg .d3-sl,
+  .d3-note {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-regular);
+    font-size: var(--svg-fs-xs);
+    fill: var(--color-on-stage-muted);
+  }
+
+  .d3-brace,
+  .d3-bt {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .d3-brace {
+    fill: none;
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-2);
+  }
+
+  .vis-drink:not([data-bar='0']) .d3-brace,
+  .vis-drink:not([data-bar='0']) .d3-bt {
+    opacity: 1;
+  }
+
+  .show-cand .d3-brace,
+  .show-cand .d3-bt {
+    opacity: 0;
+  }
+
+  .d3-tl {
+    fill: none;
+    stroke: var(--color-on-stage);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 6 4;
+  }
+
+  .d3-cand {
+    opacity: 0;
+  }
+
+  .show-cand .d3-cand {
+    opacity: 1;
+  }
+
+  .d3-cr {
+    fill: var(--a-red-35);
+    stroke: var(--red-400);
+    stroke-width: var(--bw-3);
+  }
+
+  .d3-ct {
+    fill: var(--red-300);
+  }
+
+  .cand-ok .d3-cr {
+    fill: var(--a-gold-40);
+    stroke: var(--color-result);
+  }
+
+  .cand-ok .d3-ct {
+    fill: var(--color-result);
+  }
+}

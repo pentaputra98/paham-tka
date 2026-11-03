@@ -242,6 +242,12 @@
     /* baris "F = … → F⁻¹ = …" ≈ 17 em (2×2) atau 21 em (3×3) lebarnya */
     --mat-fit-w2: 5.6cqi;
     --mat-fit-w3: 4.4cqi;
+    /* baris "matriks × vektor = hasil" soal 2 (≈ 21 em) muat di zona visual */
+    --mul-fit-h: 10cqh;
+    --mul-fit-w: 4.6cqi;
+    /* matriks kebutuhan bahan soal 3 (4 baris × ≈ 17 em) muat di zona visual */
+    --drink-fit-h: 9cqh;
+    --drink-fit-w: 4.8cqi;
     /* warna coretan (PRD FR-COR-2: tanpa emas, karena emas bermakna jawaban) */
     --ink-red: var(--red-400);
     --ink-blue: var(--blue-300);
