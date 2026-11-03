@@ -672,6 +672,24 @@ Metode kedua, hitung per tipe kamar: Standard (9+6+7) = 22 kamar × Rp150.000 = 
 - Menilai pendapatan dari jumlah kamar saja (A: 18, B: 15, C: 16), padahal tarif tiap tipe berbeda.
 - Pada butir (4), "selisih sama besar" tidak terpenuhi dalam tafsir apa pun; kunci tidak berubah.
 
+*Alur aplikasi dengan gaya mengajar pemilik materi (Revisi 1.31, 3 Nov 2026; kunci tidak berubah: (3) dan (5)). Dipakai di `app/src/content/soal/q04.ts` (modul baru, adegan `hotel4`); soal 4 ditambahkan ke Rilis 1 dan dibuka.* Hasil disimpan ke **catatan**: harga dalam juta, $A=7{,}35$, $B=6{,}4$, $C=7{,}55$, dan total $21{,}3$. Baris papan tanpa ":". Tata letak: panggung penuh dua kolom.
+- **Bagian 1 — Pahami soal:** pilih semua pernyataan yang benar tentang pendapatan dalam 1 hari; kamar penuh berarti setiap kamar laku satu malam, jadi pendapatan = banyak kamar × harga.
+- **Bagian 2 — Data dari gambar:** kolom harga di gambar dibingkai; harga ditulis dalam juta rupiah ($0{,}15$; $0{,}5$; $1$) agar ringkas, disimpan ke catatan.
+- **Bagian 3 — Pendapatan tiap hotel:**
+  - kolom Hotel A dibingkai, $9$, $6$, $3$ terbang dari gambar: $A=9\cdot0{,}15+6\cdot0{,}5+3\cdot1=1{,}35+3+3=7{,}35$; batangnya tumbuh;
+  - Hotel B $=0{,}9+3{,}5+2=6{,}4$ (pertanyaan cepat lama); Hotel C $=1{,}05+2{,}5+4=7{,}55$; semuanya disimpan ke catatan;
+  - **Hati-hati:** Hotel A kamarnya terbanyak (18), tetapi Hotel C (4 Suite) yang terbesar pendapatannya.
+- **Bagian 4 — Total pendapatan:**
+  - $7{,}35+6{,}4+7{,}55=21{,}3$ juta, batang bertumpuk dengan garis 20 juta;
+  - *Tahukah kalian?* **cara cepat** per tipe kamar (dari *Pemeriksaan hasil*): Standard $22\cdot0{,}15=3{,}3$, Deluxe $18\cdot0{,}5=9$, Suite $9\cdot1=9$, totalnya sama $21{,}3$;
+  - batas berlakunya: cara ini hanya memberi total, tidak membandingkan hotel; tawaran cara alternatif.
+- **Bagian 5 — Cara alternatif dengan perkalian matriks (opsional, Ya/Lewati):** kapasitas dengan baris Hotel A, B, C (yaitu $K^{\mathsf T}$) dikali vektor harga memberi $(7{,}35;\ 6{,}4;\ 7{,}55)$.
+- **Bagian 6 — Analisis pernyataan:** tiap pernyataan disalin dari soal, lalu diuji di batang pendapatan:
+  - (1) batang A dan C berselisih $0{,}2$ → salah; (2) $6{,}4<7{,}35$ → salah; (3) batang C terpanjang → benar;
+  - (4) selisih $A-B=0{,}95$ dan $C-A=0{,}2$ disorot di batang, tidak sama → salah;
+  - (5) **hati-hati satuan**, Rp20.000.000 = 20 juta; total $21{,}3$ juta melewati garis 20 juta → benar.
+- **Bagian 7–9:** catatan lengkap, kartu (1)–(5) dengan pertanyaan kesimpulan, segel 3 · 5.
+
 ---
 
 ## SOAL 5 — Titik Potong dengan Sumbu X
