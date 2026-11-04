@@ -1005,6 +1005,17 @@ Pin: $a+b=-1$.
 - **Bagian 7 — Kesamaan koefisien (opsional):** seperti Revisi 1.35; *Tahukah kalian?* hasil bagi Horner-Kino $x^2+(a-1)x+(b-a)=x^2+x-5$.
 - **Bagian 8–10:** catatan lengkap, kartu A–E, segel C.
 
+*Revisi 1.37 (4 Nov 2026, arahan pemilik untuk Horner-Kino; kunci tidak berubah: C). Menggantikan susunan Horner-Kino Revisi 1.36 di atas.*
+- **Bagian 2 — Syarat Horner-Kino:**
+  - *Tahukah kalian?* cara Horner-Kino dipakai bila pembaginya berderajat dua, berbentuk $ax^2+bx+c$; pembagi $x^2+x+1$ memberi $a=b=c=1$ (koefisien pembagi, bukan $a$ dan $b$ pada $f(x)$);
+  - $k_1=-\frac{c}{a}=-1$ ditulis di baris atas, $k_2=-\frac{b}{a}=-1$ di baris bawah (pertanyaan cepat baru $k_1$; pengecoh $1$, $-6$).
+- **Bagian 3 — Susun Horner-Kino:** koefisien $1$, $a$, $b$, $1$, $-6$; hasil kali dengan $k_1$ ditulis dua kolom ke kanan, dengan $k_2$ satu kolom ke kanan; tempat yang tidak terisi diberi **X** sehingga membentuk pola diagonal (baris $k_1$: X X di dua kolom pertama; baris $k_2$: X di kolom pertama dan X di kolom terakhir); **hati-hati**, hanya tiga kolom pertama yang dikali, X di ujung baris $k_2$ dan garis batas menandai perkalian berhenti.
+- **Bagian 4–6 — Hitung** (satu operasi satu langkah; tiap operasi: angka asal dan pengalinya disorot, tempat tujuan dibingkai putus-putus, panah berlabel $\times k_1$ atau $\times k_2$, angka melayang, hasil muncul dengan warna baru, dan keterangan hitungan di bawah skema):
+  - kolom $a$: $1$ turun; $1\times k_1=-1$ ke baris $k_1$ kolom $b$; $1\times k_2=-1$ ke baris $k_2$ kolom $a$; jumlah kolom $a$, $a+(-1)=a-1$;
+  - kolom $b$: $(a-1)\times k_1=1-a$ ke baris $k_1$ kolom $1$ (pertanyaan cepat lama); $(a-1)\times k_2=1-a$ ke baris $k_2$ kolom $b$; jumlah $b+(-1)+(1-a)=b-a$;
+  - kolom sisa: $(b-a)\times k_1=a-b$ ke baris $k_1$ kolom $-6$; $(b-a)\times k_2=a-b$ ke baris $k_2$ kolom $1$, tempat berikutnya X sehingga berhenti; jumlah $1+(1-a)+(a-b)=2-b$ dan $-6+(a-b)=a-b-6$; label hasil bagi dan sisa.
+- **Bagian 7 dan seterusnya:** samakan sisa, jawaban C, kesamaan koefisien (opsional), catatan, kartu, segel C, seperti sebelumnya.
+
 ### Bagian 6 — Selesai
 - **Segel:** **C**
 - **Pop-up:** "$f(x)=x^4+2x^3-3x^2+x-6$, sehingga $a=2$, $b=-3$, dan $a+b=-1$."

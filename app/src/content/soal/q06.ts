@@ -18,7 +18,8 @@ import { getSoal } from '../index';
 
 const hk = (state: Hk6State): Visual => ({ kind: 'svg', scene: 'hk6', state });
 /** skema Horner-Kino lengkap (semua op selesai) */
-const DONE: Hk6State = { m: true, cut: true, k0: 9, k: 9 };
+const HK: Hk6State = { m: true, x: true, cut: true };
+const DONE: Hk6State = { ...HK, k0: 12, k: 12 };
 const LETTERS = ['A', 'B', 'C', 'D', 'E'] as const;
 /** pilihan (docs/soal25.md no. 6) */
 const OPT = ['11', '5', '−1', '−5', '−7'];
@@ -34,7 +35,7 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
 </ol>`,
     srcNames: ['s-f', 's-p', 's-r', 's-tanya', 's-oA', 's-oB', 's-oC', 's-oD', 's-oE'],
   },
-  visualSrc: ['h-c1', 'h-s1', 'h-s2', 'h-s3', 'h-s4', 'h-s5', 'h-g4', 'h-g5'],
+  visualSrc: ['h-c1', 'h-k1', 'h-k2', 'h-s1', 'h-s2', 'h-s3', 'h-s4', 'h-s5', 'h-g4', 'h-g5'],
   lobby: {
     eyebrow: 'Kelas 12 · Matematika Lanjut · Suku banyak',
     titleLines: ['Pembahasan Soal', 'Sisa <span class="accent">Pembagian</span>', 'Suku Banyak'],
@@ -48,8 +49,10 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
   chapters: [
     { t: 'Lobi', d: 'Halaman awal' },
     { t: 'Pahami soal', d: 'Diketahui dan ditanya' },
-    { t: 'Susun Horner-Kino', d: 'Koefisien dan pengali' },
-    { t: 'Hitung kolom a dan b', d: 'Turun, kali, jumlah' },
+    { t: 'Syarat Horner-Kino', d: 'Pembagi kuadrat, k₁ dan k₂' },
+    { t: 'Susun Horner-Kino', d: 'Koefisien dan tanda X' },
+    { t: 'Hitung kolom a', d: 'Turun, kali k₁, kali k₂, jumlah' },
+    { t: 'Hitung kolom b', d: 'Kali k₁, kali k₂, jumlah' },
     { t: 'Hitung kolom sisa', d: 'Sisa (2 − b)x + (a − b − 6)' },
     { t: 'Samakan sisanya', d: 'b = −3, a = 2' },
     { t: 'Jawaban', d: 'a + b = −1' },
@@ -60,8 +63,8 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
   ],
   pinsLabel: 'Catatan',
   pins: {
-    pK: { id: 'pK', toks: [H('PK1', 'pengali', 'tx', 'h2a'), T('PK2', '-1,\\ -1', '', 'h2c')] },
-    pR: { id: 'pR', toks: [H('PR1', 'sisa', 'tx', 'u4a'), T('PR2', '(2-b)x+(a-b-6)', '', 'u4b')] },
+    pK: { id: 'pK', toks: [T('PK1', 'k_1=-1', '', 'h3g'), O('PK0', ','), T('PK2', 'k_2=-1', '', 'h4g')] },
+    pR: { id: 'pR', toks: [H('PR1', 'sisa', 'tx', 'u5a'), T('PR2', '(2-b)x+(a-b-6)', '', 'u5b')] },
     pB: { id: 'pB', toks: [T('PB1', 'b', '', 'c4a'), O('PB2', '='), T('PB3', '-3', '', 'c4c')] },
     pA: { id: 'pA', toks: [T('PA1', 'a', '', 'c8a'), O('PA2', '='), T('PA3', '2', '', 'c8f')] },
   },
@@ -84,64 +87,120 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
       },
       { id: 'k3', toks: [H('k3a', 'Ditanya', 'lbl'), T('k3b', 'a+b', 'gold', '@s-tanya')] },
     ],
-    // susun Horner-Kino
-    LH: [
+    // syarat Horner-Kino dan k₁, k₂
+    LK0: [
       {
         id: 'h1',
-        toks: [H('h1a', 'koefisien', 'tx'), T('h1b', '1,\\ a,\\ b,\\ 1,\\ -6', '', '@s-f')],
-        note: 'urut dari $x^4$ sampai konstanta, tidak ada yang terlewat',
+        toks: [H('h1a', 'syarat', 'lbl'), H('h1b', 'pembagi berderajat 2', 'tx'), T('h1c', 'ax^2+bx+c')],
+        note: 'Horner-Kino hanya untuk pembagi kuadrat',
       },
       {
         id: 'h2',
-        toks: [
-          H('h2a', 'pembagi', 'tx'),
-          T('h2b', 'x^2=-x-1', '', '@s-p'),
-          O('h2d', '\\to'),
-          T('h2c', '-1,\\ -1', 'blue'),
-        ],
-        note: 'dari $x^2+x+1=0$; pengali $-1$ (untuk $x$) dan $-1$ (konstanta); simpan ke catatan',
-        box: 'navy',
+        toks: [T('h2a', 'x^2+x+1', 'blue', '@s-p'), O('h2b', '\\to'), T('h2c', 'a=1,\\ b=1,\\ c=1')],
+        note: 'koefisien pembagi, bukan $a$ dan $b$ pada $f(x)$',
       },
       {
         id: 'h3',
-        toks: [H('h3a', 'Hati-hati', 'lbl'), H('h3b', 'hanya 3 kolom pertama yang dikali', 'tx')],
-        note: 'hasil bagi berderajat $4-2=2$, jadi $3$ angka; $2$ kolom terakhir untuk sisa',
+        toks: [
+          T('h3a', 'k_1'),
+          O('h3b', '='),
+          T('h3c', '-\\tfrac{c}{a}'),
+          O('h3d', '='),
+          T('h3e', '-\\tfrac{1}{1}'),
+          O('h3f', '='),
+          T('h3g', '-1', 'blue'),
+        ],
+        note: 'ditulis di baris atas',
+        box: 'navy',
+      },
+      {
+        id: 'h4',
+        toks: [
+          T('h4a', 'k_2'),
+          O('h4b', '='),
+          T('h4c', '-\\tfrac{b}{a}'),
+          O('h4d', '='),
+          T('h4e', '-\\tfrac{1}{1}'),
+          O('h4f', '='),
+          T('h4g', '-1', 'blue'),
+        ],
+        note: 'ditulis di baris bawah; simpan ke catatan',
+        box: 'navy',
       },
     ],
-    // hitung kolom a dan b
+    // susun Horner-Kino
+    LH: [
+      {
+        id: 'h5',
+        toks: [H('h5a', 'koefisien', 'tx'), T('h5b', '1,\\ a,\\ b,\\ 1,\\ -6', '', '@s-f')],
+        note: 'urut dari $x^4$ sampai konstanta, tidak ada yang terlewat',
+      },
+      {
+        id: 'h6',
+        toks: [
+          H('h6a', 'baris', 'tx'),
+          T('h6b', 'k_1', '', '@h-k1'),
+          H('h6c', 'mulai kolom ke-3', 'tx'),
+          O('h6d', ','),
+          H('h6e', 'baris', 'tx'),
+          T('h6f', 'k_2', '', '@h-k2'),
+          H('h6g', 'kolom ke-2', 'tx'),
+        ],
+        note: 'tempat yang tidak terisi diberi tanda X',
+      },
+      {
+        id: 'h7',
+        toks: [H('h7a', 'Hati-hati', 'lbl'), H('h7b', 'hanya 3 kolom pertama yang dikali', 'tx')],
+        note: 'hasil bagi berderajat $4-2=2$; X di ujung baris $k_2$ tanda perkalian berhenti',
+      },
+    ],
+    // hitung kolom a
     LP: [
       {
         id: 'p1',
-        toks: [
-          T('p1a', '1', '', '@h-c1'),
-          H('p1b', 'turun', 'tx'),
-          O('p1c', '\\to'),
-          T('p1d', '1\\cdot(-1)=-1', 'blue'),
-        ],
-        note: 'hasilnya ditulis di kolom $a$ (baris $1$) dan kolom $b$ (baris $2$)',
+        toks: [T('p1a', '1', '', '@h-c1'), H('p1b', 'turun ke baris hasil', 'tx')],
+        note: 'angka pertama selalu turun',
       },
       {
         id: 'p2',
-        toks: [
-          H('p2a', 'kolom a', 'tx'),
-          T('p2b', 'a+(-1)'),
-          O('p2c', '='),
-          T('p2d', 'a-1', 'blue', '@h-s2'),
-        ],
-        note: 'jumlahkan angka di kolom itu',
+        toks: [T('p2a', '1\\cdot k_1', '', '@h-s1'), O('p2b', '='), T('p2c', '1\\cdot(-1)=-1', 'blue')],
+        note: 'ditulis di baris $k_1$, dua kolom ke kanan (kolom $b$)',
       },
       {
         id: 'p3',
-        toks: [T('p3a', '(a-1)\\cdot(-1)', '', 'p2d'), O('p3b', '='), T('p3c', '1-a', 'blue')],
-        note: 'ditulis di kolom $b$ (baris $1$) dan kolom $1$ (baris $2$)',
+        toks: [T('p3a', '1\\cdot k_2', '', '@h-s1'), O('p3b', '='), T('p3c', '1\\cdot(-1)=-1', 'blue')],
+        note: 'ditulis di baris $k_2$, satu kolom ke kanan (kolom $a$)',
       },
       {
         id: 'p4',
         toks: [
-          H('p4a', 'kolom b', 'tx'),
-          T('p4b', 'b+(-1)+(1-a)'),
+          H('p4a', 'kolom a', 'tx'),
+          T('p4b', 'a+(-1)'),
           O('p4c', '='),
-          T('p4d', 'b-a', 'blue', '@h-s3'),
+          T('p4d', 'a-1', 'blue', '@h-s2'),
+        ],
+        note: 'baris $k_1$ di kolom ini X, jadi tidak ikut',
+      },
+    ],
+    // hitung kolom b
+    LQ: [
+      {
+        id: 'q1',
+        toks: [T('q1a', '(a-1)\\cdot k_1', '', '@h-s2'), O('q1b', '='), T('q1c', '1-a', 'blue')],
+        note: 'ditulis di baris $k_1$, kolom $1$',
+      },
+      {
+        id: 'q2',
+        toks: [T('q2a', '(a-1)\\cdot k_2', '', '@h-s2'), O('q2b', '='), T('q2c', '1-a', 'blue')],
+        note: 'ditulis di baris $k_2$, kolom $b$',
+      },
+      {
+        id: 'q3',
+        toks: [
+          H('q3a', 'kolom b', 'tx'),
+          T('q3b', 'b+(-1)+(1-a)'),
+          O('q3c', '='),
+          T('q3d', 'b-a', 'blue', '@h-s3'),
         ],
         note: '$-1+1=0$, tinggal $b-a$',
       },
@@ -150,31 +209,37 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
     LU: [
       {
         id: 'u1',
-        toks: [T('u1a', '(b-a)\\cdot(-1)', '', '@h-s3'), O('u1b', '='), T('u1c', 'a-b', 'blue')],
-        note: 'ditulis di dua kolom terakhir; perkalian berhenti di sini',
+        toks: [T('u1a', '(b-a)\\cdot k_1', '', '@h-s3'), O('u1b', '='), T('u1c', 'a-b', 'blue')],
+        note: 'ditulis di baris $k_1$, kolom $-6$',
       },
       {
         id: 'u2',
-        toks: [
-          H('u2a', 'kolom 1', 'tx'),
-          T('u2b', '1+(a-b)+(1-a)'),
-          O('u2c', '='),
-          T('u2d', '2-b', 'blue', '@h-s4'),
-        ],
-        note: '$a-a=0$ dan $1+1=2$',
+        toks: [T('u2a', '(b-a)\\cdot k_2', '', '@h-s3'), O('u2b', '='), T('u2c', 'a-b', 'blue')],
+        note: 'ditulis di baris $k_2$, kolom $1$; berikutnya X, perkalian berhenti',
       },
       {
         id: 'u3',
         toks: [
-          H('u3a', 'kolom −6', 'tx'),
-          T('u3b', '-6+(a-b)'),
+          H('u3a', 'kolom 1', 'tx'),
+          T('u3b', '1+(1-a)+(a-b)'),
           O('u3c', '='),
-          T('u3d', 'a-b-6', 'blue', '@h-s5'),
+          T('u3d', '2-b', 'blue', '@h-s4'),
         ],
+        note: '$a-a=0$ dan $1+1=2$',
       },
       {
         id: 'u4',
-        toks: [H('u4a', 'sisa', 'lbl'), T('u4b', '(2-b)x+(a-b-6)', 'blue', '@h-s4')],
+        toks: [
+          H('u4a', 'kolom −6', 'tx'),
+          T('u4b', '-6+(a-b)'),
+          O('u4c', '='),
+          T('u4d', 'a-b-6', 'blue', '@h-s5'),
+        ],
+        note: 'baris $k_2$ di kolom ini X',
+      },
+      {
+        id: 'u5',
+        toks: [H('u5a', 'sisa', 'lbl'), T('u5b', '(2-b)x+(a-b-6)', 'blue', '@h-s4')],
         note: 'hasil bagi $x^2+(a-1)x+(b-a)$; simpan ke catatan',
         box: 'navy',
       },
@@ -348,54 +413,80 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
       visual: { kind: 'soal', hl: 2 },
       board: { title: 'Pahami soal', list: 'L1', upTo: 3, from: 1 },
     },
-    // ---- 2 · Susun Horner-Kino ----
+    // ---- 2 · Syarat Horner-Kino ----
     {
       ch: 2,
-      cap: 'Kita bagi dengan cara Horner-Kino. Tulis koefisien $f(x)$ berurutan dari $x^4$, yaitu $1$, $a$, $b$, $1$, $-6$.',
-      visual: hk({ k: 0 }),
-      board: { title: 'Susun Horner-Kino', list: 'LH', upTo: 1, from: 0 },
+      cap: 'Tahukah kalian? Cara Horner-Kino bisa dipakai bila pembaginya berderajat dua, berbentuk $ax^2+bx+c$, seperti $x^2+x+1$ di soal ini.',
+      visual: { kind: 'soal', hl: 2 },
+      board: { title: 'Syarat Horner-Kino', list: 'LK0', upTo: 2, from: 0 },
     },
     {
       ch: 2,
-      cap: 'Pembagi $x^2+x+1=0$ berarti $x^2=-x-1$. Jadi pengalinya $-1$ dan $-1$, ditulis di kiri.',
+      cap: 'Cari dulu $k_1=-\\frac{c}{a}=-1$ untuk baris atas dan $k_2=-\\frac{b}{a}=-1$ untuk baris bawah.',
       visual: hk({ k: 0, m: true }),
-      board: { title: 'Susun Horner-Kino', list: 'LH', upTo: 2, from: 1, save: ['pK'] },
+      board: { title: 'Syarat Horner-Kino', list: 'LK0', upTo: 4, from: 2, save: ['pK'] },
       ask: {
-        before: 'h2',
-        q: 'Dari $x^2+x+1=0$, nilai $x^2$ sama dengan…',
+        before: 'h3',
+        q: 'Untuk pembagi $x^2+x+1$, nilai $k_1=-\\frac{c}{a}$ adalah…',
         opts: [
-          { tex: '-x-1', ok: true },
-          { tex: 'x+1', hint: '$x$ dan $1$ pindah ruas, jadi tandanya berubah menjadi $-x-1$.' },
-          { tex: '-x+1', hint: 'Angka $1$ juga pindah ruas, menjadi $-1$.' },
+          { tex: '-1', ok: true },
+          { tex: '1', hint: 'Jangan lupa tanda minus di depan, $-\\frac{1}{1}=-1$.' },
+          { tex: '-6', hint: '$-6$ adalah konstanta $f(x)$. $c$ di sini konstanta pembagi, yaitu $1$.' },
         ],
       },
     },
+    // ---- 3 · Susun Horner-Kino ----
     {
-      ch: 2,
-      cap: 'Hati-hati, hanya tiga kolom pertama yang dikali, karena hasil baginya berderajat $4-2=2$. Dua kolom terakhir untuk sisa.',
-      visual: hk({ k: 0, m: true, cut: true }),
+      ch: 3,
+      cap: 'Tulis koefisien $f(x)$ berurutan dari $x^4$, yaitu $1$, $a$, $b$, $1$, $-6$. $k_1$ di atas dan $k_2$ di bawah.',
+      visual: hk({ k: 0, m: true }),
+      board: { title: 'Susun Horner-Kino', pins: ['pK'], list: 'LH', upTo: 1, from: 0 },
+    },
+    {
+      ch: 3,
+      cap: 'Hasil kali dengan $k_1$ ditulis dua kolom ke kanan, dengan $k_2$ satu kolom ke kanan. Tempat yang tidak terisi diberi tanda X, sehingga membentuk pola diagonal.',
+      visual: hk({ k: 0, m: true, x: true }),
+      board: { title: 'Susun Horner-Kino', pins: ['pK'], list: 'LH', upTo: 2, from: 1 },
+    },
+    {
+      ch: 3,
+      cap: 'Hati-hati, hanya tiga kolom pertama yang dikali karena hasil baginya berderajat $4-2=2$. X di ujung baris $k_2$ dan garis batas menandai perkalian berhenti.',
+      visual: hk({ k: 0, m: true, x: true, cut: true }),
       board: { title: 'Susun Horner-Kino', pins: ['pK'], list: 'LH', upTo: 3, from: 2 },
     },
-    // ---- 3 · Hitung kolom a dan b ----
+    // ---- 4 · Hitung kolom a ----
     {
-      ch: 3,
-      cap: 'Turunkan angka $1$. Lalu kalikan $1$ dengan kedua pengali, hasilnya $-1$ ditulis di kolom $a$ dan kolom $b$.',
-      visual: hk({ m: true, cut: true, k0: 0, k: 2 }),
-      board: { title: 'Hitung kolom a dan b', pins: ['pK'], list: 'LP', upTo: 1, from: 0 },
+      ch: 4,
+      cap: 'Angka pertama, $1$, turun ke baris hasil.',
+      visual: hk({ ...HK, k0: 0, k: 1 }),
+      board: { title: 'Hitung kolom a', pins: ['pK'], list: 'LP', upTo: 1, from: 0 },
     },
     {
-      ch: 3,
-      cap: 'Jumlahkan kolom $a$, $a+(-1)=a-1$.',
-      visual: hk({ m: true, cut: true, k0: 2, k: 3 }),
-      board: { title: 'Hitung kolom a dan b', pins: ['pK'], list: 'LP', upTo: 2, from: 1 },
+      ch: 4,
+      cap: 'Kalikan $1$ dengan $k_1=-1$, hasilnya $-1$. Tulis di baris $k_1$, dua kolom ke kanan (kolom $b$).',
+      visual: hk({ ...HK, k0: 1, k: 2 }),
+      board: { title: 'Hitung kolom a', pins: ['pK'], list: 'LP', upTo: 2, from: 1 },
     },
     {
-      ch: 3,
-      cap: 'Kalikan $a-1$ dengan kedua pengali, $(a-1)\\cdot(-1)=1-a$. Hasilnya ditulis di kolom $b$ dan kolom $1$.',
-      visual: hk({ m: true, cut: true, k0: 3, k: 4 }),
-      board: { title: 'Hitung kolom a dan b', pins: ['pK'], list: 'LP', upTo: 3, from: 2 },
+      ch: 4,
+      cap: 'Kalikan $1$ dengan $k_2=-1$, hasilnya $-1$. Tulis di baris $k_2$, satu kolom ke kanan (kolom $a$).',
+      visual: hk({ ...HK, k0: 2, k: 3 }),
+      board: { title: 'Hitung kolom a', pins: ['pK'], list: 'LP', upTo: 3, from: 2 },
+    },
+    {
+      ch: 4,
+      cap: 'Jumlahkan kolom $a$, $a+(-1)=a-1$. Baris $k_1$ di kolom ini X, jadi tidak ikut.',
+      visual: hk({ ...HK, k0: 3, k: 4 }),
+      board: { title: 'Hitung kolom a', pins: ['pK'], list: 'LP', upTo: 4, from: 3 },
+    },
+    // ---- 5 · Hitung kolom b ----
+    {
+      ch: 5,
+      cap: 'Kalikan $a-1$ dengan $k_1$, $(a-1)\\cdot(-1)=1-a$. Tulis di baris $k_1$, kolom $1$.',
+      visual: hk({ ...HK, k0: 4, k: 5 }),
+      board: { title: 'Hitung kolom b', pins: ['pK'], list: 'LQ', upTo: 1, from: 0 },
       ask: {
-        before: 'p3',
+        before: 'q1',
         q: 'Hasil $(a-1)\\cdot(-1)$ adalah…',
         opts: [
           { tex: '1-a', ok: true },
@@ -405,39 +496,51 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
       },
     },
     {
-      ch: 3,
-      cap: 'Jumlahkan kolom $b$, $b+(-1)+(1-a)=b-a$.',
-      visual: hk({ m: true, cut: true, k0: 4, k: 5 }),
-      board: { title: 'Hitung kolom a dan b', pins: ['pK'], list: 'LP', upTo: 4, from: 3 },
+      ch: 5,
+      cap: 'Kalikan $a-1$ dengan $k_2$, hasilnya juga $1-a$. Tulis di baris $k_2$, kolom $b$.',
+      visual: hk({ ...HK, k0: 5, k: 6 }),
+      board: { title: 'Hitung kolom b', pins: ['pK'], list: 'LQ', upTo: 2, from: 1 },
     },
-    // ---- 4 · Hitung kolom sisa ----
     {
-      ch: 4,
-      cap: 'Kalikan $b-a$ dengan kedua pengali, hasilnya $a-b$ di dua kolom terakhir. Ini perkalian terakhir, karena batas sisa sudah tercapai.',
-      visual: hk({ m: true, cut: true, k0: 5, k: 6 }),
+      ch: 5,
+      cap: 'Jumlahkan kolom $b$, $b+(-1)+(1-a)=b-a$.',
+      visual: hk({ ...HK, k0: 6, k: 7 }),
+      board: { title: 'Hitung kolom b', pins: ['pK'], list: 'LQ', upTo: 3, from: 2 },
+    },
+    // ---- 6 · Hitung kolom sisa ----
+    {
+      ch: 6,
+      cap: 'Kalikan $b-a$ dengan $k_1$, $(b-a)\\cdot(-1)=a-b$. Tulis di baris $k_1$, kolom $-6$.',
+      visual: hk({ ...HK, k0: 7, k: 8 }),
       board: { title: 'Hitung kolom sisa', pins: ['pK'], list: 'LU', upTo: 1, from: 0 },
     },
     {
-      ch: 4,
-      cap: 'Jumlahkan dua kolom terakhir, $1+(a-b)+(1-a)=2-b$ dan $-6+(a-b)=a-b-6$.',
-      visual: hk({ m: true, cut: true, k0: 6, k: 8 }),
-      board: { title: 'Hitung kolom sisa', pins: ['pK'], list: 'LU', upTo: 3, from: 1 },
+      ch: 6,
+      cap: 'Kalikan $b-a$ dengan $k_2$, hasilnya $a-b$ di baris $k_2$, kolom $1$. Tempat berikutnya X, jadi perkalian berhenti di sini.',
+      visual: hk({ ...HK, k0: 8, k: 9 }),
+      board: { title: 'Hitung kolom sisa', pins: ['pK'], list: 'LU', upTo: 2, from: 1 },
     },
     {
-      ch: 4,
+      ch: 6,
+      cap: 'Jumlahkan dua kolom terakhir, $1+(1-a)+(a-b)=2-b$ dan $-6+(a-b)=a-b-6$.',
+      visual: hk({ ...HK, k0: 9, k: 11 }),
+      board: { title: 'Hitung kolom sisa', pins: ['pK'], list: 'LU', upTo: 4, from: 2 },
+    },
+    {
+      ch: 6,
       cap: 'Tiga angka pertama adalah hasil bagi $x^2+(a-1)x+(b-a)$. Dua angka terakhir adalah sisanya, $(2-b)x+(a-b-6)$.',
-      visual: hk({ m: true, cut: true, k0: 8, k: 9 }),
-      board: { title: 'Hitung kolom sisa', pins: ['pK'], list: 'LU', upTo: 4, from: 3, save: ['pR'] },
+      visual: hk({ ...HK, k0: 11, k: 12 }),
+      board: { title: 'Hitung kolom sisa', pins: ['pK'], list: 'LU', upTo: 5, from: 4, save: ['pR'] },
     },
-    // ---- 5 · Samakan sisanya ----
+    // ---- 7 · Samakan sisanya ----
     {
-      ch: 5,
+      ch: 7,
       cap: 'Sisa hasil hitungan harus sama dengan sisa di soal, yaitu $5x-1$.',
       visual: hk({ ...DONE, cmp: true }),
       board: { title: 'Samakan sisanya', pins: ['pR'], list: 'LS', upTo: 1, from: 0 },
     },
     {
-      ch: 5,
+      ch: 7,
       cap: 'Samakan koefisien $x$, $2-b=5$. Angka $2$ pindah ruas, $-b=3$, jadi $b=-3$.',
       visual: hk({ ...DONE, cmp: true, hl: 'x' }),
       board: { title: 'Samakan sisanya', pins: ['pR'], list: 'LS', upTo: 4, from: 1, save: ['pB'] },
@@ -453,35 +556,35 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
       },
     },
     {
-      ch: 5,
+      ch: 7,
       cap: 'Samakan konstantanya, $a-b-6=-1$. Masukkan $b=-3$, jadi $a-3=-1$ dan $a=2$.',
       visual: hk({ ...DONE, cmp: true, hl: 'c' }),
       board: { title: 'Samakan sisanya', pins: ['pR', 'pB'], list: 'LS', upTo: 8, from: 4, save: ['pA'] },
     },
-    // ---- 6 · Jawaban ----
+    // ---- 8 · Jawaban ----
     {
-      ch: 6,
+      ch: 8,
       cap: 'Jadi $a+b=2+(-3)=-1$, pilihan C. Cek, sisanya $(2+3)x+(2+3-6)=5x-1$, sesuai soal.',
       visual: { kind: 'soal', hl: 0, focus: 's-oC' },
       board: { title: 'Jawaban', pins: ['pA', 'pB'], list: 'LJ', upTo: 2, from: 0 },
     },
     {
-      ch: 6,
+      ch: 8,
       cap: 'Hati-hati, $5$ adalah koefisien $x$ pada sisa, bukan $a+b$. Pilihan B hanya mengambil angka dari soal.',
       visual: { kind: 'soal', hl: 0, focus: 's-oB' },
       board: { title: 'Jawaban', pins: ['pA', 'pB'], list: 'LJ', upTo: 3, from: 2 },
     },
-    // tawaran cara alternatif (opsional): Ya masuk Bagian 7, Tidak/Lewati langsung ke Bagian 8
+    // tawaran cara alternatif (opsional): Ya masuk Bagian 9, Tidak/Lewati langsung ke Bagian 10
     {
-      ch: 6,
+      ch: 8,
       cap: 'Mau lihat cara alternatif dengan kesamaan koefisien, tanpa Horner-Kino?',
       visual: { kind: 'soal', hl: 0, focus: 's-oC' },
       board: { title: 'Jawaban', pins: ['pA', 'pB'], list: 'LJ', upTo: 3, from: 3 },
       branch: { yes: 'Ya, lihat kesamaan koefisien' },
     },
-    // ---- 7 · Kesamaan koefisien (opsional) ----
+    // ---- 9 · Kesamaan koefisien (opsional) ----
     {
-      ch: 7,
+      ch: 9,
       cap: 'Sisa dikurangkan dulu, $f(x)-(5x-1)=x^4+ax^3+bx^2-4x-5$. Hasilnya pasti habis dibagi $x^2+x+1$.',
       visual: { kind: 'soal', hl: 2 },
       board: { title: 'Kesamaan koefisien', list: 'LK', upTo: 1, from: 0 },
@@ -496,38 +599,38 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
       },
     },
     {
-      ch: 7,
+      ch: 9,
       cap: 'Hasil baginya berderajat dua, $x^2+px+q$. Kalikan dengan pembagi, lalu kumpulkan per pangkat.',
       visual: { kind: 'soal', hl: 2 },
       board: { title: 'Kesamaan koefisien', list: 'LK', upTo: 4, from: 1 },
     },
     {
-      ch: 7,
+      ch: 9,
       cap: 'Samakan koefisiennya. Konstanta memberi $q=-5$, dan koefisien $x$ memberi $p+q=-4$, jadi $p=1$.',
       visual: { kind: 'soal', hl: 2 },
       board: { title: 'Kesamaan koefisien', list: 'LK', upTo: 6, from: 4 },
     },
     {
-      ch: 7,
+      ch: 9,
       cap: 'Koefisien $x^3$ dan $x^2$ memberi $a=p+1=2$ dan $b=p+q+1=-3$, sama dengan Horner-Kino.',
       visual: { kind: 'soal', hl: 2 },
       board: { title: 'Kesamaan koefisien', list: 'LK', upTo: 7, from: 6 },
     },
     {
-      ch: 7,
+      ch: 9,
       cap: 'Tahukah kalian? Hasil bagi Horner-Kino $x^2+(a-1)x+(b-a)$ menjadi $x^2+x-5$, sama dengan $x^2+px+q$.',
       visual: hk(DONE),
       board: { title: 'Kesamaan koefisien', list: 'LK', upTo: 8, from: 7 },
     },
-    // ---- 8 · Catatan lengkap ----
+    // ---- 10 · Catatan lengkap ----
     {
-      ch: 8,
+      ch: 10,
       cap: 'Semua langkah dari awal sampai akhir. Simpan untuk belajar lagi.',
       visual: { kind: 'notes' },
     },
-    // ---- 9 · Cocokkan pilihan ----
+    // ---- 11 · Cocokkan pilihan ----
     {
-      ch: 9,
+      ch: 11,
       cap: 'Cocokkan dengan pilihan. $a=2$ dan $b=-3$, jadi $a+b=-1$; pilih jawabannya di bawah.',
       visual: { kind: 'cards', flip: 5 },
       board: { title: 'Cocokkan pilihan', pins: ['pA', 'pB'], list: 'L7', upTo: 1, from: 0 },
@@ -545,9 +648,9 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
         ],
       },
     },
-    // ---- 10 · Selesai ----
+    // ---- 12 · Selesai ----
     {
-      ch: 10,
+      ch: 12,
       cap: '<span class="verdict"><span class="seal">C</span><span>$f(x)=x^4+2x^3-3x^2+x-6$, sehingga $a=2$, $b=-3$, dan $a+b=-1$.</span></span>',
       visual: { kind: 'done' },
       board: { title: 'Ringkasan', list: 'LR', upTo: 3, from: 3 },
@@ -579,7 +682,7 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
       { title: 'Pahami soal', lists: ['L1'] },
       {
         title: 'Horner-Kino',
-        lists: ['LH', 'LP', 'LU'],
+        lists: ['LK0', 'LH', 'LP', 'LQ', 'LU'],
         why: 'Pembagi $x^2+x+1$ diubah menjadi $x^2=-x-1$, sehingga pengalinya $-1$ dan $-1$. Turunkan, kalikan ke dua kolom berikutnya, lalu jumlahkan per kolom. Dua kolom terakhir adalah sisa.',
       },
       {

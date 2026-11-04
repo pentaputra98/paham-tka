@@ -1,17 +1,20 @@
 /**
- * Adegan "Horner-Kino" soal 6 (revisi pemilik v1.36): f(x) = x⁴ + ax³ + bx² + x − 6 dibagi x² + x + 1.
- * Pembagi x² + x + 1 = 0 → x² = −x − 1, jadi pengalinya −1 (baris A, geser satu kolom) dan −1 (baris B, geser dua kolom).
- * Skema (kolom = koefisien x⁴ … konstanta):
- *        1     a      b      1      −6
- *   −1         −1     1−a    a−b
- *   −1                −1     1−a    a−b
- *        1    a−1    b−a  │  2−b   a−b−6
- * Langkah (op): 1 turun; 2 kali 1; 3 jumlah kolom a; 4 kali a−1; 5 jumlah kolom b; 6 kali b−a; 7 jumlah kolom 1;
- * 8 jumlah kolom −6; 9 tanda hasil bagi dan sisa. State: m (pengali tampil), cut (batas kolom sisa), k0..k = op yang
- * dijalankan pada langkah ini (panahnya digambar, angkanya terbang), cmp (sisa soal 5x − 1 di bawah), hl 'x' | 'c'.
- * Hasil penjumlahan menjadi sumber terbang (h-s1 … h-s5), sisa soal h-g4, h-g5.
- * Angka turunan aljabar dari docs/pembahasan25.md soal 6 (sisa (2 − b)x + (a − b − 6), hasil bagi x² + x − 5).
- * Gerak hanya transform/opacity.
+ * Adegan "Horner-Kino" soal 6 (revisi pemilik v1.37): f(x) = x⁴ + ax³ + bx² + x − 6 dibagi x² + x + 1.
+ * Pembagi berderajat dua (bentuk ax² + bx + c dengan a = b = c = 1): k₁ = −c/a = −1 di baris atas (hasil kalinya
+ * ditulis dua kolom ke kanan), k₂ = −b/a = −1 di baris bawah (satu kolom ke kanan). Tempat kosong diberi X sehingga
+ * terlihat pola diagonal; X di ujung baris k₂ dan garis batas menandai perkalian berhenti.
+ *        x⁴    x³     x²     x      x⁰
+ *         1     a      b      1     −6
+ *   k₁    X     X     −1     1−a    a−b
+ *   k₂    X    −1     1−a    a−b     X
+ *         1    a−1    b−a  │ 2−b   a−b−6
+ * Op (satu operasi = satu animasi): 1 turun; 2 1·k₁; 3 1·k₂; 4 jumlah kolom a; 5 (a−1)·k₁; 6 (a−1)·k₂; 7 jumlah kolom b;
+ * 8 (b−a)·k₁; 9 (b−a)·k₂; 10 jumlah kolom 1; 11 jumlah kolom −6; 12 tanda hasil bagi dan sisa.
+ * Animasi kali: angka asal dan pengalinya disorot, tempat tujuan dibingkai putus-putus, panah berlabel "× k", angka
+ * melayang ke tujuan, lalu hasilnya muncul dengan warna baru. Animasi jumlah: kolom dibingkai dengan tanda +, semua
+ * angkanya melayang ke baris hasil. State: m (k₁, k₂), x (tanda X), cut (batas sisa), k0..k (op langkah ini), cmp (sisa
+ * soal 5x − 1), hl 'x' | 'c'. Hasil jumlah menjadi sumber terbang (h-s1 … h-s5), sisa soal h-g4, h-g5.
+ * Angka turunan aljabar dari docs/pembahasan25.md soal 6. Gerak hanya transform/opacity.
  */
 import { reducedMotion } from '../core/clock';
 import { tex } from '../core/math';
@@ -22,6 +25,7 @@ import type { VisualScene } from '../engine/scene';
 
 export interface Hk6State {
   m?: boolean;
+  x?: boolean;
   cut?: boolean;
   k0?: number;
   k?: number;
@@ -35,12 +39,11 @@ interface Cell {
   c: number;
   t: string;
   cls: string;
-  /** op yang memunculkan sel ini (0 = sejak awal) */
+  /** op yang memunculkan sel ini; 0 = sejak awal, −1 = bersama pengali, −2 = bersama X, −3 = sisa soal */
   op: number;
 }
-/** baris grid: 1 pangkat, 2 koefisien, 3 baris A, 4 baris B, 5 hasil jumlah, 6 label, 7 sisa soal */
+/** baris grid: 1 pangkat, 2 koefisien, 3 baris k₁, 4 baris k₂, 5 hasil jumlah, 6 label, 7 sisa soal */
 const CELLS: Record<string, Cell> = {
-  hd: { r: 1, c: 1, t: 'x^2=-x-1', cls: 'hk-hd', op: -1 },
   p1: { r: 1, c: 2, t: 'x^4', cls: 'hk-pw', op: 0 },
   p2: { r: 1, c: 3, t: 'x^3', cls: 'hk-pw', op: 0 },
   p3: { r: 1, c: 4, t: 'x^2', cls: 'hk-pw', op: 0 },
@@ -51,25 +54,31 @@ const CELLS: Record<string, Cell> = {
   c3: { r: 2, c: 4, t: 'b', cls: 'hk-k', op: 0 },
   c4: { r: 2, c: 5, t: '1', cls: 'hk-k', op: 0 },
   c5: { r: 2, c: 6, t: '-6', cls: 'hk-k', op: 0 },
-  mA: { r: 3, c: 1, t: '-1', cls: 'hk-m', op: -1 },
-  mB: { r: 4, c: 1, t: '-1', cls: 'hk-m', op: -1 },
-  a2: { r: 3, c: 3, t: '-1', cls: 'hk-p', op: 2 },
-  b3: { r: 4, c: 4, t: '-1', cls: 'hk-p', op: 2 },
-  a3: { r: 3, c: 4, t: '1-a', cls: 'hk-p', op: 4 },
-  b4: { r: 4, c: 5, t: '1-a', cls: 'hk-p', op: 4 },
-  a4: { r: 3, c: 5, t: 'a-b', cls: 'hk-p', op: 6 },
-  b5: { r: 4, c: 6, t: 'a-b', cls: 'hk-p', op: 6 },
+  k1: { r: 3, c: 1, t: 'k_1=-1', cls: 'hk-m', op: -1 },
+  k2: { r: 4, c: 1, t: 'k_2=-1', cls: 'hk-m', op: -1 },
+  x1: { r: 3, c: 2, t: '\\text{X}', cls: 'hk-x', op: -2 },
+  x2: { r: 3, c: 3, t: '\\text{X}', cls: 'hk-x', op: -2 },
+  x3: { r: 4, c: 2, t: '\\text{X}', cls: 'hk-x', op: -2 },
+  x4: { r: 4, c: 6, t: '\\text{X}', cls: 'hk-x hk-stop', op: -2 },
+  t3: { r: 3, c: 4, t: '-1', cls: 'hk-p', op: 2 },
+  u2: { r: 4, c: 3, t: '-1', cls: 'hk-p', op: 3 },
   s1: { r: 5, c: 2, t: '1', cls: 'hk-s', op: 1 },
-  s2: { r: 5, c: 3, t: 'a-1', cls: 'hk-s', op: 3 },
-  s3: { r: 5, c: 4, t: 'b-a', cls: 'hk-s', op: 5 },
-  s4: { r: 5, c: 5, t: '2-b', cls: 'hk-s hk-r', op: 7 },
-  s5: { r: 5, c: 6, t: 'a-b-6', cls: 'hk-s hk-r', op: 8 },
-  g4: { r: 7, c: 5, t: '5', cls: 'hk-g', op: -2 },
-  g5: { r: 7, c: 6, t: '-1', cls: 'hk-g', op: -2 },
+  s2: { r: 5, c: 3, t: 'a-1', cls: 'hk-s', op: 4 },
+  t4: { r: 3, c: 5, t: '1-a', cls: 'hk-p', op: 5 },
+  u3: { r: 4, c: 4, t: '1-a', cls: 'hk-p', op: 6 },
+  s3: { r: 5, c: 4, t: 'b-a', cls: 'hk-s', op: 7 },
+  t5: { r: 3, c: 6, t: 'a-b', cls: 'hk-p', op: 8 },
+  u4: { r: 4, c: 5, t: 'a-b', cls: 'hk-p', op: 9 },
+  s4: { r: 5, c: 5, t: '2-b', cls: 'hk-s hk-r', op: 10 },
+  s5: { r: 5, c: 6, t: 'a-b-6', cls: 'hk-s hk-r', op: 11 },
+  g4: { r: 7, c: 5, t: '5', cls: 'hk-g', op: -3 },
+  g5: { r: 7, c: 6, t: '-1', cls: 'hk-g', op: -3 },
 };
 /** sumber terbang ke papan */
 const SRC: Record<string, string> = {
   c1: 'h-c1',
+  k1: 'h-k1',
+  k2: 'h-k2',
   s1: 'h-s1',
   s2: 'h-s2',
   s3: 'h-s3',
@@ -79,19 +88,42 @@ const SRC: Record<string, string> = {
   g5: 'h-g5',
 };
 
-type Op = { kind: 'down' | 'mul' | 'sum' | 'mark'; from: string[]; to: string[] };
-const OPS: Op[] = [
-  { kind: 'down', from: ['c1'], to: ['s1'] },
-  { kind: 'mul', from: ['s1'], to: ['a2', 'b3'] },
-  { kind: 'sum', from: ['c2', 'a2'], to: ['s2'] },
-  { kind: 'mul', from: ['s2'], to: ['a3', 'b4'] },
-  { kind: 'sum', from: ['c3', 'a3', 'b3'], to: ['s3'] },
-  { kind: 'mul', from: ['s3'], to: ['a4', 'b5'] },
-  { kind: 'sum', from: ['c4', 'a4', 'b4'], to: ['s4'] },
-  { kind: 'sum', from: ['c5', 'b5'], to: ['s5'] },
-  { kind: 'mark', from: [], to: [] },
+/** op: down (turun), mul (kali dengan pengali `by`), sum (jumlah satu kolom), mark (tanda akhir) */
+type Op =
+  | { kind: 'down'; from: string; to: string }
+  | { kind: 'mul'; from: string; by: 'k1' | 'k2'; to: string }
+  | { kind: 'sum'; from: string[]; to: string }
+  | { kind: 'mark' };
+export const OPS: Op[] = [
+  { kind: 'down', from: 'c1', to: 's1' },
+  { kind: 'mul', from: 's1', by: 'k1', to: 't3' },
+  { kind: 'mul', from: 's1', by: 'k2', to: 'u2' },
+  { kind: 'sum', from: ['c2', 'u2'], to: 's2' },
+  { kind: 'mul', from: 's2', by: 'k1', to: 't4' },
+  { kind: 'mul', from: 's2', by: 'k2', to: 'u3' },
+  { kind: 'sum', from: ['c3', 't3', 'u3'], to: 's3' },
+  { kind: 'mul', from: 's3', by: 'k1', to: 't5' },
+  { kind: 'mul', from: 's3', by: 'k2', to: 'u4' },
+  { kind: 'sum', from: ['c4', 't4', 'u4'], to: 's4' },
+  { kind: 'sum', from: ['c5', 't5'], to: 's5' },
+  { kind: 'mark' },
 ];
-
+/** keterangan hitungan tiap op, ditulis di bawah skema */
+const SAY: string[] = [
+  '1\\ \\text{turun ke baris hasil}',
+  '1\\times k_1=1\\times(-1)=-1',
+  '1\\times k_2=1\\times(-1)=-1',
+  'a+(-1)=a-1',
+  '(a-1)\\times k_1=(a-1)\\times(-1)=1-a',
+  '(a-1)\\times k_2=(a-1)\\times(-1)=1-a',
+  'b+(-1)+(1-a)=b-a',
+  '(b-a)\\times k_1=(b-a)\\times(-1)=a-b',
+  '(b-a)\\times k_2=(b-a)\\times(-1)=a-b',
+  '1+(1-a)+(a-b)=2-b',
+  '-6+(a-b)=a-b-6',
+  '\\text{3 angka hasil bagi, 2 angka sisa}',
+];
+const LAST = OPS.length;
 const SVGNS = 'http://www.w3.org/2000/svg';
 
 function markup(): string {
@@ -102,7 +134,7 @@ function markup(): string {
       return `<span class="hk-c ${d.cls}" data-k="${k}"${src}${pair} style="grid-area:${d.r}/${d.c}"><span class="hk-ring" aria-hidden="true"></span>${tex(d.t)}</span>`;
     })
     .join('');
-  return `<div class="hk-wrap" role="img" aria-label="Horner-Kino: koefisien 1, a, b, 1, −6 dengan pengali −1 dan −1. Hasil 1, a − 1, b − a; sisa 2 − b dan a − b − 6.">
+  return `<div class="hk-wrap" role="img" aria-label="Horner-Kino: koefisien 1, a, b, 1, −6; k1 = −1 di atas, k2 = −1 di bawah, tempat kosong diberi X. Hasil 1, a − 1, b − a; sisa 2 − b dan a − b − 6.">
   <div class="hk-grid">
     <span class="hk-vl" style="grid-area:2/1/6/2" aria-hidden="true"></span>
     <span class="hk-hl" style="grid-area:5/2/6/7" aria-hidden="true"></span>
@@ -111,6 +143,7 @@ function markup(): string {
     <span class="hk-lb hk-lq" style="grid-area:6/2/7/5">hasil bagi</span>
     <span class="hk-lb hk-ls" style="grid-area:6/5/7/7">sisa</span>
     <span class="hk-lb hk-lg" style="grid-area:7/1/8/2">sisa soal</span>
+    <span class="hk-say" style="grid-area:8/1/9/7" aria-live="off"></span>
   </div>
   <svg class="hk-arrows" aria-hidden="true"><defs><marker id="hk-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z"/></marker></defs><g class="hk-ar"></g></svg>
   <div class="hk-fly" aria-hidden="true"></div>
@@ -124,11 +157,16 @@ export function createHk6(): VisualScene {
   const wrap = el.querySelector<HTMLElement>('.hk-wrap')!;
   const arG = el.querySelector<SVGGElement>('.hk-ar')!;
   const fly = el.querySelector<HTMLElement>('.hk-fly')!;
+  const say = el.querySelector<HTMLElement>('.hk-say')!;
+  /** tulis keterangan op ke-i (0 = kosong) */
+  const tell = (i: number): void => {
+    say.innerHTML = i > 0 ? tex(SAY[i - 1]!) : '';
+  };
   const cell = (k: string): HTMLElement => el.querySelector<HTMLElement>(`[data-k="${k}"]`)!;
-  let shownOps: [number, number] = [0, 0];
+  let shown: [number, number] = [0, 0];
   let lastK = -1;
   let hl = '';
-  let prev = { m: false, cut: false, cmp: false };
+  let prev = { m: false, x: false, cut: false, cmp: false };
 
   /** posisi sel dalam piksel tata letak wrap (tidak terpengaruh skala panggung) */
   function box(e: Element): { x: number; y: number; w: number; h: number } {
@@ -137,76 +175,68 @@ export function createHk6(): VisualScene {
     const r = e.getBoundingClientRect();
     return { x: (r.left - R.left) * s, y: (r.top - R.top) * s, w: r.width * s, h: r.height * s };
   }
+  function svg<K extends keyof SVGElementTagNameMap>(
+    tag: K,
+    attrs: Record<string, string | number>,
+  ): SVGElementTagNameMap[K] {
+    const e = document.createElementNS(SVGNS, tag);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, typeof v === 'number' ? v.toFixed(1) : v);
+    return e;
+  }
 
-  function line(x1: number, y1: number, x2: number, y2: number, cls: string, tag?: string): SVGGElement {
-    const g = document.createElementNS(SVGNS, 'g');
-    g.setAttribute('class', `hk-a ${cls}`);
-    const p = document.createElementNS(SVGNS, 'path');
-    p.setAttribute('d', `M${x1.toFixed(1)} ${y1.toFixed(1)}L${x2.toFixed(1)} ${y2.toFixed(1)}`);
-    p.setAttribute('marker-end', 'url(#hk-head)');
-    g.append(p);
-    if (tag) {
-      const t = document.createElementNS(SVGNS, 'text');
-      t.setAttribute('x', ((x1 + x2) / 2 + 6).toFixed(1));
-      t.setAttribute('y', ((y1 + y2) / 2 + 4).toFixed(1));
-      t.textContent = tag;
+  /** gambar panah/bingkai satu op; kembalikan grupnya */
+  function draw(op: Op): SVGGElement | null {
+    if (op.kind === 'mark') return null;
+    const g = svg('g', { class: `hk-a hk-${op.kind}` });
+    if (op.kind === 'down') {
+      const a = box(cell(op.from));
+      const b = box(cell(op.to));
+      const x = a.x + a.w / 2;
+      g.append(
+        svg('path', {
+          d: `M${x.toFixed(1)} ${(a.y + a.h + 2).toFixed(1)}V${(b.y - 3).toFixed(1)}`,
+          'marker-end': 'url(#hk-head)',
+        }),
+      );
+      const t = svg('text', { x: x + 8, y: (a.y + a.h + b.y) / 2 + 4 });
+      t.textContent = 'turun';
+      g.append(t);
+    } else if (op.kind === 'mul') {
+      const a = box(cell(op.from));
+      const b = box(cell(op.to));
+      // tempat tujuan dibingkai putus-putus, panah dari angka asal ke tempat itu
+      g.append(
+        svg('rect', { class: 'hk-slot', x: b.x - 3, y: b.y - 2, width: b.w + 6, height: b.h + 4, rx: 6 }),
+      );
+      const x1 = a.x + a.w;
+      const y1 = a.y + 2;
+      const x2 = b.x - 2;
+      const y2 = b.y + b.h * 0.6;
+      g.append(
+        svg('path', {
+          d: `M${x1.toFixed(1)} ${y1.toFixed(1)}L${x2.toFixed(1)} ${y2.toFixed(1)}`,
+          'marker-end': 'url(#hk-head)',
+        }),
+      );
+      const t = svg('text', { x: (x1 + x2) / 2 + 4, y: (y1 + y2) / 2 + 14 });
+      t.textContent = op.by === 'k1' ? '× k₁' : '× k₂';
+      g.append(t);
+    } else {
+      const bs = [...op.from, op.to].map((k) => box(cell(k)));
+      const x0 = Math.min(...bs.map((b) => b.x)) - 4;
+      const x1 = Math.max(...bs.map((b) => b.x + b.w)) + 4;
+      const y0 = Math.min(...bs.map((b) => b.y)) - 2;
+      const y1 = Math.max(...bs.map((b) => b.y + b.h)) + 2;
+      g.append(svg('rect', { x: x0, y: y0, width: x1 - x0, height: y1 - y0, rx: 8 }));
+      const t = svg('text', { x: x0 - 5, y: (y0 + y1) / 2 + 6, 'text-anchor': 'end' });
+      t.textContent = '+';
       g.append(t);
     }
     arG.append(g);
     return g;
   }
 
-  /** bingkai satu kolom yang dijumlahkan, dengan tanda + di kirinya */
-  function column(keys: string[]): SVGGElement {
-    const bs = keys.map((k) => box(cell(k)));
-    const x0 = Math.min(...bs.map((b) => b.x)) - 4;
-    const x1 = Math.max(...bs.map((b) => b.x + b.w)) + 4;
-    const y0 = Math.min(...bs.map((b) => b.y)) - 2;
-    const y1 = Math.max(...bs.map((b) => b.y + b.h)) + 2;
-    const g = document.createElementNS(SVGNS, 'g');
-    g.setAttribute('class', 'hk-a hk-sum');
-    const r = document.createElementNS(SVGNS, 'rect');
-    r.setAttribute('x', x0.toFixed(1));
-    r.setAttribute('y', y0.toFixed(1));
-    r.setAttribute('width', (x1 - x0).toFixed(1));
-    r.setAttribute('height', (y1 - y0).toFixed(1));
-    r.setAttribute('rx', '8');
-    const t = document.createElementNS(SVGNS, 'text');
-    t.setAttribute('x', (x0 - 4).toFixed(1));
-    t.setAttribute('y', ((y0 + y1) / 2 + 5).toFixed(1));
-    t.setAttribute('text-anchor', 'end');
-    t.textContent = '+';
-    g.append(r, t);
-    arG.append(g);
-    return g;
-  }
-
-  /** panah satu op: turun (vertikal), kali (diagonal ke baris 1 dan 2, satu label ×(−1)), jumlah (bingkai kolom) */
-  function arrows(op: Op): SVGGElement[] {
-    if (op.kind === 'mark') return [];
-    if (op.kind === 'down') {
-      const a = box(cell(op.from[0]!));
-      const b = box(cell(op.to[0]!));
-      return [line(a.x + a.w / 2, a.y + a.h + 2, b.x + b.w / 2, b.y - 2, 'hk-down', 'turun')];
-    }
-    if (op.kind === 'mul') {
-      const a = box(cell(op.from[0]!));
-      const out = op.to.map((k, i) => {
-        const b = box(cell(k));
-        // ke baris 1: ujung kiri bawah sel; ke baris 2 (lebih jauh, lebih landai): ujung kiri tengah sel
-        return line(a.x + a.w, a.y + 2, b.x + 2, i ? b.y + b.h / 2 : b.y + b.h - 2, 'hk-mul');
-      });
-      const t = document.createElementNS(SVGNS, 'text');
-      t.setAttribute('x', (a.x + a.w + 4).toFixed(1));
-      t.setAttribute('y', (a.y + a.h + 14).toFixed(1));
-      t.textContent = '×(−1)';
-      out[0]!.append(t);
-      return out;
-    }
-    return [column([...op.from, ...op.to])];
-  }
-
-  /** salinan angka terbang dari sel asal ke sel tujuan */
+  /** salinan angka melayang dari sel asal ke sel tujuan */
   function ghost(from: string, to: string, delay: number): Promise<boolean> {
     const a = box(cell(from));
     const b = box(cell(to));
@@ -219,16 +249,16 @@ export function createHk6(): VisualScene {
     const k = play(
       g,
       [
-        { transform: 'translate(0, 0)', opacity: 1 },
-        { transform: `translate(${b.x - a.x}px, ${b.y - a.y}px)`, opacity: 0.85 },
+        { transform: 'translate(0, 0) scale(1.15)', opacity: 1 },
+        { transform: `translate(${b.x - a.x}px, ${b.y - a.y}px) scale(1)`, opacity: 0.9 },
       ],
-      { duration: 700, delay, easing: EASE, fill: 'both', tag: 'hk' },
+      { duration: 800, delay, easing: EASE, fill: 'both', tag: 'hk' },
     ).finished;
     void k.then(() => g.remove());
     return k;
   }
 
-  const pop = (e: Element, delay: number): Promise<boolean> => {
+  const pop = (e: Element, delay = 0): Promise<boolean> => {
     (e as HTMLElement).style.transformOrigin = 'center';
     return play(
       e,
@@ -241,31 +271,50 @@ export function createHk6(): VisualScene {
   };
   const fadeIn = (e: Element, delay = 0): Promise<boolean> =>
     play(e, [{ opacity: 0 }, { opacity: 1 }], {
-      duration: 300,
+      duration: 320,
       delay,
       easing: EASE_OUT,
       fill: 'backwards',
       tag: 'hk',
     }).finished;
+  /** jeda yang ikut pengaturan kecepatan (animasi kosong pada elemen lepas) */
+  const idle = document.createElement('span');
+  const wait = (ms: number): Promise<boolean> =>
+    play(idle, [{ opacity: 1 }, { opacity: 1 }], { duration: ms, tag: 'hk' }).finished;
 
   function visible(k: number, s: Hk6State): void {
     for (const [key, d] of Object.entries(CELLS)) {
-      const on = d.op === -1 ? !!s.m : d.op === -2 ? !!s.cmp : d.op <= k;
+      const on = d.op === -1 ? !!s.m : d.op === -2 ? !!s.x : d.op === -3 ? !!s.cmp : d.op <= k;
       cell(key).classList.toggle('on', on);
     }
     el.classList.toggle('show-cut', !!s.cut);
-    el.classList.toggle('show-mark', k >= 9);
+    el.classList.toggle('show-mark', k >= LAST);
     el.classList.toggle('show-cmp', !!s.cmp);
   }
+  /** sorotan: sel asal dan pengali (sedang dikali), sel terbaru (warna baru) */
+  function mark(src: string[], mul: string | null, fresh: string[]): void {
+    el.querySelectorAll('.is-src, .is-mul, .is-new').forEach((e) =>
+      e.classList.remove('is-src', 'is-mul', 'is-new'),
+    );
+    src.forEach((k) => cell(k).classList.add('is-src'));
+    if (mul) cell(mul).classList.add('is-mul');
+    fresh.forEach((k) => cell(k).classList.add('is-new'));
+  }
+  const dst = (op: Op): string[] => (op.kind === 'mark' ? [] : [op.to]);
 
   function drawStatic(k0: number, k: number): void {
     arG.replaceChildren();
-    for (let i = k0; i < k; i++) arrows(OPS[i]!);
-    shownOps = [k0, k];
+    for (let i = k0; i < k; i++) draw(OPS[i]!);
+    mark([], null, k > k0 ? dst(OPS[k - 1]!) : []);
+    tell(k > k0 ? k : 0);
+    shown = [k0, k];
   }
 
   new ResizeObserver(() => {
-    if (!fly.childElementCount) drawStatic(...shownOps);
+    if (!fly.childElementCount) {
+      arG.replaceChildren();
+      for (let i = shown[0]; i < shown[1]; i++) draw(OPS[i]!);
+    }
   }).observe(wrap);
 
   return {
@@ -276,16 +325,15 @@ export function createHk6(): VisualScene {
       const k0 = s.k0 ?? k;
       const anim = c.dir > 0 && !reducedMotion();
       const runOps = anim && k > k0 && (k !== lastK || c.replay);
-      fly.replaceChildren();
+      fly.querySelectorAll('.hk-gh').forEach((g) => g.remove());
       const runs: Array<Promise<boolean>> = [];
-      // pengali, batas sisa, dan sisa soal yang baru muncul
+      // pengali, X, batas sisa, dan sisa soal yang baru muncul
       const fresh = (flag: boolean, was: boolean): boolean => anim && flag && (!was || c.replay);
       const newM = fresh(!!s.m, prev.m);
+      const newX = fresh(!!s.x, prev.x);
       const newCut = fresh(!!s.cut, prev.cut);
       const newCmp = fresh(!!s.cmp, prev.cmp);
-      prev = { m: !!s.m, cut: !!s.cut, cmp: !!s.cmp };
-      if (newM) ['hd', 'mA', 'mB'].forEach((x, i) => runs.push(pop(cell(x), i * 140)));
-      if (newCut) runs.push(fadeIn(el.querySelector('.hk-cut')!, 200));
+      prev = { m: !!s.m, x: !!s.x, cut: !!s.cut, cmp: !!s.cmp };
 
       if (!runOps) {
         visible(k, s);
@@ -294,36 +342,52 @@ export function createHk6(): VisualScene {
         // mulai dari keadaan sebelum langkah ini, lalu jalankan op satu per satu
         visible(k0, s);
         arG.replaceChildren();
-        shownOps = [k0, k0];
-        await Promise.all(runs.splice(0));
+        mark([], null, []);
+        shown = [k0, k0];
         for (let i = k0; i < k; i++) {
           if (!c.live()) return;
           const op = OPS[i]!;
-          const ar = arrows(op);
-          shownOps = [k0, i + 1];
-          await Promise.all(ar.map((g) => fadeIn(g)));
+          shown = [k0, i + 1];
+          tell(i + 1);
+          void fadeIn(say);
           if (op.kind === 'mark') {
+            mark([], null, []);
             el.classList.add('show-mark');
             await Promise.all([...el.querySelectorAll('.hk-lq, .hk-ls')].map((e, j) => fadeIn(e, j * 200)));
             continue;
           }
-          await Promise.all(
-            op.kind === 'sum'
-              ? op.from.map((f, j) => ghost(f, op.to[0]!, j * 120))
-              : op.to.map((t, j) => ghost(op.from[0]!, t, j * 180)),
-          );
+          // 1) sorot angka asal (dan pengalinya)
+          const src = op.kind === 'sum' ? op.from : [op.from];
+          mark(src, op.kind === 'mul' ? op.by : null, []);
+          await Promise.all([
+            ...src.map((x) => pop(cell(x).querySelector('.hk-ring')!)),
+            ...(op.kind === 'mul' ? [pop(cell(op.by).querySelector('.hk-ring')!)] : []),
+          ]);
+          // 2) panah/bingkai dan tempat tujuan
+          const g = draw(op);
+          if (g) await fadeIn(g);
+          await wait(250);
           if (!c.live()) return;
-          for (const t of op.to) cell(t).classList.add('on');
-          await Promise.all(op.to.map((t) => pop(cell(t), 0)));
+          // 3) angka melayang ke tujuan
+          await Promise.all(src.map((f, j) => ghost(f, op.to, j * 140)));
+          if (!c.live()) return;
+          // 4) hasil muncul dengan warna baru
+          cell(op.to).classList.add('on');
+          mark([], null, [op.to]);
+          await pop(cell(op.to));
+          await wait(200);
         }
         visible(k, s);
       }
+      if (newM) runs.push(...['k1', 'k2'].map((x, i) => pop(cell(x), i * 200)));
+      if (newX) runs.push(...['x1', 'x2', 'x3', 'x4'].map((x, i) => pop(cell(x), 200 + i * 220)));
+      if (newCut) runs.push(fadeIn(el.querySelector('.hk-cut')!, 300));
       if (newCmp) runs.push(...['g4', 'g5'].map((x, i) => pop(cell(x), 300 + i * 150)));
       lastK = k;
 
       const h = s.hl ?? '';
       el.dataset.hl = h;
-      if (h && c.dir > 0 && !reducedMotion() && (h !== hl || c.replay))
+      if (h && anim && (h !== hl || c.replay))
         el.querySelectorAll(`[data-p="${h}"] .hk-ring`).forEach((r, i) => runs.push(pop(r, 200 + i * 250)));
       hl = h;
       await Promise.all(runs);

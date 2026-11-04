@@ -3271,9 +3271,9 @@
   }
 }
 
-/* ---------- soal 6 revisi pemilik (hk6, v1.36): Horner-Kino dengan angka terbang dan panah ----------
-   koefisien putih; pengali dan panah kali biru langit; hasil kali biru langit pudar; hasil jumlah putih tebal;
-   kolom sisa biru langit; sisa soal merah muda (dari soal); pasangan yang disamakan dibingkai biru langit. */
+/* ---------- soal 6 revisi pemilik (hk6, v1.37): Horner-Kino k₁, k₂, tanda X, angka melayang dan panah ----------
+   koefisien putih; k₁, k₂ dan panah biru langit; X pudar (X penanda berhenti merah muda); angka yang sedang
+   dipakai dibingkai biru langit; hasil terbaru berlatar biru langit; sisa soal merah muda; emas tidak dipakai. */
 @layer pages {
   .vis-hk {
     height: 100%;
@@ -3290,7 +3290,7 @@
   .hk-grid {
     display: grid;
     grid-template-columns: auto repeat(5, minmax(3.2em, auto));
-    grid-template-rows: 1.2em repeat(4, 1.7em) 1.2em 1.7em;
+    grid-template-rows: 1.2em repeat(4, 1.7em) 1.2em 1.7em 1.9em;
     align-items: center;
     justify-items: center;
     column-gap: 0.7em;
@@ -3309,16 +3309,42 @@
     opacity: 1;
   }
 
-  .hk-pw,
-  .hk-hd {
+  .hk-pw {
     font-size: 0.62em;
     color: var(--color-on-stage-muted);
   }
 
-  .hk-hd {
-    justify-self: end;
-    padding-right: 0.6em;
+  .hk-x {
+    font-family: var(--font-mono);
+    font-size: 0.8em;
+    color: var(--color-on-stage-muted);
+  }
+
+  .hk-x.on {
+    opacity: 0.6;
+  }
+
+  .hk-stop.on {
+    opacity: 1;
+    color: var(--red-300);
+  }
+
+  /* angka yang sedang dipakai, pengalinya, dan hasil terbaru */
+  .hk-c.is-src .hk-ring,
+  .hk-c.is-mul .hk-ring {
+    opacity: 1;
+  }
+
+  .hk-c.is-src,
+  .hk-c.is-mul {
     color: var(--color-stage-accent);
+  }
+
+  .hk-c.is-new {
+    opacity: 1;
+    border-radius: var(--radius-md);
+    background: var(--a-sky-30);
+    color: var(--color-on-stage);
   }
 
   .hk-m {
@@ -3445,6 +3471,32 @@
 
   .hk-sum text {
     font-size: var(--fs-body);
+  }
+
+  .hk-mul text {
+    font-size: var(--fs-small);
+  }
+
+  /* keterangan hitungan op terakhir, di bawah skema */
+  .hk-say {
+    justify-self: center;
+    padding: 0.1em 0.6em;
+    border-radius: var(--radius-pill);
+    background: var(--a-sky-15);
+    color: var(--color-on-stage);
+    font-size: 0.82em;
+    white-space: nowrap;
+  }
+
+  .hk-say:empty {
+    visibility: hidden;
+  }
+
+  .hk-slot {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 4 3;
   }
 
   .hk-a text {
