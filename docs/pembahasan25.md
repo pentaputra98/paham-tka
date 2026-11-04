@@ -1211,6 +1211,12 @@ Metode kedua: $f(x)-2000=x^3-70x^2-600x+72000=(x+30)(x-40)(x-60)$. Karena $(x+30
 - Mengira kenaikan $x$ selalu menaikkan $f(x)$; fungsi kubik ini turun dahulu lalu naik pada rentang tertentu.
 - Catatan tafsir: jika "mungkin" diartikan $f(x)=2000$ (tepat habis), kunci sama (40 dan 60 benar, 30 salah).
 
+*Alur aplikasi (Revisi 1.41, 4 Nov 2026; kunci tidak berubah: Salah, Benar, Benar). Dipakai di `app/src/content/soal/q08.ts` (modul baru, adegan `saham8`); soal 8 ditambahkan ke Rilis 1 dan dibuka.* Hasil disimpan ke **catatan**: $f(x)$ dan modal $2.000$ juta. Baris papan tanpa ":". Tata letak: panggung penuh dua kolom.
+- **Bagian 1 — Pahami soal:** $f(x)$ dalam juta rupiah; **hati-hati satuan**, 2 miliar $=2.000$ juta; mungkin bila $f(x)\le2.000$ (pertanyaan cepat baru; pengecoh $f(x)\ge2.000$, $x\le2.000$).
+- **Bagian 2–4 — Uji 30, 40, 60 unit** (substitusi langsung tiap pernyataan, pangkat demi pangkat, dari baris a1–c3 di atas): $f(30)=20.000>2.000$ → tidak mungkin, *Salah* (pertanyaan cepat lama); $f(40)=2.000$ dan $f(60)=2.000$ → mungkin, *Benar*. Tiap hasil tumbuh sebagai batang yang dibandingkan dengan garis modal $2.000$ (melewati garis merah, tepat di garis emas). **Hati-hati**, unit lebih banyak tidak selalu butuh modal lebih besar.
+- **Bagian 5 — Lihat dengan grafik (opsional, Ya/Lewati):** Langkah 2.3 di atas; kurva turun lalu naik, menyentuh garis $2.000$ di $x=40$ dan $x=60$; daerah $40\le x\le60$ diwarnai; $f(x)-2.000=(x+30)(x-40)(x-60)$.
+- **Bagian 6–8:** catatan lengkap, kartu (1)–(3) dengan pertanyaan kesimpulan, segel Salah · Benar · Benar.
+
 ---
 
 ## SOAL 9 — Populasi Kelinci

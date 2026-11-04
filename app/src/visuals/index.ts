@@ -12,6 +12,7 @@ import { createOrn } from './orn18';
 import { createPakan2 } from './pakan2';
 import { createBars } from './bars17';
 import { createCirc } from './circ15';
+import { createSaham8 } from './saham8';
 import { createSign } from './sign17';
 import { createSubst5 } from './subst5';
 import { createTide11 } from './tide11';
@@ -32,6 +33,7 @@ export const VISUALS: Record<string, VisualFactory> = {
   mat1: createMat1,
   orn18: createOrn,
   pakan2: createPakan2,
+  saham8: createSaham8,
   sign: createSign,
   subst5: createSubst5,
   tide11: createTide11,
