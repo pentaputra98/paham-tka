@@ -4490,9 +4490,9 @@
   }
 }
 
-/* ---------- soal 14 (rail14, v1.48): kereta api, balok kerangka, lintasan 13 menit, pembanding tanpa desimal ----------
-   bingkai label waktu dan langkah rusuk biru langit; segmen yang sedang diuji biru langit, pasangan 5 menit merah
-   (lebih dari 3,5 km), pasangan paling lama 3 menit emas (jawaban); baris pembanding lama memudar. */
+/* ---------- soal 14 revisi pemilik (rail14, v1.49): kereta api, panjang AE, perbandingan waktu, koma bergeser ----------
+   bingkai label waktu biru; baris penurunan putih, baris kunci biru langit, baris lama pudar; segmen dan jarak biru
+   langit; saat dianalisis pasangan lebih dari 3,5 km merah, kurang dari 3,5 km emas (jawaban). */
 @layer pages {
   .vis-rail {
     height: 100%;
@@ -4503,17 +4503,21 @@
   }
 
   .r14-pic,
-  .r14-boxv,
+  .r14-calc,
   .r14-bv {
     grid-area: 1 / 1;
-    width: 100%;
-    height: 100%;
-    min-height: 0;
     transition: opacity var(--dur-slow) var(--ease);
   }
 
+  .r14-pic,
+  .r14-bv {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
   .vis-rail:not([data-view='pic']) .r14-pic,
-  .vis-rail:not([data-view='box']) .r14-boxv,
+  .vis-rail:not([data-view='calc']) .r14-calc,
   .vis-rail:not([data-view='bar']) .r14-bv {
     opacity: 0;
     visibility: hidden;
@@ -4534,68 +4538,75 @@
     opacity: 1;
   }
 
-  .r14-boxv,
-  .r14-bar {
-    font-family: var(--font-mono);
-    font-weight: var(--fw-bold);
-    font-size: var(--svg-fs-md);
-    overflow: visible;
+  /* ---- baris penurunan ---- */
+  .r14-calc,
+  .r14-cur {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-2);
   }
 
-  .r14-edge {
-    fill: none;
-    stroke: var(--color-on-stage-muted);
-    stroke-width: var(--bw-1);
-    stroke-dasharray: 5 5;
+  .r14-ln {
+    display: none;
+    white-space: nowrap;
   }
 
-  .r14-st path {
-    fill: none;
-    stroke: var(--color-stage-accent);
-    stroke-width: var(--bw-4);
-    stroke-linecap: round;
+  .r14-ln.on {
+    display: block;
   }
 
-  .r14-hm path {
-    fill: var(--color-stage-accent);
+  .r14-ln.is-old {
+    opacity: 0.55;
+    transition: opacity var(--dur-slow) var(--ease);
   }
 
-  .r14-st text,
-  .r14-dg text {
-    fill: var(--color-stage-accent);
-    paint-order: stroke;
-    stroke: var(--color-stage);
-    stroke-width: var(--bw-4);
+  .r14-key {
+    color: var(--color-stage-accent);
   }
 
-  .r14-dg path {
-    stroke: var(--color-on-stage);
-    stroke-width: var(--bw-4);
-    stroke-linecap: round;
+  /* koma bergeser: angka selebar --r14-dig dipisah celah --r14-gap; koma di celah pertama, bergeser ke celah kedua */
+  .r14-sh {
+    position: relative;
+    display: inline-flex;
+    margin-inline-start: var(--r14-gap);
   }
 
-  .r14-dg text {
-    fill: var(--color-on-stage);
+  .r14-d {
+    display: inline-block;
+    width: var(--r14-dig);
+    text-align: center;
   }
 
-  .r14-pt circle,
-  .r14-sta circle {
-    fill: var(--color-on-stage);
+  .r14-g {
+    display: inline-block;
+    width: var(--r14-gap);
   }
 
-  .r14-pt text,
-  .r14-sta text {
-    fill: var(--color-on-stage);
+  .r14-cm {
+    position: absolute;
+    left: var(--r14-dig);
+    bottom: 0;
+    width: var(--r14-gap);
+    display: flex;
+    justify-content: center;
   }
 
-  .r14-st,
-  .r14-dg {
+  @media (max-height: 520px) {
+    .r14-cur .r14-ln.is-gone {
+      display: none;
+    }
+  }
+
+  .r14-sh.is-done {
+    transform: translateX(calc(-1 * var(--r14-slot)));
+  }
+
+  .is-done .r14-cm {
+    transform: translateX(var(--r14-slot));
+  }
+
+  .is-done .is-z {
     opacity: 0;
-  }
-
-  .r14-st.on,
-  .show-diag .r14-dg {
-    opacity: 1;
   }
 
   /* ---- lintasan ---- */
@@ -4610,6 +4621,10 @@
     width: 100%;
     height: 100%;
     min-height: 0;
+    overflow: visible;
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-md);
   }
 
   .r14-trk {
@@ -4622,124 +4637,75 @@
     stroke-width: var(--bw-1);
   }
 
-  .r14-seg rect {
-    fill: var(--a-sky-30);
+  .r14-sta circle,
+  .r14-sta text {
+    fill: var(--color-on-stage);
   }
 
-  .r14-seg text {
+  .r14-seg rect {
+    fill: var(--color-stage-accent);
+  }
+
+  .r14-mn {
     fill: var(--color-on-stage);
     font-size: var(--svg-fs-sm);
   }
 
-  .r14-seg,
-  .r14-ce,
-  .r14-ru {
-    opacity: 0;
-  }
-
-  .r14-seg.on,
-  .show-ce .r14-ce,
-  .show-lim .r14-ru,
-  .is-sketch .r14-seg {
-    opacity: 1;
+  .r14-km,
+  .r14-cek {
+    fill: var(--color-stage-accent);
   }
 
   .r14-ce path,
-  .r14-ru path {
+  .r14-tot path {
     fill: none;
     stroke: var(--color-on-stage-muted);
     stroke-width: var(--bw-2);
   }
 
-  .r14-ce text {
+  .r14-ce text,
+  .r14-tot text {
     fill: var(--color-on-stage-muted);
     font-size: var(--svg-fs-sm);
   }
 
-  /* kelompok 5 menit (AB dan CE) */
-  .vis-rail[data-g5='1'] [data-g='5'] rect {
-    fill: var(--color-stage-accent);
+  .r14-seg,
+  .r14-ce,
+  .r14-tot,
+  .r14-km,
+  .r14-cek {
+    opacity: 0;
   }
 
-  .vis-rail[data-g5='2'] [data-g='5'] rect {
-    fill: var(--color-constraint-on-stage);
+  .r14-seg.on,
+  .show-ce .r14-ce,
+  .show-tot .r14-tot,
+  .has-km .r14-km,
+  .has-km .r14-cek,
+  .is-sketch :is(.r14-seg, .r14-km, .r14-cek) {
+    opacity: 1;
   }
 
-  .vis-rail[data-g5='1'] .r14-ce path {
-    stroke: var(--color-stage-accent);
-  }
-
-  .vis-rail[data-g5='1'] .r14-ce text {
-    fill: var(--color-stage-accent);
-  }
-
-  .vis-rail[data-g5='2'] .r14-ce path {
-    stroke: var(--color-constraint-on-stage);
-  }
-
-  .vis-rail[data-g5='2'] .r14-ce text {
-    fill: var(--color-constraint-on-stage);
-  }
-
-  /* kelompok paling lama 3 menit (BC, CD, DE) */
-  .vis-rail[data-g3='1'] [data-g='3'] rect {
-    fill: var(--color-stage-accent);
-  }
-
-  .vis-rail[data-g3='2'] [data-g='3'] rect {
+  /* analisis: lebih dari 3,5 km merah, kurang dari 3,5 km emas */
+  .is-judge .r14-seg rect {
     fill: var(--color-result);
   }
 
-  .r14-ru text {
-    font-size: var(--svg-fs-sm);
+  .is-judge .r14-seg:not(.is-far) .r14-km {
+    fill: var(--color-result);
   }
 
-  .r14-ru.is-ok path {
-    stroke: var(--color-stage-accent);
-  }
-
-  .r14-ru.is-ok text {
-    fill: var(--color-stage-accent);
-  }
-
-  .r14-ru.is-no path {
-    stroke: var(--color-constraint-on-stage);
-  }
-
-  .r14-ru.is-no text {
+  .is-judge .is-far rect {
     fill: var(--color-constraint-on-stage);
   }
 
-  /* ---- baris pembanding ---- */
-  .r14-cmp {
-    display: grid;
-    justify-items: center;
-    gap: var(--space-1);
+  .is-judge .is-far .r14-km,
+  .is-judge .r14-ce .r14-cek,
+  .is-judge .r14-ce text {
+    fill: var(--color-constraint-on-stage);
   }
 
-  .r14-ln {
-    display: none;
-    white-space: nowrap;
-  }
-
-  .r14-ln.on {
-    display: block;
-  }
-
-  .r14-ln.is-gone {
-    display: none;
-  }
-
-  .r14-ln.is-old {
-    opacity: 0.55;
-    transition: opacity var(--dur-slow) var(--ease);
-  }
-
-  .r14-v5 {
-    color: var(--color-constraint-on-stage);
-  }
-
-  .r14-v3 {
-    color: var(--color-stage-accent);
+  .is-judge .r14-ce path {
+    stroke: var(--color-constraint-on-stage);
   }
 }

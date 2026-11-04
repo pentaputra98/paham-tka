@@ -258,6 +258,10 @@
     --v12-fit-w: 4.2cqi;
     --r14-fit-h: 9cqh;
     --r14-fit-w: 3.2cqi;
+    /* lebar satu angka dan celah koma pada animasi koma bergeser soal 14 */
+    --r14-dig: 0.5em;
+    --r14-gap: 0.24em;
+    --r14-slot: calc(var(--r14-dig) + var(--r14-gap));
     --hk-fit-w: 5.4cqi;
     /* matriks kebutuhan bahan soal 3 (4 baris × ≈ 17 em) muat di zona visual */
     --drink-fit-h: 9cqh;

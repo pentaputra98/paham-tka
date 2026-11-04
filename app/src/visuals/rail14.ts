@@ -1,15 +1,14 @@
 /**
- * Adegan "kereta api" soal 14 (v1.48; docs/jarak_kereta_api.png). Empat tampilan pada panggung yang sama:
+ * Adegan "kereta api" soal 14 (revisi pemilik v1.49; docs/jarak_kereta_api.png). Tiga tampilan pada panggung yang sama:
  *  - pic: gambar asli soal; label waktu 5, 3, 2, 3 menit dibingkai dan menjadi sumber terbang (t-AB, t-BC, t-CD, t-DE).
- *  - box: balok kerangka miring dari A(2, 3, 5) ke E(11, 6, 8); k = banyak langkah rusuk yang tampil (+9, +3, +3);
- *    diag = diagonal ruang AE (√99 km).
- *  - bar: lintasan lurus A–E dibagi 13 menit (1 menit 1 ruas); n = banyak segmen yang tumbuh; ce = kurung C–E
- *    (2 + 3 = 5 menit); g5 / g3 = kelompok pasangan 5 menit (AB, CE) dan paling lama 3 menit (BC, CD, DE):
- *    1 sedang diuji (biru langit), 2 sudah diputuskan (5 menit merah, 3 menit emas = jawaban); lim = penggaris
- *    4 dan 5 menit (bagian opsional batas waktu).
- *  - cmp (di bawah bar): baris pembanding tanpa desimal untuk waktu t (5 atau 3 menit), k = banyak baris; baris baru
- *    meluncur masuk, baris sebelumnya memudar, hanya dua baris terakhir yang tampil (papan memuat semuanya).
- * Angka dari docs/pembahasan25.md soal 14 (a1–c5, Pemeriksaan hasil metode eksak). Gerak hanya transform/opacity.
+ *  - calc: baris penurunan panjang vektor AE (tanpa balok); ae = banyak baris: AE = E − A, AE = (9, 3, 3),
+ *    |AE| = √(9² + 3² + 3²) = √99, √99 ≈ √100 = 10 km. Baris baru meluncur masuk, baris lama memudar.
+ *  - bar: lintasan lurus A–E dibagi 13 menit; n = banyak segmen yang tumbuh; tot = kurung total (13 menit, AE ≈ 10 km);
+ *    ce = kurung C–E (2 + 3 = 5 menit); km = pasangan yang jaraknya sudah tampil; judge = segmen diwarnai
+ *    (lebih dari 3,5 km merah, kurang dari 3,5 km emas = jawaban); cur = pasangan yang sedang dihitung, panel di
+ *    bawah lintasan: t/13 × 10, t/13 ≈ desimal, lalu dikali 10 dengan koma bergeser satu tempat ke kanan
+ *    (k = banyak baris panel).
+ * Angka: |AE| = √99 (docs a1–a4), dibulatkan ke 10 atas arahan pemilik. Gerak hanya transform/opacity.
  */
 import { reducedMotion } from '../core/clock';
 import { tex } from '../core/math';
@@ -18,22 +17,23 @@ import { EASE, EASE_OUT } from '../core/tokens';
 import type { Ctx } from '../engine/board';
 import type { VisualScene } from '../engine/scene';
 
+export type Pair = 'AB' | 'BC' | 'CD' | 'DE' | 'CE';
+
 export interface Rail14State {
-  view?: 'pic' | 'box' | 'bar';
+  view?: 'pic' | 'calc' | 'bar';
   box?: boolean;
-  k?: number;
-  diag?: boolean;
+  ae?: number;
   n?: number;
+  tot?: boolean;
   ce?: boolean;
-  g5?: 0 | 1 | 2;
-  g3?: 0 | 1 | 2;
-  lim?: boolean;
-  cmp?: { t: 5 | 3; k: number };
+  km?: Pair[];
+  judge?: boolean;
+  cur?: { p: Pair; k: number };
   [k: string]: unknown;
 }
 
 const fig = new URL('../assets/soal/jarak_kereta_api.png', import.meta.url).href;
-/** label waktu pada gambar asli 1185 × 370: [sumber, x, y, lebar] */
+/** label waktu pada gambar asli 1185 × 370: [sumber, x, y] */
 const TL: Array<[string, number, number]> = [
   ['t-AB', 210, 300],
   ['t-BC', 478, 300],
@@ -49,51 +49,21 @@ function picMarkup(): string {
   <image href="${fig}" x="0" y="0" width="1185" height="370"/>${boxes}</svg>`;
 }
 
-// ---- balok kerangka miring (viewBox 600 × 330) ----
-const AX = 96;
-const AY = 270;
-const SX = 34; // per satuan x
-const DZ = 34; // per satuan z (tegak)
-const DY: [number, number] = [22, -16]; // per satuan y (miring ke belakang)
-const P = (x: number, y: number, z: number): [number, number] => [
-  AX + x * SX + y * DY[0],
-  AY - z * DZ + y * DY[1],
+/** penurunan panjang AE (docs a1–a4), baris terakhir pembulatan arahan pemilik */
+const AE_LINES = [
+  '\\overrightarrow{AE}=E-A=(11-2,\\ 6-3,\\ 8-5)',
+  '\\overrightarrow{AE}=(9,\\ 3,\\ 3)',
+  '|\\overrightarrow{AE}|=\\sqrt{9^2+3^2+3^2}=\\sqrt{81+9+9}=\\sqrt{99}',
+  '\\sqrt{99}\\approx\\sqrt{100}=10\\text{ km}',
 ];
-const pt = (q: [number, number]): string => `${q[0]} ${q[1]}`;
 
-function boxMarkup(): string {
-  const v = [0, 9];
-  const w = [0, 3];
-  const edges: string[] = [];
-  // 12 rusuk balok 9 × 3 × 3
-  for (const y of w) for (const z of w) edges.push(`M${pt(P(0, y, z))}L${pt(P(9, y, z))}`);
-  for (const x of v) for (const z of w) edges.push(`M${pt(P(x, 0, z))}L${pt(P(x, 3, z))}`);
-  for (const x of v) for (const y of w) edges.push(`M${pt(P(x, y, 0))}L${pt(P(x, y, 3))}`);
-  const s1 = P(9, 0, 0);
-  const s2 = P(9, 3, 0);
-  const e = P(9, 3, 3);
-  const a = P(0, 0, 0);
-  const mid = (p: [number, number], q: [number, number]): [number, number] => [
-    (p[0] + q[0]) / 2,
-    (p[1] + q[1]) / 2,
-  ];
-  const m1 = mid(a, s1);
-  const m2 = mid(s1, s2);
-  const m3 = mid(s2, e);
-  const md = mid(a, e);
-  return `<svg class="r14-boxv" viewBox="0 0 600 330" role="img" aria-label="Balok kerangka: dari A(2, 3, 5) ke E(11, 6, 8) langkahnya 9, 3, dan 3; diagonal ruang AE panjangnya akar 99 km">
-  <defs><marker id="r14-h" class="r14-hm" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z"/></marker></defs>
-  <path class="r14-edge" d="${edges.join('')}"/>
-  <g class="r14-st" data-i="1"><path d="M${pt(a)}L${pt(s1)}" marker-end="url(#r14-h)"/><text x="${m1[0]}" y="${m1[1] + 30}" text-anchor="middle">+9</text></g>
-  <g class="r14-st" data-i="2"><path d="M${pt(s1)}L${pt(s2)}" marker-end="url(#r14-h)"/><text x="${m2[0] + 16}" y="${m2[1] + 20}">+3</text></g>
-  <g class="r14-st" data-i="3"><path d="M${pt(s2)}L${pt(e)}" marker-end="url(#r14-h)"/><text x="${m3[0] + 14}" y="${m3[1] + 6}">+3</text></g>
-  <g class="r14-dg"><path d="M${pt(a)}L${pt(e)}"/><text x="${md[0] + 40}" y="${md[1] + 54}">√99 km</text></g>
-  <g class="r14-pt"><circle cx="${a[0]}" cy="${a[1]}" r="7"/><text x="${a[0] - 8}" y="${a[1] + 34}">A(2, 3, 5)</text></g>
-  <g class="r14-pt"><circle cx="${e[0]}" cy="${e[1]}" r="7"/><text x="${e[0] - 40}" y="${e[1] - 18}">E(11, 6, 8)</text></g>
-  </svg>`;
+function calcMarkup(): string {
+  return `<div class="r14-calc" role="img" aria-label="Vektor AE sama dengan E dikurangi A, yaitu (9, 3, 3); panjangnya akar 99, dibulatkan akar 100 sama dengan 10 km">${AE_LINES.map(
+    (t, i) => `<div class="r14-ln${i === 3 ? ' r14-key' : ''}" data-i="${i}">${tex(t)}</div>`,
+  ).join('')}</div>`;
 }
 
-// ---- lintasan 13 menit (viewBox 640 × 200), 40 px per menit ----
+// ---- lintasan 13 menit (viewBox 640 × 210), 40 px per menit ----
 const X0 = 60;
 const PM = 40;
 const TY = 84;
@@ -105,68 +75,66 @@ const STA: Array<[string, number]> = [
   ['E', 13],
 ];
 const tx = (m: number): number => X0 + m * PM;
-/** segmen: [kunci, menit awal, menit akhir, kelompok] */
-const SEG: Array<[string, number, number, 5 | 3]> = [
-  ['AB', 0, 5, 5],
-  ['BC', 5, 8, 3],
-  ['CD', 8, 10, 3],
-  ['DE', 10, 13, 3],
-];
+/** pasangan: menit awal, menit akhir, jarak (km, dibulatkan), dua angka desimal t/13 */
+const PAIR: Record<Pair, { a: number; b: number; km: string; d: [string, string] }> = {
+  AB: { a: 0, b: 5, km: '3,8', d: ['3', '8'] },
+  BC: { a: 5, b: 8, km: '2,3', d: ['2', '3'] },
+  CD: { a: 8, b: 10, km: '1,5', d: ['1', '5'] },
+  DE: { a: 10, b: 13, km: '2,3', d: ['2', '3'] },
+  CE: { a: 8, b: 13, km: '3,8', d: ['3', '8'] },
+};
+const SEGS: Pair[] = ['AB', 'BC', 'CD', 'DE'];
+const far = (p: Pair): boolean => PAIR[p].b - PAIR[p].a === 5;
 
 function barMarkup(): string {
   const ticks = Array.from({ length: 14 }, (_, m) => `M${tx(m)} ${TY - 6}V${TY + 6}`).join('');
-  const segs = SEG.map(
-    ([k, a, b, g], i) =>
-      `<g class="r14-seg" data-i="${i}" data-g="${g}"><rect x="${tx(a) + 2}" y="${TY - 9}" width="${tx(b) - tx(a) - 4}" height="18" rx="4"/>
-      <text x="${(tx(a) + tx(b)) / 2}" y="${TY + 34}" text-anchor="middle">${b - a} menit</text><title>${k}</title></g>`,
-  ).join('');
+  const segs = SEGS.map((k, i) => {
+    const { a, b, km } = PAIR[k];
+    const cx = (tx(a) + tx(b)) / 2;
+    return `<g class="r14-seg${far(k) ? ' is-far' : ''}" data-i="${i}" data-p="${k}"><rect x="${tx(a) + 2}" y="${TY - 9}" width="${tx(b) - tx(a) - 4}" height="18" rx="4"/>
+      <text class="r14-mn" x="${cx}" y="${TY + 34}" text-anchor="middle">${b - a} menit</text>
+      <text class="r14-km" x="${cx}" y="${TY + 60}" text-anchor="middle">${km} km</text></g>`;
+  }).join('');
   const sta = STA.map(
     ([s, m]) =>
       `<g class="r14-sta"><circle cx="${tx(m)}" cy="${TY}" r="7"/><text x="${tx(m)}" y="${TY - 18}" text-anchor="middle">${s}</text></g>`,
   ).join('');
-  const brace = (a: number, b: number, y: number, cls: string, label: string): string =>
-    `<g class="${cls}"><path d="M${tx(a) + 3} ${y + 8}V${y}H${tx(b) - 3}V${y + 8}"/><text x="${(tx(a) + tx(b)) / 2}" y="${y - 8}" text-anchor="middle">${label}</text></g>`;
-  const ruler = (m: number, y: number, ok: boolean): string =>
-    `<g class="r14-ru ${ok ? 'is-ok' : 'is-no'}"><path d="M${tx(0)} ${y - 6}V${y + 6}M${tx(0)} ${y}H${tx(m)}M${tx(m)} ${y - 6}V${y + 6}"/><text x="${tx(m) + 10}" y="${y + 6}">${m} menit ${ok ? '✓' : '✗'}</text></g>`;
-  return `<svg class="r14-bar" viewBox="0 0 640 200" role="img" aria-label="Lintasan lurus A sampai E selama 13 menit: AB 5 menit, BC 3 menit, CD 2 menit, DE 3 menit; CE 2 + 3 = 5 menit">
+  return `<svg class="r14-bar" viewBox="0 0 640 210" role="img" aria-label="Lintasan lurus A sampai E selama 13 menit, AE kira-kira 10 km: AB 5 menit 3,8 km, BC 3 menit 2,3 km, CD 2 menit 1,5 km, DE 3 menit 2,3 km; CE 5 menit 3,8 km">
   <path class="r14-trk" d="M${tx(0)} ${TY}H${tx(13)}"/><path class="r14-tk" d="${ticks}"/>${segs}
-  ${brace(8, 13, 30, 'r14-ce', 'CE = 2 + 3 = 5 menit')}${sta}
-  ${ruler(4, 150, true)}${ruler(5, 180, false)}
+  <g class="r14-ce is-far" data-p="CE"><path d="M${tx(8) + 3} 38V30H${tx(13) - 3}V38"/><text x="${(tx(8) + tx(13)) / 2}" y="22" text-anchor="middle">CE = 2 + 3 = 5 menit<tspan class="r14-cek"> → 3,8 km</tspan></text></g>
+  ${sta}
+  <g class="r14-tot"><path d="M${tx(0)} 172V180H${tx(13)}V172"/><text x="${(tx(0) + tx(13)) / 2}" y="202" text-anchor="middle">A ke E = 13 menit, AE ≈ 10 km</text></g>
   </svg>`;
 }
 
-/** baris pembanding tanpa desimal (docs Pemeriksaan hasil metode eksak) */
-const CMP: Record<5 | 3, string[]> = {
-  5: [
-    '\\dfrac{5}{13}\\times\\sqrt{99}=\\dfrac{5\\sqrt{99}}{13}',
-    '\\Big(\\dfrac{5\\sqrt{99}}{13}\\Big)^2=\\dfrac{2475}{169}\\quad\\text{dan}\\quad\\Big(\\dfrac{7}{2}\\Big)^2=\\dfrac{49}{4}',
-    '2475\\times4=9900\\quad\\text{dan}\\quad49\\times169=8281',
-    '9900>8281\\ \\to\\ \\text{lebih dari }3{,}5\\text{ km}',
-  ],
-  3: [
-    '\\dfrac{3}{13}\\times\\sqrt{99}=\\dfrac{3\\sqrt{99}}{13}',
-    '\\Big(\\dfrac{3\\sqrt{99}}{13}\\Big)^2=\\dfrac{891}{169}\\quad\\text{dan}\\quad\\Big(\\dfrac{7}{2}\\Big)^2=\\dfrac{49}{4}',
-    '891\\times4=3564\\quad\\text{dan}\\quad49\\times169=8281',
-    '3564<8281\\ \\to\\ \\text{kurang dari }3{,}5\\text{ km}',
-  ],
-};
+/** panel perhitungan satu pasangan: t/13 × 10, t/13 ≈ desimal, desimal × 10 dengan koma bergeser */
+function curMarkup(p: Pair): string {
+  const { a, b, d } = PAIR[p];
+  const t = b - a;
+  const head =
+    p === 'CE' ? `CE=\\dfrac{2+3}{13}\\times10=\\dfrac{5}{13}\\times10` : `${p}=\\dfrac{${t}}{13}\\times10`;
+  const dec = `0{,}${d[0]}${d[1]}`;
+  const slot = (v: string, cls = ''): string => `<span class="r14-d${cls}">${tex(v)}</span>`;
+  return `<div class="r14-ln" data-i="0">${tex(head)}</div>
+  <div class="r14-ln" data-i="1">${tex(`\\dfrac{${t}}{13}=${t}\\div13\\approx${dec}`)}</div>
+  <div class="r14-ln r14-key" data-i="2">${tex(`${dec}\\times10=`)}<span class="r14-sh">${slot('0', ' is-z')}<span class="r14-g"></span>${slot(d[0])}<span class="r14-g"></span>${slot(d[1])}<span class="r14-cm">${tex('{,}')}</span>${tex('\\text{ km}')}</span></div>`;
+}
 
 export function createRail14(): VisualScene {
   const el = document.createElement('div');
   el.className = 'vis-rail';
-  el.innerHTML = `${picMarkup()}${boxMarkup()}<div class="r14-bv">${barMarkup()}<div class="r14-cmp" aria-live="polite"></div></div>`;
-  const cmpEl = el.querySelector<HTMLElement>('.r14-cmp')!;
+  el.innerHTML = `${picMarkup()}${calcMarkup()}<div class="r14-bv">${barMarkup()}<div class="r14-cur" aria-live="polite"></div></div>`;
+  const curEl = el.querySelector<HTMLElement>('.r14-cur')!;
   let view = '';
   let box = false;
-  let k = 0;
-  let diag = false;
+  let ae = 0;
   let n = 0;
+  let tot = false;
   let ce = false;
-  let g5 = 0;
-  let g3 = 0;
-  let lim = false;
-  let cmpKey = '';
-  let cmpK = 0;
+  let km = new Set<string>();
+  let judge = false;
+  let curKey = '';
+  let curK = 0;
 
   const fadeIn = (e: Element, delay = 0): Promise<boolean> =>
     play(e, [{ opacity: 0 }, { opacity: 1 }], {
@@ -188,6 +156,15 @@ export function createRail14(): VisualScene {
       { duration: 450, delay, easing: EASE_OUT, fill: 'backwards', tag: 'rail' },
     ).finished;
   };
+  const slideIn = (e: Element, delay = 0): Promise<boolean> =>
+    play(
+      e,
+      [
+        { transform: 'translateY(0.6em)', opacity: 0 },
+        { transform: 'none', opacity: 1 },
+      ],
+      { duration: 550, delay, easing: EASE_OUT, fill: 'backwards', tag: 'rail' },
+    ).finished;
   const grow = (e: SVGElement, delay = 0): Promise<boolean> => {
     e.style.transformBox = 'fill-box';
     e.style.transformOrigin = 'left center';
@@ -200,7 +177,7 @@ export function createRail14(): VisualScene {
       { duration: 650, delay, easing: EASE, fill: 'backwards', tag: 'rail' },
     ).finished;
   };
-  /** denyut singkat saat kelompok berganti warna (warna sendiri tidak dianimasikan) */
+  /** denyut singkat saat segmen diberi warna (warna sendiri tidak dianimasikan) */
   const pulse = (e: SVGElement, delay = 0): Promise<boolean> => {
     e.style.transformBox = 'fill-box';
     e.style.transformOrigin = 'center';
@@ -210,6 +187,26 @@ export function createRail14(): VisualScene {
       easing: EASE,
       tag: 'rail',
     }).finished;
+  };
+  /** koma bergeser satu tempat ke kanan, nol di depan memudar, angka merapat ke kiri */
+  const shift = async (sh: HTMLElement, delay: number): Promise<boolean> => {
+    const cm = sh.querySelector<HTMLElement>('.r14-cm')!;
+    const z = sh.querySelector<HTMLElement>('.is-z')!;
+    const o = { easing: EASE, fill: 'backwards' as const, tag: 'rail' };
+    const r = await Promise.all([
+      play(cm, [{ transform: 'none' }, { transform: 'translateX(var(--r14-slot))' }], {
+        ...o,
+        duration: 700,
+        delay,
+      }).finished,
+      play(z, [{ opacity: 1 }, { opacity: 0 }], { ...o, duration: 400, delay: delay + 800 }).finished,
+      play(sh, [{ transform: 'none' }, { transform: 'translateX(calc(-1 * var(--r14-slot)))' }], {
+        ...o,
+        duration: 500,
+        delay: delay + 1200,
+      }).finished,
+    ]);
+    return r.every(Boolean);
   };
 
   return {
@@ -221,8 +218,7 @@ export function createRail14(): VisualScene {
       const v = s.view ?? 'pic';
       if (v !== view) {
         el.dataset.view = v;
-        if (anim && view)
-          runs.push(fadeIn(el.querySelector(v === 'bar' ? '.r14-bv' : `.r14-${v === 'box' ? 'boxv' : v}`)!));
+        if (anim && view) runs.push(fadeIn(el.querySelector(v === 'bar' ? '.r14-bv' : `.r14-${v}`)!));
         view = v;
       }
 
@@ -233,19 +229,16 @@ export function createRail14(): VisualScene {
         el.querySelectorAll('.r14-box').forEach((e, i) => runs.push(pop(e, i * 220)));
       box = b;
 
-      // ---- balok ----
-      const kk = s.k ?? 0;
-      el.querySelectorAll<SVGGElement>('.r14-st').forEach((g) => {
-        const i = Number(g.dataset.i);
-        g.classList.toggle('on', i <= kk);
-        if (anim && v === 'box' && i <= kk && (i > k || c.replay))
-          runs.push(fadeIn(g, (i - 1 - (c.replay ? 0 : k)) * 550));
+      // ---- penurunan panjang AE ----
+      const ak = s.ae ?? 0;
+      el.querySelectorAll<HTMLElement>('.r14-calc .r14-ln').forEach((ln) => {
+        const i = Number(ln.dataset.i);
+        ln.classList.toggle('on', i < ak);
+        ln.classList.toggle('is-old', i < ak - 1);
+        if (anim && v === 'calc' && i < ak && (i >= ae || c.replay))
+          runs.push(slideIn(ln, (i - (c.replay ? 0 : ae)) * 650));
       });
-      k = kk;
-      const dg = !!s.diag;
-      el.classList.toggle('show-diag', dg);
-      if (anim && dg && (!diag || c.replay)) runs.push(fadeIn(el.querySelector('.r14-dg')!, 200));
-      diag = dg;
+      ae = ak;
 
       // ---- lintasan ----
       const m = s.n ?? 0;
@@ -254,75 +247,60 @@ export function createRail14(): VisualScene {
         g.classList.toggle('on', i < m);
         if (anim && v === 'bar' && i < m && (i >= n || c.replay)) {
           const d = (i - (c.replay ? 0 : n)) * 380;
-          runs.push(grow(g.querySelector('rect')!, d), fadeIn(g.querySelector('text')!, d + 500));
+          runs.push(grow(g.querySelector('rect')!, d), fadeIn(g.querySelector('.r14-mn')!, d + 500));
         }
       });
       n = m;
+      const tt = !!s.tot;
+      el.classList.toggle('show-tot', tt);
+      if (anim && tt && (!tot || c.replay)) runs.push(fadeIn(el.querySelector('.r14-tot')!, 300));
+      tot = tt;
       const cc = !!s.ce;
       el.classList.toggle('show-ce', cc);
       if (anim && cc && (!ce || c.replay)) runs.push(fadeIn(el.querySelector('.r14-ce')!));
       ce = cc;
-      const a5 = s.g5 ?? 0;
-      const a3 = s.g3 ?? 0;
-      el.dataset.g5 = String(a5);
-      el.dataset.g3 = String(a3);
-      if (anim && v === 'bar') {
-        el.querySelectorAll<SVGGElement>('.r14-seg').forEach((g) => {
-          const grp = g.dataset.g === '5' ? 5 : 3;
-          const now = grp === 5 ? a5 : a3;
-          const was = grp === 5 ? g5 : g3;
-          if (now && (now !== was || c.replay)) runs.push(pulse(g.querySelector('rect')!, 150));
-        });
-        if (a5 && (a5 !== g5 || c.replay) && cc)
-          runs.push(pulse(el.querySelector<SVGGElement>('.r14-ce path')!, 150));
+      const ks = new Set<string>(s.km ?? []);
+      el.querySelectorAll<SVGGElement>('.r14-bar [data-p]').forEach((g) => {
+        const p = g.dataset.p!;
+        const on = ks.has(p);
+        g.classList.toggle('has-km', on);
+        const lbl = g.querySelector<SVGElement>(p === 'CE' ? '.r14-cek' : '.r14-km');
+        if (anim && v === 'bar' && on && lbl && (!km.has(p) || c.replay)) runs.push(fadeIn(lbl, 1900));
+      });
+      km = ks;
+      const jg = !!s.judge;
+      el.classList.toggle('is-judge', jg);
+      if (anim && jg && (!judge || c.replay)) {
+        el.querySelectorAll<SVGGElement>('.r14-seg rect').forEach((r, i) => runs.push(pulse(r, i * 150)));
+        runs.push(pulse(el.querySelector<SVGGElement>('.r14-ce path')!, 600));
       }
-      g5 = a5;
-      g3 = a3;
-      const li = !!s.lim;
-      el.classList.toggle('show-lim', li);
-      if (anim && li && (!lim || c.replay))
-        el.querySelectorAll<SVGGElement>('.r14-ru').forEach((g, i) => runs.push(grow(g, i * 700)));
-      lim = li;
+      judge = jg;
 
-      // ---- baris pembanding ----
-      const cm = s.cmp;
-      const key = cm ? String(cm.t) : '';
-      const ck = cm?.k ?? 0;
-      if (key !== cmpKey) {
-        cmpEl.innerHTML = cm
-          ? CMP[cm.t]
-              .map(
-                (t, i) =>
-                  `<div class="r14-ln${i === 3 ? ` r14-v${cm.t}` : ''}" data-i="${i}">${tex(t)}</div>`,
-              )
-              .join('')
-          : '';
-        cmpKey = key;
-        cmpK = 0;
+      // ---- panel perhitungan pasangan ----
+      const cu = s.cur;
+      const key = cu?.p ?? '';
+      const ck = cu?.k ?? 0;
+      if (key !== curKey) {
+        curEl.innerHTML = cu ? curMarkup(cu.p) : '';
+        curKey = key;
+        curK = 0;
       }
-      cmpEl.querySelectorAll<HTMLElement>('.r14-ln').forEach((ln) => {
+      curEl.querySelectorAll<HTMLElement>('.r14-ln').forEach((ln) => {
         const i = Number(ln.dataset.i);
         ln.classList.toggle('on', i < ck);
         ln.classList.toggle('is-old', i < ck - 1);
         ln.classList.toggle('is-gone', i < ck - 2);
-        if (anim && i < ck && (i >= cmpK || c.replay)) {
-          const d = (i - (c.replay ? 0 : cmpK)) * 600;
-          runs.push(
-            play(
-              ln,
-              [
-                { transform: 'translateY(0.6em)', opacity: 0 },
-                { transform: 'none', opacity: 1 },
-              ],
-              { duration: 550, delay: d, easing: EASE_OUT, fill: 'backwards', tag: 'rail' },
-            ).finished,
-          );
-        }
+        const fresh = anim && i < ck && (i >= curK || c.replay);
+        const d = (i - (c.replay ? 0 : curK)) * 650;
+        const sh = ln.querySelector<HTMLElement>('.r14-sh');
+        if (fresh) runs.push(slideIn(ln, d));
+        if (sh) sh.classList.toggle('is-done', i < ck);
+        if (fresh && sh) runs.push(shift(sh, d + 700));
       });
-      cmpK = ck;
+      curK = ck;
       await Promise.all(runs);
     },
     sketch: () =>
-      `<div class="vis-rail n-sketch is-sketch show-ce" data-view="bar" data-g5="2" data-g3="2">${barMarkup()}</div>`,
+      `<div class="vis-rail n-sketch is-sketch show-ce show-tot is-judge" data-view="bar">${barMarkup()}</div>`,
   };
 }

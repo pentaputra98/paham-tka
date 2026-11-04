@@ -1,26 +1,29 @@
 /**
- * SOAL 14 — Kereta Api dan Koordinat 3D (jarak antartitik, kecepatan konstan; multi-jawaban). Kunci: BC, CD, DE.
+ * SOAL 14 — Kereta Api dan Koordinat 3D (panjang vektor, perbandingan waktu; multi-jawaban). Kunci: BC, CD, DE.
  * Sumber: docs/pembahasan25.md "SOAL 14", docs/soal25.md no. 14, docs/jarak_kereta_api.png.
- * Alur pemilik (v1.48, tanpa desimal, dicatat di dokumen):
+ * Alur revisi pemilik (v1.49, dicatat di dokumen):
  *  - pahami: kecepatan konstan, lintasan lurus; A(2, 3, 5), E(11, 6, 8); waktu 5, 3, 2, 3 menit; ditanya jarak < 3,5 km;
- *  - jarak A ke E: AE = E − A = (9, 3, 3) (langkah balok), |AE|² = 81 + 9 + 9 = 99, |AE| = √99 km;
- *  - jarak sebanding waktu: total 13 menit, jarak t menit = t/13 × √99; waktu tiap pilihan, CE = 2 + 3 = 5 menit;
- *    cukup uji dua waktu, 5 menit (AB, CE) dan 3 menit (BC, DE);
- *  - uji tanpa desimal: kuadratkan (akar hilang), kali silang dengan (7/2)² = 49/4 (penyebut hilang):
- *    5 menit → 9900 > 8281 (lebih dari 3,5 km); 3 menit → 3564 < 8281 (kurang); CD 2 menit lebih pendek lagi;
- *  - bagian opsional "Batas waktu": 396t² < 8281, t = 4 lolos (6336), t = 5 tidak (9900).
- * Tanpa simbol ":" di baris papan. Tata letak: panggung penuh dua kolom (PRD v1.5).
+ *  - panjang vektor AE: AE = E − A = (9, 3, 3); panjangnya akar dari jumlah kuadrat komponennya, √99 (tanpa balok);
+ *    √99 mendekati √100 = 10, jadi AE dianggap 10 km supaya mudah dihitung;
+ *  - perbandingan waktu: total A ke E 5 + 3 + 2 + 3 = 13 menit, jarak pasangan = t/13 × 10; CE = 2 + 3 = 5 menit;
+ *  - jarak tiap pasangan: t/13 diubah ke desimal (5 ÷ 13 ≈ 0,38), lalu dikali 10 (koma bergeser satu tempat):
+ *    AB ≈ 3,8, BC = DE ≈ 2,3, CD ≈ 1,5, CE ≈ 3,8 km;
+ *  - analisis: kurang dari 3,5 km → BC, CD, DE.
+ * Tanpa simbol ":" di baris papan (pembagian ditulis dengan ÷). Tata letak: panggung penuh dua kolom (PRD v1.5).
  */
 import { H, O, T } from '../../engine/dsl';
 import type { SoalContent, Visual } from '../../engine/types';
-import type { Rail14State } from '../../visuals/rail14';
+import type { Pair, Rail14State } from '../../visuals/rail14';
 import { getSoal } from '../index';
 
 /** Gambar asli soal (docs/jarak_kereta_api.png), dibundel dan ikut precache. */
 const fig = new URL('../../assets/soal/jarak_kereta_api.png', import.meta.url).href;
 const rail = (state: Rail14State): Visual => ({ kind: 'svg', scene: 'rail14', state });
 const PAIRS = ['AB', 'BC', 'CD', 'DE', 'CE'];
-const BAR: Rail14State = { view: 'bar', n: 4, ce: true };
+const BAR: Rail14State = { view: 'bar', n: 4, tot: true, ce: true };
+/** lintasan dengan jarak yang sudah dihitung dan panel perhitungan pasangan p */
+const pair = (p: Pair, k: number, km: Pair[]): Visual => rail({ ...BAR, km, cur: { p, k } });
+const ALL: Pair[] = ['AB', 'BC', 'DE', 'CD', 'CE'];
 const AE = '\\overrightarrow{AE}';
 
 const q14: SoalContent = {
@@ -51,19 +54,18 @@ ${PAIRS.map((p, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-
   chapters: [
     { t: 'Lobi', d: 'Halaman awal' },
     { t: 'Pahami soal', d: 'Koordinat dan waktu' },
-    { t: 'Jarak A ke E', d: '√99 km' },
-    { t: 'Jarak sebanding waktu', d: '13 menit untuk √99 km' },
-    { t: 'Uji 5 menit', d: 'AB dan CE' },
-    { t: 'Uji 3 dan 2 menit', d: 'BC, CD, DE' },
-    { t: 'Batas waktu', d: 'Opsional: paling lama 4 menit', opt: true },
+    { t: 'Panjang vektor AE', d: '√99, dianggap 10 km' },
+    { t: 'Perbandingan waktu', d: 'Total 13 menit' },
+    { t: 'Jarak tiap pasangan', d: 'Desimal, koma bergeser' },
+    { t: 'Analisis', d: 'Kurang dari 3,5 km' },
     { t: 'Catatan lengkap', d: 'Simpan dan cetak' },
     { t: 'Cocokkan pilihan', d: '5 kartu' },
     { t: 'Selesai', d: 'BC, CD, DE' },
   ],
   pinsLabel: 'Catatan',
   pins: {
-    pAE: { id: 'pAE', toks: [T('PAE1', '|AE|=\\sqrt{99}\\text{ km}', '', 'a5c')] },
-    pJ: { id: 'pJ', toks: [T('PJ1', '\\text{jarak}=\\dfrac{t}{13}\\times\\sqrt{99}', '', 'b2c')] },
+    pAE: { id: 'pAE', toks: [T('PAE1', '|AE|\\approx10\\text{ km}', '', 'a5c')] },
+    pJ: { id: 'pJ', toks: [T('PJ1', '\\text{jarak}=\\dfrac{t}{13}\\times10', '', 'b2c')] },
   },
   lists: {
     L1: [
@@ -113,27 +115,37 @@ ${PAIRS.map((p, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-
           O('a1d', '='),
           T('a1e', '(11-2,\\ 6-3,\\ 8-5)'),
         ],
-        note: 'ujung dikurangi pangkal',
+        note: 'vektor posisi, ujung dikurangi pangkal',
       },
       {
         id: 'a2',
         toks: [T('a2a', AE), O('a2b', '='), T('a2c', '(9,3,3)', 'blue')],
-        note: 'langkah $+9$, $+3$, dan $+3$ pada balok',
+        note: 'komponen vektor $AE$',
         box: 'navy',
       },
       {
         id: 'a3',
-        toks: [T('a3a', '|AE|^2'), O('a3b', '='), T('a3c', '9^2+3^2+3^2', '', 'a2c')],
-        note: 'jumlah kuadrat semua komponen',
+        toks: [T('a3a', '|AE|'), O('a3b', '='), T('a3c', '\\sqrt{9^2+3^2+3^2}', '', 'a2c')],
+        note: 'panjang vektor = akar dari jumlah kuadrat komponennya',
       },
       {
         id: 'a4',
-        toks: [T('a4a', '|AE|^2'), O('a4b', '='), T('a4c', '81+9+9'), O('a4d', '='), T('a4e', '99')],
+        toks: [
+          T('a4a', '|AE|'),
+          O('a4b', '='),
+          T('a4c', '\\sqrt{81+9+9}'),
+          O('a4d', '='),
+          T('a4e', '\\sqrt{99}'),
+        ],
       },
       {
         id: 'a5',
-        toks: [T('a5a', '|AE|'), O('a5b', '='), T('a5c', '\\sqrt{99}\\text{ km}', 'blue')],
-        note: 'sedikit kurang dari $10$ km, karena $10^2=100$; simpan ke catatan',
+        toks: [
+          T('a5a', '\\sqrt{99}', '', 'a4e'),
+          O('a5b', '\\approx'),
+          T('a5c', '\\sqrt{100}=10\\text{ km}', 'blue'),
+        ],
+        note: '$99$ paling dekat dengan $100$, jadi sementara dianggap $10$ km supaya mudah dihitung; simpan ke catatan',
         box: 'navy',
       },
     ],
@@ -147,186 +159,104 @@ ${PAIRS.map((p, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-
           O('b1d', '='),
           T('b1e', '13\\text{ menit}', 'blue'),
         ],
-        note: 'seluruh lintasan $\\sqrt{99}$ km ditempuh $13$ menit',
+        note: 'semua waktu dijumlahkan; $AE\\approx10$ km ditempuh $13$ menit',
         box: 'navy',
       },
       {
         id: 'b2',
-        toks: [
-          T('b2a', '\\text{jarak }t\\text{ menit}'),
-          O('b2b', '='),
-          T('b2c', '\\dfrac{t}{13}\\times\\sqrt{99}', 'blue', 'PAE1'),
-        ],
-        note: 'kecepatan konstan, jadi jarak sebanding waktu; simpan ke catatan',
+        toks: [T('b2a', '\\text{jarak}'), O('b2b', '='), T('b2c', '\\dfrac{t}{13}\\times10', 'blue', 'PAE1')],
+        note: '$t$ = waktu pasangan dibagi total waktu, dikali jarak $AE$; simpan ke catatan',
         box: 'navy',
       },
       {
         id: 'b3',
         toks: [
-          T('b3a', 'AB=5'),
-          O('b3b', ','),
-          T('b3c', 'BC=3'),
-          O('b3d', ','),
-          T('b3e', 'CD=2'),
-          O('b3f', ','),
-          T('b3g', 'DE=3'),
-        ],
-        note: 'waktu tiap pilihan, dalam menit',
-      },
-      {
-        id: 'b4',
-        toks: [
-          T('b4a', 'CE'),
-          O('b4b', '='),
-          T('b4c', '2+3', '', 'b3e'),
-          O('b4d', '='),
-          T('b4e', '5\\text{ menit}', 'blue'),
+          T('b3a', 'CE'),
+          O('b3b', '='),
+          T('b3c', '2+3'),
+          O('b3d', '='),
+          T('b3e', '5\\text{ menit}', 'blue'),
         ],
         note: 'dari $C$ ke $E$ melewati $CD$ dan $DE$',
       },
-      {
-        id: 'b5',
-        toks: [
-          H('b5a', 'cukup uji', 'tx'),
-          T('b5b', '5\\text{ menit}'),
-          H('b5c', 'dan', 'tx'),
-          T('b5d', '3\\text{ menit}'),
-        ],
-        note: '$AB$ dan $CE$ sama-sama $5$ menit, $BC$ dan $DE$ sama-sama $3$ menit',
-      },
     ],
-    LU: [
+    LC: [
       {
-        id: 'u1',
-        toks: [
-          T('u1a', '5\\text{ menit}'),
-          O('u1b', '\\to'),
-          T('u1c', '\\dfrac{5}{13}\\times\\sqrt{99}', '', 'PJ1'),
-          O('u1d', '='),
-          T('u1e', '\\dfrac{5\\sqrt{99}}{13}'),
-        ],
-        note: 'jarak $AB$, sama dengan jarak $CE$',
+        id: 'c1',
+        toks: [T('c1a', 'AB'), O('c1b', '='), T('c1c', '\\dfrac{5}{13}\\times10', '', 'PJ1')],
+        note: 'waktu $AB=5$ menit',
       },
       {
-        id: 'u2',
+        id: 'c2',
         toks: [
-          T('u2a', '\\Big(\\dfrac{5\\sqrt{99}}{13}\\Big)^2=\\dfrac{2475}{169}', '', 'u1e'),
-          O('u2b', ','),
-          T('u2c', '\\Big(\\dfrac{7}{2}\\Big)^2=\\dfrac{49}{4}'),
+          T('c2a', '\\dfrac{5}{13}', '', 'c1c'),
+          O('c2b', '='),
+          T('c2c', '5\\div13'),
+          O('c2d', '\\approx'),
+          T('c2e', '0{,}38'),
         ],
-        note: '$3{,}5=\\frac{7}{2}$; kuadratkan supaya akarnya hilang',
+        note: '$5$ dibagi $13$ hasilnya $0{,}384\\ldots$, cukup dua angka di belakang koma',
       },
       {
-        id: 'u3',
-        toks: [
-          T('u3a', '2475\\times4=9900', '', 'u2a'),
-          O('u3b', ','),
-          T('u3c', '49\\times169=8281', '', 'u2c'),
-        ],
-        note: 'kali silang supaya penyebutnya hilang',
-      },
-      {
-        id: 'u4',
-        toks: [
-          T('u4a', '9900>8281', 'red'),
-          O('u4b', '\\to'),
-          H('u4c', '<i>AB</i> dan <i>CE</i> lebih dari 3,5 km', 'tx'),
-        ],
-        note: 'keduanya bukan jawaban',
-      },
-    ],
-    LV: [
-      {
-        id: 'v1',
-        toks: [
-          T('v1a', '3\\text{ menit}'),
-          O('v1b', '\\to'),
-          T('v1c', '\\dfrac{3}{13}\\times\\sqrt{99}', '', 'PJ1'),
-          O('v1d', '='),
-          T('v1e', '\\dfrac{3\\sqrt{99}}{13}'),
-        ],
-        note: 'jarak $BC$, sama dengan jarak $DE$',
-      },
-      {
-        id: 'v2',
-        toks: [
-          T('v2a', '\\Big(\\dfrac{3\\sqrt{99}}{13}\\Big)^2=\\dfrac{891}{169}', '', 'v1e'),
-          O('v2b', ','),
-          T('v2c', '\\Big(\\dfrac{7}{2}\\Big)^2=\\dfrac{49}{4}'),
-        ],
-        note: '$9\\times99=891$',
-      },
-      {
-        id: 'v3',
-        toks: [
-          T('v3a', '891\\times4=3564', '', 'v2a'),
-          O('v3b', ','),
-          T('v3c', '49\\times169=8281', '', 'v2c'),
-        ],
-        note: 'kali silang',
-      },
-      {
-        id: 'v4',
-        toks: [
-          T('v4a', '3564<8281', 'blue'),
-          O('v4b', '\\to'),
-          H('v4c', '<i>BC</i> dan <i>DE</i> kurang dari 3,5 km', 'tx'),
-        ],
+        id: 'c3',
+        toks: [T('c3a', '0{,}38\\times10', '', 'c2e'), O('c3b', '='), T('c3c', '3{,}8\\text{ km}', 'blue')],
+        note: 'dikali $10$, koma bergeser satu tempat ke kanan',
         box: 'navy',
       },
+    ],
+    LD: [
       {
-        id: 'v5',
+        id: 'd1',
         toks: [
-          T('v5a', 'CD=2\\text{ menit}'),
-          O('v5b', '\\to'),
-          H('v5c', 'lebih singkat lagi, juga kurang', 'tx'),
+          T('d1a', 'BC=DE=\\dfrac{3}{13}\\times10', '', 'PJ1'),
+          O('d1b', '\\approx'),
+          T('d1c', '2{,}3\\text{ km}', 'blue'),
         ],
-        note: 'waktunya kurang dari $3$ menit, jadi jaraknya lebih pendek',
+        note: '$3\\div13\\approx0{,}23$, dikali $10$ menjadi $2{,}3$',
       },
       {
-        id: 'v6',
-        toks: [H('v6a', 'Jawaban', 'lbl'), H('v6b', 'BC, CD, dan DE', 'tx')],
-        box: 'gold',
+        id: 'd2',
+        toks: [
+          T('d2a', 'CD=\\dfrac{2}{13}\\times10', '', 'PJ1'),
+          O('d2b', '\\approx'),
+          T('d2c', '1{,}5\\text{ km}', 'blue'),
+        ],
+        note: '$2\\div13\\approx0{,}15$, dikali $10$ menjadi $1{,}5$',
+      },
+      {
+        id: 'd3',
+        toks: [
+          T('d3a', 'CE=\\dfrac{5}{13}\\times10', '', 'PJ1'),
+          O('d3b', '\\approx'),
+          T('d3c', '3{,}8\\text{ km}', 'blue'),
+        ],
+        note: 'waktunya $5$ menit, sama dengan $AB$',
       },
     ],
-    // batas waktu (opsional)
-    LX: [
+    LE: [
       {
-        id: 'x1',
-        toks: [
-          T('x1a', '\\Big(\\dfrac{t\\sqrt{99}}{13}\\Big)^2<\\dfrac{49}{4}', '', 'PJ1'),
-          O('x1b', '\\to'),
-          T('x1c', '396\\,t^2<8281'),
-        ],
-        note: 'kali silang, $99\\times4=396$ dan $49\\times169=8281$',
+        id: 'e1',
+        toks: [T('e1a', 'AB=CE\\approx3{,}8', 'red'), O('e1b', '>'), T('e1c', '3{,}5')],
+        note: 'lebih dari $3{,}5$ km, bukan jawaban',
       },
       {
-        id: 'x2',
-        toks: [T('x2a', 't=4'), O('x2b', '\\to'), T('x2c', '396\\times16=6336<8281', 'blue')],
-        note: 'lolos',
+        id: 'e2',
+        toks: [T('e2a', 'BC=DE\\approx2{,}3', 'blue'), O('e2b', '<'), T('e2c', '3{,}5')],
+        note: 'kurang dari $3{,}5$ km',
       },
       {
-        id: 'x3',
-        toks: [T('x3a', 't=5'), O('x3b', '\\to'), T('x3c', '396\\times25=9900>8281', 'red')],
-        note: 'tidak lolos',
+        id: 'e3',
+        toks: [T('e3a', 'CD\\approx1{,}5', 'blue'), O('e3b', '<'), T('e3c', '3{,}5')],
+        note: 'kurang dari $3{,}5$ km, pasangan terdekat',
       },
-      {
-        id: 'x4',
-        toks: [H('x4a', 'paling lama 4 menit', 'tx'), O('x4b', '\\to'), H('x4c', 'BC, CD, DE', 'tx')],
-        note: 'sama dengan hasil uji',
-        box: 'navy',
-      },
+      { id: 'e4', toks: [H('e4a', 'Jawaban', 'lbl'), H('e4b', 'BC, CD, dan DE', 'tx')], box: 'gold' },
     ],
     L7: [{ id: 'w1', toks: [H('w1a', 'Jawaban', 'lbl'), H('w1b', 'BC, CD, dan DE', 'tx')], box: 'gold' }],
     LR: [
       {
         id: 'r1',
-        toks: [
-          T('r1a', '5\\text{ menit}\\to9900>8281'),
-          O('r1b', ','),
-          T('r1c', '3\\text{ menit}\\to3564<8281'),
-        ],
-        note: 'pembanding $(3{,}5)^2$ tanpa desimal',
+        toks: [T('r1a', '\\text{jarak}=\\dfrac{t}{13}\\times10')],
+        note: '$AB=CE\\approx3{,}8$, $BC=DE\\approx2{,}3$, $CD\\approx1{,}5$ km',
         box: 'navy',
       },
       { id: 'r2', toks: [H('r2a', 'Jawaban', 'lbl'), H('r2b', 'BC, CD, dan DE', 'tx')], box: 'gold' },
@@ -352,18 +282,18 @@ ${PAIRS.map((p, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-
       visual: { kind: 'soal', hl: 2 },
       board: { title: 'Pahami soal', list: 'L1', upTo: 4, from: 3 },
     },
-    // ---- 2 · Jarak A ke E ----
+    // ---- 2 · Panjang vektor AE ----
     {
       ch: 2,
-      cap: 'Dari $A$ ke $E$, kurangkan koordinatnya. Hasilnya $(9,3,3)$, yaitu langkah $9$, $3$, dan $3$ pada balok.',
-      visual: rail({ view: 'box', k: 3 }),
-      board: { title: 'Jarak A ke E', list: 'LA', upTo: 2, from: 0 },
+      cap: 'Tentukan dulu vektor $\\overrightarrow{AE}$. Vektor posisinya $E-A$, jadi komponennya $(9,3,3)$.',
+      visual: rail({ view: 'calc', ae: 2 }),
+      board: { title: 'Panjang vektor AE', list: 'LA', upTo: 2, from: 0 },
     },
     {
       ch: 2,
-      cap: 'Jarak $AE$ adalah diagonal balok. Kuadratnya $9^2+3^2+3^2=99$, jadi $|AE|=\\sqrt{99}$ km.',
-      visual: rail({ view: 'box', k: 3, diag: true }),
-      board: { title: 'Jarak A ke E', list: 'LA', upTo: 5, from: 2, save: ['pAE'] },
+      cap: 'Panjang vektor adalah akar dari jumlah kuadrat komponennya. Hasilnya $\\sqrt{81+9+9}=\\sqrt{99}$.',
+      visual: rail({ view: 'calc', ae: 3 }),
+      board: { title: 'Panjang vektor AE', list: 'LA', upTo: 4, from: 2 },
       ask: {
         before: 'a4',
         q: 'Berapa $9^2+3^2+3^2$?',
@@ -374,26 +304,41 @@ ${PAIRS.map((p, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-
         ],
       },
     },
-    // ---- 3 · Jarak sebanding waktu ----
     {
-      ch: 3,
-      cap: 'Seluruh lintasan ditempuh $5+3+2+3=13$ menit. Jadi $\\sqrt{99}$ km dibagi menjadi $13$ bagian menit yang sama.',
-      visual: rail({ view: 'bar', n: 4 }),
-      board: { title: 'Jarak sebanding waktu', pins: ['pAE'], list: 'LB', upTo: 1, from: 0 },
-    },
-    {
-      ch: 3,
-      cap: 'Kecepatannya konstan, jadi jarak sebanding waktu. Jarak $t$ menit adalah $\\frac{t}{13}\\times\\sqrt{99}$.',
-      visual: rail({ view: 'bar', n: 4 }),
-      board: { title: 'Jarak sebanding waktu', pins: ['pAE'], list: 'LB', upTo: 2, from: 1, save: ['pJ'] },
-    },
-    {
-      ch: 3,
-      cap: 'Lihat waktu tiap pilihan. Hati-hati, $CE$ melewati $CD$ dan $DE$, jadi $2+3=5$ menit.',
-      visual: rail(BAR),
-      board: { title: 'Jarak sebanding waktu', pins: ['pAE'], list: 'LB', upTo: 5, from: 2 },
+      ch: 2,
+      cap: 'Supaya mudah dihitung, $\\sqrt{99}$ dianggap sementara $\\sqrt{100}=10$, karena $99$ paling dekat dengan $100$. Jadi $AE\\approx10$ km.',
+      visual: rail({ view: 'calc', ae: 4 }),
+      board: { title: 'Panjang vektor AE', list: 'LA', upTo: 5, from: 4, save: ['pAE'] },
       ask: {
-        before: 'b4',
+        before: 'a5',
+        q: '$\\sqrt{99}$ paling dekat dengan…',
+        opts: [
+          { tex: '\\sqrt{100}=10', ok: true },
+          { tex: '\\sqrt{81}=9', hint: '$99$ lebih dekat ke $100$ daripada ke $81$.' },
+          { tex: '\\sqrt{121}=11', hint: '$121$ lebih jauh dari $99$ daripada $100$.' },
+        ],
+      },
+    },
+    // ---- 3 · Perbandingan waktu ----
+    {
+      ch: 3,
+      cap: 'Jumlahkan semua waktunya, $5+3+2+3=13$ menit. Jadi jarak $AE\\approx10$ km ditempuh dalam $13$ menit.',
+      visual: rail({ view: 'bar', n: 4, tot: true }),
+      board: { title: 'Perbandingan waktu', pins: ['pAE'], list: 'LB', upTo: 1, from: 0 },
+    },
+    {
+      ch: 3,
+      cap: 'Kecepatannya konstan, jadi pakai perbandingan. Jarak pasangan sama dengan waktu pasangan dibagi $13$, dikali $10$.',
+      visual: rail({ view: 'bar', n: 4, tot: true }),
+      board: { title: 'Perbandingan waktu', pins: ['pAE'], list: 'LB', upTo: 2, from: 1, save: ['pJ'] },
+    },
+    {
+      ch: 3,
+      cap: 'Hati-hati dengan $CE$. Kereta melewati $CD$ dan $DE$, jadi waktunya $2+3=5$ menit.',
+      visual: rail(BAR),
+      board: { title: 'Perbandingan waktu', pins: ['pAE'], list: 'LB', upTo: 3, from: 2 },
+      ask: {
+        before: 'b3',
         q: 'Waktu kereta dari $C$ ke $E$ adalah…',
         opts: [
           { txt: '5 menit', ok: true },
@@ -402,90 +347,75 @@ ${PAIRS.map((p, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-
         ],
       },
     },
-    // ---- 4 · Uji 5 menit ----
+    // ---- 4 · Jarak tiap pasangan ----
     {
       ch: 4,
-      cap: 'Uji $5$ menit, yaitu $AB$ dan $CE$. Supaya akarnya hilang, kuadratkan jaraknya dan juga $3{,}5=\\frac{7}{2}$.',
-      visual: rail({ ...BAR, g5: 1, cmp: { t: 5, k: 2 } }),
-      board: { title: 'Uji 5 menit', pins: ['pJ'], list: 'LU', upTo: 2, from: 0 },
+      cap: 'Jarak $AB=\\frac{5}{13}\\times10$. Ubah dulu $\\frac{5}{13}$ ke desimal, $5\\div13\\approx0{,}38$.',
+      visual: pair('AB', 2, []),
+      board: { title: 'Jarak tiap pasangan', pins: ['pJ'], list: 'LC', upTo: 2, from: 0 },
+    },
+    {
+      ch: 4,
+      cap: 'Dikali $10$, komanya bergeser satu tempat ke kanan. Jadi $0{,}38\\times10=3{,}8$, jarak $AB\\approx3{,}8$ km.',
+      visual: pair('AB', 3, ['AB']),
+      board: { title: 'Jarak tiap pasangan', pins: ['pJ'], list: 'LC', upTo: 3, from: 2 },
       ask: {
-        before: 'u2',
-        q: '$\\Big(\\dfrac{5\\sqrt{99}}{13}\\Big)^2$ sama dengan…',
+        before: 'c3',
+        q: '$0{,}38\\times10$ sama dengan…',
         opts: [
-          { tex: '\\dfrac{2475}{169}', ok: true },
-          { tex: '\\dfrac{2475}{13}', hint: 'Penyebutnya juga dikuadratkan, $13^2=169$.' },
-          { tex: '\\dfrac{495}{169}', hint: '$5$ juga dikuadratkan, $25\\times99=2475$.' },
+          { tex: '3{,}8', ok: true },
+          { tex: '0{,}038', hint: 'Dikali $10$, koma bergeser ke kanan, bukan ke kiri.' },
+          { tex: '38', hint: 'Dikali $10$, koma bergeser satu tempat saja. $38$ itu dikali $100$.' },
         ],
       },
     },
     {
       ch: 4,
-      cap: 'Kali silang supaya penyebutnya hilang, $9900$ dan $8281$. Karena $9900>8281$, jarak $AB$ dan $CE$ lebih dari $3{,}5$ km.',
-      visual: rail({ ...BAR, g5: 2, cmp: { t: 5, k: 4 } }),
-      board: { title: 'Uji 5 menit', pins: ['pJ'], list: 'LU', upTo: 4, from: 2 },
-    },
-    // ---- 5 · Uji 3 dan 2 menit ----
-    {
-      ch: 5,
-      cap: 'Uji $3$ menit, yaitu $BC$ dan $DE$, dengan cara yang sama. Kuadratnya $\\frac{891}{169}$, lalu kali silang menjadi $3564$ dan $8281$.',
-      visual: rail({ ...BAR, g5: 2, g3: 1, cmp: { t: 3, k: 3 } }),
-      board: { title: 'Uji 3 dan 2 menit', pins: ['pJ'], list: 'LV', upTo: 3, from: 0 },
+      cap: 'Dengan cara yang sama, $BC$ dan $DE$ sama-sama $3$ menit. $3\\div13\\approx0{,}23$, dikali $10$ menjadi $2{,}3$ km.',
+      visual: pair('BC', 3, ['AB', 'BC', 'DE']),
+      board: { title: 'Jarak tiap pasangan', pins: ['pJ'], list: 'LD', upTo: 1, from: 0 },
     },
     {
+      ch: 4,
+      cap: '$CD$ hanya $2$ menit. $2\\div13\\approx0{,}15$, dikali $10$ menjadi $1{,}5$ km.',
+      visual: pair('CD', 3, ['AB', 'BC', 'DE', 'CD']),
+      board: { title: 'Jarak tiap pasangan', pins: ['pJ'], list: 'LD', upTo: 2, from: 1 },
+    },
+    {
+      ch: 4,
+      cap: '$CE$ ditempuh $5$ menit, sama dengan $AB$. Jadi jaraknya juga $\\frac{5}{13}\\times10\\approx3{,}8$ km.',
+      visual: pair('CE', 3, ALL),
+      board: { title: 'Jarak tiap pasangan', pins: ['pJ'], list: 'LD', upTo: 3, from: 2 },
+    },
+    // ---- 5 · Analisis ----
+    {
       ch: 5,
-      cap: 'Karena $3564<8281$, jarak $BC$ dan $DE$ kurang dari $3{,}5$ km. $CD$ hanya $2$ menit, jadi lebih pendek lagi.',
-      visual: rail({ ...BAR, g5: 2, g3: 2, cmp: { t: 3, k: 4 } }),
-      board: { title: 'Uji 3 dan 2 menit', pins: ['pJ'], list: 'LV', upTo: 5, from: 3 },
-      ask: {
-        before: 'v5',
-        q: 'Pasangan $CD$ ($2$ menit) jaraknya…',
-        col: true,
-        opts: [
-          { txt: 'Kurang dari 3,5 km', ok: true },
-          {
-            txt: 'Lebih dari 3,5 km',
-            hint: 'Waktunya lebih singkat dari $3$ menit, jadi jaraknya lebih pendek dari $BC$.',
-          },
-        ],
-      },
+      cap: 'Bandingkan tiap jarak dengan $3{,}5$ km. $AB$ dan $CE$ sekitar $3{,}8$ km, lebih dari $3{,}5$, jadi bukan jawaban.',
+      visual: rail({ ...BAR, km: ALL, judge: true }),
+      board: { title: 'Analisis', list: 'LE', upTo: 1, from: 0 },
+    },
+    {
+      ch: 5,
+      cap: '$BC$ dan $DE$ sekitar $2{,}3$ km, sedangkan $CD$ sekitar $1{,}5$ km. Ketiganya kurang dari $3{,}5$ km.',
+      visual: rail({ ...BAR, km: ALL, judge: true }),
+      board: { title: 'Analisis', list: 'LE', upTo: 3, from: 1 },
     },
     {
       ch: 5,
       cap: 'Jadi pasangan yang jaraknya kurang dari $3{,}5$ km adalah $BC$, $CD$, dan $DE$.',
-      visual: rail({ ...BAR, g5: 2, g3: 2 }),
-      board: { title: 'Uji 3 dan 2 menit', pins: ['pJ'], list: 'LV', upTo: 6, from: 5 },
+      visual: rail({ ...BAR, km: ALL, judge: true }),
+      board: { title: 'Analisis', list: 'LE', upTo: 4, from: 3 },
     },
-    // tawaran batas waktu (opsional): Ya masuk Bagian 6, Tidak/Lewati langsung ke Bagian 7
-    {
-      ch: 5,
-      cap: 'Mau lihat cara lain, yaitu mencari batas waktu perjalanan yang jaraknya kurang dari $3{,}5$ km?',
-      visual: rail({ ...BAR, g5: 2, g3: 2 }),
-      board: { title: 'Uji 3 dan 2 menit', pins: ['pJ'], list: 'LV', upTo: 6, from: 6 },
-      branch: { yes: 'Ya, lihat batas waktu' },
-    },
-    // ---- 6 · Batas waktu (opsional) ----
+    // ---- 6 · Catatan lengkap ----
     {
       ch: 6,
-      cap: 'Untuk waktu $t$ menit, syaratnya jarak kuadrat kurang dari $\\frac{49}{4}$. Setelah kali silang menjadi $396t^2<8281$.',
-      visual: rail({ ...BAR, g5: 2, g3: 2 }),
-      board: { title: 'Batas waktu', pins: ['pJ'], list: 'LX', upTo: 1, from: 0 },
-    },
-    {
-      ch: 6,
-      cap: 'Waktu $4$ menit masih lolos, $5$ menit tidak. Jadi pasangan yang waktunya paling lama $4$ menit, yaitu $BC$, $CD$, $DE$.',
-      visual: rail({ ...BAR, g5: 2, g3: 2, lim: true }),
-      board: { title: 'Batas waktu', pins: ['pJ'], list: 'LX', upTo: 4, from: 1 },
-    },
-    // ---- 7 · Catatan lengkap ----
-    {
-      ch: 7,
       cap: 'Semua langkah dari awal sampai akhir. Simpan untuk belajar lagi.',
       visual: { kind: 'notes' },
     },
-    // ---- 8 · Cocokkan pilihan ----
+    // ---- 7 · Cocokkan pilihan ----
     {
-      ch: 8,
-      cap: 'Cocokkan dengan pilihan. Pasangan $5$ menit lebih dari $3{,}5$ km, sedangkan yang $3$ dan $2$ menit kurang; pilih jawabannya di bawah.',
+      ch: 7,
+      cap: 'Cocokkan dengan pilihan. Hanya pasangan yang jaraknya kurang dari $3{,}5$ km; pilih jawabannya di bawah.',
       visual: { kind: 'cards', flip: 5 },
       board: { title: 'Cocokkan pilihan', pins: ['pJ'], list: 'L7', upTo: 1, from: 0 },
       ask: {
@@ -495,16 +425,16 @@ ${PAIRS.map((p, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-
         win: '<b>BC, CD, dan DE</b>.',
         opts: [
           { txt: 'BC, CD, dan DE', ok: true },
-          { txt: 'AB, BC, CD, dan DE', hint: '$AB$ ditempuh $5$ menit, $9900>8281$.' },
-          { txt: 'BC dan DE', hint: '$CD$ hanya $2$ menit, jaraknya lebih pendek lagi.' },
-          { txt: 'BC, CD, DE, dan CE', hint: '$CE=2+3=5$ menit, sama seperti $AB$.' },
+          { txt: 'AB, BC, CD, dan DE', hint: '$AB\\approx3{,}8$ km, lebih dari $3{,}5$ km.' },
+          { txt: 'BC dan DE', hint: '$CD\\approx1{,}5$ km, juga kurang dari $3{,}5$ km.' },
+          { txt: 'BC, CD, DE, dan CE', hint: '$CE=2+3=5$ menit, jaraknya sekitar $3{,}8$ km seperti $AB$.' },
         ],
       },
     },
-    // ---- 9 · Selesai ----
+    // ---- 8 · Selesai ----
     {
-      ch: 9,
-      cap: '<span class="verdict"><span class="seal">BC · CD · DE</span><span>Jarak sebanding waktu. Pasangan $5$ menit memberi $9900>8281$, pasangan $3$ menit memberi $3564<8281$.</span></span>',
+      ch: 8,
+      cap: '<span class="verdict"><span class="seal">BC · CD · DE</span><span>Dengan $AE\\approx10$ km dalam $13$ menit, $BC$ dan $DE$ sekitar $2{,}3$ km, $CD$ sekitar $1{,}5$ km, kurang dari $3{,}5$ km.</span></span>',
       visual: { kind: 'done' },
       board: { title: 'Ringkasan', list: 'LR', upTo: 2, from: 2 },
     },
@@ -514,29 +444,29 @@ ${PAIRS.map((p, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-
       label: 'AB',
       statement: 'AB',
       ok: false,
-      formula: '9900>8281',
+      formula: '3{,}8>3{,}5',
       why: '$5$ menit, lebih dari $3{,}5$ km.',
     },
     {
       label: 'BC',
       statement: 'BC',
       ok: true,
-      formula: '3564<8281',
+      formula: '2{,}3<3{,}5',
       why: '$3$ menit, kurang dari $3{,}5$ km.',
     },
-    { label: 'CD', statement: 'CD', ok: true, formula: '1584<8281', why: '$2$ menit, pasangan terdekat.' },
+    { label: 'CD', statement: 'CD', ok: true, formula: '1{,}5<3{,}5', why: '$2$ menit, pasangan terdekat.' },
     {
       label: 'DE',
       statement: 'DE',
       ok: true,
-      formula: '3564<8281',
+      formula: '2{,}3<3{,}5',
       why: '$3$ menit, kurang dari $3{,}5$ km.',
     },
     {
       label: 'CE',
       statement: 'CE',
       ok: false,
-      formula: '9900>8281',
+      formula: '3{,}8>3{,}5',
       why: 'Hati-hati, $CE=2+3=5$ menit, sama dengan $AB$.',
     },
   ],
@@ -546,41 +476,36 @@ ${PAIRS.map((p, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-
     sections: [
       { title: 'Pahami soal', lists: ['L1'] },
       {
-        title: 'Jarak A ke E',
+        title: 'Panjang vektor AE',
         lists: ['LA'],
-        why: 'Jarak dua titik di ruang adalah akar dari jumlah kuadrat selisih koordinatnya.',
+        why: 'Untuk $\\vec v=(x,y,z)$, panjangnya $|\\vec v|=\\sqrt{x^2+y^2+z^2}$. Karena $\\sqrt{99}$ sedikit kurang dari $10$, jarak sebenarnya sedikit lebih pendek, tetapi selisihnya kecil sehingga kesimpulannya tetap.',
       },
       {
-        title: 'Jarak sebanding waktu',
+        title: 'Perbandingan waktu',
         lists: ['LB'],
         sketch: 'rail14',
-        why: 'Pada kecepatan konstan, jarak $=$ kecepatan $\\times$ waktu, jadi jarak sebanding dengan waktu tempuh.',
+        why: 'Pada kecepatan konstan, jarak sebanding dengan waktu tempuh, jadi jarak pasangan $=\\frac{\\text{waktu pasangan}}{\\text{total waktu}}\\times$ jarak total.',
       },
-      {
-        title: 'Uji 5 menit',
-        lists: ['LU'],
-        why: 'Membandingkan dua bilangan positif sama saja dengan membandingkan kuadratnya, dan dua pecahan dibandingkan dengan kali silang.',
-      },
-      { title: 'Uji 3 dan 2 menit', lists: ['LV'] },
-      { title: 'Batas waktu (opsional)', lists: ['LX'] },
+      { title: 'Jarak tiap pasangan', lists: ['LC', 'LD'] },
+      { title: 'Analisis', lists: ['LE'] },
     ],
     answer: 'Jawaban: <b>BC, CD, dan DE</b>.',
   },
   done: {
     seal: 'BC · CD · DE',
     message:
-      'Jarak sebanding waktu. Pasangan $5$ menit memberi $9900>8281$, pasangan $3$ menit memberi $3564<8281$.',
+      'Dengan $AE\\approx10$ km dalam $13$ menit, $BC$ dan $DE$ sekitar $2{,}3$ km, $CD$ sekitar $1{,}5$ km, kurang dari $3{,}5$ km.',
   },
   key: {
     answer: 'BC, CD, DE',
     cardOk: [false, true, true, true, false],
-    goldRows: ['v6', 'w1', 'r2'],
+    goldRows: ['e4', 'w1', 'r2'],
   },
   authorNotes: [
-    'Modul baru (v1.48). Jarak AE dari dokumen a1–a5 (AE = (9, 3, 3), |AE| = √99) dengan balok kerangka; pertanyaan cepat 9² + 3² + 3² dari dokumen.',
-    'Jalur utama tanpa desimal (arahan pemilik): jarak t menit = t/13 × √99, lalu tiap waktu diuji dengan mengkuadratkan dan kali silang terhadap (7/2)² = 49/4, sesuai metode eksak di Pemeriksaan hasil dokumen (9900 > 8281, 3564 < 8281).',
-    'Pertanyaan cepat waktu CE dari dokumen; jebakan CE sebagai satu segmen (Kesalahan umum) ditonjolkan. Kecepatan 0,765 km/menit dari dokumen tidak dipakai (desimal); "Batas waktu" 396t² < 8281 menjadi bagian opsional.',
-    'Tanpa simbol ":" di baris papan.',
+    'Revisi pemilik (v1.49): tanpa balok. Vektor posisi AE = E − A = (9, 3, 3), panjangnya akar dari jumlah kuadrat komponennya, √99 (dokumen a1–a4); pertanyaan cepat 9² + 3² + 3² dari dokumen.',
+    'Atas arahan pemilik √99 dianggap sementara √100 = 10 km supaya mudah dihitung, lalu dipakai perbandingan waktu, jarak = t/13 × 10 dengan total 13 menit (dokumen b1–b2).',
+    'Tiap pecahan diubah ke desimal (5 ÷ 13 ≈ 0,38) lalu dikali 10 dengan koma bergeser satu tempat ke kanan (animasi): AB = CE ≈ 3,8, BC = DE ≈ 2,3, CD ≈ 1,5 km, sejalan dengan nilai dokumen c1–c5 (3,83; 2,30; 1,53).',
+    'Pertanyaan cepat waktu CE dari dokumen; jebakan CE sebagai satu segmen (Kesalahan umum) ditonjolkan. Tanpa simbol ":" di baris papan; pembagian ditulis dengan ÷.',
   ],
 };
 

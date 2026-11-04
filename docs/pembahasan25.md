@@ -1971,6 +1971,13 @@ Jumlah semua segmen: $3{,}83+2{,}30+1{,}53+2{,}30=9{,}95\approx3\sqrt{11}$ ✓. 
 - **Bagian 6 — Batas waktu (opsional, Ya/Lewati):** $396t^2<8281$; $t=4$ memberi $6336<8281$ (lolos), $t=5$ memberi $9900>8281$ (tidak); pasangan yang waktunya paling lama $4$ menit lolos.
 - **Bagian 7–9:** catatan lengkap (sketsa lintasan 13 menit), kartu AB–CE dengan pertanyaan pilihan kombinasi, segel BC · CD · DE.
 
+*Revisi 1.49 (4 Nov 2026, arahan pemilik; kunci tidak berubah: BC, CD, DE). Menggantikan alur Revisi 1.48 di atas.* Tanpa balok; $\sqrt{99}$ dibulatkan supaya mudah dihitung, lalu dipakai perbandingan waktu dan desimal. Hasil disimpan ke **catatan**: $|AE|\approx10$ km dan jarak $=\frac{t}{13}\times10$.
+- **Bagian 2 — Panjang vektor AE:** vektor posisi $\vec{AE}=E-A=(11-2,\ 6-3,\ 8-5)=(9,3,3)$; panjangnya akar dari jumlah kuadrat komponennya, $\sqrt{81+9+9}=\sqrt{99}$ (pertanyaan cepat dokumen); $\sqrt{99}$ paling dekat dengan $\sqrt{100}=10$, jadi sementara $AE\approx10$ km (pertanyaan cepat baru, pengecoh $\sqrt{81}=9$, $\sqrt{121}=11$).
+- **Bagian 3 — Perbandingan waktu:** total $5+3+2+3=13$ menit; jarak pasangan $=\frac{t}{13}\times10$; $CE=2+3=5$ menit (pertanyaan cepat dokumen).
+- **Bagian 4 — Jarak tiap pasangan:** $AB=\frac{5}{13}\times10$, $5\div13\approx0{,}38$, lalu $0{,}38\times10=3{,}8$ km (koma bergeser satu tempat ke kanan, animasi; pertanyaan cepat baru, pengecoh $0{,}038$ dan $38$). Cara yang sama: $BC=DE\approx2{,}3$ km ($3\div13\approx0{,}23$), $CD\approx1{,}5$ km ($2\div13\approx0{,}15$), $CE\approx3{,}8$ km.
+- **Bagian 5 — Analisis:** $AB=CE\approx3{,}8>3{,}5$; $BC=DE\approx2{,}3$ dan $CD\approx1{,}5$ kurang dari $3{,}5$ → **BC, CD, DE**. Karena $\sqrt{99}$ sedikit kurang dari $10$, jarak sebenarnya sedikit lebih pendek (c1–c5 di atas: $3{,}83$; $2{,}30$; $1{,}53$), kesimpulan tetap.
+- Uji kuadrat dan kali silang serta *Batas waktu* dari Revisi 1.48 dihapus.
+
 ---
 
 ## SOAL 15 — Lingkaran yang Sepusat
