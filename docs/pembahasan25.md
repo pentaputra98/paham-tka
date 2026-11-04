@@ -1431,6 +1431,14 @@ Soal menyebut "dimodelkan dengan fungsi berikut", tetapi fungsi tidak tertulis; 
 - Memakai $L(3)=10\cdot343=3430$ lalu membandingkan dengan data; data adalah luas tiap danau, bukan hasil model dengan $L_0=10$.
 - Salah menghitung faktor 3 tahun sebagai $7\cdot3=21$.
 
+*Alur aplikasi (Revisi 1.43, 4 Nov 2026; kunci tidak berubah: Danau C, D, E). Dipakai di `app/src/content/soal/q10.ts` (modul baru, adegan `eceng10`); soal 10 ditambahkan ke Rilis 1 dan dibuka.* Jalur utama **tanpa desimal** (arahan pemilik): dipakai batas $16.807$, bukan pembagian dengan $343$. Hasil disimpan ke **catatan**: $\times7$ tiap tahun dan batas $16.807$. Baris papan tanpa ":". Tata letak: panggung penuh dua kolom.
+- **Bagian 1 — Pahami soal:** label $10$, $70$, $490$ pada grafik dibingkai; data tabel adalah luas setelah 3 tahun; ditanya luas awal lebih dari $49$ m².
+- **Bagian 2 — Baca grafik:** panah "$\times7$" digambar di grafik asli, $10\to70\to490$ (a1–a4); pertanyaan cepat lama $490:70$.
+- **Bagian 3 — Batas setelah 3 tahun:** $7\times7\times7=343$ (**hati-hati**, bukan $7\times3=21$); luas awal tepat $49$ dikali 7 tiga kali: $49\to343\to2.401\to16.807$ (c1–c3, rantai dianimasikan); jadi luas awal lebih dari $49$ berarti luas setelah 3 tahun lebih dari $16.807$.
+- **Bagian 4 — Cocokkan tiap danau:** batang luas tiap danau dibandingkan dengan garis batas $16.807$: A ($15.000$) dan B ($16.500$, **hati-hati** hampir) di bawah, bukan; C, D, E di atas, benar.
+- **Bagian 5 — Cara lain (opsional, Ya/Lewati):** $L(t)=10\cdot7^t$; luas awal $=$ data $\div343$ (d1–d5, dibulatkan): A $\approx43$, B $\approx48$ di bawah $49$; C sedikit di atas $49$, D $\approx51$, E $\approx52$.
+- **Bagian 6–8:** catatan lengkap, kartu A–E dengan pertanyaan kesimpulan, segel C · D · E.
+
 ---
 
 ## SOAL 11 — Kedalaman Air Laut

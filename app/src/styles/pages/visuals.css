@@ -4057,3 +4057,176 @@
     opacity: 1;
   }
 }
+
+/* ---------- soal 10 (eceng10, v1.43): grafik eceng gondok, rantai × 7, batas 16.807 ----------
+   bingkai label grafik dan panah × 7 biru langit; batang di bawah batas merah (bukan), di atas batas emas (jawaban). */
+@layer pages {
+  .vis-eceng {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: var(--color-on-stage);
+    font-size: min(var(--fs-mat), var(--e10-fit-h), var(--e10-fit-w));
+  }
+
+  .e10-pic,
+  .e10-chain,
+  .e10-bars {
+    grid-area: 1 / 1;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .e10-pic,
+  .e10-bars {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .vis-eceng:not([data-view='pic']) .e10-pic,
+  .vis-eceng:not([data-view='chain']) .e10-chain,
+  .vis-eceng:not([data-view='bars']) .e10-bars {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .e10-pic image {
+    clip-path: inset(0 round var(--radius-lg));
+  }
+
+  .e10-box {
+    fill: none;
+    stroke: var(--blue-600);
+    stroke-width: var(--bw-4);
+    opacity: 0;
+  }
+
+  .show-box .e10-box {
+    opacity: 1;
+  }
+
+  .e10-ar {
+    opacity: 0;
+  }
+
+  .e10-ar.on {
+    opacity: 1;
+  }
+
+  .e10-ar path {
+    fill: none;
+    stroke: var(--blue-600);
+    stroke-width: var(--bw-4);
+  }
+
+  .e10-pic marker path {
+    fill: var(--blue-600);
+  }
+
+  .e10-ar text {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-lg);
+    fill: var(--blue-600);
+  }
+
+  /* ---- rantai × 7 ---- */
+  .e10-chain {
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+    white-space: nowrap;
+  }
+
+  .e10-v,
+  .e10-x {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .e10-v.on,
+  .e10-x.on {
+    opacity: 1;
+  }
+
+  .e10-v {
+    display: grid;
+    justify-items: center;
+    font-weight: var(--fw-bold);
+  }
+
+  .e10-v small {
+    font-family: var(--font-mono);
+    font-size: max(var(--fs-label), 0.4em);
+    font-weight: var(--fw-medium);
+    color: var(--color-on-stage-muted);
+  }
+
+  .e10-v[data-i='3'] {
+    color: var(--color-stage-accent);
+  }
+
+  .e10-x {
+    font-size: 0.7em;
+    color: var(--color-stage-accent);
+  }
+
+  /* ---- batang danau ---- */
+  .e10-ax {
+    fill: none;
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-2);
+  }
+
+  .e10-bar {
+    opacity: 0;
+  }
+
+  .e10-bar.on {
+    opacity: 1;
+  }
+
+  .e10-br {
+    fill: var(--a-red-35);
+    stroke: var(--red-400);
+    stroke-width: var(--bw-2);
+  }
+
+  .e10-bar.is-ok .e10-br {
+    fill: var(--color-result);
+    stroke: var(--color-result);
+  }
+
+  .e10-bl,
+  .e10-bv {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-sm);
+    fill: var(--color-on-stage);
+    paint-order: stroke;
+    stroke: var(--color-stage);
+    stroke-width: var(--bw-4);
+  }
+
+  .e10-bar:not(.is-ok) .e10-bv {
+    fill: var(--red-300);
+  }
+
+  .e10-bar.is-ok .e10-bv {
+    fill: var(--color-result);
+  }
+
+  .e10-line {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-3);
+    stroke-dasharray: 8 5;
+  }
+
+  .e10-lt {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-sm);
+    fill: var(--color-stage-accent);
+  }
+}
