@@ -1978,6 +1978,8 @@ Jumlah semua segmen: $3{,}83+2{,}30+1{,}53+2{,}30=9{,}95\approx3\sqrt{11}$ ✓. 
 - **Bagian 5 — Analisis:** $AB=CE\approx3{,}8>3{,}5$; $BC=DE\approx2{,}3$ dan $CD\approx1{,}5$ kurang dari $3{,}5$ → **BC, CD, DE**. Karena $\sqrt{99}$ sedikit kurang dari $10$, jarak sebenarnya sedikit lebih pendek (c1–c5 di atas: $3{,}83$; $2{,}30$; $1{,}53$), kesimpulan tetap.
 - Uji kuadrat dan kali silang serta *Batas waktu* dari Revisi 1.48 dihapus.
 
+*Revisi 1.50 (4 Nov 2026, arahan pemilik; kunci tidak berubah).* Baris papan yang terlalu lebar dipecah supaya tidak terpotong: $\vec{AE}=E-A$ dan $\vec{AE}=(11-2,\ 6-3,\ 8-5)$ menjadi dua baris, dan total waktu ditulis $5+3+2+3=13$ menit. Saat jarak tiap pasangan dihitung, segmen, waktu, dan jaraknya di lintasan serta panel hitungannya berwarna **mint** (warna "sedang dihitung"); $BC$ dan $DE$ menyala bersama, $CE$ lewat kurungnya.
+
 ---
 
 ## SOAL 15 — Lingkaran yang Sepusat

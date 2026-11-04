@@ -39,6 +39,8 @@
     --gold-300: #f5d778;
     --gold-800: #7a5800;
     --gold-50: #fbf3dc;
+    /* hijau mint = bagian yang sedang dihitung di panggung (bukan benar/salah); ≈11:1 di atas bp-900 */
+    --mint-300: #6ee2b4;
     --line-200: #dce3ee;
     /* objek 3D/2D soal 18 (warna benda dari gambar soal, bukan makna) */
     --metal-400: #b8c2cf;
@@ -446,6 +448,7 @@
     --color-stage-line-minor: var(--a-sky-04);
     --color-stage-glow: var(--a-blue-45);
     --color-stage-accent: var(--blue-300);
+    --color-current-on-stage: var(--mint-300);
     --color-stage-surface: var(--a-white-05);
     --color-stage-border: var(--a-white-20);
     --color-focus: var(--gold-400);

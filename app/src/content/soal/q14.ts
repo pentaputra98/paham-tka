@@ -108,14 +108,13 @@ ${PAIRS.map((p, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-
     LA: [
       {
         id: 'a1',
-        toks: [
-          T('a1a', AE),
-          O('a1b', '='),
-          T('a1c', 'E-A', '', '@s-E'),
-          O('a1d', '='),
-          T('a1e', '(11-2,\\ 6-3,\\ 8-5)'),
-        ],
+        toks: [T('a1a', AE), O('a1b', '='), T('a1c', 'E-A', '', '@s-E')],
         note: 'vektor posisi, ujung dikurangi pangkal',
+      },
+      {
+        id: 'a1x',
+        toks: [T('a1d', AE), O('a1e', '='), T('a1f', '(11-2,\\ 6-3,\\ 8-5)')],
+        note: 'kurangkan koordinat $E(11,6,8)$ dengan $A(2,3,5)$',
       },
       {
         id: 'a2',
@@ -152,14 +151,8 @@ ${PAIRS.map((p, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-
     LB: [
       {
         id: 'b1',
-        toks: [
-          T('b1a', '\\text{waktu }A\\to E'),
-          O('b1b', '='),
-          T('b1c', '5+3+2+3'),
-          O('b1d', '='),
-          T('b1e', '13\\text{ menit}', 'blue'),
-        ],
-        note: 'semua waktu dijumlahkan; $AE\\approx10$ km ditempuh $13$ menit',
+        toks: [T('b1c', '5+3+2+3'), O('b1d', '='), T('b1e', '13\\text{ menit}', 'blue')],
+        note: 'total waktu, semua waktu $A$ ke $E$ dijumlahkan; $AE\\approx10$ km ditempuh $13$ menit',
         box: 'navy',
       },
       {
@@ -287,13 +280,13 @@ ${PAIRS.map((p, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-
       ch: 2,
       cap: 'Tentukan dulu vektor $\\overrightarrow{AE}$. Vektor posisinya $E-A$, jadi komponennya $(9,3,3)$.',
       visual: rail({ view: 'calc', ae: 2 }),
-      board: { title: 'Panjang vektor AE', list: 'LA', upTo: 2, from: 0 },
+      board: { title: 'Panjang vektor AE', list: 'LA', upTo: 3, from: 0 },
     },
     {
       ch: 2,
       cap: 'Panjang vektor adalah akar dari jumlah kuadrat komponennya. Hasilnya $\\sqrt{81+9+9}=\\sqrt{99}$.',
       visual: rail({ view: 'calc', ae: 3 }),
-      board: { title: 'Panjang vektor AE', list: 'LA', upTo: 4, from: 2 },
+      board: { title: 'Panjang vektor AE', list: 'LA', upTo: 5, from: 3 },
       ask: {
         before: 'a4',
         q: 'Berapa $9^2+3^2+3^2$?',
@@ -308,7 +301,7 @@ ${PAIRS.map((p, i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span data-
       ch: 2,
       cap: 'Supaya mudah dihitung, $\\sqrt{99}$ dianggap sementara $\\sqrt{100}=10$, karena $99$ paling dekat dengan $100$. Jadi $AE\\approx10$ km.',
       visual: rail({ view: 'calc', ae: 4 }),
-      board: { title: 'Panjang vektor AE', list: 'LA', upTo: 5, from: 4, save: ['pAE'] },
+      board: { title: 'Panjang vektor AE', list: 'LA', upTo: 6, from: 5, save: ['pAE'] },
       ask: {
         before: 'a5',
         q: '$\\sqrt{99}$ paling dekat dengan…',

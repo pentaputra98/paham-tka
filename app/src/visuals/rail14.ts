@@ -112,7 +112,9 @@ function curMarkup(p: Pair): string {
   const { a, b, d } = PAIR[p];
   const t = b - a;
   const head =
-    p === 'CE' ? `CE=\\dfrac{2+3}{13}\\times10=\\dfrac{5}{13}\\times10` : `${p}=\\dfrac{${t}}{13}\\times10`;
+    p === 'CE'
+      ? `CE=\\dfrac{2+3}{13}\\times10=\\dfrac{5}{13}\\times10`
+      : `${p === 'BC' ? 'BC=DE' : p}=\\dfrac{${t}}{13}\\times10`;
   const dec = `0{,}${d[0]}${d[1]}`;
   const slot = (v: string, cls = ''): string => `<span class="r14-d${cls}">${tex(v)}</span>`;
   return `<div class="r14-ln" data-i="0">${tex(head)}</div>
@@ -280,6 +282,8 @@ export function createRail14(): VisualScene {
       const cu = s.cur;
       const key = cu?.p ?? '';
       const ck = cu?.k ?? 0;
+      // pasangan yang sedang dihitung diberi warna sendiri (BC dan DE dihitung bersama)
+      el.dataset.cur = key === 'BC' ? 'BC DE' : key;
       if (key !== curKey) {
         curEl.innerHTML = cu ? curMarkup(cu.p) : '';
         curKey = key;

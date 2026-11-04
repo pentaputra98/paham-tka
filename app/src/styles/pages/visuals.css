@@ -4564,6 +4564,12 @@
     color: var(--color-stage-accent);
   }
 
+  /* panel pasangan yang sedang dihitung: warna mint, sama dengan segmennya di lintasan */
+  .r14-cur,
+  .r14-cur .r14-key {
+    color: var(--color-current-on-stage);
+  }
+
   /* koma bergeser: angka selebar --r14-dig dipisah celah --r14-gap; koma di celah pertama, bergeser ke celah kedua */
   .r14-sh {
     position: relative;
@@ -4707,5 +4713,25 @@
 
   .is-judge .r14-ce path {
     stroke: var(--color-constraint-on-stage);
+  }
+
+  /* pasangan yang sedang dihitung (data-cur): segmen, waktu, dan jaraknya mint */
+  :is(
+      .vis-rail[data-cur~='AB'] [data-p='AB'],
+      .vis-rail[data-cur~='BC'] [data-p='BC'],
+      .vis-rail[data-cur~='CD'] [data-p='CD'],
+      .vis-rail[data-cur~='DE'] [data-p='DE']
+    )
+    :is(rect, .r14-mn, .r14-km) {
+    fill: var(--color-current-on-stage);
+  }
+
+  .vis-rail[data-cur~='CE'] .r14-ce path {
+    stroke: var(--color-current-on-stage);
+    stroke-width: var(--bw-4);
+  }
+
+  .vis-rail[data-cur~='CE'] .r14-ce :is(text, .r14-cek) {
+    fill: var(--color-current-on-stage);
   }
 }
