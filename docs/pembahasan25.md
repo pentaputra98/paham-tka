@@ -1962,6 +1962,15 @@ Jumlah semua segmen: $3{,}83+2{,}30+1{,}53+2{,}30=9{,}95\approx3\sqrt{11}$ ✓. 
 - Memperlakukan $CE$ sebagai segmen tunggal bernilai 3 menit.
 - Memakai jarak $A$–$E$ sebagai satu langkah tanpa membaginya sebanding dengan waktu.
 
+*Alur aplikasi (Revisi 1.48, 4 Nov 2026, gaya pemilik; kunci tidak berubah: BC, CD, DE). Dipakai di `app/src/content/soal/q14.ts` (modul baru, adegan `rail14`, gambar `app/src/assets/soal/jarak_kereta_api.png`); soal 14 ditambahkan ke Rilis 1 dan dibuka.* Jalur utama **tanpa desimal** (arahan pemilik): kecepatan $0{,}765$ dan jarak berkoma di atas tidak dipakai; tiap waktu diuji dengan metode eksak dari *Pemeriksaan hasil* (kuadratkan, lalu kali silang). Hasil disimpan ke **catatan**: $|AE|=\sqrt{99}$ km dan jarak $t$ menit $=\frac{t}{13}\times\sqrt{99}$. Baris papan tanpa ":". Tata letak: panggung penuh dua kolom.
+- **Bagian 1 — Pahami soal:** kecepatan konstan dan lintasan lurus (jarak sebanding waktu); $A(2,3,5)$, $E(11,6,8)$; waktu $5$, $3$, $2$, $3$ menit dibingkai pada gambar asli; ditanya jarak $<3{,}5$ km.
+- **Bagian 2 — Jarak A ke E:** $\vec{AE}=E-A=(9,3,3)$ sebagai langkah $+9$, $+3$, $+3$ pada balok kerangka; $|AE|^2=81+9+9=99$, $|AE|=\sqrt{99}$ km (sedikit kurang dari $10$). Pertanyaan cepat dokumen $9^2+3^2+3^2$.
+- **Bagian 3 — Jarak sebanding waktu:** total $13$ menit; jarak $t$ menit $=\frac{t}{13}\times\sqrt{99}$; waktu tiap pilihan, $CE=2+3=5$ menit (pertanyaan cepat dokumen); cukup uji $5$ menit ($AB$, $CE$) dan $3$ menit ($BC$, $DE$).
+- **Bagian 4 — Uji 5 menit:** $\left(\frac{5\sqrt{99}}{13}\right)^2=\frac{2475}{169}$ dan $\left(\frac72\right)^2=\frac{49}{4}$ (pertanyaan cepat baru, pengecoh $\frac{2475}{13}$, $\frac{495}{169}$); kali silang $9900$ dan $8281$; $9900>8281$, jadi $AB$ dan $CE$ lebih dari $3{,}5$ km.
+- **Bagian 5 — Uji 3 dan 2 menit:** $\frac{891}{169}$, kali silang $3564<8281$, jadi $BC$ dan $DE$ kurang dari $3{,}5$ km; $CD$ hanya $2$ menit, lebih pendek lagi (pertanyaan cepat baru) → **BC, CD, DE**.
+- **Bagian 6 — Batas waktu (opsional, Ya/Lewati):** $396t^2<8281$; $t=4$ memberi $6336<8281$ (lolos), $t=5$ memberi $9900>8281$ (tidak); pasangan yang waktunya paling lama $4$ menit lolos.
+- **Bagian 7–9:** catatan lengkap (sketsa lintasan 13 menit), kartu AB–CE dengan pertanyaan pilihan kombinasi, segel BC · CD · DE.
+
 ---
 
 ## SOAL 15 — Lingkaran yang Sepusat

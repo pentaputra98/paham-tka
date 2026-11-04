@@ -4489,3 +4489,257 @@
     color: var(--color-result);
   }
 }
+
+/* ---------- soal 14 (rail14, v1.48): kereta api, balok kerangka, lintasan 13 menit, pembanding tanpa desimal ----------
+   bingkai label waktu dan langkah rusuk biru langit; segmen yang sedang diuji biru langit, pasangan 5 menit merah
+   (lebih dari 3,5 km), pasangan paling lama 3 menit emas (jawaban); baris pembanding lama memudar. */
+@layer pages {
+  .vis-rail {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: var(--color-on-stage);
+    font-size: min(var(--fs-mat), var(--r14-fit-h), var(--r14-fit-w));
+  }
+
+  .r14-pic,
+  .r14-boxv,
+  .r14-bv {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .vis-rail:not([data-view='pic']) .r14-pic,
+  .vis-rail:not([data-view='box']) .r14-boxv,
+  .vis-rail:not([data-view='bar']) .r14-bv {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .r14-pic image {
+    clip-path: inset(0 round var(--radius-lg));
+  }
+
+  .r14-box {
+    fill: none;
+    stroke: var(--blue-600);
+    stroke-width: var(--bw-4);
+    opacity: 0;
+  }
+
+  .show-box .r14-box {
+    opacity: 1;
+  }
+
+  .r14-boxv,
+  .r14-bar {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-md);
+    overflow: visible;
+  }
+
+  .r14-edge {
+    fill: none;
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-1);
+    stroke-dasharray: 5 5;
+  }
+
+  .r14-st path {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-4);
+    stroke-linecap: round;
+  }
+
+  .r14-hm path {
+    fill: var(--color-stage-accent);
+  }
+
+  .r14-st text,
+  .r14-dg text {
+    fill: var(--color-stage-accent);
+    paint-order: stroke;
+    stroke: var(--color-stage);
+    stroke-width: var(--bw-4);
+  }
+
+  .r14-dg path {
+    stroke: var(--color-on-stage);
+    stroke-width: var(--bw-4);
+    stroke-linecap: round;
+  }
+
+  .r14-dg text {
+    fill: var(--color-on-stage);
+  }
+
+  .r14-pt circle,
+  .r14-sta circle {
+    fill: var(--color-on-stage);
+  }
+
+  .r14-pt text,
+  .r14-sta text {
+    fill: var(--color-on-stage);
+  }
+
+  .r14-st,
+  .r14-dg {
+    opacity: 0;
+  }
+
+  .r14-st.on,
+  .show-diag .r14-dg {
+    opacity: 1;
+  }
+
+  /* ---- lintasan ---- */
+  .r14-bv {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    justify-items: center;
+    gap: var(--space-2);
+  }
+
+  .r14-bar {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .r14-trk {
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-2);
+  }
+
+  .r14-tk {
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-1);
+  }
+
+  .r14-seg rect {
+    fill: var(--a-sky-30);
+  }
+
+  .r14-seg text {
+    fill: var(--color-on-stage);
+    font-size: var(--svg-fs-sm);
+  }
+
+  .r14-seg,
+  .r14-ce,
+  .r14-ru {
+    opacity: 0;
+  }
+
+  .r14-seg.on,
+  .show-ce .r14-ce,
+  .show-lim .r14-ru,
+  .is-sketch .r14-seg {
+    opacity: 1;
+  }
+
+  .r14-ce path,
+  .r14-ru path {
+    fill: none;
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-2);
+  }
+
+  .r14-ce text {
+    fill: var(--color-on-stage-muted);
+    font-size: var(--svg-fs-sm);
+  }
+
+  /* kelompok 5 menit (AB dan CE) */
+  .vis-rail[data-g5='1'] [data-g='5'] rect {
+    fill: var(--color-stage-accent);
+  }
+
+  .vis-rail[data-g5='2'] [data-g='5'] rect {
+    fill: var(--color-constraint-on-stage);
+  }
+
+  .vis-rail[data-g5='1'] .r14-ce path {
+    stroke: var(--color-stage-accent);
+  }
+
+  .vis-rail[data-g5='1'] .r14-ce text {
+    fill: var(--color-stage-accent);
+  }
+
+  .vis-rail[data-g5='2'] .r14-ce path {
+    stroke: var(--color-constraint-on-stage);
+  }
+
+  .vis-rail[data-g5='2'] .r14-ce text {
+    fill: var(--color-constraint-on-stage);
+  }
+
+  /* kelompok paling lama 3 menit (BC, CD, DE) */
+  .vis-rail[data-g3='1'] [data-g='3'] rect {
+    fill: var(--color-stage-accent);
+  }
+
+  .vis-rail[data-g3='2'] [data-g='3'] rect {
+    fill: var(--color-result);
+  }
+
+  .r14-ru text {
+    font-size: var(--svg-fs-sm);
+  }
+
+  .r14-ru.is-ok path {
+    stroke: var(--color-stage-accent);
+  }
+
+  .r14-ru.is-ok text {
+    fill: var(--color-stage-accent);
+  }
+
+  .r14-ru.is-no path {
+    stroke: var(--color-constraint-on-stage);
+  }
+
+  .r14-ru.is-no text {
+    fill: var(--color-constraint-on-stage);
+  }
+
+  /* ---- baris pembanding ---- */
+  .r14-cmp {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-1);
+  }
+
+  .r14-ln {
+    display: none;
+    white-space: nowrap;
+  }
+
+  .r14-ln.on {
+    display: block;
+  }
+
+  .r14-ln.is-gone {
+    display: none;
+  }
+
+  .r14-ln.is-old {
+    opacity: 0.55;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .r14-v5 {
+    color: var(--color-constraint-on-stage);
+  }
+
+  .r14-v3 {
+    color: var(--color-stage-accent);
+  }
+}
