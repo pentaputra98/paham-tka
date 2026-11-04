@@ -4231,9 +4231,9 @@
   }
 }
 
-/* ---------- soal 12 (vec12, v1.44): balok panjang vektor dan tabel uji nilai m ----------
-   rusuk putih (rusuk belakang putus-putus); diagonal ruang biru langit; baris yang tepat 81 emas (jawaban),
-   lainnya merah. */
+/* ---------- soal 12 revisi pemilik (vec12, v1.45): penurunan aljabar dan tabel uji nilai m ----------
+   baris penurunan putih; bagian yang disorot dan pasangan yang cocok biru langit; baris lama pudar; hasil m dan baris
+   uji yang tepat 81 emas (jawaban), lainnya merah. */
 @layer pages {
   .vis-vec {
     height: 100%;
@@ -4243,63 +4243,106 @@
     font-size: min(var(--fs-mat), var(--v12-fit-h), var(--v12-fit-w));
   }
 
-  .v12-box,
+  .a12-alg,
   .v12-tab {
     grid-area: 1 / 1;
     transition: opacity var(--dur-slow) var(--ease);
   }
 
-  .v12-box {
-    width: 100%;
-    height: 100%;
-    min-height: 0;
-  }
-
-  .vis-vec[data-view='box'] .v12-tab,
-  .vis-vec[data-view='tab'] .v12-box {
+  .vis-vec[data-view='alg'] .v12-tab,
+  .vis-vec[data-view='tab'] .a12-alg {
     opacity: 0;
     visibility: hidden;
   }
 
-  .v12-e {
-    fill: none;
-    stroke: var(--color-on-stage);
-    stroke-width: var(--bw-2);
+  /* ---- penurunan aljabar ---- */
+  .a12-alg {
+    display: grid;
+    justify-items: center;
+    gap: 0.5em;
   }
 
-  .v12-hid {
-    stroke: var(--color-on-stage-muted);
-    stroke-dasharray: 6 5;
+  .a12-l {
+    display: none;
+    grid-template-areas: 'f' 'l';
+    justify-items: center;
+    white-space: nowrap;
+    opacity: 0.4;
+    transition: opacity var(--dur-slow) var(--ease);
   }
 
-  .v12-diag {
-    fill: none;
-    stroke: var(--color-stage-accent);
-    stroke-width: var(--bw-4);
+  .a12-l.on {
+    display: grid;
   }
 
-  .v12-pt {
-    fill: var(--color-stage-accent);
+  .a12-l.is-cur {
+    opacity: 1;
   }
 
-  .v12-pl,
-  .v12-rl,
-  .v12-dl {
+  .a12-f {
+    grid-area: f;
+  }
+
+  .a12-fb,
+  .a12-l.is-b .a12-fa {
+    opacity: 0;
+  }
+
+  .a12-l.is-b .a12-fb {
+    opacity: 1;
+  }
+
+  .a12-l small {
+    grid-area: l;
     font-family: var(--font-mono);
-    font-weight: var(--fw-bold);
-    font-size: var(--svg-fs-md);
-    fill: var(--color-on-stage);
+    font-size: max(var(--fs-label), 0.36em);
+    color: var(--color-on-stage-muted);
   }
 
-  .v12-dl {
-    fill: var(--color-stage-accent);
-    paint-order: stroke;
-    stroke: var(--color-stage);
-    stroke-width: var(--bw-4);
+  .a12-l.is-cur .a12-k {
+    color: var(--color-stage-accent);
   }
 
-  .has-m .v12-rl {
-    fill: var(--color-stage-accent);
+  .a12-k {
+    display: inline-block;
+  }
+
+  .a12-l.is-b .a12-ans {
+    color: var(--color-result);
+  }
+
+  .a12-pairs {
+    grid-template-areas: none;
+    gap: 0.15em;
+    font-size: 0.75em;
+  }
+
+  .a12-pairs small {
+    grid-area: auto;
+  }
+
+  .a12-ph {
+    font-size: 0.8em;
+    color: var(--color-stage-accent);
+  }
+
+  .a12-pr {
+    display: flex;
+    gap: 0.8em;
+    align-items: center;
+    color: var(--color-on-stage-muted);
+  }
+
+  .a12-pr b {
+    color: var(--red-300);
+  }
+
+  .a12-pr.is-ok {
+    color: var(--color-on-stage);
+  }
+
+  .a12-pr.is-ok b {
+    color: var(--color-stage-accent);
   }
 
   /* ---- tabel uji nilai m ---- */

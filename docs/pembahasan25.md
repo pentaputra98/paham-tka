@@ -1698,6 +1698,19 @@ $m=-4$: $\vec{AB}=(-8,-1,-4)$, $64+1+16=81$ ✓. $m=3$: $\vec{AB}=(6,6,3)$, $36+
 - **Bagian 5 — Cara esai (opsional, Ya/Lewati):** a1–b5 di atas, $(m+3)^2=m^2+6m+9$ (pertanyaan cepat lama), $m^2+m-12=0$, $(m+4)(m-3)=0$.
 - **Bagian 6–8:** catatan lengkap, kartu A–E dengan pertanyaan berhuruf, segel B.
 
+*Revisi 1.45 (4 Nov 2026, arahan pemilik "pure jelaskan aljabarnya tanpa balok"; kunci tidak berubah: B). Menggantikan alur Revisi 1.44 di atas.* Gambar balok dihapus; panggung menampilkan baris penurunan aljabar besar yang berganti bentuk dengan halus.
+- **Bagian 2 — Panjang vektor:** panjang vektor = akar dari jumlah kuadrat semua komponennya; $9=\sqrt{(2m)^2+(m+3)^2+m^2}$; kedua ruas dikuadratkan, $9^2$ berganti menjadi $81$ (pertanyaan cepat baru).
+- **Bagian 3 — Jabarkan:** $81=4m^2+(m^2+6m+9)+m^2$ (pertanyaan cepat lama $(m+3)^2$); $4m^2+m^2+m^2$ berganti menjadi $6m^2$; $9-81$ berganti menjadi $-72$, sehingga $6m^2+6m-72=0$.
+- **Bagian 4 — Faktorkan dengan cara $a\cdot c$** (untuk $a>1$, arahan pemilik):
+  - $a=6$, $b=6$, $c=-72$ diberi label di bawah koefisiennya;
+  - langkah 1: $a\cdot c=6\cdot(-72)=-432$;
+  - langkah 2: cari dua bilangan yang dikali $-432$ dan dijumlah $6$; panel mencoba $12$ dan $-36$ (jumlah $-24$), $18$ dan $-24$ ($-6$), lalu $24$ dan $-18$ ($6$, cocok) (pertanyaan cepat baru);
+  - langkah 3: $\frac{(6m+24)(6m-18)}{6}=0$;
+  - langkah 4: kurung yang bisa dibagi $6$ disederhanakan, $\frac{6m+24}{6}$ berganti menjadi $(m+4)$, jadi $(m+4)(6m-18)=0$.
+- **Bagian 5 — Nilai $m$:** $m+4=0\Rightarrow m=-4$; $6m-18=0\Rightarrow m=3$; pilihan **B**.
+- **Bagian 6 — Cek dengan substitusi (opsional, Ya/Lewati):** tabel uji $m=-4,-3,3,4$ dari Revisi 1.44.
+- Catatan: dokumen di atas membagi 6 lebih dulu ($m^2+m-12=0$); cara $a\cdot c$ memberi hasil yang sama.
+
 ---
 
 ## SOAL 13 — Trapesium Sama Kaki
