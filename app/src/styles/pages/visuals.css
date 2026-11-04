@@ -1392,8 +1392,9 @@
   }
 }
 
-/* ---------- soal 13: bidang koordinat trapesium ----------
-   Alas biru, kaki merah (kendala sama panjang); bagian baru muncul bertahap lewat opacity. */
+/* ---------- soal 13 alur pemilik (trap13, v1.47): trapesium sama kaki di bidang koordinat ----------
+   kisi biru langit pudar; vektor AB dan BC biru langit, AD merah; langkah kisi (tangga) putus-putus; garis simetri
+   abu-abu; jebakan C′ (jajargenjang) merah putus-putus; isian trapesium biru langit tipis. Emas tidak dipakai di adegan. */
 @layer pages {
   .vis-trap {
     height: 100%;
@@ -1401,90 +1402,188 @@
     place-items: center;
   }
 
-  .vis-trap svg {
+  .t13-svg {
     width: 100%;
     height: 100%;
     min-height: 0;
     overflow: visible;
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-sm);
   }
 
-  .tp-grid {
+  .t13-g {
     stroke: var(--a-sky-15);
     stroke-width: var(--bw-hair);
   }
 
-  .tp-ax {
+  .t13-g.t13-ax {
     stroke: var(--color-on-stage-muted);
     stroke-width: var(--bw-1);
   }
 
-  .tp-ab,
-  .tp-dc {
+  .t13-tk {
+    fill: var(--color-on-stage-muted);
+    font-size: var(--svg-fs-xs);
+  }
+
+  .t13-ab,
+  .t13-ad,
+  .t13-bc {
+    fill: none;
+    stroke-width: var(--bw-4);
+    stroke-linecap: round;
+  }
+
+  .t13-ab,
+  .t13-bc {
     stroke: var(--color-stage-accent);
-    stroke-width: var(--bw-4);
-    stroke-linecap: round;
+    color: var(--color-stage-accent);
   }
 
-  .tp-ad,
-  .tp-bc {
+  .t13-ad {
     stroke: var(--color-constraint-on-stage);
-    stroke-width: var(--bw-4);
-    stroke-linecap: round;
+    color: var(--color-constraint-on-stage);
   }
 
-  .tp-sym {
-    stroke: var(--color-on-stage-muted);
+  .t13-hb path {
+    fill: var(--color-stage-accent);
+  }
+
+  .t13-hr path {
+    fill: var(--color-constraint-on-stage);
+  }
+
+  .t13-lean path,
+  .t13-step path {
+    fill: none;
     stroke-width: var(--bw-2);
     stroke-dasharray: 6 5;
   }
 
-  .tp-mirror {
-    fill: none;
+  .t13-lean path {
+    stroke: var(--color-constraint-on-stage);
+  }
+
+  .t13-step path {
     stroke: var(--color-stage-accent);
-    stroke-width: var(--bw-1);
-    stroke-dasharray: 4 4;
   }
 
-  .tp-pt {
-    fill: var(--color-on-stage);
+  .t13-lean text,
+  .t13-step text {
+    font-size: var(--svg-fs-md);
+    paint-order: stroke;
+    stroke: var(--color-stage);
+    stroke-width: var(--bw-4);
   }
 
-  .tp-lbl {
-    font-family: var(--font-mono);
-    font-weight: var(--fw-bold);
-    font-size: var(--svg-fs-sm);
-    fill: var(--color-on-stage);
-  }
-
-  .tp-len {
+  .t13-lean text {
     fill: var(--color-constraint-on-stage);
   }
 
-  .tp-sym,
-  .tp-sym-t,
-  .tp-mirror,
-  .tp-c,
-  .tp-c-t,
-  .tp-bc,
-  .tp-len,
-  .tp-dc {
+  .t13-step text,
+  .t13-bcl {
+    fill: var(--color-stage-accent);
+  }
+
+  .t13-bcl {
+    font-size: var(--svg-fs-md);
+    paint-order: stroke;
+    stroke: var(--color-stage);
+    stroke-width: var(--bw-4);
+  }
+
+  .t13-sym {
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 3 6;
+  }
+
+  .t13-sl {
+    fill: var(--color-on-stage-muted);
+  }
+
+  .t13-ghost path {
+    fill: none;
+    stroke: var(--color-constraint-on-stage);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 8 6;
+  }
+
+  .t13-ghost text {
+    fill: var(--color-constraint-on-stage);
+  }
+
+  .t13-fill {
+    fill: var(--a-sky-15);
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-2);
+  }
+
+  .t13-p circle {
+    fill: var(--color-on-stage);
+  }
+
+  .t13-p text {
+    fill: var(--color-on-stage);
+    paint-order: stroke;
+    stroke: var(--color-stage);
+    stroke-width: var(--bw-4);
+  }
+
+  /* kemunculan bertahap: hanya opacity */
+  .t13-pa,
+  .t13-pb,
+  .t13-pd,
+  .t13-pc,
+  .t13-ab,
+  .t13-ad,
+  .t13-lean,
+  .t13-sym,
+  .t13-sl,
+  .t13-step,
+  .t13-bc,
+  .t13-bcl,
+  .t13-ghost,
+  .t13-fill {
     opacity: 0;
     transition: opacity var(--dur-slow) var(--ease);
   }
 
-  .at-sym .tp-sym,
-  .at-sym .tp-sym-t,
-  .at-sym .tp-mirror,
-  .at-sym .tp-c,
-  .at-sym .tp-c-t,
-  .at-legs .tp-bc,
-  .at-legs .tp-len,
-  .at-final .tp-dc {
+  .n1 .t13-pa,
+  .n2 .t13-pb,
+  .n2 .t13-ab,
+  .n3 .t13-pd,
+  .n3 .t13-ad,
+  .is-lean .t13-lean,
+  .is-sym .t13-sym,
+  .is-sym .t13-sl,
+  .is-mir .t13-pc,
+  .is-step .t13-step,
+  .is-step .t13-bc,
+  .is-step .t13-bcl,
+  .is-ghost .t13-ghost,
+  .is-fill .t13-fill {
     opacity: 1;
   }
 
-  .at-legs .tp-mirror {
-    opacity: 0;
+  /* sketsa catatan: semua tampil kecuali jebakan */
+  .is-all
+    :is(
+      .t13-pa,
+      .t13-pb,
+      .t13-pd,
+      .t13-pc,
+      .t13-ab,
+      .t13-ad,
+      .t13-sym,
+      .t13-sl,
+      .t13-step,
+      .t13-bc,
+      .t13-bcl,
+      .t13-fill
+    ) {
+    opacity: 1;
   }
 }
 

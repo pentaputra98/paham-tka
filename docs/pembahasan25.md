@@ -1832,6 +1832,15 @@ Uji dengan syarat panjang saja: $a^2+b^2=17$. Agar $DC\parallel AB$ harus $b=4$ 
 - Menyalin $\vec{BC}=\vec{AD}=(1,4)$ hanya karena $AD=BC$; itu menghasilkan jajargenjang.
 - Mengabaikan syarat bahwa $DC$ sejajar $AB$ sehingga komponen $b$ tidak boleh sembarang.
 
+*Alur aplikasi (Revisi 1.47, 4 Nov 2026, gaya pemilik; kunci tidak berubah: C). Menggantikan alur aplikasi lama di atas; dipakai di `app/src/content/soal/q13.ts` (adegan `trap13` ditulis ulang); soal 13 dibuka.* Jalur utama **logika gambar dulu** di kisi; cara aljabar menjadi opsional. Hasil disimpan ke **catatan**: $B$, $D$, $C$, dan $a=-1$, $b=4$. Baris papan tanpa ":". Tata letak: panggung penuh dua kolom.
+- **Bagian 1 — Pahami soal:** $AD=BC$ (kaki), $A(0,0)$, $\vec{AD}=(1,4)$, $\vec{AB}=(6,0)$, $\vec{BC}=(a,b)$; ditanya $a^2+2b$.
+- **Bagian 2 — Gambar titik:** $A$ di titik asal, jadi ujung vektor langsung menjadi titik; $\vec{AB}$ berarti $6$ ke kanan → $B=(6,0)$; $\vec{AD}$ berarti $1$ ke kanan, $4$ ke atas → $D=(1,4)$ (tangga kisi $+1$, $+4$).
+- **Bagian 3 — Titik C:** trapesium sama kaki simetris terhadap $x=3$ (tengah alas $AB$); $D$ condong $1$ ke kanan dari $A$, maka $C$ condong $1$ ke kiri dari $B$ → $C=(6-1,\ 4)=(5,4)$ (titik bergeser dari $D$ ke $C$). Pertanyaan cepat dokumen "Kenapa $C$ berada di ketinggian $y=4$?" ($DC$ sejajar $AB$).
+- **Bagian 4 — Vektor BC:** dibaca di kisi dari $B$ ke $C$, $1$ ke kiri ($-1$) dan $4$ ke atas ($+4$) → $\vec{BC}=(-1,4)$, $a=-1$, $b=4$ (pertanyaan cepat baru, pengecoh $1$ dan $-5$). **Hati-hati** (kesalahan umum dokumen): $\vec{BC}\ne\vec{AD}$; kalau $(1,4)$, $C'=(7,4)$ dan bangunnya jajargenjang (ditampilkan putus-putus merah).
+- **Bagian 5 — Nilai a² + 2b:** $(-1)^2+2(4)=1+8=9$ → pilihan **C**; tawaran cara aljabar.
+- **Bagian 6 — Cara aljabar (opsional, Ya/Lewati):** $\vec{BC}=C-B=(5-6,\ 4-0)=(-1,4)$; $|\vec{AD}|=\sqrt{1^2+4^2}=\sqrt{17}$ dan $|\vec{BC}|=\sqrt{(-1)^2+4^2}=\sqrt{17}$ (kaki sama panjang).
+- **Bagian 7–9:** catatan lengkap (dengan sketsa trapesium), kartu A–E dengan pertanyaan berhuruf, segel C.
+
 ---
 
 ## SOAL 14 — Kereta Api dan Koordinat 3D
