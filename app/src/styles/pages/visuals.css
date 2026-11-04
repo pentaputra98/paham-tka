@@ -4925,6 +4925,11 @@
     color: var(--color-result);
   }
 
+  /* hasil kunci yang bukan jawaban akhir (rumus cepat, garis l soal 21) */
+  .t19-key {
+    color: var(--color-stage-accent);
+  }
+
   /* ---- grafik uji titik ---- */
   .t19-test {
     display: none;
@@ -5477,6 +5482,15 @@
   .is-two .r21-tw,
   .is-all :is(.r21-P, .r21-l0, .r21-n0, .r21-l1, .r21-n1, .r21-op) {
     opacity: 1;
+  }
+
+  .r21-gv,
+  .is-gen .r21-cv {
+    display: none;
+  }
+
+  .is-gen .r21-gv {
+    display: inline;
   }
 
   .r2 .r21-arm,

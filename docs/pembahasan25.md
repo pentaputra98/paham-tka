@@ -3029,6 +3029,13 @@ Metode ketiga (vektor normal): $(3,2)$ berputar menjadi $(-2,3)$ sehingga bayang
 - **Bagian 5 — Cara dua titik (opsional, Ya/Lewati):** $(0,3)\to(-1,-2)$ dan $(2,0)$ tetap; keduanya memenuhi $2x-3y=4$.
 - **Bagian 6–8:** catatan lengkap (sketsa grafik), kartu 1–5 dengan pertanyaan pilihan kombinasi, segel (2, 0) · (5, 2).
 
+*Revisi 1.55 (5 Nov 2026, arahan pemilik "pakai cara cepat"; kunci tidak berubah: (2, 0) dan (5, 2)). Menggantikan Bagian 2–3 dan bagian opsional Revisi 1.54 di atas; adegan baru `eq21`, adegan `rot21` dengan mode label umum.*
+- **Bagian 2 — Rumus cepat:** rotasi $90^\circ$ berlawanan jarum jam berpusat $(a,b)$: pada persamaan, $x$ diganti $(y+a-b)$ dan $y$ diganti $(a+b-x)$. Pusat $(2,0)$ memberi $x\to(y+2)$ dan $y\to(2-x)$ (pertanyaan cepat baru, pengecoh $(y-2)$ dan $(2-x)$).
+- **Bagian 3 — Garis bayangan l:** $3(y+2)+2(2-x)=6$, $3y+6+4-2x=6$, $-2x+3y+4=0$, jadi $l$: $2x-3y=4$ (sama dengan b1–b6); garis awal berputar menjadi $l$ di gambar.
+- **Bagian 4 — Uji tiap titik:** c1–c5, $(2,0)$ dan $(5,2)$ memenuhi; lalu tawaran "Mau tahu kenapa rumus cepatnya seperti itu?".
+- **Bagian 5 — Asal rumus cepat (opsional, Ya/Lewati):** gambar umum titik $(x,y)$ diputar mengelilingi pusat $(a,b)$; selisih $(x-a,\ y-b)$ diputar menjadi $(-(y-b),\ x-a)$; ditambah pusat, $x'=a+b-y$ dan $y'=x-a+b$; dibalik, $y=a+b-x'$ dan $x=y'+a-b$, sehingga pada persamaan bayangan $x\to(y+a-b)$ dan $y\to(a+b-x)$.
+- Aturan lewat titik $A(4,-3)$ dan cara dua titik dari Revisi 1.54 dihapus.
+
 ---
 
 ## SOAL 22 — Limit Fungsi Rasional di $x=3$

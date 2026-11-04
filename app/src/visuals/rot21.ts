@@ -7,6 +7,7 @@
  *    l: 2x − 3y = 4 (biru langit).
  *  - n: banyak titik pilihan yang sudah diuji pada l; di l emas (jawaban), di luar l merah.
  *  - two: cara dua titik (opsional); (0, 3) berputar menjadi (−1, −2), (2, 0) tetap karena pusat rotasi.
+ *  - gen: label umum, titik (x, y), pusat (a, b), selisih (x − a, y − b) menjadi (−(y − b), x − a), bayangan (x′, y′).
  * Angka dari docs/pembahasan25.md soal 21 (a1–c5, Pemeriksaan hasil). Gerak hanya transform/opacity.
  */
 import { reducedMotion } from '../core/clock';
@@ -21,6 +22,8 @@ export interface Rot21State {
   rot?: boolean;
   n?: number;
   two?: boolean;
+  /** label umum (x, y), (a, b) untuk menjelaskan asal rumus cepat */
+  gen?: boolean;
   [k: string]: unknown;
 }
 
@@ -85,16 +88,16 @@ function markup(sketch: boolean): string {
   <text class="r21-n0" x="${px(4.7)}" y="${py(-3.5)}">3x + 2y = 6</text>
   <text class="r21-n1" x="${px(4.4)}" y="${py(3.2)}">l: 2x − 3y = 4</text>
   <path class="r21-arc" d="M${px(4)} ${py(-3)}A${Math.sqrt(13) * U} ${Math.sqrt(13) * U} 0 0 0 ${px(5)} ${py(2)}"/>
-  <g class="r21-arm0"><path d="M${px(2)} ${py(0)}L${px(4)} ${py(-3)}"/>${dot(4, -3)}<text x="${px(4) + 9}" y="${py(-3) + 5}">A (4, −3)</text></g>
+  <g class="r21-arm0"><path d="M${px(2)} ${py(0)}L${px(4)} ${py(-3)}"/>${dot(4, -3)}<text x="${px(4) + 9}" y="${py(-3) + 5}"><tspan class="r21-cv">A (4, −3)</tspan><tspan class="r21-gv">(x, y)</tspan></text></g>
   <g class="r21-arm"><path d="M${px(2)} ${py(0)}L${px(4)} ${py(-3)}"/>${dot(4, -3)}</g>
-  <text class="r21-v0" x="${px(3.1)}" y="${py(-1.7)}">(2, −3)</text>
-  <text class="r21-v1" x="${px(3.2)}" y="${py(1.7)}" text-anchor="end">(3, 2)</text>
-  <text class="r21-a1" x="${px(5) + 9}" y="${py(2) - 8}">A′ (5, 2)</text>
+  <text class="r21-v0" x="${px(3.1)}" y="${py(-1.7)}"><tspan class="r21-cv">(2, −3)</tspan><tspan class="r21-gv">(x − a, y − b)</tspan></text>
+  <text class="r21-v1" x="${px(3.4)}" y="${py(2.5)}" text-anchor="end"><tspan class="r21-cv">(3, 2)</tspan><tspan class="r21-gv">(−(y − b), x − a)</tspan></text>
+  <text class="r21-a1" x="${px(5) + 9}" y="${py(2) - 8}"><tspan class="r21-cv">A′ (5, 2)</tspan><tspan class="r21-gv">(x′, y′)</tspan></text>
   <g class="r21-tw"><g class="r21-twa"><path d="M${px(2)} ${py(0)}L${px(0)} ${py(3)}"/>${dot(0, 3)}</g>
     <g class="r21-tw0">${dot(0, 3)}<text x="${px(0) + 9}" y="${py(3) - 6}">(0, 3)</text></g>
     <text class="r21-tw1" x="${px(-1) - 8}" y="${py(-2) + 20}" text-anchor="end">(−1, −2)</text></g>
   ${opts}
-  <g class="r21-P"><circle cx="${px(2)}" cy="${py(0)}" r="7"/><text x="${px(2) + 10}" y="${py(0) - 9}">P (2, 0)</text></g>
+  <g class="r21-P"><circle cx="${px(2)}" cy="${py(0)}" r="7"/><text x="${px(2) + 10}" y="${py(0) - 9}"><tspan class="r21-cv">P (2, 0)</tspan><tspan class="r21-gv">pusat (a, b)</tspan></text></g>
   </svg>`;
 }
 
@@ -188,6 +191,7 @@ export function createRot21(): VisualScene {
       });
       n = nn;
 
+      svg.classList.toggle('is-gen', !!s.gen);
       const tw = !!s.two;
       svg.classList.toggle('is-two', tw);
       if (anim && tw && (!two || c.replay))

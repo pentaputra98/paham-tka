@@ -1,22 +1,25 @@
 /**
  * SOAL 21 — Rotasi Garis Berpusat (2, 0) (transformasi geometri; multi-jawaban). Kunci: (2, 0) dan (5, 2).
  * Sumber: docs/pembahasan25.md "SOAL 21", docs/soal25.md no. 21.
- * Alur (v1.54, dicatat di dokumen):
+ * Alur revisi pemilik (v1.55, cara cepat dulu, dicatat di dokumen):
  *  - pahami: garis 3x + 2y = 6, rotasi 90° berlawanan arah jarum jam, pusat (2, 0) (bukan titik asal); ditanya titik pada l;
- *  - aturan lewat satu titik: A(4, −3), geser pusat ke O (u, v) = (2, −3), putar (−v, u) = (3, 2), geser kembali (5, 2);
- *    jadi (x, y) → (2 − y, x − 2);
- *  - garis l: y = 2 − x′ dan x = y′ + 2 dimasukkan ke 3x + 2y = 6 → −2x′ + 3y′ + 4 = 0, yaitu 2x − 3y = 4;
- *    di panggung garis awal berputar 90° mengelilingi P menjadi l;
+ *  - rumus cepat: rotasi 90° berlawanan jarum jam berpusat (a, b), pada persamaan x diganti (y + a − b) dan
+ *    y diganti (a + b − x); pusat (2, 0) memberi x → (y + 2), y → (2 − x);
+ *  - garis l: 3(y + 2) + 2(2 − x) = 6 → −2x + 3y + 4 = 0, yaitu 2x − 3y = 4; garis awal berputar menjadi l;
  *  - uji tiap titik pilihan pada 2x − 3y = 4: hanya (2, 0) dan (5, 2) yang memenuhi;
- *  - bagian opsional "Cara dua titik": (0, 3) → (−1, −2), (2, 0) tetap (pusat rotasi), garis melalui keduanya.
+ *  - tawaran "Mau tahu kenapa rumus cepatnya seperti itu?" → bagian opsional "Asal rumus cepat": gambar umum titik (x, y)
+ *    diputar mengelilingi (a, b), selisih (x − a, y − b) menjadi (−(y − b), x − a), sehingga x′ = a + b − y dan
+ *    y′ = x − a + b; dibalik, y = a + b − x′ dan x = y′ + a − b, jadi x diganti (y + a − b), y diganti (a + b − x).
  * Tanpa simbol ":" di baris papan. Tata letak: panggung penuh dua kolom (PRD v1.5).
  */
 import { H, O, T } from '../../engine/dsl';
 import type { Row, SoalContent, Visual } from '../../engine/types';
+import type { Eq21State } from '../../visuals/eq21';
 import type { Rot21State } from '../../visuals/rot21';
 import { getSoal } from '../index';
 
 const sc = (state: Rot21State): Visual => ({ kind: 'svg', scene: 'rot21', state });
+const eq = (set: Eq21State['set'], s: number): Visual => ({ kind: 'svg', scene: 'eq21', state: { set, s } });
 const PTS: Array<[string, string]> = [
   ['-3', '-2'],
   ['-2', '-1'],
@@ -56,7 +59,7 @@ ${PTS.map(([x, y], i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span da
   lobby: {
     eyebrow: 'Kelas 12 · Matematika Lanjut · Transformasi geometri',
     titleLines: ['Pembahasan Soal', 'Rotasi <span class="accent">Garis</span>', 'Pusat (2, 0)'],
-    lede: 'Garis $3x+2y=6$ diputar $90^\\circ$ berlawanan arah jarum jam terhadap titik $(2,0)$. Titik mana saja yang terletak pada garis hasil putaran?',
+    lede: 'Garis $3x+2y=6$ diputar $90^\\circ$ berlawanan arah jarum jam terhadap titik $(2,0)$. Dengan rumus cepat, kita cari garis bayangannya, lalu uji titik-titiknya.',
     facts: [
       { dt: 'Garis awal', dd: '3x + 2y = 6' },
       { dt: 'Rotasi', dd: '90° berlawanan jarum jam' },
@@ -66,17 +69,17 @@ ${PTS.map(([x, y], i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span da
   chapters: [
     { t: 'Lobi', d: 'Halaman awal' },
     { t: 'Pahami soal', d: 'Garis, sudut, dan pusat' },
-    { t: 'Aturan rotasi', d: '(x, y) → (2 − y, x − 2)' },
+    { t: 'Rumus cepat', d: 'x → (y + 2), y → (2 − x)' },
     { t: 'Garis bayangan l', d: '2x − 3y = 4' },
     { t: 'Uji tiap titik', d: '(2, 0) dan (5, 2)' },
-    { t: 'Cara dua titik', d: 'Opsional: putar dua titik', opt: true },
+    { t: 'Asal rumus cepat', d: 'Opsional: gambar dan pemisalan', opt: true },
     { t: 'Catatan lengkap', d: 'Simpan dan cetak' },
     { t: 'Cocokkan pilihan', d: '5 kartu' },
     { t: 'Selesai', d: '(2, 0) dan (5, 2)' },
   ],
   pinsLabel: 'Catatan',
   pins: {
-    pR: { id: 'pR', toks: [T('PR1', '(x,y)\\to(2-y,\\ x-2)', '', 'a3c')] },
+    pR: { id: 'pR', toks: [T('PR1', 'x\\to(y+2),\\ y\\to(2-x)', '', 'q3c')] },
     pL: { id: 'pL', toks: [T('PL1', 'l\\ \\ 2x-3y=4', '', 'b6c')] },
   },
   lists: {
@@ -100,47 +103,43 @@ ${PTS.map(([x, y], i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span da
         ],
       },
     ],
-    LA: [
+    LQ: [
       {
-        id: 'a1',
-        toks: [T('a1a', '(u,v)'), O('a1b', '='), T('a1c', '(x-2,\\ y)')],
-        note: 'geser pusat $(2,0)$ ke titik asal; contoh $A(4,-3)$ menjadi $(2,-3)$',
+        id: 'q1',
+        toks: [H('q1a', 'rotasi 90° berlawanan jarum jam, pusat', 'tx'), T('q1b', '(a,b)')],
+        note: 'rumus cepat',
       },
       {
-        id: 'a2',
-        toks: [T('a2a', '(u,v)'), O('a2b', '\\to'), T('a2c', '(-v,\\ u)')],
-        note: 'putar $90^\\circ$ berlawanan jarum jam; $(2,-3)$ menjadi $(3,2)$',
+        id: 'q2',
+        toks: [T('q2a', 'x\\to(y+a-b)'), O('q2b', ','), T('q2c', 'y\\to(a+b-x)')],
+        note: 'pada persamaan, $x$ dan $y$ diganti',
+        box: 'navy',
       },
       {
-        id: 'a3',
-        toks: [T('a3a', '(x,y)'), O('a3b', '\\to'), T('a3c', '(2-y,\\ x-2)', 'blue')],
-        note: 'geser kembali, $x$ ditambah $2$; $A$ menjadi $A^{\\prime}(5,2)$; simpan ke catatan',
+        id: 'q3',
+        toks: [T('q3a', 'a=2,\\ b=0', '', '@s-pusat')],
+        note: 'pusat $(2,0)$',
+      },
+      {
+        id: 'q3x',
+        toks: [T('q3c', 'x\\to(y+2),\\ y\\to(2-x)', 'blue', 'q3a')],
+        note: '$y+2-0$ dan $2+0-x$; simpan ke catatan',
         box: 'navy',
       },
     ],
     LB: [
-      {
-        id: 'b1',
-        toks: [T('b1a', "x'=2-y", '', 'PR1'), O('b1b', '\\to'), T('b1c', "y=2-x'", 'blue')],
-        note: 'ambil $y$ lama',
-      },
-      {
-        id: 'b1x',
-        toks: [T('b1d', "y'=x-2", '', 'PR1'), O('b1e', '\\to'), T('b1f', "x=y'+2", 'blue')],
-        note: 'ambil $x$ lama',
-      },
       { id: 'b2', toks: [T('b2a', '3x+2y=6', '', '@s-g')], note: 'garis awal' },
       {
         id: 'b3',
-        toks: [T('b3a', "3(y'+2)+2(2-x')=6", '', 'b1f')],
-        note: '$x$ dan $y$ lama dimasukkan',
+        toks: [T('b3a', '3(y+2)+2(2-x)=6', '', 'PR1')],
+        note: '$x$ diganti $(y+2)$, $y$ diganti $(2-x)$',
       },
-      { id: 'b4', toks: [T('b4a', "3y'+6+4-2x'=6")], note: 'dijabarkan' },
-      { id: 'b5', toks: [T('b5a', "-2x'+3y'+4=0")], note: '$6+4-6=4$' },
+      { id: 'b4', toks: [T('b4a', '3y+6+4-2x=6')], note: 'dijabarkan' },
+      { id: 'b5', toks: [T('b5a', '-2x+3y+4=0')], note: '$6+4-6=4$' },
       {
         id: 'b6',
         toks: [H('b6a', 'garis', 'tx'), T('b6c', 'l\\ \\ 2x-3y=4', 'blue')],
-        note: 'dikali $-1$, konstanta pindah ruas, tanda aksen dilepas; simpan ke catatan',
+        note: 'dikali $-1$, konstanta pindah ruas; simpan ke catatan',
         box: 'navy',
       },
     ],
@@ -149,29 +148,52 @@ ${PTS.map(([x, y], i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span da
       test('c2', 1, '-4+3', '-1', false, '$2(-2)-3(-1)$, tidak pada $l$'),
       test('c3', 2, '2-6', '-4', false, '$2(1)-3(2)$, tidak pada $l$'),
       test('c4', 3, '4-0', '4', true, '$2(2)-3(0)$, pada $l$; ini pusat rotasi, tidak berpindah'),
-      test('c5', 4, '10-6', '4', true, '$2(5)-3(2)$, pada $l$; bayangan $A(4,-3)$'),
+      test('c5', 4, '10-6', '4', true, '$2(5)-3(2)$, pada $l$'),
       {
         id: 'c6',
         toks: [H('c6a', 'Jawaban', 'lbl'), T('c6b', '(2,0)\\ \\text{dan}\\ (5,2)', 'gold')],
         box: 'gold',
       },
     ],
-    // cara dua titik (opsional)
-    LX: [
+    // asal rumus cepat (opsional)
+    LZ1: [
       {
-        id: 'x1',
-        toks: [T('x1a', '(0,3)'), O('x1b', '\\to'), T('x1e', '(-1,-2)', 'blue', 'PR1')],
-        note: 'titik $(0,3)$ pada garis awal diputar, $(2-3,\\ 0-2)$',
+        id: 'z1',
+        toks: [T('z1a', '(x,y)'), O('z1b', '\\to'), T('z1c', "(x',y')")],
+        note: 'misalkan titik $(x,y)$ diputar mengelilingi pusat $(a,b)$',
       },
       {
-        id: 'x2',
-        toks: [T('x2a', '(2,0)'), O('x2b', '\\to'), T('x2c', '(2,0)', 'blue')],
-        note: 'pusat rotasi ada di garis awal, jadi tidak berpindah',
+        id: 'z2',
+        toks: [T('z2a', '(x-a,\\ y-b)')],
+        note: 'selisih titik terhadap pusat',
       },
       {
-        id: 'x3',
-        toks: [T('x3a', '-2+6=4'), O('x3b', ','), T('x3c', '4-0=4'), T('x3d', '\\;\\checkmark', 'blue')],
-        note: '$(-1,-2)$ dan $(2,0)$ memenuhi $2x-3y=4$, sama dengan hasil aljabar',
+        id: 'z3',
+        toks: [H('z3a', 'diputar', 'tx'), O('z3b', '\\to'), T('z3c', '(-(y-b),\\ x-a)', 'blue', 'z2a')],
+        note: 'selisih diputar $90^\\circ$ berlawanan jarum jam, $(u,v)$ menjadi $(-v,u)$',
+      },
+    ],
+    LZ2: [
+      {
+        id: 'z4',
+        toks: [T('z4a', "x'=a-(y-b)"), O('z4b', '='), T('z4c', 'a+b-y', 'blue')],
+        note: 'tambahkan kembali pusat, koordinat $x$',
+      },
+      {
+        id: 'z5',
+        toks: [T('z5a', "y'=b+(x-a)"), O('z5b', '='), T('z5c', 'x-a+b', 'blue')],
+        note: 'tambahkan kembali pusat, koordinat $y$',
+      },
+      {
+        id: 'z6',
+        toks: [T('z6a', "y=a+b-x'"), O('z6b', ','), T('z6c', "x=y'+a-b")],
+        note: 'dibalik, titik lama dinyatakan dengan titik baru',
+      },
+      {
+        id: 'z7',
+        toks: [T('z7a', 'x\\to(y+a-b)'), O('z7b', ','), T('z7c', 'y\\to(a+b-x)', 'blue')],
+        note: 'pada persamaan bayangan tanda aksen dilepas, inilah rumus cepatnya',
+        box: 'navy',
       },
     ],
     L7: [
@@ -196,70 +218,52 @@ ${PTS.map(([x, y], i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span da
       visual: { kind: 'soal', hl: 2 },
       board: { title: 'Pahami soal', list: 'L1', upTo: 4, from: 3 },
     },
-    // ---- 2 · Aturan rotasi ----
+    // ---- 2 · Rumus cepat ----
     {
       ch: 2,
-      cap: 'Coba pada titik $A(4,-3)$. Geser dulu pusat $(2,0)$ ke titik asal, jadi selisihnya $(4-2,\\ -3-0)=(2,-3)$.',
-      visual: sc({ r: 1 }),
-      board: { title: 'Aturan rotasi', list: 'LA', upTo: 1, from: 0 },
+      cap: 'Pakai rumus cepat. Untuk rotasi $90^\\circ$ berlawanan jarum jam berpusat $(a,b)$, $x$ diganti $(y+a-b)$ dan $y$ diganti $(a+b-x)$.',
+      visual: eq(1, 1),
+      board: { title: 'Rumus cepat', list: 'LQ', upTo: 2, from: 0 },
     },
     {
       ch: 2,
-      cap: 'Putar $90^\\circ$ berlawanan arah jarum jam, $(u,v)$ menjadi $(-v,u)$. Jadi $(2,-3)$ menjadi $(3,2)$.',
-      visual: sc({ r: 2 }),
-      board: { title: 'Aturan rotasi', list: 'LA', upTo: 2, from: 1 },
+      cap: 'Pusatnya $(2,0)$, jadi $a=2$ dan $b=0$. Maka $x$ diganti $(y+2)$ dan $y$ diganti $(2-x)$.',
+      visual: eq(1, 2),
+      board: { title: 'Rumus cepat', list: 'LQ', upTo: 4, from: 2, save: ['pR'] },
       ask: {
-        before: 'a2',
-        q: 'Rotasi $90^\\circ$ berlawanan jarum jam mengubah $(u,v)$ menjadi…',
+        before: 'q3x',
+        q: 'Dengan pusat $(2,0)$, $x$ diganti dengan…',
         opts: [
-          { tex: '(-v,\\ u)', ok: true },
-          {
-            tex: '(v,\\ -u)',
-            hint: 'Itu rotasi searah jarum jam. Berlawanan jarum jam, titik $(1,0)$ menjadi $(0,1)$.',
-          },
-          { tex: '(-u,\\ -v)', hint: 'Itu rotasi $180^\\circ$.' },
+          { tex: '(y+2)', ok: true },
+          { tex: '(y-2)', hint: '$a-b=2-0=2$, jadi $y+2$.' },
+          { tex: '(2-x)', hint: 'Itu pengganti $y$. Pengganti $x$ adalah $(y+a-b)=(y+2)$.' },
         ],
       },
-    },
-    {
-      ch: 2,
-      cap: 'Geser kembali, tambahkan $2$ pada $x$. Jadi $A$ menjadi $(5,2)$, dan aturannya $(x,y)\\to(2-y,\\ x-2)$.',
-      visual: sc({ r: 2 }),
-      board: { title: 'Aturan rotasi', list: 'LA', upTo: 3, from: 2, save: ['pR'] },
     },
     // ---- 3 · Garis bayangan l ----
     {
       ch: 3,
-      cap: 'Dari aturan itu, ambil $x$ dan $y$ lama. $x^{\\prime}=2-y$ memberi $y=2-x^{\\prime}$, dan $y^{\\prime}=x-2$ memberi $x=y^{\\prime}+2$.',
-      visual: sc({ g0: true }),
+      cap: 'Masukkan ke garis awal $3x+2y=6$. Huruf $x$ diganti $(y+2)$ dan $y$ diganti $(2-x)$.',
+      visual: eq(2, 2),
       board: { title: 'Garis bayangan l', pins: ['pR'], list: 'LB', upTo: 2, from: 0 },
-      ask: {
-        before: 'b1',
-        q: "Dari $x'=2-y$, maka $y=$…",
-        opts: [
-          { tex: "2-x'", ok: true },
-          { tex: "x'-2", hint: "Pindahkan $y$ ke kiri dan $x'$ ke kanan, $y=2-x'$." },
-          { tex: "2+x'", hint: "$x'=2-y$ memberi $y=2-x'$. Tanda $x'$ tetap negatif." },
-        ],
-      },
     },
     {
       ch: 3,
-      cap: 'Masukkan ke garis awal $3x+2y=6$. Jadi $3(y^{\\prime}+2)+2(2-x^{\\prime})=6$.',
-      visual: sc({ g0: true }),
+      cap: 'Jabarkan, $3y+6+4-2x=6$, lalu kumpulkan konstantanya, $-2x+3y+4=0$.',
+      visual: eq(2, 3),
       board: { title: 'Garis bayangan l', pins: ['pR'], list: 'LB', upTo: 4, from: 2 },
     },
     {
       ch: 3,
-      cap: 'Jabarkan, $3y^{\\prime}+6+4-2x^{\\prime}=6$, lalu kumpulkan konstantanya, $-2x^{\\prime}+3y^{\\prime}+4=0$.',
-      visual: sc({ g0: true }),
-      board: { title: 'Garis bayangan l', pins: ['pR'], list: 'LB', upTo: 6, from: 4 },
+      cap: 'Kalikan $-1$ dan pindahkan konstantanya. Garis bayangannya $l$, $2x-3y=4$.',
+      visual: eq(2, 4),
+      board: { title: 'Garis bayangan l', pins: ['pR'], list: 'LB', upTo: 5, from: 4, save: ['pL'] },
     },
     {
       ch: 3,
-      cap: 'Kalikan $-1$ dan pindahkan konstantanya. Garis bayangannya $l$, $2x-3y=4$, yaitu garis awal yang berputar mengelilingi $(2,0)$.',
+      cap: 'Di gambar, garis awal berputar $90^\\circ$ mengelilingi $(2,0)$ dan berhenti tepat di garis $l$.',
       visual: sc(GRAPH),
-      board: { title: 'Garis bayangan l', pins: ['pR'], list: 'LB', upTo: 7, from: 6, save: ['pL'] },
+      board: { title: 'Garis bayangan l', pins: ['pR'], list: 'LB', upTo: 5, from: 5 },
     },
     // ---- 4 · Uji tiap titik ----
     {
@@ -276,7 +280,7 @@ ${PTS.map(([x, y], i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span da
     },
     {
       ch: 4,
-      cap: 'Titik $(2,0)$ memberi $4$, karena pusat rotasi tidak berpindah. Titik $(5,2)$ memberi $10-6=4$, bayangan $A(4,-3)$.',
+      cap: 'Titik $(2,0)$ memberi $4$, karena pusat rotasi tidak berpindah. Titik $(5,2)$ memberi $10-6=4$.',
       visual: sc({ ...GRAPH, n: 5 }),
       board: { title: 'Uji tiap titik', pins: ['pL'], list: 'LC', upTo: 5, from: 3 },
     },
@@ -286,26 +290,38 @@ ${PTS.map(([x, y], i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span da
       visual: sc({ ...GRAPH, n: 5 }),
       board: { title: 'Uji tiap titik', pins: ['pL'], list: 'LC', upTo: 6, from: 5 },
     },
-    // tawaran cara dua titik (opsional): Ya masuk Bagian 5, Tidak/Lewati langsung ke Bagian 6
+    // tawaran asal rumus cepat (opsional): Ya masuk Bagian 5, Tidak/Lewati langsung ke Bagian 6
     {
       ch: 4,
-      cap: 'Mau lihat cara lain, yaitu memutar dua titik dari garis awal?',
+      cap: 'Mau tahu kenapa rumus cepatnya $x\\to(y+a-b)$ dan $y\\to(a+b-x)$?',
       visual: sc({ ...GRAPH, n: 5 }),
       board: { title: 'Uji tiap titik', pins: ['pL'], list: 'LC', upTo: 6, from: 6 },
-      branch: { yes: 'Ya, lihat cara dua titik' },
+      branch: { yes: 'Ya, jelaskan asal rumusnya' },
     },
-    // ---- 5 · Cara dua titik (opsional) ----
+    // ---- 5 · Asal rumus cepat (opsional) ----
     {
       ch: 5,
-      cap: 'Ambil dua titik pada garis awal, $(0,3)$ dan $(2,0)$. Titik $(0,3)$ diputar menjadi $(-1,-2)$, sedangkan $(2,0)$ adalah pusat, jadi tetap.',
-      visual: sc({ g0: true, two: true }),
-      board: { title: 'Cara dua titik', pins: ['pR'], list: 'LX', upTo: 2, from: 0 },
+      cap: 'Misalkan titik $(x,y)$ diputar mengelilingi pusat $(a,b)$ menjadi $(x^{\\prime},y^{\\prime})$. Selisih titik terhadap pusat adalah $(x-a,\\ y-b)$.',
+      visual: sc({ r: 1, gen: true }),
+      board: { title: 'Asal rumus cepat', list: 'LZ1', upTo: 2, from: 0 },
     },
     {
       ch: 5,
-      cap: 'Garis $l$ melalui $(-1,-2)$ dan $(2,0)$. Keduanya memenuhi $2x-3y=4$, sama dengan hasil aljabar.',
-      visual: sc({ ...GRAPH, two: true }),
-      board: { title: 'Cara dua titik', pins: ['pR'], list: 'LX', upTo: 3, from: 2 },
+      cap: 'Diputar $90^\\circ$ berlawanan jarum jam, $(u,v)$ menjadi $(-v,u)$. Jadi selisihnya menjadi $(-(y-b),\\ x-a)$.',
+      visual: sc({ r: 2, gen: true }),
+      board: { title: 'Asal rumus cepat', list: 'LZ1', upTo: 3, from: 2 },
+    },
+    {
+      ch: 5,
+      cap: 'Tambahkan kembali pusatnya. Jadi $x^{\\prime}=a+b-y$ dan $y^{\\prime}=x-a+b$.',
+      visual: eq(3, 4),
+      board: { title: 'Asal rumus cepat', list: 'LZ2', upTo: 2, from: 0 },
+    },
+    {
+      ch: 5,
+      cap: 'Dibalik, titik lama $y=a+b-x^{\\prime}$ dan $x=y^{\\prime}+a-b$. Pada persamaan bayangan tanda aksen dilepas, itulah rumus cepatnya.',
+      visual: eq(3, 6),
+      board: { title: 'Asal rumus cepat', list: 'LZ2', upTo: 4, from: 2 },
     },
     // ---- 6 · Catatan lengkap ----
     {
@@ -353,13 +369,13 @@ ${PTS.map(([x, y], i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span da
     sections: [
       { title: 'Pahami soal', lists: ['L1'] },
       {
-        title: 'Aturan rotasi',
-        lists: ['LA'],
-        why: 'Rotasi $90^\\circ$ berlawanan jarum jam berpusat $(a,b)$: geser pusat ke titik asal, putar $(u,v)\\to(-v,u)$, lalu geser kembali.',
+        title: 'Rumus cepat',
+        lists: ['LQ'],
+        why: 'Rotasi $90^\\circ$ berlawanan jarum jam berpusat $(a,b)$: pada persamaan, $x$ diganti $(y+a-b)$ dan $y$ diganti $(a+b-x)$.',
       },
       { title: 'Garis bayangan l', lists: ['LB'], sketch: 'rot21' },
       { title: 'Uji tiap titik', lists: ['LC'] },
-      { title: 'Cara dua titik (opsional)', lists: ['LX'] },
+      { title: 'Asal rumus cepat (opsional)', lists: ['LZ1', 'LZ2'] },
     ],
     answer: 'Jawaban: <b>(2, 0) dan (5, 2)</b>.',
   },
@@ -373,9 +389,9 @@ ${PTS.map(([x, y], i) => `<li><span class="hl hl-blue hl-q" data-hl="9"><span da
     goldRows: ['c4', 'c5', 'c6', 'w1', 'r2'],
   },
   authorNotes: [
-    'Modul baru (v1.54). Aturan rotasi dijelaskan lewat satu titik A(4, −3) dari Pemeriksaan hasil dokumen: lengan dari pusat (2, 0) berputar 90° dan A mendarat di (5, 2); dokumen a1–a3 dan pertanyaan cepat (−v, u).',
-    'Garis l dari dokumen b1–b6 (pertanyaan cepat y = 2 − x′), di panggung garis awal berputar mengelilingi P menjadi l. Uji titik dokumen c1–c5 satu per satu dari pilihan.',
-    'Cara dua titik dari Pemeriksaan hasil dokumen menjadi bagian opsional. Tanpa simbol ":" di baris papan.',
+    'Revisi pemilik (v1.55): langsung rumus cepat, rotasi 90° berlawanan jarum jam berpusat (a, b), x diganti (y + a − b) dan y diganti (a + b − x); dengan pusat (2, 0), x → (y + 2) dan y → (2 − x). Hasilnya sama dengan dokumen b1–b6, l: 2x − 3y = 4.',
+    'Adegan eq21 memakai gaya penurunan soal 19: huruf x dan y terbang ke penggantinya. Garis awal berputar menjadi l (adegan rot21), lalu tiap titik pilihan diuji (dokumen c1–c5).',
+    'Tawaran "Mau tahu kenapa rumus cepatnya seperti itu?" membuka bagian opsional: gambar umum titik (x, y) dan pusat (a, b) (rot21 mode gen), pemisalan selisih (x − a, y − b) yang diputar menjadi (−(y − b), x − a), lalu dibalik menjadi rumus cepat. Tanpa simbol ":" di baris papan.',
   ],
 };
 
