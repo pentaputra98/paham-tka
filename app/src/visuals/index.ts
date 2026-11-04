@@ -4,6 +4,7 @@ import { createCone } from './cone';
 import { createCubic5 } from './cubic5';
 import { createDoor3d } from './door3d';
 import { createDrink3 } from './drink3';
+import { createDil20 } from './dil20';
 import { createDrum7 } from './drum7';
 import { createEceng10 } from './eceng10';
 import { createHk6 } from './hk6';
@@ -32,6 +33,7 @@ export const VISUALS: Record<string, VisualFactory> = {
   cubic5: createCubic5,
   door3d: createDoor3d,
   drink3: createDrink3,
+  dil20: createDil20,
   drum7: createDrum7,
   eceng10: createEceng10,
   hk6: createHk6,

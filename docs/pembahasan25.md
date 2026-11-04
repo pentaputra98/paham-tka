@@ -2899,6 +2899,15 @@ Maju: $(-5,3)+(3,-1)=(-2,2)$; dilatasi $k=2$ menghasilkan pusat $(-4,4)$ dan jar
 - Menghitung $T$ langsung dari $L$ ke $L''$ tanpa menghitung dilatasi lebih dahulu (karena pusat dilatasi $O$, pusat ikut berubah).
 - Mengalikan jari-jari dengan $k$ tetapi lupa mengalikan koordinat pusat (atau sebaliknya).
 
+*Alur aplikasi (Revisi 1.52, 5 Nov 2026, gaya pemilik; kunci tidak berubah: C). Dipakai di `app/src/content/soal/q20.ts` (modul baru, adegan `dil20`); soal 20 ditambahkan ke Rilis 1 dan dibuka.* Jalur utama **dari pilihan**: faktor skala dicari dulu sehingga pilihan langsung tinggal dua. Hasil disimpan ke **catatan**: $L$, $L''$, $k=2$, pusat $L'$. Baris papan tanpa ":". Tata letak: panggung penuh dua kolom.
+- **Bagian 1 — Pahami soal:** $L$ pusat $(-5,3)$, $r=2$; translasi $T$ lalu dilatasi berpusat $O$; $L''$; ditanya $T$ dan $k$.
+- **Bagian 2 — Lingkaran L″:** a1–a3, pusat $(-4,4)$ dan $r=4$ (pertanyaan cepat dokumen).
+- **Bagian 3 — Faktor skala:** b1–b4, $r'=2$, $4=k\times2$, $k=2$; pilihan dengan $k=2$ tinggal **C** dan **D**.
+- **Bagian 4 — Pusat L′:** c1–c3, mundur dari $L''$, $(-4,4)$ dibagi $2$ menjadi $(-2,2)$; di panggung $L'$ menyusut dari $L''$ ke arah $O$.
+- **Bagian 5 — Translasi T:** d1–d3, $T=(-2,2)-(-5,3)=(3,-1)$ (pertanyaan cepat dokumen) → **C**; tawaran cek maju.
+- **Bagian 6 — Cek maju dari pilihan (opsional, Ya/Lewati):** C: $(-5,3)\to(-2,2)\to(-4,4)$, jari-jari $2\to2\to4$ ✓ (*Pemeriksaan hasil*); D: $(-5,3)\to(-4,4)\to(-8,8)$ ✗ (jebakan kartu D). Lingkaran mint bergeser lalu diperbesar dari $O$.
+- **Bagian 7–9:** catatan lengkap (sketsa tiga lingkaran), kartu A–E dengan pertanyaan berhuruf, segel C.
+
 ---
 
 ## SOAL 21 — Rotasi Garis Berpusat (2, 0)

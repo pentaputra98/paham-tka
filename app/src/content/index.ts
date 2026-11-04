@@ -64,17 +64,17 @@ export const RESPONSE_LABEL: Record<Response, string> = {
   truefalse: 'Tabel dua kolom',
 };
 
-/** Soal Rilis 1 (K10, ditambah soal 15 pada v1.14, soal 11 pada v1.20, soal 3 pada v1.30, dan soal 4 pada v1.31, soal 7 pada v1.39, soal 8 pada v1.41, soal 9 pada v1.42, soal 10 pada v1.43, soal 12 pada v1.44, soal 14 pada v1.48, soal 19 pada v1.51): kontennya sudah ada dan tetap diverifikasi (verify:content, uji unit). */
+/** Soal Rilis 1 (K10, ditambah soal 15 pada v1.14, soal 11 pada v1.20, soal 3 pada v1.30, dan soal 4 pada v1.31, soal 7 pada v1.39, soal 8 pada v1.41, soal 9 pada v1.42, soal 10 pada v1.43, soal 12 pada v1.44, soal 14 pada v1.48, soal 19 pada v1.51, soal 20 pada v1.52): kontennya sudah ada dan tetap diverifikasi (verify:content, uji unit). */
 export const RELEASE_1: readonly number[] = [
-  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 24, 25,
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 24, 25,
 ];
 
 /**
  * Soal yang DIBUKA untuk siswa (revisi pemilik PRD v1.6–1.7): dibuka satu per satu setelah pembahasannya
- * ditulis ulang mengikuti alur guru dan disetujui; soal lain tampil "Segera hadir". Soal 1, lalu 24, 17, 18, 15, 16, 11 (PRD v1.14–1.20), 2, 3, 4 (v1.29–1.31), 5 (v1.33), 6 (v1.35), 7 (v1.39), 8 (v1.41), 9 (v1.42), 10 (v1.43), 12 (v1.44), 13 (v1.47), 14 (v1.48), 19 (v1.51).
+ * ditulis ulang mengikuti alur guru dan disetujui; soal lain tampil "Segera hadir". Soal 1, lalu 24, 17, 18, 15, 16, 11 (PRD v1.14–1.20), 2, 3, 4 (v1.29–1.31), 5 (v1.33), 6 (v1.35), 7 (v1.39), 8 (v1.41), 9 (v1.42), 10 (v1.43), 12 (v1.44), 13 (v1.47), 14 (v1.48), 19 (v1.51), 20 (v1.52).
  */
 export const OPEN: readonly number[] = [
-  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 24,
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 24,
 ];
 
 type Row = [no: number, title: string, domain: Domain, response: Response, labels?: [string, string]];
