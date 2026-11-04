@@ -3287,6 +3287,26 @@
     position: relative;
   }
 
+  /* f(x) di atas skema: koefisiennya diambil satu per satu ke tabel */
+  .hk-fx {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    margin-bottom: 0.35em;
+    font-size: 0.7em;
+    white-space: nowrap;
+  }
+
+  .hk-co {
+    position: relative;
+    padding-inline: 0.12em;
+    color: var(--color-stage-accent);
+  }
+
+  .hk-co.is-src .hk-ring {
+    opacity: 1;
+  }
+
   .hk-grid {
     display: grid;
     grid-template-columns: auto repeat(5, minmax(3.2em, auto));
@@ -3474,7 +3494,7 @@
   }
 
   .hk-mul text {
-    font-size: var(--fs-small);
+    font-size: var(--fs-body);
   }
 
   /* keterangan hitungan op terakhir, di bawah skema */

@@ -8,12 +8,15 @@
  *   k₁    X     X     −1     1−a    a−b
  *   k₂    X    −1     1−a    a−b     X
  *         1    a−1    b−a  │ 2−b   a−b−6
- * Op (satu operasi = satu animasi): 1 turun; 2 1·k₁; 3 1·k₂; 4 jumlah kolom a; 5 (a−1)·k₁; 6 (a−1)·k₂; 7 jumlah kolom b;
- * 8 (b−a)·k₁; 9 (b−a)·k₂; 10 jumlah kolom 1; 11 jumlah kolom −6; 12 tanda hasil bagi dan sisa.
- * Animasi kali: angka asal dan pengalinya disorot, tempat tujuan dibingkai putus-putus, panah berlabel "× k", angka
- * melayang ke tujuan, lalu hasilnya muncul dengan warna baru. Animasi jumlah: kolom dibingkai dengan tanda +, semua
- * angkanya melayang ke baris hasil. State: m (k₁, k₂), x (tanda X), cut (batas sisa), k0..k (op langkah ini), cmp (sisa
- * soal 5x − 1), hl 'x' | 'c'. Hasil jumlah menjadi sumber terbang (h-s1 … h-s5), sisa soal h-g4, h-g5.
+ * Revisi v1.38: co = koefisien diambil dari f(x) di atas skema (tiap koefisien disorot lalu melayang ke tabel; x⁴ dan x
+ * ditulis 1x⁴ dan 1x); perkalian dengan k₂ (baris bawah, kolom berikutnya) lebih dulu, baru k₁ (naik ke baris atas).
+ * Op (satu operasi = satu animasi): 1 turun; 2 1·k₂; 3 1·k₁; 4 jumlah kolom a; 5 (a−1)·k₂; 6 (a−1)·k₁; 7 jumlah kolom b;
+ * 8 (b−a)·k₂; 9 (b−a)·k₁; 10 jumlah kolom 1; 11 jumlah kolom −6; 12 tanda hasil bagi dan sisa.
+ * Animasi kali: angka asal dan pengalinya disorot, tempat tujuan dibingkai putus-putus, panah berlabel "× k₂" yang lalu
+ * berganti menjadi angkanya "× (−1)", angka melayang ke tujuan, lalu hasilnya muncul dengan warna baru. Animasi jumlah:
+ * kolom dibingkai dengan tanda +, semua angkanya melayang ke baris hasil. State: m (k₁, k₂), co (koefisien), x (tanda X),
+ * cut (batas sisa), k0..k (op langkah ini), cmp (sisa soal 5x − 1), hl 'x' | 'c'. Hasil jumlah menjadi sumber terbang
+ * (h-s1 … h-s5), sisa soal h-g4, h-g5.
  * Angka turunan aljabar dari docs/pembahasan25.md soal 6. Gerak hanya transform/opacity.
  */
 import { reducedMotion } from '../core/clock';
@@ -25,6 +28,9 @@ import type { VisualScene } from '../engine/scene';
 
 export interface Hk6State {
   m?: boolean;
+  co?: boolean;
+  /** langkah ini memperagakan pengambilan koefisien dari f(x) */
+  coIn?: boolean;
   x?: boolean;
   cut?: boolean;
   k0?: number;
@@ -39,7 +45,7 @@ interface Cell {
   c: number;
   t: string;
   cls: string;
-  /** op yang memunculkan sel ini; 0 = sejak awal, −1 = bersama pengali, −2 = bersama X, −3 = sisa soal */
+  /** op yang memunculkan sel ini; 0 = sejak awal, −1 = pengali, −2 = X, −3 = sisa soal, −4 = koefisien */
   op: number;
 }
 /** baris grid: 1 pangkat, 2 koefisien, 3 baris k₁, 4 baris k₂, 5 hasil jumlah, 6 label, 7 sisa soal */
@@ -49,26 +55,26 @@ const CELLS: Record<string, Cell> = {
   p3: { r: 1, c: 4, t: 'x^2', cls: 'hk-pw', op: 0 },
   p4: { r: 1, c: 5, t: 'x', cls: 'hk-pw', op: 0 },
   p5: { r: 1, c: 6, t: 'x^0', cls: 'hk-pw', op: 0 },
-  c1: { r: 2, c: 2, t: '1', cls: 'hk-k', op: 0 },
-  c2: { r: 2, c: 3, t: 'a', cls: 'hk-k', op: 0 },
-  c3: { r: 2, c: 4, t: 'b', cls: 'hk-k', op: 0 },
-  c4: { r: 2, c: 5, t: '1', cls: 'hk-k', op: 0 },
-  c5: { r: 2, c: 6, t: '-6', cls: 'hk-k', op: 0 },
+  c1: { r: 2, c: 2, t: '1', cls: 'hk-k', op: -4 },
+  c2: { r: 2, c: 3, t: 'a', cls: 'hk-k', op: -4 },
+  c3: { r: 2, c: 4, t: 'b', cls: 'hk-k', op: -4 },
+  c4: { r: 2, c: 5, t: '1', cls: 'hk-k', op: -4 },
+  c5: { r: 2, c: 6, t: '-6', cls: 'hk-k', op: -4 },
   k1: { r: 3, c: 1, t: 'k_1=-1', cls: 'hk-m', op: -1 },
   k2: { r: 4, c: 1, t: 'k_2=-1', cls: 'hk-m', op: -1 },
   x1: { r: 3, c: 2, t: '\\text{X}', cls: 'hk-x', op: -2 },
   x2: { r: 3, c: 3, t: '\\text{X}', cls: 'hk-x', op: -2 },
   x3: { r: 4, c: 2, t: '\\text{X}', cls: 'hk-x', op: -2 },
   x4: { r: 4, c: 6, t: '\\text{X}', cls: 'hk-x hk-stop', op: -2 },
-  t3: { r: 3, c: 4, t: '-1', cls: 'hk-p', op: 2 },
-  u2: { r: 4, c: 3, t: '-1', cls: 'hk-p', op: 3 },
+  u2: { r: 4, c: 3, t: '-1', cls: 'hk-p', op: 2 },
+  t3: { r: 3, c: 4, t: '-1', cls: 'hk-p', op: 3 },
   s1: { r: 5, c: 2, t: '1', cls: 'hk-s', op: 1 },
   s2: { r: 5, c: 3, t: 'a-1', cls: 'hk-s', op: 4 },
-  t4: { r: 3, c: 5, t: '1-a', cls: 'hk-p', op: 5 },
-  u3: { r: 4, c: 4, t: '1-a', cls: 'hk-p', op: 6 },
+  u3: { r: 4, c: 4, t: '1-a', cls: 'hk-p', op: 5 },
+  t4: { r: 3, c: 5, t: '1-a', cls: 'hk-p', op: 6 },
   s3: { r: 5, c: 4, t: 'b-a', cls: 'hk-s', op: 7 },
-  t5: { r: 3, c: 6, t: 'a-b', cls: 'hk-p', op: 8 },
-  u4: { r: 4, c: 5, t: 'a-b', cls: 'hk-p', op: 9 },
+  u4: { r: 4, c: 5, t: 'a-b', cls: 'hk-p', op: 8 },
+  t5: { r: 3, c: 6, t: 'a-b', cls: 'hk-p', op: 9 },
   s4: { r: 5, c: 5, t: '2-b', cls: 'hk-s hk-r', op: 10 },
   s5: { r: 5, c: 6, t: 'a-b-6', cls: 'hk-s hk-r', op: 11 },
   g4: { r: 7, c: 5, t: '5', cls: 'hk-g', op: -3 },
@@ -96,14 +102,14 @@ type Op =
   | { kind: 'mark' };
 export const OPS: Op[] = [
   { kind: 'down', from: 'c1', to: 's1' },
-  { kind: 'mul', from: 's1', by: 'k1', to: 't3' },
   { kind: 'mul', from: 's1', by: 'k2', to: 'u2' },
+  { kind: 'mul', from: 's1', by: 'k1', to: 't3' },
   { kind: 'sum', from: ['c2', 'u2'], to: 's2' },
-  { kind: 'mul', from: 's2', by: 'k1', to: 't4' },
   { kind: 'mul', from: 's2', by: 'k2', to: 'u3' },
+  { kind: 'mul', from: 's2', by: 'k1', to: 't4' },
   { kind: 'sum', from: ['c3', 't3', 'u3'], to: 's3' },
-  { kind: 'mul', from: 's3', by: 'k1', to: 't5' },
   { kind: 'mul', from: 's3', by: 'k2', to: 'u4' },
+  { kind: 'mul', from: 's3', by: 'k1', to: 't5' },
   { kind: 'sum', from: ['c4', 't4', 'u4'], to: 's4' },
   { kind: 'sum', from: ['c5', 't5'], to: 's5' },
   { kind: 'mark' },
@@ -111,17 +117,25 @@ export const OPS: Op[] = [
 /** keterangan hitungan tiap op, ditulis di bawah skema */
 const SAY: string[] = [
   '1\\ \\text{turun ke baris hasil}',
-  '1\\times k_1=1\\times(-1)=-1',
   '1\\times k_2=1\\times(-1)=-1',
+  '1\\times k_1=1\\times(-1)=-1',
   'a+(-1)=a-1',
-  '(a-1)\\times k_1=(a-1)\\times(-1)=1-a',
   '(a-1)\\times k_2=(a-1)\\times(-1)=1-a',
+  '(a-1)\\times k_1=(a-1)\\times(-1)=1-a',
   'b+(-1)+(1-a)=b-a',
-  '(b-a)\\times k_1=(b-a)\\times(-1)=a-b',
   '(b-a)\\times k_2=(b-a)\\times(-1)=a-b',
+  '(b-a)\\times k_1=(b-a)\\times(-1)=a-b',
   '1+(1-a)+(a-b)=2-b',
   '-6+(a-b)=a-b-6',
   '\\text{3 angka hasil bagi, 2 angka sisa}',
+];
+/** f(x) lengkap dengan koefisien 1 yang tersirat: [TeX sebelum koefisien, koefisien] */
+const FX: Array<[string, string]> = [
+  ['f(x)=', '1'],
+  ['x^4+', 'a'],
+  ['x^3+', 'b'],
+  ['x^2+', '1'],
+  ['x', '-6'],
 ];
 const LAST = OPS.length;
 const SVGNS = 'http://www.w3.org/2000/svg';
@@ -135,6 +149,7 @@ function markup(): string {
     })
     .join('');
   return `<div class="hk-wrap" role="img" aria-label="Horner-Kino: koefisien 1, a, b, 1, −6; k1 = −1 di atas, k2 = −1 di bawah, tempat kosong diberi X. Hasil 1, a − 1, b − a; sisa 2 − b dan a − b − 6.">
+  <div class="hk-fx">${FX.map(([pre, co], i) => `${tex(pre)}<span class="hk-co" data-co="${i + 1}"><span class="hk-ring" aria-hidden="true"></span>${tex(co)}</span>`).join('')}</div>
   <div class="hk-grid">
     <span class="hk-vl" style="grid-area:2/1/6/2" aria-hidden="true"></span>
     <span class="hk-hl" style="grid-area:5/2/6/7" aria-hidden="true"></span>
@@ -166,7 +181,11 @@ export function createHk6(): VisualScene {
   let shown: [number, number] = [0, 0];
   let lastK = -1;
   let hl = '';
-  let prev = { m: false, x: false, cut: false, cmp: false };
+  let prev = { m: false, co: false, x: false, cut: false, cmp: false };
+  /** nomor panggilan apply terakhir: animasi lama berhenti bila sudah ada langkah baru */
+  let gen = 0;
+  /** animasi op sedang berjalan: jangan gambar ulang panah saat ukuran berubah */
+  let busy = false;
 
   /** posisi sel dalam piksel tata letak wrap (tidak terpengaruh skala panggung) */
   function box(e: Element): { x: number; y: number; w: number; h: number } {
@@ -218,8 +237,11 @@ export function createHk6(): VisualScene {
           'marker-end': 'url(#hk-head)',
         }),
       );
-      const t = svg('text', { x: (x1 + x2) / 2 + 4, y: (y1 + y2) / 2 + 14 });
-      t.textContent = op.by === 'k1' ? '× k₁' : '× k₂';
+      // label di bawah angka asal (baris kosong), tidak menimpa panah
+      const t = svg('text', { x: a.x + a.w + 2, y: a.y + a.h + 16 });
+      // label mula-mula nama pengalinya, lalu (saat animasi) diganti angkanya
+      t.textContent = '× (−1)';
+      t.dataset.k = op.by === 'k1' ? '× k₁' : '× k₂';
       g.append(t);
     } else {
       const bs = [...op.from, op.to].map((k) => box(cell(k)));
@@ -238,11 +260,14 @@ export function createHk6(): VisualScene {
 
   /** salinan angka melayang dari sel asal ke sel tujuan */
   function ghost(from: string, to: string, delay: number): Promise<boolean> {
-    const a = box(cell(from));
-    const b = box(cell(to));
+    return ghostEl(cell(from), cell(to), CELLS[from]!.t, delay);
+  }
+  function ghostEl(fromEl: Element, toEl: Element, t: string, delay: number): Promise<boolean> {
+    const a = box(fromEl);
+    const b = box(toEl);
     const g = document.createElement('span');
     g.className = 'hk-gh';
-    g.innerHTML = tex(CELLS[from]!.t);
+    g.innerHTML = tex(t);
     g.style.left = `${a.x}px`;
     g.style.top = `${a.y}px`;
     fly.append(g);
@@ -284,7 +309,8 @@ export function createHk6(): VisualScene {
 
   function visible(k: number, s: Hk6State): void {
     for (const [key, d] of Object.entries(CELLS)) {
-      const on = d.op === -1 ? !!s.m : d.op === -2 ? !!s.x : d.op === -3 ? !!s.cmp : d.op <= k;
+      const on =
+        d.op === -1 ? !!s.m : d.op === -2 ? !!s.x : d.op === -3 ? !!s.cmp : d.op === -4 ? !!s.co : d.op <= k;
       cell(key).classList.toggle('on', on);
     }
     el.classList.toggle('show-cut', !!s.cut);
@@ -311,7 +337,7 @@ export function createHk6(): VisualScene {
   }
 
   new ResizeObserver(() => {
-    if (!fly.childElementCount) {
+    if (!busy && !fly.childElementCount) {
       arG.replaceChildren();
       for (let i = shown[0]; i < shown[1]; i++) draw(OPS[i]!);
     }
@@ -325,27 +351,33 @@ export function createHk6(): VisualScene {
       const k0 = s.k0 ?? k;
       const anim = c.dir > 0 && !reducedMotion();
       const runOps = anim && k > k0 && (k !== lastK || c.replay);
+      const my = ++gen;
+      busy = false;
+      const live = (): boolean => c.live() && my === gen;
       fly.querySelectorAll('.hk-gh').forEach((g) => g.remove());
+      el.querySelectorAll('.hk-co.is-src').forEach((e) => e.classList.remove('is-src'));
       const runs: Array<Promise<boolean>> = [];
       // pengali, X, batas sisa, dan sisa soal yang baru muncul
       const fresh = (flag: boolean, was: boolean): boolean => anim && flag && (!was || c.replay);
       const newM = fresh(!!s.m, prev.m);
+      const newCo = anim && !!s.coIn && (!prev.co || c.replay);
       const newX = fresh(!!s.x, prev.x);
       const newCut = fresh(!!s.cut, prev.cut);
       const newCmp = fresh(!!s.cmp, prev.cmp);
-      prev = { m: !!s.m, x: !!s.x, cut: !!s.cut, cmp: !!s.cmp };
+      prev = { m: !!s.m, co: !!s.co, x: !!s.x, cut: !!s.cut, cmp: !!s.cmp };
 
       if (!runOps) {
         visible(k, s);
         drawStatic(k0, k);
       } else {
         // mulai dari keadaan sebelum langkah ini, lalu jalankan op satu per satu
+        busy = true;
         visible(k0, s);
         arG.replaceChildren();
         mark([], null, []);
         shown = [k0, k0];
         for (let i = k0; i < k; i++) {
-          if (!c.live()) return;
+          if (!live()) return;
           const op = OPS[i]!;
           shown = [k0, i + 1];
           tell(i + 1);
@@ -363,25 +395,59 @@ export function createHk6(): VisualScene {
             ...src.map((x) => pop(cell(x).querySelector('.hk-ring')!)),
             ...(op.kind === 'mul' ? [pop(cell(op.by).querySelector('.hk-ring')!)] : []),
           ]);
+          if (!live()) return;
           // 2) panah/bingkai dan tempat tujuan
           const g = draw(op);
+          const lbl = g?.querySelector<SVGTextElement>('text[data-k]');
+          if (lbl) lbl.textContent = lbl.dataset.k ?? '';
           if (g) await fadeIn(g);
           await wait(250);
-          if (!c.live()) return;
+          if (!live()) return;
+          // nama pengali berganti menjadi angkanya
+          if (lbl) {
+            await wait(450);
+            if (!live()) return;
+            lbl.textContent = '× (−1)';
+            await fadeIn(lbl);
+          }
+          if (!live()) return;
           // 3) angka melayang ke tujuan
           await Promise.all(src.map((f, j) => ghost(f, op.to, j * 140)));
-          if (!c.live()) return;
+          if (!live()) return;
           // 4) hasil muncul dengan warna baru
           cell(op.to).classList.add('on');
           mark([], null, [op.to]);
           await pop(cell(op.to));
           await wait(200);
         }
+        if (!live()) return;
+        busy = false;
         visible(k, s);
       }
-      if (newM) runs.push(...['k1', 'k2'].map((x, i) => pop(cell(x), i * 200)));
-      if (newX) runs.push(...['x1', 'x2', 'x3', 'x4'].map((x, i) => pop(cell(x), 200 + i * 220)));
-      if (newCut) runs.push(fadeIn(el.querySelector('.hk-cut')!, 300));
+      if (newM && !runOps) runs.push(...['k1', 'k2'].map((x, i) => pop(cell(x), i * 200)));
+      if (newCo) {
+        // koefisien diambil satu per satu dari f(x): disorot, melayang ke tabel, muncul
+        ['c1', 'c2', 'c3', 'c4', 'c5'].forEach((x) => cell(x).classList.remove('on'));
+        for (let i = 1; i <= 5; i++) {
+          if (!live()) return;
+          const co = el.querySelector(`[data-co="${i}"]`)!;
+          const to = cell(`c${i}`);
+          to.classList.remove('on');
+          co.classList.add('is-src');
+          await pop(co.querySelector('.hk-ring')!);
+          if (!live()) return void co.classList.remove('is-src');
+          await ghostEl(co, to, FX[i - 1]![1], 0);
+          co.classList.remove('is-src');
+          if (!live()) return;
+          to.classList.add('on');
+          mark([], null, [`c${i}`]);
+          await pop(to);
+        }
+        if (!live()) return;
+        mark([], null, []);
+      }
+      if (newX && !runOps) runs.push(...['x1', 'x2', 'x3', 'x4'].map((x, i) => pop(cell(x), 200 + i * 220)));
+      if (newCut && !runOps) runs.push(fadeIn(el.querySelector('.hk-cut')!, 300));
       if (newCmp) runs.push(...['g4', 'g5'].map((x, i) => pop(cell(x), 300 + i * 150)));
       lastK = k;
 

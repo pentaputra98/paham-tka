@@ -1,7 +1,8 @@
 /**
  * SOAL 6 — Sisa Pembagian Suku Banyak (Horner-Kino, kesamaan koefisien; pilihan tunggal). Kunci: C (a + b = −1).
  * Sumber: docs/pembahasan25.md "SOAL 6", docs/soal25.md no. 6.
- * Alur revisi pemilik v1.36 (dicatat di dokumen):
+ * Alur revisi pemilik v1.36–v1.38 (dicatat di dokumen; v1.38: koefisien diambil dari f(x) ke tabel, kali k₂ dulu lalu k₁,
+ *  nama pengali selalu diganti angkanya):
  *  - pahami: f(x) memuat a dan b; dibagi x² + x + 1 bersisa 5x − 1; ditanya a + b;
  *  - susun Horner-Kino: koefisien 1, a, b, 1, −6; x² + x + 1 = 0 → x² = −x − 1, pengali −1 dan −1; hanya tiga
  *    kolom pertama yang dikali (hasil bagi berderajat 2), dua kolom terakhir untuk sisa;
@@ -18,7 +19,7 @@ import { getSoal } from '../index';
 
 const hk = (state: Hk6State): Visual => ({ kind: 'svg', scene: 'hk6', state });
 /** skema Horner-Kino lengkap (semua op selesai) */
-const HK: Hk6State = { m: true, x: true, cut: true };
+const HK: Hk6State = { m: true, co: true, x: true, cut: true };
 const DONE: Hk6State = { ...HK, k0: 12, k: 12 };
 const LETTERS = ['A', 'B', 'C', 'D', 'E'] as const;
 /** pilihan (docs/soal25.md no. 6) */
@@ -132,29 +133,29 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
     LH: [
       {
         id: 'h5',
-        toks: [H('h5a', 'koefisien', 'tx'), T('h5b', '1,\\ a,\\ b,\\ 1,\\ -6', '', '@s-f')],
-        note: 'urut dari $x^4$ sampai konstanta, tidak ada yang terlewat',
+        toks: [H('h5a', 'koefisien', 'tx'), T('h5b', '1,\\ a,\\ b,\\ 1,\\ -6', '', '@h-c1')],
+        note: '$x^4$ berarti $1x^4$ dan $x$ berarti $1x$; urut dari $x^4$ sampai konstanta',
       },
       {
         id: 'h6',
         toks: [
           H('h6a', 'baris', 'tx'),
-          T('h6b', 'k_1', '', '@h-k1'),
-          H('h6c', 'mulai kolom ke-3', 'tx'),
+          T('h6b', 'k_2', '', '@h-k2'),
+          H('h6c', 'mulai kolom ke-2', 'tx'),
           O('h6d', ','),
           H('h6e', 'baris', 'tx'),
-          T('h6f', 'k_2', '', '@h-k2'),
-          H('h6g', 'kolom ke-2', 'tx'),
+          T('h6f', 'k_1', '', '@h-k1'),
+          H('h6g', 'kolom ke-3', 'tx'),
         ],
         note: 'tempat yang tidak terisi diberi tanda X',
       },
       {
         id: 'h7',
         toks: [H('h7a', 'Hati-hati', 'lbl'), H('h7b', 'hanya 3 kolom pertama yang dikali', 'tx')],
-        note: 'hasil bagi berderajat $4-2=2$; X di ujung baris $k_2$ tanda perkalian berhenti',
+        note: 'hasil bagi berderajat $4-2=2$; garis batas dan X di ujung tanda perkalian berhenti',
       },
     ],
-    // hitung kolom a
+    // hitung kolom a: kali k₂ dulu (baris bawah), lalu naik ke k₁
     LP: [
       {
         id: 'p1',
@@ -163,13 +164,25 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
       },
       {
         id: 'p2',
-        toks: [T('p2a', '1\\cdot k_1', '', '@h-s1'), O('p2b', '='), T('p2c', '1\\cdot(-1)=-1', 'blue')],
-        note: 'ditulis di baris $k_1$, dua kolom ke kanan (kolom $b$)',
+        toks: [
+          T('p2a', '1\\cdot k_2', '', '@h-s1'),
+          O('p2b', '='),
+          T('p2c', '1\\cdot(-1)', '', '@h-k2'),
+          O('p2d', '='),
+          T('p2e', '-1', 'blue'),
+        ],
+        note: 'ditulis di baris $k_2$, satu kolom ke kanan (kolom $a$)',
       },
       {
         id: 'p3',
-        toks: [T('p3a', '1\\cdot k_2', '', '@h-s1'), O('p3b', '='), T('p3c', '1\\cdot(-1)=-1', 'blue')],
-        note: 'ditulis di baris $k_2$, satu kolom ke kanan (kolom $a$)',
+        toks: [
+          T('p3a', '1\\cdot k_1', '', '@h-s1'),
+          O('p3b', '='),
+          T('p3c', '1\\cdot(-1)', '', '@h-k1'),
+          O('p3d', '='),
+          T('p3e', '-1', 'blue'),
+        ],
+        note: 'naik ke baris $k_1$, dua kolom ke kanan (kolom $b$)',
       },
       {
         id: 'p4',
@@ -186,13 +199,25 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
     LQ: [
       {
         id: 'q1',
-        toks: [T('q1a', '(a-1)\\cdot k_1', '', '@h-s2'), O('q1b', '='), T('q1c', '1-a', 'blue')],
-        note: 'ditulis di baris $k_1$, kolom $1$',
+        toks: [
+          T('q1a', '(a-1)\\cdot k_2', '', '@h-s2'),
+          O('q1b', '='),
+          T('q1c', '(a-1)\\cdot(-1)', '', '@h-k2'),
+          O('q1d', '='),
+          T('q1e', '1-a', 'blue'),
+        ],
+        note: 'ditulis di baris $k_2$, kolom $b$',
       },
       {
         id: 'q2',
-        toks: [T('q2a', '(a-1)\\cdot k_2', '', '@h-s2'), O('q2b', '='), T('q2c', '1-a', 'blue')],
-        note: 'ditulis di baris $k_2$, kolom $b$',
+        toks: [
+          T('q2a', '(a-1)\\cdot k_1', '', '@h-s2'),
+          O('q2b', '='),
+          T('q2c', '(a-1)\\cdot(-1)', '', '@h-k1'),
+          O('q2d', '='),
+          T('q2e', '1-a', 'blue'),
+        ],
+        note: 'naik ke baris $k_1$, kolom $1$',
       },
       {
         id: 'q3',
@@ -209,13 +234,25 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
     LU: [
       {
         id: 'u1',
-        toks: [T('u1a', '(b-a)\\cdot k_1', '', '@h-s3'), O('u1b', '='), T('u1c', 'a-b', 'blue')],
-        note: 'ditulis di baris $k_1$, kolom $-6$',
+        toks: [
+          T('u1a', '(b-a)\\cdot k_2', '', '@h-s3'),
+          O('u1b', '='),
+          T('u1c', '(b-a)\\cdot(-1)', '', '@h-k2'),
+          O('u1d', '='),
+          T('u1e', 'a-b', 'blue'),
+        ],
+        note: 'ditulis di baris $k_2$, kolom $1$; sesudahnya X',
       },
       {
         id: 'u2',
-        toks: [T('u2a', '(b-a)\\cdot k_2', '', '@h-s3'), O('u2b', '='), T('u2c', 'a-b', 'blue')],
-        note: 'ditulis di baris $k_2$, kolom $1$; berikutnya X, perkalian berhenti',
+        toks: [
+          T('u2a', '(b-a)\\cdot k_1', '', '@h-s3'),
+          O('u2b', '='),
+          T('u2c', '(b-a)\\cdot(-1)', '', '@h-k1'),
+          O('u2d', '='),
+          T('u2e', 'a-b', 'blue'),
+        ],
+        note: 'naik ke baris $k_1$, kolom $-6$; tempat terakhir, perkalian berhenti',
       },
       {
         id: 'u3',
@@ -438,20 +475,20 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
     // ---- 3 · Susun Horner-Kino ----
     {
       ch: 3,
-      cap: 'Tulis koefisien $f(x)$ berurutan dari $x^4$, yaitu $1$, $a$, $b$, $1$, $-6$. $k_1$ di atas dan $k_2$ di bawah.',
-      visual: hk({ k: 0, m: true }),
+      cap: 'Ambil koefisien $f(x)$ satu per satu dari $x^4$. $x^4$ berarti $1x^4$ dan $x$ berarti $1x$, jadi koefisiennya $1$, $a$, $b$, $1$, $-6$.',
+      visual: hk({ k: 0, m: true, co: true, coIn: true }),
       board: { title: 'Susun Horner-Kino', pins: ['pK'], list: 'LH', upTo: 1, from: 0 },
     },
     {
       ch: 3,
-      cap: 'Hasil kali dengan $k_1$ ditulis dua kolom ke kanan, dengan $k_2$ satu kolom ke kanan. Tempat yang tidak terisi diberi tanda X, sehingga membentuk pola diagonal.',
-      visual: hk({ k: 0, m: true, x: true }),
+      cap: 'Hasil kali dengan $k_2$ ditulis satu kolom ke kanan, dengan $k_1$ dua kolom ke kanan. Tempat yang tidak terisi diberi tanda X, sehingga membentuk pola diagonal.',
+      visual: hk({ k: 0, m: true, co: true, x: true }),
       board: { title: 'Susun Horner-Kino', pins: ['pK'], list: 'LH', upTo: 2, from: 1 },
     },
     {
       ch: 3,
-      cap: 'Hati-hati, hanya tiga kolom pertama yang dikali karena hasil baginya berderajat $4-2=2$. X di ujung baris $k_2$ dan garis batas menandai perkalian berhenti.',
-      visual: hk({ k: 0, m: true, x: true, cut: true }),
+      cap: 'Hati-hati, hanya tiga kolom pertama yang dikali karena hasil baginya berderajat $4-2=2$. Garis batas dan X di ujung menandai perkalian berhenti.',
+      visual: hk({ k: 0, m: true, co: true, x: true, cut: true }),
       board: { title: 'Susun Horner-Kino', pins: ['pK'], list: 'LH', upTo: 3, from: 2 },
     },
     // ---- 4 · Hitung kolom a ----
@@ -463,13 +500,13 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
     },
     {
       ch: 4,
-      cap: 'Kalikan $1$ dengan $k_1=-1$, hasilnya $-1$. Tulis di baris $k_1$, dua kolom ke kanan (kolom $b$).',
+      cap: 'Kalikan $1$ dengan $k_2=-1$, jadi $1\\cdot(-1)=-1$. Tulis di baris $k_2$, satu kolom ke kanan (kolom $a$).',
       visual: hk({ ...HK, k0: 1, k: 2 }),
       board: { title: 'Hitung kolom a', pins: ['pK'], list: 'LP', upTo: 2, from: 1 },
     },
     {
       ch: 4,
-      cap: 'Kalikan $1$ dengan $k_2=-1$, hasilnya $-1$. Tulis di baris $k_2$, satu kolom ke kanan (kolom $a$).',
+      cap: 'Naik ke $k_1=-1$, jadi $1\\cdot(-1)=-1$. Tulis di baris $k_1$, dua kolom ke kanan (kolom $b$).',
       visual: hk({ ...HK, k0: 2, k: 3 }),
       board: { title: 'Hitung kolom a', pins: ['pK'], list: 'LP', upTo: 3, from: 2 },
     },
@@ -482,7 +519,7 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
     // ---- 5 · Hitung kolom b ----
     {
       ch: 5,
-      cap: 'Kalikan $a-1$ dengan $k_1$, $(a-1)\\cdot(-1)=1-a$. Tulis di baris $k_1$, kolom $1$.',
+      cap: 'Kalikan $a-1$ dengan $k_2=-1$, jadi $(a-1)\\cdot(-1)=1-a$. Tulis di baris $k_2$, kolom $b$.',
       visual: hk({ ...HK, k0: 4, k: 5 }),
       board: { title: 'Hitung kolom b', pins: ['pK'], list: 'LQ', upTo: 1, from: 0 },
       ask: {
@@ -497,7 +534,7 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
     },
     {
       ch: 5,
-      cap: 'Kalikan $a-1$ dengan $k_2$, hasilnya juga $1-a$. Tulis di baris $k_2$, kolom $b$.',
+      cap: 'Naik ke $k_1=-1$, $(a-1)\\cdot(-1)=1-a$ juga. Tulis di baris $k_1$, kolom $1$.',
       visual: hk({ ...HK, k0: 5, k: 6 }),
       board: { title: 'Hitung kolom b', pins: ['pK'], list: 'LQ', upTo: 2, from: 1 },
     },
@@ -510,13 +547,13 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
     // ---- 6 · Hitung kolom sisa ----
     {
       ch: 6,
-      cap: 'Kalikan $b-a$ dengan $k_1$, $(b-a)\\cdot(-1)=a-b$. Tulis di baris $k_1$, kolom $-6$.',
+      cap: 'Kalikan $b-a$ dengan $k_2=-1$, jadi $(b-a)\\cdot(-1)=a-b$. Tulis di baris $k_2$, kolom $1$; sesudahnya X.',
       visual: hk({ ...HK, k0: 7, k: 8 }),
       board: { title: 'Hitung kolom sisa', pins: ['pK'], list: 'LU', upTo: 1, from: 0 },
     },
     {
       ch: 6,
-      cap: 'Kalikan $b-a$ dengan $k_2$, hasilnya $a-b$ di baris $k_2$, kolom $1$. Tempat berikutnya X, jadi perkalian berhenti di sini.',
+      cap: 'Naik ke $k_1=-1$, hasilnya $a-b$ di baris $k_1$, kolom $-6$. Itu tempat terakhir, jadi perkalian berhenti di sini.',
       visual: hk({ ...HK, k0: 8, k: 9 }),
       board: { title: 'Hitung kolom sisa', pins: ['pK'], list: 'LU', upTo: 2, from: 1 },
     },

@@ -1016,6 +1016,11 @@ Pin: $a+b=-1$.
   - kolom sisa: $(b-a)\times k_1=a-b$ ke baris $k_1$ kolom $-6$; $(b-a)\times k_2=a-b$ ke baris $k_2$ kolom $1$, tempat berikutnya X sehingga berhenti; jumlah $1+(1-a)+(a-b)=2-b$ dan $-6+(a-b)=a-b-6$; label hasil bagi dan sisa.
 - **Bagian 7 dan seterusnya:** samakan sisa, jawaban C, kesamaan koefisien (opsional), catatan, kartu, segel C, seperti sebelumnya.
 
+*Revisi 1.38 (4 Nov 2026, arahan pemilik; kunci tidak berubah: C).*
+- **Ambil koefisien dari soal:** di atas skema ditulis $f(x)=1x^4+ax^3+bx^2+1x-6$ (koefisien $1$ yang tersirat ditampilkan). Tiap koefisien disorot satu per satu, lalu angkanya melayang ke baris koefisien tabel Horner-Kino.
+- **Urutan perkalian:** tiap hasil dikali $k_2$ dulu (baris bawah, satu kolom ke kanan, sehingga terisi berurutan), baru naik ke $k_1$ (baris atas, dua kolom ke kanan). Urutan op: turun; $1\cdot k_2$; $1\cdot k_1$; jumlah kolom $a$; $(a-1)\cdot k_2$; $(a-1)\cdot k_1$; jumlah kolom $b$; $(b-a)\cdot k_2$ (sesudahnya X); $(b-a)\cdot k_1$ (tempat terakhir, perkalian berhenti); jumlah dua kolom sisa.
+- **Pengali selalu diganti angkanya:** label panah mula-mula "$\times k_2$" lalu berganti menjadi "$\times(-1)$"; papan menulis $1\cdot k_2=1\cdot(-1)=-1$, $(a-1)\cdot k_2=(a-1)\cdot(-1)=1-a$, dan seterusnya; keterangan di bawah skema dan pop-up juga memakai angkanya ($k_2=-1$).
+
 ### Bagian 6 — Selesai
 - **Segel:** **C**
 - **Pop-up:** "$f(x)=x^4+2x^3-3x^2+x-6$, sehingga $a=2$, $b=-3$, dan $a+b=-1$."
