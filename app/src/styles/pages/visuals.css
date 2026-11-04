@@ -4735,3 +4735,245 @@
     fill: var(--color-current-on-stage);
   }
 }
+
+/* ---------- soal 19 (refl19, v1.51): cermin y = x lalu translasi pada persamaan garis ----------
+   huruf x biru langit dan huruf y ungu (terbang saat bertukar/diganti); bagian penting mint; baris lama pudar;
+   hasil 2a − b emas (jawaban). Kisi aturan: titik awal putih, bayangan cermin biru langit, hasil translasi ungu. */
+@layer pages {
+  .vis-refl {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: var(--color-on-stage);
+    font-size: min(var(--fs-mat), var(--t19-fit-h), var(--t19-fit-w));
+  }
+
+  .t19-rule,
+  .t19-eq,
+  .t19-graph {
+    grid-area: 1 / 1;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .t19-rule,
+  .t19-graph {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: visible;
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-md);
+  }
+
+  .vis-refl:not([data-view='rule']) .t19-rule,
+  .vis-refl:not([data-view='eq']) .t19-eq,
+  .vis-refl:not([data-view='graph']) .t19-graph {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .t19-g {
+    stroke: var(--a-sky-15);
+    stroke-width: var(--bw-hair);
+  }
+
+  .t19-g.t19-ax {
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-1);
+  }
+
+  .t19-mir {
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 6 5;
+  }
+
+  .t19-ml,
+  .t19-cap {
+    fill: var(--color-on-stage-muted);
+    font-size: var(--svg-fs-sm);
+  }
+
+  .t19-link {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 4 4;
+  }
+
+  .t19-mv {
+    fill: none;
+    stroke: var(--color-y-on-stage);
+    stroke-width: var(--bw-4);
+  }
+
+  .t19-hm path {
+    fill: var(--color-y-on-stage);
+  }
+
+  .t19-p circle,
+  .t19-p text {
+    fill: var(--color-on-stage);
+  }
+
+  .t19-p1 circle,
+  .t19-p1 text {
+    fill: var(--color-stage-accent);
+  }
+
+  .t19-p2 circle,
+  .t19-p2 text {
+    fill: var(--color-y-on-stage);
+  }
+
+  .t19-gp text,
+  .t19-lb {
+    font-size: var(--svg-fs-sm);
+  }
+
+  .t19-p text,
+  .t19-gp text,
+  .t19-lb {
+    paint-order: stroke;
+    stroke: var(--color-stage);
+    stroke-width: var(--bw-4);
+  }
+
+  .t19-r1,
+  .t19-r2 {
+    opacity: 0;
+  }
+
+  .r1 .t19-r1,
+  .r2 .t19-r2 {
+    opacity: 1;
+  }
+
+  /* ---- penurunan persamaan ---- */
+  .t19-eq {
+    display: grid;
+    justify-items: center;
+  }
+
+  .t19-set {
+    display: none;
+    justify-items: center;
+    gap: 0.5em;
+  }
+
+  .t19-set.on {
+    display: grid;
+  }
+
+  .t19-l {
+    display: none;
+    grid-template-areas: 'f' 'l';
+    justify-items: center;
+    white-space: nowrap;
+    opacity: 0.4;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .t19-l.on {
+    display: grid;
+  }
+
+  .t19-l.is-cur {
+    opacity: 1;
+  }
+
+  .t19-f {
+    grid-area: f;
+  }
+
+  .t19-fb,
+  .t19-l.is-b .t19-fa {
+    opacity: 0;
+  }
+
+  .t19-l.is-b .t19-fb {
+    opacity: 1;
+  }
+
+  .t19-l small {
+    grid-area: l;
+    font-family: var(--font-mono);
+    font-size: max(var(--fs-label), 0.36em);
+    color: var(--color-on-stage-muted);
+  }
+
+  .t19-x,
+  .t19-y,
+  .t19-k {
+    display: inline-block;
+  }
+
+  .t19-l.is-cur .t19-x {
+    color: var(--color-stage-accent);
+  }
+
+  .t19-l.is-cur .t19-y {
+    color: var(--color-y-on-stage);
+  }
+
+  .t19-l.is-cur .t19-k {
+    color: var(--color-current-on-stage);
+  }
+
+  .t19-ans {
+    color: var(--color-result);
+  }
+
+  /* ---- grafik uji titik ---- */
+  .t19-test {
+    display: none;
+  }
+
+  .t19-test.on {
+    display: inline;
+  }
+
+  .t19-gl {
+    fill: none;
+    stroke-width: var(--bw-4);
+    stroke-linecap: round;
+  }
+
+  .t19-gl.t19-k0 {
+    stroke: var(--color-on-stage);
+  }
+
+  .t19-gl.t19-k1 {
+    stroke: var(--color-stage-accent);
+    stroke-dasharray: 8 6;
+  }
+
+  .t19-gl.t19-k2 {
+    stroke: var(--color-y-on-stage);
+  }
+
+  :is(.t19-gp, .t19-lb).t19-k0,
+  .t19-gp.t19-k0 text {
+    fill: var(--color-on-stage);
+  }
+
+  :is(.t19-gp, .t19-lb).t19-k1,
+  .t19-gp.t19-k1 text {
+    fill: var(--color-stage-accent);
+  }
+
+  :is(.t19-gp, .t19-lb).t19-k2,
+  .t19-gp.t19-k2 text {
+    fill: var(--color-y-on-stage);
+  }
+
+  .t19-test [class*='t19-k'] {
+    opacity: 0;
+  }
+
+  .t19-test [class*='t19-k'].vis,
+  .is-sketch .t19-test.on [class*='t19-k'] {
+    opacity: 1;
+  }
+}

@@ -9,7 +9,7 @@ describe('daftar soal (PRD §5)', () => {
   it('hanya soal yang dibuka pemilik berstatus ready; semuanya bagian Rilis 1 (PRD v1.6)', () => {
     expect(SOAL.filter((s) => s.status === 'ready').map((s) => s.no)).toEqual([...OPEN]);
     expect(OPEN.every((n) => RELEASE_1.includes(n))).toBe(true);
-    expect(RELEASE_1).toHaveLength(20);
+    expect(RELEASE_1).toHaveLength(21);
     expect(isReady(1)).toBe(true);
     // soal yang belum dibuka (di luar OPEN) berstatus soon
     expect(SOAL.filter((x) => !OPEN.includes(x.no)).every((x) => !isReady(x.no))).toBe(true);

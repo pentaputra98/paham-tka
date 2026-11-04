@@ -2775,6 +2775,15 @@ Uji titik: titik $(3,3)$ pada $2x+y-9=0$ dicerminkan menjadi $(3,3)$, ditranslas
 - Salah arah substitusi translasi ($x+1$ alih-alih $x-1$).
 - Lupa mengalikan $-1$ saat membandingkan $2x-y-9=0$ dengan $bx+y+(7-b)=0$.
 
+*Alur aplikasi (Revisi 1.51, 5 Nov 2026, gaya pemilik; kunci tidak berubah: E). Dipakai di `app/src/content/soal/q19.ts` (modul baru, adegan `refl19`); soal 19 ditambahkan ke Rilis 1 dan dibuka.* Aturan dijelaskan dulu lewat satu titik di kisi, lalu penurunan a1–b6 dengan huruf $x$ (biru langit) dan $y$ (ungu) yang terbang ke tempat barunya. Hasil disimpan ke **catatan**: aturan cermin, aturan translasi, $a=2$, $b=-2$. Baris papan tanpa ":". Tata letak: panggung penuh dua kolom.
+- **Bagian 1 — Pahami soal:** dua garis awal, urutan cermin $y=x$ lalu $T(1,-1)$, dua bayangan; ditanya $2a-b$.
+- **Bagian 2 — Aturan transformasi:** titik $(4,1)$ dicerminkan menjadi $(1,4)$ ($x$ dan $y$ bertukar), lalu digeser $1$ ke kanan dan $1$ ke bawah menjadi $(2,3)$; pada persamaan kebalikannya, $x\to x-1$ dan $y\to y+1$ (pertanyaan cepat dokumen).
+- **Bagian 3 — Garis pertama:** a1–a6; $x+ay+(a-10)=0$ disamakan dengan $x+2y-8=0$, $a=2$ (cek $a-10=-8$).
+- **Bagian 4 — Garis kedua:** b1–b6; bayangan $2x-y-9=0$ dikali $-1$ (pertanyaan cepat baru dari *Kesalahan umum*, pengecoh $1$ dan $2$), $b=-2$ (cek $7-b=9$).
+- **Bagian 5 — Nilai 2a − b:** $2(2)-(-2)=4+2=6$ → **E**; tawaran cek grafik.
+- **Bagian 6 — Cek dengan grafik (opsional, Ya/Lewati):** uji titik dari *Pemeriksaan hasil*, $(3,3)\to(3,3)\to(4,2)$ pada $x+2y-8=0$ dan $(0,3)\to(3,0)\to(4,-1)$ pada $2x-y-9=0$, dengan garis awal, bayangan cermin, dan bayangan akhir.
+- **Bagian 7–9:** catatan lengkap (sketsa grafik), kartu A–E dengan pertanyaan berhuruf, segel E.
+
 ---
 
 ## SOAL 20 — Translasi lalu Dilatasi Lingkaran
