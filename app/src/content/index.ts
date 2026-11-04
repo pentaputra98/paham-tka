@@ -64,14 +64,14 @@ export const RESPONSE_LABEL: Record<Response, string> = {
   truefalse: 'Tabel dua kolom',
 };
 
-/** Soal Rilis 1 (K10, ditambah soal 15 pada v1.14, soal 11 pada v1.20, soal 3 pada v1.30, dan soal 4 pada v1.31): kontennya sudah ada dan tetap diverifikasi (verify:content, uji unit). */
-export const RELEASE_1: readonly number[] = [1, 2, 3, 4, 5, 6, 11, 13, 15, 16, 17, 18, 24, 25];
+/** Soal Rilis 1 (K10, ditambah soal 15 pada v1.14, soal 11 pada v1.20, soal 3 pada v1.30, dan soal 4 pada v1.31, soal 7 pada v1.39): kontennya sudah ada dan tetap diverifikasi (verify:content, uji unit). */
+export const RELEASE_1: readonly number[] = [1, 2, 3, 4, 5, 6, 7, 11, 13, 15, 16, 17, 18, 24, 25];
 
 /**
  * Soal yang DIBUKA untuk siswa (revisi pemilik PRD v1.6–1.7): dibuka satu per satu setelah pembahasannya
- * ditulis ulang mengikuti alur guru dan disetujui; soal lain tampil "Segera hadir". Soal 1, lalu 24, 17, 18, 15, 16, 11 (PRD v1.14–1.20), 2, 3, 4 (v1.29–1.31), 5 (v1.33), 6 (v1.35).
+ * ditulis ulang mengikuti alur guru dan disetujui; soal lain tampil "Segera hadir". Soal 1, lalu 24, 17, 18, 15, 16, 11 (PRD v1.14–1.20), 2, 3, 4 (v1.29–1.31), 5 (v1.33), 6 (v1.35), 7 (v1.39).
  */
-export const OPEN: readonly number[] = [1, 2, 3, 4, 5, 6, 11, 15, 16, 17, 18, 24];
+export const OPEN: readonly number[] = [1, 2, 3, 4, 5, 6, 7, 11, 15, 16, 17, 18, 24];
 
 type Row = [no: number, title: string, domain: Domain, response: Response, labels?: [string, string]];
 

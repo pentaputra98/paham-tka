@@ -1107,6 +1107,14 @@ Pada $T=10$ rumus D memberi $0{,}5(1000)+4(100)+200(10)=500+400+2000=2900=10\tim
 - Mengalikan hanya sebagian suku (opsi E).
 - Salah menggeser koma pada $0{,}05\times10$ dan $0{,}4\times10$.
 
+*Alur aplikasi (Revisi 1.39, 4 Nov 2026; kunci tidak berubah: D). Dipakai di `app/src/content/soal/q07.ts` (modul baru, adegan `drum7`); soal 7 ditambahkan ke Rilis 1 dan dibuka.* Hasil disimpan ke **catatan**: $V(T)$ dan $V_{\text{total}}=0{,}5T^3+4T^2+200T$. Baris papan tanpa ":". Tata letak: panggung penuh dua kolom.
+- **Bagian 1 — Pahami soal:** $V(T)$ untuk satu drum; 10 drum sama dan suhunya sama, jadi tiap drum bertambah $V(T)$; ditanya total.
+- **Bagian 2 — Total 10 drum:** satu drum menjadi sepuluh drum (drum lain muncul dari drum pertama); $V(T)+V(T)+\dots+V(T)$ (10 kali), penjumlahan berulang $=10\cdot V(T)$.
+- **Bagian 3 — Kalikan tiap suku:** $10(0{,}05T^3+0{,}4T^2+20T)$; tiap suku dianimasikan: *Tahukah kalian?* dikali $10$ berarti koma bergeser satu tempat ke kanan, $10\times0{,}05=0{,}5$ (pertanyaan cepat lama); $10\times0{,}4=4$ (koma ke belakang angka $4$); $10\times20=200$ (tambah satu nol); hasil $0{,}5T^3+4T^2+200T$ (emas).
+- **Bagian 4 — Cocokkan pilihan per suku** (jalur cepat pilihan ganda): suku $T$ sama di semua pilihan; suku $T^2$ menggugurkan A ($40T^2$) dan E ($0{,}4T^2$); suku $T^3$ menggugurkan B ($50T^3$) dan C ($5T^3$); tinggal **D**; **hati-hati** semua suku harus dikali 10 (pilihan E).
+- **Bagian 5 — Cek dengan $T=10$ (opsional, Ya/Lewati):** dari *Pemeriksaan hasil*, $V(10)=290$, $10\times290=2.900$; D memberi $2.900$, pilihan lain $56.000$, $52.400$, $7.400$, $2.540$.
+- **Bagian 6–8:** catatan lengkap, kartu A–E dengan pertanyaan berhuruf, segel D.
+
 ---
 
 ## SOAL 8 — Modal Saham
