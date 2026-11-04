@@ -36,7 +36,7 @@ const q07: SoalContent = {
 <p>$\\htmlClass{hl hl-red}{\\htmlData{src=s-V, hl=1}{V(T)=0{,}05T^{3}+0{,}4T^{2}+20T}}$</p>
 <p>dengan $T$ adalah suhu dalam derajat Celsius dan $V(T)$ adalah penambahan volume dalam liter.</p>
 <p>Apabila terdapat <span class="hl hl-blue" data-hl="2"><span data-src="s-10">10 drum dengan jenis dan ukuran yang sama</span></span>, <span class="hl hl-gold" data-hl="3"><span data-src="s-tanya">total penambahan volume</span></span> dari drum-drum tersebut ketika terkena panas dengan <span class="hl hl-blue" data-hl="2"><span data-src="s-suhu">suhu yang sama</span></span> dapat dinyatakan dengan ....</p>
-<ol class="abc">
+<ol class="abc abc-col">
 ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" data-hl="9"><span data-src="s-o${o}">$${OPT[i]}$</span></span></li>`).join('\n')}
 </ol>`,
     srcNames: ['s-V', 's-10', 's-suhu', 's-tanya', 's-oA', 's-oB', 's-oC', 's-oD', 's-oE'],
@@ -86,12 +86,8 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
       },
       {
         id: 'k2',
-        toks: [
-          H('k2a', '10 drum sama, suhu sama', 'tx', '@s-10'),
-          O('k2b', '\\to'),
-          H('k2c', 'tiap drum bertambah', 'tx'),
-          T('k2d', 'V(T)', 'blue'),
-        ],
+        toks: [H('k2a', 'tiap drum', 'tx', '@s-10'), O('k2b', '\\to'), T('k2d', 'V(T)', 'blue')],
+        note: '10 drum sama dan suhunya sama',
       },
       {
         id: 'k3',

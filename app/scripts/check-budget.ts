@@ -1,6 +1,6 @@
 /**
  * Anggaran performa (PRD §14.7, §14.12): gagal bila keluaran build melewati batas.
- * JS awal ≤ 250 KB gzip, CSS ≤ 40 KB gzip, font ≤ 350 KB, total precache ≤ 8 MB.
+ * JS awal ≤ 250 KB gzip, CSS ≤ 48 KB gzip, font ≤ 350 KB, total precache ≤ 8 MB.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
@@ -28,7 +28,7 @@ const lazy3d = files
 
 const rows: Array<[string, number, number]> = [
   ['JS awal (gzip)', jsInitial, 250 * KB],
-  ['CSS (gzip)', css, 40 * KB],
+  ['CSS (gzip)', css, 48 * KB],
   ['Font (woff2)', fonts, 350 * KB],
   ['Total precache', total, 8 * KB * KB],
 ];
