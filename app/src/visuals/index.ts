@@ -7,6 +7,7 @@ import { createDrink3 } from './drink3';
 import { createDrum7 } from './drum7';
 import { createHk6 } from './hk6';
 import { createHotel4 } from './hotel4';
+import { createKel9 } from './kel9';
 import { createMat1 } from './mat1';
 import { createOrn } from './orn18';
 import { createPakan2 } from './pakan2';
@@ -30,6 +31,7 @@ export const VISUALS: Record<string, VisualFactory> = {
   drum7: createDrum7,
   hk6: createHk6,
   hotel4: createHotel4,
+  kel9: createKel9,
   mat1: createMat1,
   orn18: createOrn,
   pakan2: createPakan2,

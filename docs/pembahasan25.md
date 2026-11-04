@@ -1312,6 +1312,15 @@ Pemeriksaan numerik: $K(4)=4\cdot2^1=8$, $K(8)=16$, $K(12)=32$, $K(16)=64$, $K(2
 - Menyamakan "dua kali lipat" dengan "empat kali lipat" (butir 1).
 - Mengabaikan satuan ribu ekor (butir 3).
 
+*Alur aplikasi (Revisi 1.42, 4 Nov 2026; kunci tidak berubah: Salah, Benar, Salah). Dipakai di `app/src/content/soal/q09.ts` (modul baru, adegan `kel9`); soal 9 ditambahkan ke Rilis 1 dan dibuka.* Jalur utama **logika dulu** dari tabel nilai; rasio aljabar menjadi opsional. Baris papan tanpa ":". Tata letak: panggung penuh dua kolom.
+- **Bagian 1 — Pahami soal:** $t$ dalam tahun, **hati-hati** $K$ dalam ribu ekor; tiga pernyataan benar atau salah.
+- **Bagian 2 — Tabel nilai** (Visual Langkah 2.2 dan *Pemeriksaan hasil*): $t=0$ ($2^0=1$) → $4$; $t=4$ → $8$; $t=8$ → $16$; lalu $32$, $64$, $128$; panah $\times2$ di antara kolom; pertanyaan cepat lama "setiap 4 tahun populasi menjadi…" dijawab dari tabel.
+- **Bagian 3 — Pernyataan (1):** $4\to8\to16$, tiap 4 tahun hanya $\times2$ → **Salah**; **hati-hati**, $\times4$ ($4\to16$) butuh 8 tahun; angka 4 di depan adalah populasi awal.
+- **Bagian 4 — Pernyataan (2):** $t=0$, $K(0)=4$ ribu → **Benar**.
+- **Bagian 5 — Pernyataan (3):** 1 juta $=1.000$ ribu; grafik dengan garis $1.000$, $K(20)=128<1.000$ → **Salah**.
+- **Bagian 6 — Cara aljabar (opsional, Ya/Lewati):** $\frac{K(t+4)}{K(t)}=2^{\frac{t+4}{4}-\frac t4}=2$ (b1–b3); $2^{t/4}=250$, $2^7<250<2^8$, $28<t<32$ (sekitar 32 tahun, ditandai di grafik).
+- **Bagian 7–9:** catatan lengkap, kartu (1)–(3) dengan pertanyaan kesimpulan, segel Salah · Benar · Salah.
+
 ---
 
 ## SOAL 10 — Eceng Gondok

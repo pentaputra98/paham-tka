@@ -3878,3 +3878,182 @@
     fill: var(--color-result);
   }
 }
+
+/* ---------- soal 9 (kel9, v1.42): tabel populasi kelinci dan grafik eksponensial ----------
+   nilai K putih; panah × 2 dan kolom yang disorot biru langit; busur × 4 merah muda (jebakan pernyataan 1);
+   garis 1 juta dan penanda t = 20 merah muda; emas tidak dipakai di adegan ini. */
+@layer pages {
+  .vis-kel {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: var(--color-on-stage);
+    font-size: min(var(--fs-mat), var(--k9-fit-h), var(--k9-fit-w));
+  }
+
+  .k9-tab,
+  .k9-graph {
+    grid-area: 1 / 1;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .k9-graph {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .vis-kel[data-view='tab'] .k9-graph,
+  .vis-kel[data-view='graph'] .k9-tab {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .k9-tab {
+    display: grid;
+    grid-template-columns: auto repeat(12, minmax(1.1em, auto));
+    grid-template-rows: 1.6em 1.8em 1.3em 1.5em;
+    align-items: center;
+    justify-items: center;
+    column-gap: 0.15em;
+  }
+
+  .k9-h {
+    display: grid;
+    justify-items: end;
+    padding-right: 0.6em;
+    font-size: 0.8em;
+    color: var(--color-stage-accent);
+  }
+
+  .k9-h small {
+    font-family: var(--font-mono);
+    font-size: max(var(--fs-label), 0.45em);
+    color: var(--color-on-stage-muted);
+  }
+
+  .k9-t {
+    font-size: 0.8em;
+    color: var(--color-on-stage-muted);
+  }
+
+  .k9-t,
+  .k9-k,
+  .k9-ar,
+  .k9-x4 {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .k9-t.on,
+  .k9-k.on,
+  .show-arr .k9-ar,
+  .show-x4 .k9-x4 {
+    opacity: 1;
+  }
+
+  .k9-k {
+    position: relative;
+    padding-inline: 0.25em;
+    font-weight: var(--fw-bold);
+  }
+
+  .k9-ring {
+    position: absolute;
+    inset: -0.1em -0.05em;
+    border: var(--bw-3) solid var(--color-stage-accent);
+    border-radius: var(--radius-md);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .k9-k.is-hl {
+    color: var(--color-stage-accent);
+  }
+
+  .k9-k.is-hl .k9-ring {
+    opacity: 1;
+  }
+
+  .k9-ar {
+    font-size: 0.6em;
+    color: var(--color-stage-accent);
+  }
+
+  .k9-x4 {
+    justify-self: stretch;
+    display: flex;
+    justify-content: center;
+    gap: 0.4em;
+    border-top: var(--bw-2) dashed var(--red-300);
+    font-size: 0.6em;
+    color: var(--red-300);
+  }
+
+  .k9-x4 small {
+    font-family: var(--font-mono);
+    font-size: max(var(--fs-label), 0.7em);
+  }
+
+  /* ---- grafik ---- */
+  .k9-ax {
+    fill: none;
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-2);
+  }
+
+  .k9-tk {
+    font-family: var(--font-mono);
+    font-size: var(--svg-fs-xs);
+    fill: var(--color-on-stage-muted);
+  }
+
+  .k9-curve {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-3);
+  }
+
+  .k9-line {
+    fill: none;
+    stroke: var(--red-300);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 8 5;
+  }
+
+  .k9-lt,
+  .k9-m20 text,
+  .k9-mc text {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-sm);
+    fill: var(--red-300);
+  }
+
+  .k9-drop {
+    fill: none;
+    stroke: var(--red-300);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 4 4;
+  }
+
+  .k9-m20 circle,
+  .k9-mc circle {
+    fill: var(--red-400);
+  }
+
+  .k9-mc text {
+    fill: var(--color-on-stage);
+  }
+
+  .k9-m20,
+  .k9-mc {
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .show-t20 .k9-m20,
+  .show-cross .k9-mc {
+    opacity: 1;
+  }
+}
