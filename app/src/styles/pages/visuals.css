@@ -4230,3 +4230,120 @@
     fill: var(--color-stage-accent);
   }
 }
+
+/* ---------- soal 12 (vec12, v1.44): balok panjang vektor dan tabel uji nilai m ----------
+   rusuk putih (rusuk belakang putus-putus); diagonal ruang biru langit; baris yang tepat 81 emas (jawaban),
+   lainnya merah. */
+@layer pages {
+  .vis-vec {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: var(--color-on-stage);
+    font-size: min(var(--fs-mat), var(--v12-fit-h), var(--v12-fit-w));
+  }
+
+  .v12-box,
+  .v12-tab {
+    grid-area: 1 / 1;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .v12-box {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .vis-vec[data-view='box'] .v12-tab,
+  .vis-vec[data-view='tab'] .v12-box {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .v12-e {
+    fill: none;
+    stroke: var(--color-on-stage);
+    stroke-width: var(--bw-2);
+  }
+
+  .v12-hid {
+    stroke: var(--color-on-stage-muted);
+    stroke-dasharray: 6 5;
+  }
+
+  .v12-diag {
+    fill: none;
+    stroke: var(--color-stage-accent);
+    stroke-width: var(--bw-4);
+  }
+
+  .v12-pt {
+    fill: var(--color-stage-accent);
+  }
+
+  .v12-pl,
+  .v12-rl,
+  .v12-dl {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-md);
+    fill: var(--color-on-stage);
+  }
+
+  .v12-dl {
+    fill: var(--color-stage-accent);
+    paint-order: stroke;
+    stroke: var(--color-stage);
+    stroke-width: var(--bw-4);
+  }
+
+  .has-m .v12-rl {
+    fill: var(--color-stage-accent);
+  }
+
+  /* ---- tabel uji nilai m ---- */
+  .v12-tab {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    align-items: center;
+    justify-items: center;
+    gap: 0.35em 0.8em;
+    font-size: 0.7em;
+  }
+
+  .v12-h {
+    font-size: 0.75em;
+    color: var(--color-on-stage-muted);
+  }
+
+  .v12-c {
+    padding: 0.05em 0.3em;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .v12-c.on {
+    opacity: 1;
+  }
+
+  .v12-c.is-cur {
+    background: var(--a-sky-15);
+  }
+
+  .v12-m {
+    font-weight: var(--fw-bold);
+    color: var(--color-stage-accent);
+  }
+
+  .v12-tag {
+    font-weight: var(--fw-bold);
+    color: var(--red-300);
+  }
+
+  .v12-tag.is-ok {
+    color: var(--color-result);
+  }
+}

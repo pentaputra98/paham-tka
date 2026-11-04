@@ -1690,6 +1690,14 @@ $m=-4$: $\vec{AB}=(-8,-1,-4)$, $64+1+16=81$ ✓. $m=3$: $\vec{AB}=(6,6,3)$, $36+
 - Lupa suku tengah pada $(m+3)^2$.
 - Menganggap hanya satu nilai $m$ yang cocok; persamaan kuadrat memberi dua akar dan keduanya harus diuji terhadap panjang 9.
 
+*Alur aplikasi (Revisi 1.44, 4 Nov 2026; kunci tidak berubah: B). Dipakai di `app/src/content/soal/q12.ts` (modul baru, adegan `vec12`); soal 12 ditambahkan ke Rilis 1 dan dibuka.* Jalur utama **dari pilihan** (pola pemilik untuk pilihan ganda); persamaan kuadrat menjadi cara esai opsional. Hasil disimpan ke **catatan**: $\vec{AB}$ dan $x^2+y^2+z^2=81$. Baris papan tanpa ":". Tata letak: panggung penuh dua kolom.
+- **Bagian 1 — Pahami soal:** komponen $2m$, $m+3$, $m$; panjang $9$; ditanya $m$.
+- **Bagian 2 — Panjang vektor:** *Tahukah kalian?* panjang vektor 3D adalah diagonal ruang balok, $\sqrt{x^2+y^2+z^2}$ (balok kerangka); panjang $9$ berarti jumlah kuadrat $=81$ (pertanyaan cepat baru; pengecoh $9$, $3$).
+- **Bagian 3 — Uji nilai dari pilihan:** nilai $m$ yang muncul di pilihan hanya $-4$, $-3$, $3$, $4$; tiap nilai disubstitusi ke vektornya (tabel uji): $m=-4\to(-8,-1,-4)$, $64+1+16=81$ ✓; $m=-3\to45$; $m=3\to(6,6,3)$, $81$ ✓; $m=4\to129$ (pertanyaan cepat baru; pengecoh $81$, $19$).
+- **Bagian 4 — Jawaban:** hanya $-4$ dan $3$ → **B**; A, C memuat $-3$, D, E memuat $4$; **hati-hati** kedua nilai harus memenuhi (E benar untuk $-4$ saja).
+- **Bagian 5 — Cara esai (opsional, Ya/Lewati):** a1–b5 di atas, $(m+3)^2=m^2+6m+9$ (pertanyaan cepat lama), $m^2+m-12=0$, $(m+4)(m-3)=0$.
+- **Bagian 6–8:** catatan lengkap, kartu A–E dengan pertanyaan berhuruf, segel B.
+
 ---
 
 ## SOAL 13 — Trapesium Sama Kaki

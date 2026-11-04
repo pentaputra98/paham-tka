@@ -21,6 +21,7 @@ import { createTide11 } from './tide11';
 import { createTrans2 } from './trans2';
 import { createSing16 } from './sing16';
 import { createTrap13 } from './trap13';
+import { createVec12 } from './vec12';
 
 export const VISUALS: Record<string, VisualFactory> = {
   bars: createBars,
@@ -44,4 +45,5 @@ export const VISUALS: Record<string, VisualFactory> = {
   trans2: createTrans2,
   sing16: createSing16,
   trap13: createTrap13,
+  vec12: createVec12,
 };
