@@ -3021,6 +3021,14 @@ Metode ketiga (vektor normal): $(3,2)$ berputar menjadi $(-2,3)$ sehingga bayang
 - Memutar searah jarum jam.
 - Menguji titik pada **garis awal** (misal $(5,2)$ tidak terletak pada $3x+2y=6$ karena $19\neq6$), bukan pada bayangan.
 
+*Alur aplikasi (Revisi 1.54, 5 Nov 2026, gaya pemilik; kunci tidak berubah: (2, 0) dan (5, 2)). Dipakai di `app/src/content/soal/q21.ts` (modul baru, adegan `rot21`); soal 21 ditambahkan ke Rilis 1 dan dibuka.* Aturan dijelaskan lewat satu titik, lalu persamaan $l$, lalu tiap pilihan diuji. Hasil disimpan ke **catatan**: aturan $(x,y)\to(2-y,\ x-2)$ dan $l$: $2x-3y=4$. Baris papan tanpa ":". Tata letak: panggung penuh dua kolom.
+- **Bagian 1 — Pahami soal:** garis $3x+2y=6$, rotasi $90^\circ$ berlawanan jarum jam, pusat $(2,0)$ bukan titik asal; ditanya titik pada $l$.
+- **Bagian 2 — Aturan rotasi:** titik $A(4,-3)$ (dari *Pemeriksaan hasil*): geser pusat ke $O$, $(2,-3)$; putar $(-v,u)$, $(3,2)$ (pertanyaan cepat dokumen); geser kembali, $A'(5,2)$; jadi $(x,y)\to(2-y,\ x-2)$. Di panggung lengan dari $P(2,0)$ berputar $90^\circ$ dan $A$ bergerak menyusuri busur.
+- **Bagian 3 — Garis bayangan l:** b1–b6, $y=2-x'$ (pertanyaan cepat dokumen) dan $x=y'+2$ dimasukkan ke $3x+2y=6$, sehingga $l$: $2x-3y=4$; garis awal berputar mengelilingi $P$ menjadi $l$.
+- **Bagian 4 — Uji tiap titik:** c1–c5 pada $2x-3y=4$; $(2,0)$ (pusat rotasi, tidak berpindah) dan $(5,2)$ (bayangan $A$) memenuhi.
+- **Bagian 5 — Cara dua titik (opsional, Ya/Lewati):** $(0,3)\to(-1,-2)$ dan $(2,0)$ tetap; keduanya memenuhi $2x-3y=4$.
+- **Bagian 6–8:** catatan lengkap (sketsa grafik), kartu 1–5 dengan pertanyaan pilihan kombinasi, segel (2, 0) · (5, 2).
+
 ---
 
 ## SOAL 22 — Limit Fungsi Rasional di $x=3$

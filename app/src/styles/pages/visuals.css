@@ -5324,3 +5324,164 @@
     }
   }
 }
+
+/* ---------- soal 21 (rot21, v1.54): rotasi 90° berpusat (2, 0) pada garis ----------
+   garis awal putih, garis bayangan l biru langit, pusat P mint; lengan titik A biru langit lalu A′ ungu;
+   titik pilihan pada l emas (jawaban), di luar l merah. */
+@layer pages {
+  .vis-rot {
+    height: 100%;
+    display: grid;
+    place-items: center;
+  }
+
+  .r21-svg {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--svg-fs-sm);
+  }
+
+  .r21-g {
+    stroke: var(--a-sky-15);
+    stroke-width: var(--bw-hair);
+  }
+
+  .r21-g.r21-ax {
+    stroke: var(--color-on-stage-muted);
+    stroke-width: var(--bw-1);
+  }
+
+  .r21-tk {
+    fill: var(--color-on-stage-muted);
+    font-size: var(--svg-fs-xs);
+  }
+
+  .r21-svg text {
+    paint-order: stroke;
+    stroke: var(--color-stage);
+    stroke-width: var(--bw-4);
+  }
+
+  .r21-l0,
+  .r21-l0r,
+  .r21-l1 {
+    fill: none;
+    stroke-width: var(--bw-4);
+    stroke-linecap: round;
+  }
+
+  .r21-l0 {
+    stroke: var(--color-on-stage);
+  }
+
+  .r21-l0r {
+    stroke: var(--color-on-stage);
+    stroke-dasharray: 8 6;
+  }
+
+  .r21-l1 {
+    stroke: var(--color-stage-accent);
+  }
+
+  .r21-n0 {
+    fill: var(--color-on-stage);
+  }
+
+  .r21-n1 {
+    fill: var(--color-stage-accent);
+  }
+
+  .r21-P circle,
+  .r21-P text {
+    fill: var(--color-current-on-stage);
+  }
+
+  .r21-arm0 path,
+  .r21-arm path,
+  .r21-twa path {
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 5 4;
+  }
+
+  .r21-arm0 path {
+    stroke: var(--color-on-stage-muted);
+  }
+
+  .r21-arm0 circle,
+  .r21-arm0 text,
+  .r21-tw0 circle,
+  .r21-tw0 text {
+    fill: var(--color-on-stage);
+  }
+
+  .r21-arm path,
+  .r21-twa path {
+    stroke: var(--color-y-on-stage);
+  }
+
+  .r21-arm circle,
+  .r21-twa circle,
+  .r21-a1,
+  .r21-tw1 {
+    fill: var(--color-y-on-stage);
+  }
+
+  .r21-v0,
+  .r21-v1 {
+    fill: var(--color-stage-accent);
+  }
+
+  .r21-arc {
+    fill: none;
+    stroke: var(--color-y-on-stage);
+    stroke-width: var(--bw-2);
+    stroke-dasharray: 2 5;
+  }
+
+  .r21-op circle,
+  .r21-op text {
+    fill: var(--color-constraint-on-stage);
+  }
+
+  .r21-op.is-ok circle,
+  .r21-op.is-ok text {
+    fill: var(--color-result);
+  }
+
+  /* kemunculan bertahap */
+  .r21-arm0,
+  .r21-arm,
+  .r21-arc,
+  .r21-v0,
+  .r21-v1,
+  .r21-a1,
+  .r21-P,
+  .r21-l0,
+  .r21-n0,
+  .r21-l0r,
+  .r21-l1,
+  .r21-n1,
+  .r21-op,
+  .r21-tw {
+    opacity: 0;
+  }
+
+  .r1 :is(.r21-arm0, .r21-arm, .r21-v0, .r21-P),
+  .r2 :is(.r21-arc, .r21-v1, .r21-a1),
+  .is-g0 :is(.r21-l0, .r21-n0, .r21-P),
+  .is-rot :is(.r21-l0r, .r21-l1, .r21-n1),
+  .r21-op.on,
+  .is-two .r21-tw,
+  .is-all :is(.r21-P, .r21-l0, .r21-n0, .r21-l1, .r21-n1, .r21-op) {
+    opacity: 1;
+  }
+
+  .r2 .r21-arm,
+  .is-rot .r21-l0r,
+  .is-two .r21-twa {
+    transform: rotate(-90deg);
+  }
+}

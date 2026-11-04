@@ -26,6 +26,7 @@ const LOADERS: Partial<Record<number, () => Promise<{ default: SoalContent }>>> 
   18: () => import('./q18'),
   19: () => import('./q19'),
   20: () => import('./q20'),
+  21: () => import('./q21'),
   24: () => import('./q24'),
   25: () => import('./q25'),
 };
