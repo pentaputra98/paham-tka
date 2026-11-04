@@ -1,22 +1,27 @@
 /**
  * SOAL 20 — Translasi lalu Dilatasi Lingkaran (transformasi geometri; pilihan tunggal). Kunci: C (T = (3, −1), k = 2).
  * Sumber: docs/pembahasan25.md "SOAL 20", docs/soal25.md no. 20.
- * Alur (v1.52, dicatat di dokumen):
+ * Alur revisi pemilik (v1.53, murni aljabar dengan timeline L → L′ → L″, dicatat di dokumen):
  *  - pahami: L pusat (−5, 3), r = 2; translasi T lalu dilatasi [O, k]; L″ (x + 4)² + (y − 4)² = 16; ditanya T dan k;
- *  - baca L″: pusat (−4, 4), r² = 16 jadi r = 4;
- *  - faktor skala dulu dari jari-jari: translasi tidak mengubah jari-jari (r′ = 2), 4 = k × 2 jadi k = 2;
- *    pilihan tinggal C dan D;
- *  - pusat L′ mundur dari L″: dilatasi dari O mengalikan pusat dengan 2, jadi (−4, 4) dibagi 2 = (−2, 2);
- *  - T = pusat L′ − pusat L = (3, −1) → pilihan C (hati-hati D, (1, 1) dihitung langsung dari L ke L″);
- *  - bagian opsional "Cek maju dari pilihan": C (−5, 3) → (−2, 2) → (−4, 4) ✓, D (−5, 3) → (−4, 4) → (−8, 8) ✗.
+ *  - L: (x + 5)² + (y − 3)² = 2²;
+ *  - L′: translasi dimisalkan T = (a, b), x diganti x − a dan y diganti y − b, jari-jari tetap:
+ *    ((x − a) + 5)² + ((y − b) − 3)² = 2², yaitu (x − (a − 5))² + (y − (b + 3))² = 2²;
+ *  - L″: dilatasi [O, k] mengalikan jari-jari dengan k (2 menjadi 2k) DAN mengalikan pusat dengan k (pusat ikut
+ *    berpindah karena dilatasinya berpusat di O): (x − k(a − 5))² + (y − k(b + 3))² = (2k)² = 4k²;
+ *    pertanyaan cepat: kalau pusat dianggap tetap, hasilnya T = (1, 1), jebakan pilihan D;
+ *  - samakan dengan soal (x − (−4))² + (y − 4)² = 16: 4k² = 16 → k = 2; k(a − 5) = −4 → a = 3; k(b + 3) = 4 → b = −1;
+ *    T = (3, −1), k = 2 → pilihan C;
+ *  - bagian opsional "Cek dengan gambar" (adegan dil20): pilihan C mendarat tepat di L″, pilihan D meleset.
  * Tanpa simbol ":" di baris papan. Tata letak: panggung penuh dua kolom (PRD v1.5).
  */
 import { H, O, T } from '../../engine/dsl';
 import type { SoalContent, Visual } from '../../engine/types';
 import type { Dil20State } from '../../visuals/dil20';
+import type { Tl20State } from '../../visuals/tl20';
 import { getSoal } from '../index';
 
-const sc = (state: Dil20State): Visual => ({ kind: 'svg', scene: 'dil20', state });
+const tl = (state: Tl20State): Visual => ({ kind: 'svg', scene: 'tl20', state });
+const pic = (state: Dil20State): Visual => ({ kind: 'svg', scene: 'dil20', state });
 const col = (a: string, b: string): string => `\\begin{pmatrix}${a}\\\\${b}\\end{pmatrix}`;
 const LETTERS = ['A', 'B', 'C', 'D', 'E'] as const;
 const OPT: Array<[string, string, string]> = [
@@ -44,7 +49,7 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
   lobby: {
     eyebrow: 'Kelas 12 · Matematika Lanjut · Transformasi geometri',
     titleLines: ['Pembahasan Soal', 'Translasi lalu <span class="accent">Dilatasi</span>', 'Lingkaran'],
-    lede: 'Lingkaran $L$ digeser lalu diperbesar menjadi $L^{\\prime\\prime}$. Dari lingkaran awal dan akhir, kita cari translasi dan faktor skalanya.',
+    lede: 'Lingkaran $L$ digeser lalu diperbesar menjadi $L^{\\prime\\prime}$. Kita ikuti persamaannya dari $L$ ke $L^{\\prime}$ ke $L^{\\prime\\prime}$, lalu samakan dengan soal.',
     facts: [
       { dt: 'L', dd: 'pusat (−5, 3), r = 2' },
       { dt: 'L″', dd: '(x+4)² + (y−4)² = 16' },
@@ -54,21 +59,19 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
   chapters: [
     { t: 'Lobi', d: 'Halaman awal' },
     { t: 'Pahami soal', d: 'Lingkaran awal dan akhir' },
-    { t: 'Lingkaran L″', d: 'Pusat (−4, 4), r = 4' },
-    { t: 'Faktor skala', d: 'k = 2, sisa C dan D' },
-    { t: 'Pusat L′', d: 'Mundur, dibagi 2' },
-    { t: 'Translasi T', d: 'Pilihan C' },
-    { t: 'Cek maju dari pilihan', d: 'Opsional: C dan D', opt: true },
+    { t: 'Lingkaran L', d: 'Persamaan awal' },
+    { t: 'Translasi ke L′', d: 'T = (a, b), jari-jari tetap' },
+    { t: 'Dilatasi ke L″', d: 'Pusat dan jari-jari dikali k' },
+    { t: 'Samakan dengan soal', d: 'k = 2, a = 3, b = −1' },
+    { t: 'Cek dengan gambar', d: 'Opsional: pilihan C dan D', opt: true },
     { t: 'Catatan lengkap', d: 'Simpan dan cetak' },
     { t: 'Cocokkan pilihan', d: 'Kartu A–E' },
     { t: 'Selesai', d: 'Jawaban C' },
   ],
   pinsLabel: 'Catatan',
   pins: {
-    pL: { id: 'pL', toks: [T('PL1', 'L\\ (-5,3),\\ r=2', '', 'k1a')] },
-    pL2: { id: 'pL2', toks: [T('PL21', `${L2}\\ (-4,4),\\ r=4`, '', 'a3c')] },
-    pK: { id: 'pK', toks: [T('PK1', 'k=2', '', 'b3a')] },
-    pLp: { id: 'pLp', toks: [T('PP1', `${L1}\\ (-2,2)`, '', 'c3c')] },
+    pL: { id: 'pL', toks: [T('PL1', '(x+5)^2+(y-3)^2=2^2', '', 'l2a')] },
+    pLp: { id: 'pLp', toks: [T('PP1', `\\text{pusat }${L1}\\ (a-5,\\ b+3),\\ r=2`, '', 't4a')] },
   },
   lists: {
     L1: [
@@ -98,88 +101,88 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
         note: 'translasi dan faktor skala',
       },
     ],
-    LA: [
-      { id: 'a1', toks: [T('a1a', '(x+4)^2+(y-4)^2=16', '', '@s-L2')], note: 'bentuk $(x-p)^2+(y-q)^2=r^2$' },
+    LL: [
+      { id: 'l1', toks: [T('l1a', 'L\\ (-5,3),\\ r=2', '', '@s-L')], note: 'dari soal' },
       {
-        id: 'a2',
-        toks: [H('a2a', 'pusat', 'tx'), T('a2b', '(-4,\\ 4)', 'blue')],
-        note: '$x+4=x-(-4)$, tandanya dibalik',
-        box: 'navy',
-      },
-      {
-        id: 'a3',
-        toks: [T('a3a', 'r^2=16'), O('a3b', '\\to'), T('a3c', 'r=4', 'blue')],
-        note: '$\\sqrt{16}=4$; simpan ke catatan',
+        id: 'l2',
+        toks: [T('l2a', '(x+5)^2+(y-3)^2=2^2', 'blue')],
+        note: 'bentuk $(x-p)^2+(y-q)^2=r^2$, tanda pusat dibalik; simpan ke catatan',
         box: 'navy',
       },
     ],
-    LB: [
+    LT: [
       {
-        id: 'b1',
-        toks: [T('b1a', `r^{\\prime}=r=2`, '', 'PL1')],
-        note: 'translasi hanya menggeser, ukurannya tetap',
+        id: 't1',
+        toks: [T('t1a', 'T'), O('t1b', '='), T('t1c', '(a,b)')],
+        note: 'translasi dimisalkan $a$ dan $b$',
       },
       {
-        id: 'b2',
-        toks: [T('b2a', '4', '', 'PL21'), O('b2b', '='), T('b2c', 'k\\times2')],
-        note: 'dilatasi mengalikan jari-jari dengan $k$',
-      },
-      { id: 'b3', toks: [T('b3a', 'k=2', 'blue')], note: '$4\\div2=2$; simpan ke catatan', box: 'navy' },
-      {
-        id: 'b4',
-        toks: [H('b4a', 'pilihan tinggal', 'tx'), T('b4b', '\\text{C}\\ \\text{dan}\\ \\text{D}')],
-        note: 'A dan E memakai $k=8$, B memakai $k=4$',
-      },
-    ],
-    LC: [
-      {
-        id: 'c1',
-        toks: [
-          T('c1a', `2\\times\\text{pusat }${L1}`, '', 'PK1'),
-          O('c1b', '='),
-          T('c1c', `\\text{pusat }${L2}`),
-        ],
-        note: 'dilatasi dari $O$ mengalikan koordinat pusat dengan $k$',
+        id: 't2',
+        toks: [T('t2a', 'x\\to x-a'), O('t2b', ','), T('t2c', 'y\\to y-b')],
+        note: 'masukkan ke persamaan $L$',
       },
       {
-        id: 'c2',
-        toks: [T('c2a', `2\\times(p,q)`), O('c2b', '='), T('c2c', '(-4,4)', '', 'PL21')],
+        id: 't3',
+        toks: [T('t3a', '\\begin{aligned}&((x-a)+5)^2+((y-b)-3)^2\\\\&=2^2\\end{aligned}', '', 'PL1')],
+        note: 'jari-jari tetap $2$',
       },
       {
-        id: 'c3',
-        toks: [T('c3a', `\\text{pusat }${L1}`), O('c3b', '='), T('c3c', '(-2,\\ 2)', 'blue')],
-        note: 'mundur, tiap koordinat dibagi $2$; simpan ke catatan',
+        id: 't4',
+        toks: [T('t4a', '\\begin{aligned}&(x-(a-5))^2+(y-(b+3))^2\\\\&=2^2\\end{aligned}', 'blue')],
+        note: `$${L1}$ berpusat di $(a-5,\\ b+3)$, translasi tidak mengubah jari-jari; simpan ke catatan`,
         box: 'navy',
       },
     ],
     LD: [
       {
         id: 'd1',
-        toks: [T('d1a', 'T'), O('d1b', '='), T('d1c', `\\text{pusat }${L1}-\\text{pusat }L`)],
-        note: 'translasi memindahkan pusat $L$ ke pusat $L^{\\prime}$',
+        toks: [T('d1a', 'r=2\\to2k', '', 'PP1')],
+        note: 'dilatasi mengalikan jari-jari dengan $k$',
       },
       {
         id: 'd2',
-        toks: [T('d2a', 'T'), O('d2b', '='), T('d2c', '(-2-(-5),\\ 2-3)', '', 'PP1')],
-        note: 'tujuan dikurangi asal',
+        toks: [H('d2a', 'pusat', 'tx'), T('d2b', '(k(a-5),\\ k(b+3))')],
+        note: 'pusat $(a-5,\\ b+3)$ ikut dikali $k$, karena dilatasinya berpusat di $O$',
       },
       {
         id: 'd3',
-        toks: [T('d3a', 'T'), O('d3b', '='), T('d3c', col('3', '-1'), 'blue')],
-        note: 'geser $3$ ke kanan, $1$ ke bawah',
+        toks: [T('d3a', '\\begin{aligned}&(x-k(a-5))^2+(y-k(b+3))^2\\\\&=(2k)^2=4k^2\\end{aligned}', 'blue')],
+        note: `persamaan $${L2}$, $(2k)^2=4k^2$`,
         box: 'navy',
       },
+    ],
+    LE: [
       {
-        id: 'd4',
+        id: 'e1',
+        toks: [T('e1a', '(x+4)^2+(y-4)^2=16', '', '@s-L2')],
+        note: 'dari soal, sama dengan $(x-(-4))^2+(y-4)^2=16$',
+      },
+      {
+        id: 'e2',
+        toks: [T('e2a', '4k^2=16'), O('e2b', '\\to'), T('e2c', 'k=2', 'blue')],
+        note: '$k^2=4$; faktor skala pada pilihan positif',
+      },
+      {
+        id: 'e3',
+        toks: [T('e3a', 'k(a-5)=-4'), O('e3b', '\\to'), T('e3c', 'a=3', 'blue')],
+        note: '$2(a-5)=-4$, jadi $a-5=-2$',
+      },
+      {
+        id: 'e4',
+        toks: [T('e4a', 'k(b+3)=4'), O('e4b', '\\to'), T('e4c', 'b=-1', 'blue')],
+        note: '$2(b+3)=4$, jadi $b+3=2$',
+      },
+      {
+        id: 'e5',
         toks: [
-          H('d4a', 'Jawaban', 'lbl'),
-          T('d4b', '\\textbf{C}', '', '@s-oC'),
-          T('d4c', `T=${col('3', '-1')},\\ k=2`, 'gold'),
+          H('e5a', 'Jawaban', 'lbl'),
+          T('e5b', '\\textbf{C}', '', '@s-oC'),
+          T('e5c', `T=${col('3', '-1')},\\ k=2`, 'gold'),
         ],
         box: 'gold',
       },
     ],
-    // cek maju dari pilihan (opsional)
+    // cek dengan gambar (opsional)
     LX: [
       {
         id: 'x1',
@@ -197,17 +200,12 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
           T('x2b', '(-5,3)\\to(-4,4)\\to(-8,8)'),
           T('x2c', '\\;\\times', 'red'),
         ],
-        note: 'digeser $(1,1)$ lalu dikali $2$; jebakan, $T$ dihitung langsung dari $L$ ke $L^{\\prime\\prime}$ tanpa dilatasi',
+        note: 'digeser $(1,1)$ lalu dikali $2$; pusatnya ikut dikali $2$, jadi meleset',
       },
     ],
     L7: [{ id: 'w1', toks: [H('w1a', 'Jawaban', 'lbl'), T('w1b', '\\textbf{C}')], box: 'gold' }],
     LR: [
-      {
-        id: 'r1',
-        toks: [T('r1a', `T=${col('3', '-1')},\\ k=2`)],
-        note: '$(-5,3)\\to(-2,2)\\to(-4,4)$',
-        box: 'gold',
-      },
+      { id: 'r1', toks: [T('r1a', `T=${col('3', '-1')},\\ k=2`)], note: '$a=3$, $b=-1$, $k=2$', box: 'gold' },
       { id: 'r2', toks: [H('r2a', 'Jawaban', 'lbl'), T('r2b', '\\textbf{C}')], box: 'gold' },
     ],
   },
@@ -217,107 +215,119 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
       ch: 1,
       cap: 'Perhatikan soalnya. Lingkaran $L$ berpusat di $(-5,3)$ dengan jari-jari $2$, lalu digeser dengan translasi $T$.',
       visual: { kind: 'soal', hl: 1 },
-      board: { title: 'Pahami soal', list: 'L1', upTo: 2, from: 0, save: ['pL'] },
+      board: { title: 'Pahami soal', list: 'L1', upTo: 2, from: 0 },
     },
     {
       ch: 1,
-      cap: 'Setelah digeser, lingkaran diperbesar dari $O$ menjadi $L^{\\prime\\prime}$. Yang ditanya translasi $T$ dan faktor skala $k$.',
+      cap: 'Setelah digeser, lingkaran didilatasi dari $O$ menjadi $L^{\\prime\\prime}$. Yang ditanya translasi $T$ dan faktor skala $k$.',
       visual: { kind: 'soal', hl: 2 },
       board: { title: 'Pahami soal', list: 'L1', upTo: 4, from: 2 },
     },
-    // ---- 2 · Lingkaran L″ ----
+    // ---- 2 · Lingkaran L ----
     {
       ch: 2,
-      cap: 'Baca lingkaran akhir. Dari $(x+4)^2+(y-4)^2=16$, pusatnya $(-4,4)$, tanda di dalam kurung dibalik.',
-      visual: sc({ L: true, L2: true }),
-      board: { title: 'Lingkaran L″', pins: ['pL'], list: 'LA', upTo: 2, from: 0 },
+      cap: 'Mulai dari $L$. Pusat $(-5,3)$ dan jari-jari $2$ memberi persamaan $(x+5)^2+(y-3)^2=2^2$.',
+      visual: tl({ view: 'tl', n: 1 }),
+      board: { title: 'Lingkaran L', list: 'LL', upTo: 2, from: 0, save: ['pL'] },
     },
-    {
-      ch: 2,
-      cap: 'Ruas kanan $16$ adalah $r^2$, jadi jari-jarinya $\\sqrt{16}=4$.',
-      visual: sc(BASE),
-      board: { title: 'Lingkaran L″', pins: ['pL'], list: 'LA', upTo: 3, from: 2, save: ['pL2'] },
-      ask: {
-        before: 'a3',
-        q: 'Jari-jari lingkaran dengan ruas kanan $16$ adalah…',
-        opts: [
-          { tex: '4', ok: true },
-          { tex: '16', hint: 'Ruas kanan adalah $r^2$, bukan $r$. Akarkan $16$.' },
-          { tex: '8', hint: '$16\\div2=8$ tidak dipakai di sini. Jari-jari adalah akar dari $16$.' },
-        ],
-      },
-    },
-    // ---- 3 · Faktor skala ----
+    // ---- 3 · Translasi ke L′ ----
     {
       ch: 3,
-      cap: 'Cari faktor skala dulu dari jari-jari. Translasi hanya menggeser, jadi jari-jari $L^{\\prime}$ tetap $2$.',
-      visual: sc(BASE),
-      board: { title: 'Faktor skala', pins: ['pL', 'pL2'], list: 'LB', upTo: 1, from: 0 },
+      cap: 'Misalkan translasinya $T=(a,b)$. Pada persamaan, $x$ diganti $x-a$ dan $y$ diganti $y-b$, sedangkan jari-jarinya tetap $2$.',
+      visual: tl({ view: 'tl', n: 2, m: 0 }),
+      board: { title: 'Translasi ke L′', pins: ['pL'], list: 'LT', upTo: 3, from: 0 },
     },
     {
       ch: 3,
-      cap: 'Dilatasi mengubah jari-jari $2$ menjadi $4$, jadi $4=k\\times2$ dan $k=2$. Pilihan dengan $k=2$ tinggal C dan D.',
-      visual: sc(BASE),
-      board: { title: 'Faktor skala', pins: ['pL', 'pL2'], list: 'LB', upTo: 4, from: 1, save: ['pK'] },
+      cap: 'Rapikan isi kurungnya. Jadi $L^{\\prime}$ berpusat di $(a-5,\\ b+3)$ dengan jari-jari tetap $2$.',
+      visual: tl({ view: 'tl', n: 2, m: 1 }),
+      board: { title: 'Translasi ke L′', pins: ['pL'], list: 'LT', upTo: 4, from: 3, save: ['pLp'] },
     },
-    // ---- 4 · Pusat L′ ----
+    // ---- 4 · Dilatasi ke L″ ----
     {
       ch: 4,
-      cap: 'Dilatasi dari $O$ juga mengalikan pusat dengan $2$. Jadi $2\\times$ pusat $L^{\\prime}$ sama dengan $(-4,4)$.',
-      visual: sc({ ...BASE, ray: true }),
-      board: { title: 'Pusat L′', pins: ['pK', 'pL2'], list: 'LC', upTo: 2, from: 0 },
-    },
-    {
-      ch: 4,
-      cap: 'Mundur, bagi tiap koordinat dengan $2$. Pusat $L^{\\prime}$ adalah $(-2,2)$, tepat di tengah antara $O$ dan pusat $L^{\\prime\\prime}$.',
-      visual: sc({ ...BASE, ray: true, Lp: true }),
-      board: { title: 'Pusat L′', pins: ['pK', 'pL2'], list: 'LC', upTo: 3, from: 2, save: ['pLp'] },
-    },
-    // ---- 5 · Translasi T ----
-    {
-      ch: 5,
-      cap: 'Translasi memindahkan pusat $L(-5,3)$ ke pusat $L^{\\prime}(-2,2)$. Hitung tujuan dikurangi asal.',
-      visual: sc({ ...BASE, ray: true, Lp: true, tv: true }),
-      board: { title: 'Translasi T', pins: ['pL', 'pLp'], list: 'LD', upTo: 3, from: 0 },
+      cap: 'Dilatasi $[O,k]$ mengalikan jari-jari dengan $k$, jadi $2$ menjadi $2k$. Pusatnya juga dikali $k$, karena dilatasinya berpusat di $O$.',
+      visual: tl({ view: 'tl', n: 3, m: 0 }),
+      board: { title: 'Dilatasi ke L″', pins: ['pLp'], list: 'LD', upTo: 2, from: 0 },
       ask: {
-        before: 'd3',
-        q: 'Dari pusat $(-5,3)$ ke $(-2,2)$, translasinya…',
+        before: 'd2',
+        q: 'Pada dilatasi berpusat di $O(0,0)$, pusat lingkaran…',
+        col: true,
         opts: [
-          { tex: col('3', '-1'), ok: true },
+          { txt: 'Ikut dikali k, menjadi (k(a − 5), k(b + 3))', ok: true },
           {
-            tex: col('1', '1'),
-            hint: 'Itu selisih $L$ ke $L^{\\prime\\prime}$, melewatkan dilatasi. Tujuan translasi adalah $L^{\\prime}(-2,2)$.',
+            txt: 'Tetap di (a − 5, b + 3)',
+            hint: 'Dilatasi dari $O$ memindahkan setiap titik $(x,y)$ ke $(kx,ky)$, termasuk pusat. Kalau pusat dianggap tetap, hasilnya $T=(1,1)$, jebakan pilihan D.',
           },
-          { tex: col('-3', '1'), hint: 'Arahnya terbalik. Hitung tujuan dikurangi asal.' },
+        ],
+      },
+    },
+    {
+      ch: 4,
+      cap: 'Tulis persamaan $L^{\\prime\\prime}$ dengan pusat baru dan jari-jari $2k$. Ruas kanannya $(2k)^2=4k^2$.',
+      visual: tl({ view: 'tl', n: 3, m: 1 }),
+      board: { title: 'Dilatasi ke L″', pins: ['pLp'], list: 'LD', upTo: 3, from: 2 },
+    },
+    // ---- 5 · Samakan dengan soal ----
+    {
+      ch: 5,
+      cap: 'Samakan hasil aljabar dengan persamaan dari soal. Bagian yang warnanya sama harus bernilai sama.',
+      visual: tl({ view: 'cmp', s: 0 }),
+      board: { title: 'Samakan dengan soal', list: 'LE', upTo: 1, from: 0 },
+    },
+    {
+      ch: 5,
+      cap: 'Ruas kanan, $4k^2=16$, jadi $k^2=4$ dan $k=2$.',
+      visual: tl({ view: 'cmp', s: 1 }),
+      board: { title: 'Samakan dengan soal', list: 'LE', upTo: 2, from: 1 },
+      ask: {
+        before: 'e2',
+        q: 'Dari $4k^2=16$, faktor skalanya $k=$…',
+        opts: [
+          { tex: '2', ok: true },
+          { tex: '4', hint: '$4k^2=16$ memberi $k^2=4$, jadi $k=2$.' },
+          { tex: '8', hint: 'Bagi dulu dengan $4$, lalu akarkan. $k^2=4$.' },
         ],
       },
     },
     {
       ch: 5,
-      cap: 'Jadi $T=(3,-1)$ dan $k=2$, yaitu pilihan C.',
-      visual: { kind: 'soal', hl: 0, focus: 's-oC' },
-      board: { title: 'Translasi T', pins: ['pL', 'pLp'], list: 'LD', upTo: 4, from: 3 },
+      cap: 'Bagian $x$, $k(a-5)=-4$. Dengan $k=2$, $a-5=-2$, jadi $a=3$.',
+      visual: tl({ view: 'cmp', s: 2 }),
+      board: { title: 'Samakan dengan soal', list: 'LE', upTo: 3, from: 2 },
     },
-    // tawaran cek maju (opsional): Ya masuk Bagian 6, Tidak/Lewati langsung ke Bagian 7
     {
       ch: 5,
-      cap: 'Mau cek maju dari pilihan, yaitu menjalankan translasi dan dilatasi pilihan C dan D pada lingkaran $L$?',
-      visual: sc({ ...BASE, ray: true, Lp: true, tv: true }),
-      board: { title: 'Translasi T', pins: ['pL', 'pLp'], list: 'LD', upTo: 4, from: 4 },
-      branch: { yes: 'Ya, cek maju' },
-    },
-    // ---- 6 · Cek maju dari pilihan (opsional) ----
-    {
-      ch: 6,
-      cap: 'Pilihan C. Lingkaran $L$ digeser $(3,-1)$ ke $(-2,2)$, lalu diperbesar $2$ kali dari $O$ dan mendarat tepat di $L^{\\prime\\prime}$.',
-      visual: sc({ ...BASE, fwd: 'C' }),
-      board: { title: 'Cek maju dari pilihan', pins: ['pL', 'pL2'], list: 'LX', upTo: 1, from: 0 },
+      cap: 'Bagian $y$, $k(b+3)=4$. Dengan $k=2$, $b+3=2$, jadi $b=-1$.',
+      visual: tl({ view: 'cmp', s: 3 }),
+      board: { title: 'Samakan dengan soal', list: 'LE', upTo: 4, from: 3 },
     },
     {
+      ch: 5,
+      cap: 'Jadi $T=(3,-1)$ dan faktor skalanya $2$, yaitu pilihan C.',
+      visual: tl({ view: 'cmp', s: 4 }),
+      board: { title: 'Samakan dengan soal', list: 'LE', upTo: 5, from: 4 },
+    },
+    // tawaran cek dengan gambar (opsional): Ya masuk Bagian 6, Tidak/Lewati langsung ke Bagian 7
+    {
+      ch: 5,
+      cap: 'Mau cek dengan gambar, yaitu menjalankan translasi dan dilatasi pilihan C dan D pada lingkaran $L$?',
+      visual: tl({ view: 'cmp', s: 4 }),
+      board: { title: 'Samakan dengan soal', list: 'LE', upTo: 5, from: 5 },
+      branch: { yes: 'Ya, cek dengan gambar' },
+    },
+    // ---- 6 · Cek dengan gambar (opsional) ----
+    {
       ch: 6,
-      cap: 'Pilihan D. Digeser $(1,1)$ ke $(-4,4)$, lalu diperbesar $2$ kali menjadi pusat $(-8,8)$, meleset dari $L^{\\prime\\prime}$.',
-      visual: sc({ ...BASE, fwd: 'D' }),
-      board: { title: 'Cek maju dari pilihan', pins: ['pL', 'pL2'], list: 'LX', upTo: 2, from: 1 },
+      cap: 'Pilihan C. Lingkaran $L$ digeser $(3,-1)$ ke $(-2,2)$, lalu didilatasi $2$ kali dari $O$ dan mendarat tepat di $L^{\\prime\\prime}$.',
+      visual: pic({ ...BASE, fwd: 'C' }),
+      board: { title: 'Cek dengan gambar', list: 'LX', upTo: 1, from: 0 },
+    },
+    {
+      ch: 6,
+      cap: 'Pilihan D. Digeser $(1,1)$ ke $(-4,4)$, lalu didilatasi $2$ kali sehingga pusatnya pindah ke $(-8,8)$, meleset dari $L^{\\prime\\prime}$.',
+      visual: pic({ ...BASE, fwd: 'D' }),
+      board: { title: 'Cek dengan gambar', list: 'LX', upTo: 2, from: 1 },
     },
     // ---- 7 · Catatan lengkap ----
     {
@@ -330,7 +340,7 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
       ch: 8,
       cap: 'Cocokkan dengan pilihan. Hasilnya $T=(3,-1)$ dan $k=2$; pilih jawabannya di bawah.',
       visual: { kind: 'cards', flip: 5 },
-      board: { title: 'Cocokkan pilihan', pins: ['pK', 'pLp'], list: 'L7', upTo: 1, from: 0 },
+      board: { title: 'Cocokkan pilihan', pins: ['pLp'], list: 'L7', upTo: 1, from: 0 },
       ask: {
         before: 'w1',
         q: 'Translasi $T$ dan faktor skala dilatasinya adalah…',
@@ -338,10 +348,7 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
         col: true,
         win: 'Jawabannya <b>C</b>.',
         opts: [
-          {
-            tex: `T=${col('3', '-1')},\\ k=8`,
-            hint: '$16$ adalah $r^2$. Jari-jarinya $4$, jadi $k=4\\div2=2$.',
-          },
+          { tex: `T=${col('3', '-1')},\\ k=8`, hint: '$4k^2=16$ memberi $k=2$, bukan $8$.' },
           {
             tex: `T=${col('3', '-1')},\\ k=4`,
             hint: '$4$ adalah jari-jari $L^{\\prime\\prime}$, bukan faktor skala.',
@@ -349,7 +356,7 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
           { tex: `T=${col('3', '-1')},\\ k=2`, ok: true },
           {
             tex: `T=${col('1', '1')},\\ k=2`,
-            hint: '$(1,1)$ dihitung langsung dari $L$ ke $L^{\\prime\\prime}$, melewatkan dilatasi.',
+            hint: 'Itu hasil bila pusat dianggap tidak ikut dikali $k$. Pusatnya ikut dikali $k$.',
           },
           { tex: `T=${col('1', '1')},\\ k=8`, hint: 'Translasi dan faktor skalanya sama-sama keliru.' },
         ],
@@ -358,7 +365,7 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
     // ---- 9 · Selesai ----
     {
       ch: 9,
-      cap: '<span class="verdict"><span class="seal">C</span><span>$L(-5,3)$ digeser $(3,-1)$ menjadi $L^{\\prime}(-2,2)$, lalu diperbesar $2$ kali menjadi $L^{\\prime\\prime}(-4,4)$ berjari-jari $4$.</span></span>',
+      cap: '<span class="verdict"><span class="seal">C</span><span>Dari $L\\to L^{\\prime}\\to L^{\\prime\\prime}$ diperoleh $4k^2=16$, $k(a-5)=-4$, $k(b+3)=4$, jadi $T=(3,-1)$ dan $k=2$.</span></span>',
       visual: { kind: 'done' },
       board: { title: 'Ringkasan', list: 'LR', upTo: 2, from: 2 },
     },
@@ -368,31 +375,37 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
       label: 'A',
       statement: '$T=(3,-1)$, $k=8$',
       ok: false,
-      formula: '8\\times2=16\\ne4',
-      why: '$16$ adalah $r^2$, bukan jari-jari.',
+      formula: '4\\cdot8^2\\ne16',
+      why: '$4k^2=16$ memberi $k=2$.',
     },
     {
       label: 'B',
       statement: '$T=(3,-1)$, $k=4$',
       ok: false,
-      formula: '4\\times2=8\\ne4',
+      formula: '4\\cdot4^2\\ne16',
       why: '$4$ adalah jari-jari $L^{\\prime\\prime}$.',
     },
     {
       label: 'C',
       statement: '$T=(3,-1)$, $k=2$',
       ok: true,
-      formula: '(-2,2)\\times2=(-4,4)',
+      formula: 'a=3,\\ b=-1,\\ k=2',
       why: 'Cocok seluruhnya.',
     },
     {
       label: 'D',
       statement: '$T=(1,1)$, $k=2$',
       ok: false,
-      formula: '(-4,4)\\times2=(-8,8)',
-      why: 'Translasi melewatkan dilatasi.',
+      formula: '2(1-5)=-8\\ne-4',
+      why: 'Jebakan, pusat dianggap tidak ikut dikali $k$.',
     },
-    { label: 'E', statement: '$T=(1,1)$, $k=8$', ok: false, formula: 'r=16\\ne4', why: 'Kedua nilai salah.' },
+    {
+      label: 'E',
+      statement: '$T=(1,1)$, $k=8$',
+      ok: false,
+      formula: '4\\cdot8^2\\ne16',
+      why: 'Kedua nilai salah.',
+    },
   ],
   notes: {
     title: 'Pembahasan Soal 20: Translasi lalu Dilatasi Lingkaran',
@@ -400,40 +413,39 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
     sections: [
       { title: 'Pahami soal', lists: ['L1'] },
       {
-        title: 'Lingkaran L″',
-        lists: ['LA'],
+        title: 'Lingkaran L',
+        lists: ['LL'],
         why: 'Lingkaran $(x-p)^2+(y-q)^2=r^2$ berpusat di $(p,q)$ dengan jari-jari $r$.',
       },
       {
-        title: 'Faktor skala',
-        lists: ['LB'],
-        why: 'Translasi tidak mengubah jari-jari; dilatasi $[O,k]$ mengalikan jari-jari dengan $|k|$.',
+        title: 'Translasi ke L′',
+        lists: ['LT'],
+        why: 'Translasi $(a,b)$ hanya menggeser, jadi pada persamaan $x$ diganti $x-a$ dan $y$ diganti $y-b$, jari-jari tetap.',
       },
       {
-        title: 'Pusat L′',
-        lists: ['LC'],
-        sketch: 'dil20',
-        why: 'Dilatasi berpusat di $O$ mengalikan koordinat pusat dengan $k$, jadi untuk mundur pusatnya dibagi $k$.',
+        title: 'Dilatasi ke L″',
+        lists: ['LD'],
+        why: 'Dilatasi $[O,k]$ memetakan $(x,y)$ ke $(kx,ky)$, jadi pusat dan jari-jari sama-sama dikali $k$.',
       },
-      { title: 'Translasi T', lists: ['LD'] },
-      { title: 'Cek maju dari pilihan (opsional)', lists: ['LX'] },
+      { title: 'Samakan dengan soal', lists: ['LE'] },
+      { title: 'Cek dengan gambar (opsional)', lists: ['LX'], sketch: 'dil20' },
     ],
     answer: 'Jawaban: <b>C</b>, $T=(3,-1)$ dan faktor skala $2$.',
   },
   done: {
     seal: 'C',
     message:
-      '$L(-5,3)$ digeser $(3,-1)$ menjadi $L^{\\prime}(-2,2)$, lalu diperbesar $2$ kali menjadi $L^{\\prime\\prime}(-4,4)$ berjari-jari $4$.',
+      'Dari $L\\to L^{\\prime}\\to L^{\\prime\\prime}$ diperoleh $4k^2=16$, $k(a-5)=-4$, $k(b+3)=4$, jadi $T=(3,-1)$ dan $k=2$.',
   },
   key: {
     answer: 'C',
     cardOk: [false, false, true, false, false],
-    goldRows: ['d4', 'w1', 'r1', 'r2'],
+    goldRows: ['e5', 'w1', 'r1', 'r2'],
   },
   authorNotes: [
-    'Modul baru (v1.52). Faktor skala dicari dulu dari jari-jari (dokumen b1–b4), sehingga pilihan langsung tinggal C dan D; pusat L′ dicari mundur (c1–c3) dan T dari selisih pusat (d1–d3). Pertanyaan cepat jari-jari dan translasi dari dokumen.',
-    'Adegan dil20: L′ muncul dengan menyusut dari L″ ke arah O (skala berpusat di O), panah T dari pusat L ke pusat L′.',
-    'Bagian opsional "Cek maju dari pilihan" memakai Pemeriksaan hasil dokumen untuk C dan jebakan D dari kartu dokumen. Tanpa simbol ":" di baris papan.',
+    'Revisi pemilik (v1.53): murni aljabar dengan timeline L → L′ → L″. Translasi dimisalkan T = (a, b) dan dimasukkan ke persamaan L (x → x − a, y → y − b), jari-jari tetap 2; dilatasi mengubah jari-jari 2 menjadi 2k sehingga ruas kanan (2k)² = 4k².',
+    'Koreksi matematis: dilatasi berpusat di O(0, 0) juga mengalikan koordinat pusat dengan k (dokumen c1–c3). Kalau pusat dianggap tetap, penyamaan memberi T = (1, 1) dan k = 2, yaitu jebakan pilihan D; hal ini dijadikan pertanyaan cepat. Kunci tetap C.',
+    'Penyamaan dengan soal (x − (−4))² + (y − 4)² = 16 memakai warna pasangan: 4k² = 16, k(a − 5) = −4, k(b + 3) = 4, jadi k = 2, a = 3, b = −1. Cek dengan gambar (adegan dil20) menjadi bagian opsional. Tanpa simbol ":" di baris papan.',
   ],
 };
 

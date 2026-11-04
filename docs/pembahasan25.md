@@ -2908,6 +2908,14 @@ Maju: $(-5,3)+(3,-1)=(-2,2)$; dilatasi $k=2$ menghasilkan pusat $(-4,4)$ dan jar
 - **Bagian 6 — Cek maju dari pilihan (opsional, Ya/Lewati):** C: $(-5,3)\to(-2,2)\to(-4,4)$, jari-jari $2\to2\to4$ ✓ (*Pemeriksaan hasil*); D: $(-5,3)\to(-4,4)\to(-8,8)$ ✗ (jebakan kartu D). Lingkaran mint bergeser lalu diperbesar dari $O$.
 - **Bagian 7–9:** catatan lengkap (sketsa tiga lingkaran), kartu A–E dengan pertanyaan berhuruf, segel C.
 
+*Revisi 1.53 (5 Nov 2026, arahan pemilik "pendekatan aljabar dengan timeline L, L′, L″"; kunci tidak berubah: C). Menggantikan alur Revisi 1.52 di atas; adegan baru `tl20`, adegan `dil20` tetap dipakai di bagian opsional.*
+- **Bagian 2 — Lingkaran L:** $(x+5)^2+(y-3)^2=2^2$.
+- **Bagian 3 — Translasi ke L′:** translasi dimisalkan $T=(a,b)$; $x\to x-a$, $y\to y-b$ dimasukkan ke persamaan $L$, jari-jari tetap: $((x-a)+5)^2+((y-b)-3)^2=2^2$, yaitu $(x-(a-5))^2+(y-(b+3))^2=2^2$, pusat $(a-5,\ b+3)$.
+- **Bagian 4 — Dilatasi ke L″:** jari-jari $2$ menjadi $2k$ sehingga ruas kanan $(2k)^2=4k^2$. **Koreksi matematis:** dilatasi berpusat di $O(0,0)$ memetakan $(x,y)\to(kx,ky)$, jadi pusat juga ikut dikali $k$ menjadi $(k(a-5),\ k(b+3))$ (sesuai c1–c3 di atas). Kalau pusat dianggap tetap, penyamaan memberi $T=(1,1)$, $k=2$, yaitu jebakan pilihan D; ini dijadikan pertanyaan cepat. Persamaan $L''$: $(x-k(a-5))^2+(y-k(b+3))^2=4k^2$.
+- **Bagian 5 — Samakan dengan soal:** $(x-(-4))^2+(y-4)^2=16$; bagian yang bersesuaian diberi warna sama; $4k^2=16\Rightarrow k=2$ (pertanyaan cepat baru, pengecoh $4$, $8$); $k(a-5)=-4\Rightarrow a=3$; $k(b+3)=4\Rightarrow b=-1$; $T=(3,-1)$, $k=2$ → **C**.
+- **Bagian 6 — Cek dengan gambar (opsional):** pilihan C mendarat tepat di $L''$, pilihan D meleset ke pusat $(-8,8)$.
+- Langkah "faktor skala dulu, pilihan tinggal C dan D" dan "pusat mundur dibagi 2" dari Revisi 1.52 dihapus.
+
 ---
 
 ## SOAL 21 — Rotasi Garis Berpusat (2, 0)

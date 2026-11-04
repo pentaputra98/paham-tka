@@ -21,6 +21,7 @@ import { createSaham8 } from './saham8';
 import { createSign } from './sign17';
 import { createSubst5 } from './subst5';
 import { createTide11 } from './tide11';
+import { createTl20 } from './tl20';
 import { createTrans2 } from './trans2';
 import { createSing16 } from './sing16';
 import { createTrap13 } from './trap13';
@@ -48,6 +49,7 @@ export const VISUALS: Record<string, VisualFactory> = {
   sign: createSign,
   subst5: createSubst5,
   tide11: createTide11,
+  tl20: createTl20,
   trans2: createTrans2,
   sing16: createSing16,
   trap13: createTrap13,

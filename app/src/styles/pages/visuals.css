@@ -5128,3 +5128,199 @@
     opacity: 1;
   }
 }
+
+/* ---------- soal 20 revisi pemilik (tl20, v1.53): timeline aljabar L → L′ → L″ dan penyamaan dengan soal ----------
+   huruf x biru langit, y ungu; bagian yang berubah mint; baris lama pudar; pada penyamaan bagian yang bersesuaian
+   biru langit, ungu, dan mint; hasil T dan k emas (jawaban). */
+@layer pages {
+  .vis-tl20 {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: var(--color-on-stage);
+    font-size: min(var(--fs-mat), var(--t20-fit-h), var(--t20-fit-w));
+  }
+
+  .t20-tl,
+  .t20-cmp {
+    grid-area: 1 / 1;
+    display: grid;
+    justify-items: center;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .vis-tl20:not([data-view='tl']) .t20-tl,
+  .vis-tl20:not([data-view='cmp']) .t20-cmp {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .t20-tl {
+    gap: 0.2em;
+  }
+
+  .t20-row {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-areas: 'tag eq' '. cap';
+    column-gap: 0.5em;
+    align-items: center;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .t20-row.on {
+    opacity: 0.5;
+  }
+
+  .t20-row.on.is-cur {
+    opacity: 1;
+  }
+
+  .t20-tag {
+    grid-area: tag;
+    font-family: var(--font-display);
+    font-weight: var(--fw-black);
+    color: var(--color-stage-accent);
+  }
+
+  .t20-eq {
+    grid-area: eq;
+    display: grid;
+  }
+
+  .t20-f {
+    grid-area: 1 / 1;
+  }
+
+  .t20-fb,
+  .t20-row.is-b .t20-fa {
+    opacity: 0;
+  }
+
+  .t20-row.is-b .t20-fb {
+    opacity: 1;
+  }
+
+  .t20-row small,
+  .t20-arr,
+  .t20-pl small {
+    font-family: var(--font-mono);
+    font-size: max(var(--fs-label), 0.36em);
+    color: var(--color-on-stage-muted);
+  }
+
+  .t20-row small {
+    grid-area: cap;
+    display: grid;
+  }
+
+  .t20-ca,
+  .t20-cb {
+    grid-area: 1 / 1;
+  }
+
+  .t20-cb,
+  .t20-row.is-b .t20-ca {
+    opacity: 0;
+  }
+
+  .t20-row.is-b .t20-cb {
+    opacity: 1;
+  }
+
+  .t20-arr {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .t20-arr.on {
+    opacity: 1;
+  }
+
+  .t20-ah {
+    font-size: 2.4em;
+    line-height: 1;
+    color: var(--color-stage-accent);
+  }
+
+  .t20-x,
+  .t20-y,
+  .t20-k,
+  .t20-ka,
+  .t20-kb,
+  .t20-kc {
+    display: inline-block;
+  }
+
+  .t20-row.is-cur .t20-x {
+    color: var(--color-stage-accent);
+  }
+
+  .t20-row.is-cur .t20-y {
+    color: var(--color-y-on-stage);
+  }
+
+  .t20-row.is-cur .t20-k {
+    color: var(--color-current-on-stage);
+  }
+
+  /* ---- penyamaan dengan soal ---- */
+  .t20-cmp {
+    gap: 0.45em;
+  }
+
+  .t20-pair {
+    display: grid;
+    gap: 0.3em;
+    justify-items: center;
+    padding-bottom: 0.3em;
+    border-bottom: var(--bw-1) solid var(--color-stage-border);
+  }
+
+  .t20-pl {
+    display: grid;
+    justify-items: center;
+    white-space: nowrap;
+  }
+
+  .t20-ka {
+    color: var(--color-stage-accent);
+  }
+
+  .t20-kb {
+    color: var(--color-y-on-stage);
+  }
+
+  .t20-kc {
+    color: var(--color-current-on-stage);
+  }
+
+  .t20-sl {
+    display: none;
+    white-space: nowrap;
+    opacity: 0.55;
+  }
+
+  .t20-sl.on {
+    display: block;
+  }
+
+  .t20-sl.is-cur {
+    opacity: 1;
+  }
+
+  .t20-ans {
+    color: var(--color-result);
+  }
+
+  @media (max-height: 520px) {
+    .t20-sl.is-gone {
+      display: none;
+    }
+  }
+}
