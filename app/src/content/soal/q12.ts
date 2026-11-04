@@ -1,12 +1,12 @@
 /**
  * SOAL 12 — Panjang Vektor 3D (panjang vektor dan persamaan kuadrat; pilihan tunggal). Kunci: B (m = −4 atau m = 3).
  * Sumber: docs/pembahasan25.md "SOAL 12", docs/soal25.md no. 12 (opsi E diganti "−4 atau 4", catatan dokumen).
- * Alur revisi pemilik (v1.45, dicatat di dokumen), murni aljabar tanpa gambar balok:
+ * Alur revisi pemilik (v1.45–v1.46, dicatat di dokumen), murni aljabar tanpa gambar balok:
  *  - pahami: AB = (2m, m + 3, m), panjangnya 9; ditanya m;
  *  - panjang vektor = akar dari jumlah kuadrat semua komponennya; komponen dimasukkan, kedua ruas dikuadratkan;
  *  - jabarkan: 81 = 4m² + (m² + 6m + 9) + m², jadi 6m² + 6m − 72 = 0;
- *  - faktorkan bentuk a > 1 dengan cara a · c: a · c = 6 · (−72) = −432; dua bilangan yang dikali −432 dan dijumlah 6
- *    adalah 24 dan −18; tulis (6m + 24)(6m − 18)/6 = 0; kurung yang bisa dibagi 6 disederhanakan, (m + 4)(6m − 18) = 0;
+ *  - sederhanakan (semua dibagi 6): m² + m − 12 = 0; a · c = −12; kotak □ × □ = −12 dan □ + □ = 1 diisi 4 dan −3;
+ *    angka-angka itu diisikan ke (m + □)(m + □), jadi (m + 4)(m − 3) = 0;
  *  - m = −4 atau m = 3 → pilihan B; bagian opsional "Cek dengan substitusi" (tabel uji nilai m dari pilihan).
  * Tanpa simbol ":" di baris papan. Tata letak: panggung penuh dua kolom (PRD v1.5).
  */
@@ -21,7 +21,7 @@ const LETTERS = ['A', 'B', 'C', 'D', 'E'] as const;
 /** pilihan (docs/soal25.md no. 12; opsi E sesuai catatan dokumen) */
 const OPT = ['−4 atau −3', '−4 atau 3', '−3 atau 4', '3 atau 4', '−4 atau 4'];
 const PIN = ['pV', 'p81'];
-const PQ = ['pQ', 'pAC'];
+const SQ = ['pS', 'pAC'];
 
 /** uji satu nilai m: jumlah kuadrat komponen dibandingkan dengan 81 */
 const test = (id: string, m: string, xyz: string, sum: string, val: string, ok: boolean, i: number): Row => ({
@@ -66,7 +66,7 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
     { t: 'Pahami soal', d: 'Komponen dan panjang' },
     { t: 'Panjang vektor', d: 'Akar jumlah kuadrat' },
     { t: 'Jabarkan', d: '6m² + 6m − 72 = 0' },
-    { t: 'Faktorkan', d: 'Cara a · c' },
+    { t: 'Faktorkan', d: 'Sederhanakan, isi kotak' },
     { t: 'Nilai m', d: 'Pilihan B' },
     { t: 'Cek dengan substitusi', d: 'Opsional: uji nilai dari pilihan', opt: true },
     { t: 'Catatan lengkap', d: 'Simpan dan cetak' },
@@ -81,8 +81,9 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
       toks: [T('P811', '(2m)^2+(m+3)^2+m^2', '', 'l3a'), O('P812', '='), T('P813', '81', '', 'l3c')],
     },
     pQ: { id: 'pQ', toks: [T('PQ1', '6m^2+6m-72=0', '', 'j3a')] },
-    pAC: { id: 'pAC', toks: [T('PA1', 'a\\cdot c=-432', '', 'f2e')] },
-    pF: { id: 'pF', toks: [T('PF1', '(m+4)(6m-18)=0', '', 'f7a')] },
+    pS: { id: 'pS', toks: [T('PS1', 'm^2+m-12=0', '', 'f0c')] },
+    pAC: { id: 'pAC', toks: [T('PA1', 'a\\cdot c=-12', '', 'f2e')] },
+    pF: { id: 'pF', toks: [T('PF1', '(m+4)(m-3)=0', '', 'f5a')] },
   },
   lists: {
     L1: [
@@ -140,53 +141,45 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
     ],
     LF: [
       {
+        id: 'f0',
+        toks: [H('f0a', 'dibagi 6', 'tx', 'PQ1'), O('f0b', '\\to'), T('f0c', 'm^2+m-12=0', 'blue')],
+        note: '$6m^2$, $6m$, dan $72$ semuanya bisa dibagi $6$; simpan ke catatan',
+        box: 'navy',
+      },
+      {
         id: 'f1',
-        toks: [T('f1a', 'a=6'), O('f1b', ','), T('f1c', 'b=6'), O('f1d', ','), T('f1e', 'c=-72', '', 'PQ1')],
-        note: '$a$ lebih dari $1$, jadi pakai cara $a\\cdot c$',
+        toks: [T('f1a', 'a=1'), O('f1b', ','), T('f1c', 'b=1'), O('f1d', ','), T('f1e', 'c=-12', '', 'PS1')],
+        note: 'koefisien $m^2$, $m$, dan konstanta',
       },
       {
         id: 'f2',
         toks: [
-          H('f2a', 'langkah 1', 'lbl'),
           T('f2b', 'a\\cdot c'),
           O('f2c', '='),
-          T('f2d', '6\\cdot(-72)', '', 'f1a'),
-          T('f2e', '=-432', 'blue'),
+          T('f2d', '1\\cdot(-12)', '', 'f1a'),
+          T('f2e', '=-12', 'blue'),
         ],
-        note: 'kalikan $a$ dan $c$ dulu; simpan ke catatan',
+        note: 'kalikan $a$ dan $c$; simpan ke catatan',
       },
       {
         id: 'f3',
         toks: [
-          H('f3a', 'langkah 2', 'lbl'),
-          H('f3b', 'dikali', 'tx'),
-          T('f3c', '-432', '', 'PA1'),
-          O('f3d', ','),
-          H('f3e', 'dijumlah', 'tx'),
-          T('f3f', '6', '', 'f1c'),
+          T('f3a', '\\square\\times\\square=-12', '', 'PA1'),
+          O('f3b', ','),
+          T('f3c', '\\square+\\square=1', '', 'f1c'),
         ],
-        note: 'cari dua bilangan dengan hasil kali $ac$ dan jumlah $b$',
+        note: 'dikali hasilnya $ac$, dijumlah hasilnya $b$',
       },
       {
         id: 'f4',
-        toks: [T('f4a', '24\\times(-18)=-432'), O('f4b', ','), T('f4c', '24+(-18)=6', 'blue')],
-        note: '$12$ dan $-36$ berjumlah $-24$, $18$ dan $-24$ berjumlah $-6$, belum cocok',
+        toks: [T('f4a', '4\\times(-3)=-12'), O('f4b', ','), T('f4c', '4+(-3)=1', 'blue')],
+        note: 'kotak diisi $4$ dan $-3$',
         box: 'navy',
       },
       {
         id: 'f5',
-        toks: [H('f5a', 'langkah 3', 'lbl'), T('f5b', '\\dfrac{(6m+24)(6m-18)}{6}=0')],
-        note: 'kedua bilangan masuk kurung bersama $am$, lalu dibagi $a$',
-      },
-      {
-        id: 'f6',
-        toks: [H('f6a', 'langkah 4', 'lbl'), T('f6b', '\\dfrac{6m+24}{6}=m+4', '', 'f5b')],
-        note: 'kurung yang bisa dibagi $6$ disederhanakan',
-      },
-      {
-        id: 'f7',
-        toks: [T('f7a', '(m+4)(6m-18)=0', 'blue')],
-        note: 'bentuk faktornya',
+        toks: [T('f5a', '(m+4)(m-3)=0', 'blue', 'f4a')],
+        note: 'kedua angka diisikan ke kurung $(m+\\square)(m+\\square)$; simpan ke catatan',
         box: 'navy',
       },
     ],
@@ -198,14 +191,8 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
       },
       {
         id: 'm2',
-        toks: [
-          T('m2a', '6m-18=0', '', 'PF1'),
-          O('m2b', '\\to'),
-          T('m2c', '6m=18'),
-          O('m2d', '\\to'),
-          T('m2e', 'm=3', 'gold'),
-        ],
-        note: '$18\\div6=3$',
+        toks: [T('m2a', 'm-3=0', '', 'PF1'), O('m2b', '\\to'), T('m2c', 'm=3', 'gold')],
+        note: '$-3$ pindah ruas menjadi $3$',
       },
       {
         id: 'm3',
@@ -227,7 +214,7 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
     ],
     L7: [{ id: 'v1', toks: [H('v1a', 'Jawaban', 'lbl'), T('v1b', '\\textbf{B}')], box: 'gold' }],
     LR: [
-      { id: 'r1', toks: [T('r1a', '(m+4)(6m-18)=0')], note: '$m=-4$ atau $m=3$', box: 'gold' },
+      { id: 'r1', toks: [T('r1a', '(m+4)(m-3)=0')], note: '$m=-4$ atau $m=3$', box: 'gold' },
       { id: 'r2', toks: [H('r2a', 'Jawaban', 'lbl'), T('r2b', '\\textbf{B}')], box: 'gold' },
     ],
   },
@@ -304,47 +291,50 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
     // ---- 4 · Faktorkan ----
     {
       ch: 4,
-      cap: 'Bentuknya $am^2+bm+c=0$ dengan $a=6$, $b=6$, dan $c=-72$. Karena $a$ lebih dari $1$, kita pakai cara $a\\cdot c$.',
+      cap: 'Semua sukunya, $6$, $6$, dan $72$, bisa dibagi $6$. Kalau bisa disederhanakan, sederhanakan dulu, jadi $m^2+m-12=0$.',
       visual: alg(7),
-      board: { title: 'Faktorkan', pins: ['pQ'], list: 'LF', upTo: 1, from: 0 },
-    },
-    {
-      ch: 4,
-      cap: 'Langkah 1, kalikan $a$ dan $c$ dulu, $6\\cdot(-72)=-432$.',
-      visual: alg(8),
-      board: { title: 'Faktorkan', pins: ['pQ'], list: 'LF', upTo: 2, from: 1, save: ['pAC'] },
-    },
-    {
-      ch: 4,
-      cap: 'Langkah 2, cari dua bilangan yang jika dikali hasilnya $-432$ dan jika dijumlah hasilnya $6$. Ketemu $24$ dan $-18$.',
-      visual: alg(9),
-      board: { title: 'Faktorkan', pins: PQ, list: 'LF', upTo: 4, from: 2 },
+      board: { title: 'Faktorkan', pins: ['pQ'], list: 'LF', upTo: 1, from: 0, save: ['pS'] },
       ask: {
-        before: 'f4',
-        q: 'Dua bilangan yang dikali $-432$ dan dijumlah $6$ adalah…',
+        before: 'f0',
+        q: '$6m^2+6m-72=0$ dibagi $6$ menjadi…',
         opts: [
-          { tex: '24\\ \\text{dan}\\ -18', ok: true },
-          { tex: '-24\\ \\text{dan}\\ 18', hint: 'Hasil kalinya benar, tetapi jumlahnya $-6$, bukan $6$.' },
-          { tex: '12\\ \\text{dan}\\ -36', hint: 'Jumlahnya $-24$. Yang dicari berjumlah $6$.' },
+          { tex: 'm^2+m-12=0', ok: true },
+          { tex: 'm^2+m-72=0', hint: 'Konstanta $-72$ juga dibagi $6$, jadi $-12$.' },
+          { tex: 'm^2+6m-12=0', hint: 'Suku $6m$ juga dibagi $6$, jadi $m$.' },
         ],
       },
     },
     {
       ch: 4,
-      cap: 'Langkah 3, tulis kedua bilangan dalam kurung bersama $6m$, lalu seluruhnya dibagi $a=6$.',
-      visual: alg(10),
-      board: { title: 'Faktorkan', pins: PQ, list: 'LF', upTo: 5, from: 4 },
+      cap: 'Bentuknya $am^2+bm+c=0$ dengan $a=1$, $b=1$, dan $c=-12$. Kalikan $a$ dan $c$, jadi $a\\cdot c=-12$.',
+      visual: alg(9),
+      board: { title: 'Faktorkan', pins: ['pS'], list: 'LF', upTo: 3, from: 1, save: ['pAC'] },
     },
     {
       ch: 4,
-      cap: 'Langkah 4, kurung yang bisa dibagi $6$ disederhanakan, $\\frac{6m+24}{6}=m+4$. Jadi $(m+4)(6m-18)=0$.',
+      cap: 'Buat dua kotak, dikali hasilnya $a\\cdot c=-12$ dan dijumlah hasilnya $b=1$. Kotaknya diisi $4$ dan $-3$.',
+      visual: alg(10),
+      board: { title: 'Faktorkan', pins: SQ, list: 'LF', upTo: 5, from: 3 },
+      ask: {
+        before: 'f4',
+        q: 'Dua bilangan yang dikali $-12$ dan dijumlah $1$ adalah…',
+        opts: [
+          { tex: '4\\ \\text{dan}\\ -3', ok: true },
+          { tex: '-4\\ \\text{dan}\\ 3', hint: 'Hasil kalinya benar, tetapi jumlahnya $-1$, bukan $1$.' },
+          { tex: '6\\ \\text{dan}\\ -2', hint: 'Jumlahnya $4$. Yang dicari berjumlah $1$.' },
+        ],
+      },
+    },
+    {
+      ch: 4,
+      cap: 'Masukkan kedua angka itu ke dalam kurung $(m+\\square)(m+\\square)$, jadi $(m+4)(m-3)=0$.',
       visual: alg(11),
-      board: { title: 'Faktorkan', pins: PQ, list: 'LF', upTo: 7, from: 5, save: ['pF'] },
+      board: { title: 'Faktorkan', pins: SQ, list: 'LF', upTo: 6, from: 5, save: ['pF'] },
     },
     // ---- 5 · Nilai m ----
     {
       ch: 5,
-      cap: 'Hasil kali sama dengan nol, jadi tiap kurung sama dengan nol. $m+4=0$ memberi $m=-4$, dan $6m-18=0$ memberi $m=3$.',
+      cap: 'Hasil kali sama dengan nol, jadi tiap kurung sama dengan nol. $m+4=0$ memberi $m=-4$, dan $m-3=0$ memberi $m=3$.',
       visual: alg(12),
       board: { title: 'Nilai m', pins: ['pF'], list: 'LM', upTo: 2, from: 0 },
     },
@@ -395,7 +385,7 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
         opts: [
           { txt: OPT[0]!, hint: '$m=-3$ memberi $45$, bukan $81$.' },
           { txt: OPT[1]!, ok: true },
-          { txt: OPT[2]!, hint: 'Tandanya terbalik. Faktornya $(m+4)(6m-18)$.' },
+          { txt: OPT[2]!, hint: 'Tandanya terbalik. Faktornya $(m+4)(m-3)$.' },
           { txt: OPT[3]!, hint: '$m=4$ memberi $129$.' },
           { txt: OPT[4]!, hint: '$-4$ memenuhi, tetapi $4$ memberi $129$.' },
         ],
@@ -404,14 +394,14 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
     // ---- 9 · Selesai ----
     {
       ch: 9,
-      cap: '<span class="verdict"><span class="seal">B</span><span>Dari $6m^2+6m-72=0$ diperoleh $(m+4)(6m-18)=0$, jadi $m=-4$ atau $m=3$.</span></span>',
+      cap: '<span class="verdict"><span class="seal">B</span><span>Dari $m^2+m-12=0$ diperoleh $(m+4)(m-3)=0$, jadi $m=-4$ atau $m=3$.</span></span>',
       visual: { kind: 'done' },
       board: { title: 'Ringkasan', list: 'LR', upTo: 2, from: 2 },
     },
   ],
   cards: [
     { label: 'A', statement: OPT[0]!, ok: false, formula: 'm=-3\\to45\\ne81', why: '$m=-3$ bukan akar.' },
-    { label: 'B', statement: OPT[1]!, ok: true, formula: '(m+4)(6m-18)=0', why: 'Kedua nilai memenuhi.' },
+    { label: 'B', statement: OPT[1]!, ok: true, formula: '(m+4)(m-3)=0', why: 'Kedua nilai memenuhi.' },
     {
       label: 'C',
       statement: OPT[2]!,
@@ -434,9 +424,9 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
       },
       { title: 'Jabarkan', lists: ['LJ'] },
       {
-        title: 'Faktorkan dengan cara a · c',
+        title: 'Faktorkan',
         lists: ['LF'],
-        why: 'Untuk $am^2+bm+c=0$ dengan $a>1$: hitung $a\\cdot c$, cari dua bilangan $p$ dan $q$ dengan $pq=ac$ dan $p+q=b$, tulis $\\frac{(am+p)(am+q)}{a}=0$, lalu sederhanakan kurung yang bisa dibagi $a$.',
+        why: 'Sederhanakan dulu bila semua suku bisa dibagi bilangan yang sama. Lalu isi $\\square\\times\\square=ac$ dan $\\square+\\square=b$, dan kedua angkanya diisikan ke $(m+\\square)(m+\\square)=0$.',
       },
       { title: 'Nilai m', lists: ['LM'] },
       { title: 'Cek dengan substitusi (opsional)', lists: ['LU'] },
@@ -445,7 +435,7 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
   },
   done: {
     seal: 'B',
-    message: 'Dari $6m^2+6m-72=0$ diperoleh $(m+4)(6m-18)=0$, jadi $m=-4$ atau $m=3$.',
+    message: 'Dari $m^2+m-12=0$ diperoleh $(m+4)(m-3)=0$, jadi $m=-4$ atau $m=3$.',
   },
   key: {
     answer: 'B',
@@ -454,9 +444,9 @@ ${LETTERS.map((o, i) => `<li><span>${o}.</span><span class="hl hl-blue hl-q" dat
   },
   authorNotes: [
     'Ditulis ulang atas arahan pemilik (v1.45): murni aljabar, tanpa gambar balok. Panjang vektor = akar jumlah kuadrat semua komponen, lalu dijabarkan sampai 6m² + 6m − 72 = 0 (dokumen a1–b2).',
-    'Faktorisasi memakai cara a · c untuk a > 1 (arahan pemilik): a · c = −432, pasangan 24 dan −18, (6m + 24)(6m − 18)/6 = 0, kurung yang bisa dibagi 6 disederhanakan menjadi (m + 4)(6m − 18) = 0. Ini turunan aljabar; dokumen membagi 6 lebih dulu (m² + m − 12 = 0), hasilnya sama.',
-    'Adegan vec12: baris penurunan besar bertahap (baris baru meluncur masuk, bagian penting berdenyut, bentuk berganti dengan pudar silang), panel pencarian pasangan 12 dan −36, 18 dan −24, 24 dan −18.',
-    'Pertanyaan cepat: 9² = 81, (m + 3)² dari dokumen, dan pasangan 24 dan −18 (pengecoh −24 dan 18, 12 dan −36). Uji substitusi dari pilihan menjadi bagian opsional.',
+    'Revisi pemilik (v1.46): 6m² + 6m − 72 = 0 disederhanakan dulu (semua dibagi 6) menjadi m² + m − 12 = 0, sesuai dokumen b3. Tanpa coba-coba: kotak □ × □ = ac = −12 dan □ + □ = b = 1 diisi 4 dan −3, lalu diisikan ke (m + □)(m + □), jadi (m + 4)(m − 3) = 0 (dokumen b4–b5).',
+    'Adegan vec12: baris penurunan besar bertahap (baris baru meluncur masuk, bagian penting berdenyut, bentuk berganti dengan pudar silang), termasuk kotak kosong yang berganti menjadi angka.',
+    'Pertanyaan cepat: 9² = 81, (m + 3)² dari dokumen, pembagian dengan 6 (pengecoh m² + m − 72, m² + 6m − 12), dan pasangan 4 dan −3 (pengecoh −4 dan 3, 6 dan −2). Uji substitusi dari pilihan menjadi bagian opsional.',
     'Opsi E memakai "−4 atau 4" sesuai catatan dokumen. Tanpa simbol ":" di baris papan.',
   ],
 };

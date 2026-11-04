@@ -1,13 +1,13 @@
 /**
- * Adegan "panjang vektor" soal 12 (revisi pemilik v1.45): AB = (2m, m + 3, m), |AB| = 9, murni aljabar.
+ * Adegan "panjang vektor" soal 12 (revisi pemilik v1.45–v1.46): AB = (2m, m + 3, m), |AB| = 9, murni aljabar.
  * Dua tampilan pada panggung yang sama:
  *  - alg: baris penurunan aljabar yang besar, satu baris per langkah (s = 1 … 12). Tiga baris terakhir tampil; baris
  *    baru meluncur masuk, baris lama naik dan memudar (FLIP). Bagian penting baris saat ini (kelas a12-k) disorot dan
  *    berdenyut. Baris yang punya bentuk kedua (b) berganti bentuk dengan pudar silang, misalnya 9² → 81,
- *    6m² + 6m + 9 − 81 → 6m² + 6m − 72, (6m + 24)/6 → (m + 4). Baris 9 adalah panel pencarian dua bilangan
- *    (dikali −432, dijumlah 6), barisnya muncul satu per satu sampai pasangan 24 dan −18.
+ *    6m² + 6m − 72 → m² + m − 12 (dibagi 6), kotak kosong □ × □ = −12 dan □ + □ = 1 → 4 dan −3, (m + □)(m + □) →
+ *    (m + 4)(m − 3).
  *  - tab: tabel uji nilai m dari pilihan (opsional): komponen vektor dan jumlah kuadrat dibandingkan dengan 81.
- * Angka dari docs/pembahasan25.md soal 12 (a1–b5, kartu A–E); cara a·c turunan aljabar dari 6m² + 6m − 72 = 0.
+ * Angka dari docs/pembahasan25.md soal 12 (a1–b5, kartu A–E).
  * Gerak hanya transform/opacity.
  */
 import { reducedMotion } from '../core/clock';
@@ -26,6 +26,8 @@ export interface Vec12State {
 }
 
 const K = (t: string): string => `\\htmlClass{a12-k}{${t}}`;
+/** kotak kosong yang nanti diisi angka */
+const BOX = '\\boxed{\\phantom{00}}';
 /** baris penurunan: a = bentuk pertama, b = bentuk sesudah diganti (opsional), lbl = keterangan kecil */
 const LINES: Array<{ a: string; b?: string; lbl: string }> = [
   { a: `|\\vec{AB}|=${K('\\sqrt{x^2+y^2+z^2}')}`, lbl: 'akar dari jumlah kuadrat komponen' },
@@ -39,43 +41,39 @@ const LINES: Array<{ a: string; b?: string; lbl: string }> = [
   { a: `81=${K('4m^2+m^2+m^2')}+6m+9`, b: `81=${K('6m^2')}+6m+9`, lbl: 'suku sejenis dijumlahkan' },
   { a: `6m^2+6m+${K('9-81')}=0`, b: `6m^2+6m${K('-72')}=0`, lbl: '81 pindah ruas' },
   {
-    a: `\\underset{a}{${K('6')}}m^2+\\underset{b}{${K('6')}}m\\underset{c}{${K('-72')}}=0`,
+    a: `${K('6')}m^2+${K('6')}m-${K('72')}=0`,
+    b: `${K('m^2+m-12')}=0`,
+    lbl: 'semua suku dibagi 6, jadi lebih sederhana',
+  },
+  {
+    a: `\\underset{a}{${K('1')}}m^2+\\underset{b}{${K('1')}}m\\underset{c}{${K('-12')}}=0`,
     lbl: 'bentuk am² + bm + c = 0',
   },
-  { a: `a\\cdot c=${K('6\\cdot(-72)')}`, b: `a\\cdot c=${K('-432')}`, lbl: 'kalikan a dan c dulu' },
-  { a: '', lbl: 'cari dua bilangan' },
-  { a: `\\dfrac{(6m${K('+24')})(6m${K('-18')})}{${K('6')}}=0`, lbl: 'tulis dalam kurung, dibagi a' },
+  { a: `a\\cdot c=${K('1\\cdot(-12)')}`, b: `a\\cdot c=${K('-12')}`, lbl: 'kalikan a dan c' },
   {
-    a: `\\left(\\dfrac{6m+24}{${K('6')}}\\right)(6m-18)=0`,
-    b: `${K('(m+4)')}(6m-18)=0`,
-    lbl: 'satu kurung dibagi 6',
+    a: `\\begin{gathered}${BOX}\\times${BOX}=${K('-12')}\\\\${BOX}+${BOX}=${K('1')}\\end{gathered}`,
+    b: `\\begin{gathered}${K('4')}\\times${K('(-3)')}=-12\\\\${K('4')}+${K('(-3)')}=1\\end{gathered}`,
+    lbl: 'dikali hasilnya ac, dijumlah hasilnya b',
   },
   {
-    a: `${K('m+4=0')}\\quad\\text{atau}\\quad${K('6m-18=0')}`,
+    a: `(m+${BOX})(m+${BOX})=0`,
+    b: `(m${K('+4')})(m${K('-3')})=0`,
+    lbl: 'kedua angka diisikan ke kurung',
+  },
+  {
+    a: `${K('m+4=0')}\\quad\\text{atau}\\quad${K('m-3=0')}`,
     b: `\\htmlClass{a12-ans}{m=-4\\quad\\text{atau}\\quad m=3}`,
     lbl: 'tiap kurung sama dengan nol',
   },
 ];
-/** pasangan bilangan yang dicoba: dikali −432, dijumlah 6 */
-const PAIRS: Array<[number, number]> = [
-  [12, -36],
-  [18, -24],
-  [24, -18],
-];
 const p = (v: number): string => (v < 0 ? `(${v})` : String(v));
 
 function algMarkup(): string {
-  const lines = LINES.map((l, i) => {
-    if (i === 8) {
-      const rows = PAIRS.map(([x, y]) => {
-        const ok = x + y === 6;
-        return `<span class="a12-pr${ok ? ' is-ok' : ''}">${tex(`${x}\\times${p(y)}=-432`)}<span>${tex(`${x}+${p(y)}=${x + y}`)}</span><b>${tex(ok ? '\\checkmark' : '\\ne6')}</b></span>`;
-      }).join('');
-      return `<div class="a12-l a12-pairs" data-i="${i + 1}"><span class="a12-ph">${tex('\\text{dikali }-432,\\ \\text{dijumlah }6')}</span>${rows}<small>${l.lbl}</small></div>`;
-    }
-    return `<div class="a12-l" data-i="${i + 1}"><span class="a12-f a12-fa">${tex(l.a)}</span>${l.b ? `<span class="a12-f a12-fb">${tex(l.b)}</span>` : ''}<small>${l.lbl}</small></div>`;
-  }).join('');
-  return `<div class="a12-alg" role="img" aria-label="Penurunan: 9 = akar jumlah kuadrat komponen, 6m² + 6m − 72 = 0, a·c = −432, pasangan 24 dan −18, (m + 4)(6m − 18) = 0, m = −4 atau m = 3">${lines}</div>`;
+  const lines = LINES.map(
+    (l, i) =>
+      `<div class="a12-l" data-i="${i + 1}"><span class="a12-f a12-fa">${tex(l.a)}</span>${l.b ? `<span class="a12-f a12-fb">${tex(l.b)}</span>` : ''}<small>${l.lbl}</small></div>`,
+  ).join('');
+  return `<div class="a12-alg" role="img" aria-label="Penurunan: 9 = akar jumlah kuadrat komponen, 6m² + 6m − 72 = 0 dibagi 6 menjadi m² + m − 12 = 0, a·c = −12, kotak diisi 4 dan −3, (m + 4)(m − 3) = 0, m = −4 atau m = 3">${lines}</div>`;
 }
 
 /** nilai m yang muncul di pilihan, urut seperti diuji */
@@ -206,12 +204,6 @@ export function createVec12(): VisualScene {
         // sorot bagian penting bentuk pertama
         const fa = cur.querySelector('.a12-fa');
         if (fa) await Promise.all([...fa.querySelectorAll('.a12-k')].map((e, j) => pulse(e, j * 220)));
-        // panel pasangan: baris dicoba satu per satu
-        if (cur.classList.contains('a12-pairs'))
-          for (const [j, r] of [...cur.querySelectorAll('.a12-pr')].entries()) {
-            if (!live()) return;
-            await pop(r, j ? 250 : 0);
-          }
         if (!live()) return;
         // ganti ke bentuk kedua dengan pudar silang
         const fb = cur.querySelector('.a12-fb');

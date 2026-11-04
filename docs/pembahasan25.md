@@ -1711,6 +1711,12 @@ $m=-4$: $\vec{AB}=(-8,-1,-4)$, $64+1+16=81$ ✓. $m=3$: $\vec{AB}=(6,6,3)$, $36+
 - **Bagian 6 — Cek dengan substitusi (opsional, Ya/Lewati):** tabel uji $m=-4,-3,3,4$ dari Revisi 1.44.
 - Catatan: dokumen di atas membagi 6 lebih dulu ($m^2+m-12=0$); cara $a\cdot c$ memberi hasil yang sama.
 
+*Revisi 1.46 (4 Nov 2026, arahan pemilik; kunci tidak berubah: B). Mengganti Bagian 4 Revisi 1.45 di atas.*
+- **Sederhanakan dulu:** $6m^2+6m-72=0$ semua sukunya bisa dibagi $6$, jadi $m^2+m-12=0$ (dokumen b3; pertanyaan cepat baru, pengecoh $m^2+m-72$, $m^2+6m-12$).
+- **Tanpa coba-coba:** $a=1$, $b=1$, $c=-12$, $a\cdot c=-12$; buat kotak $\square\times\square=-12$ dan di bawahnya $\square+\square=1$, lalu kotak diisi $4$ dan $-3$ (kotak kosong berganti menjadi angka; pertanyaan cepat, pengecoh $-4$ dan $3$, $6$ dan $-2$).
+- **Isi ke kurung:** $(m+\square)(m+\square)=0$ menjadi $(m+4)(m-3)=0$ (dokumen b4), jadi $m=-4$ atau $m=3$ (b5).
+- Panel coba-coba pasangan dan pembagian dengan $a=6$ dari Revisi 1.45 dihapus.
+
 ---
 
 ## SOAL 13 — Trapesium Sama Kaki
